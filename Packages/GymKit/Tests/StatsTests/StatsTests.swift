@@ -287,6 +287,7 @@ struct StatisticsPerformanceTests {
         let points = try engine.progress(of: refs[0])
         let heat = try engine.heatmap(from: base.addingTimeInterval(-400 * day), until: base, info: provider)
         let elapsed = Date().timeIntervalSince(start)
+        print("Statistika za godinu dana: \(elapsed) s")
 
         #expect(!records.isEmpty && weekly.count == 52 && points.count == 156 && !heat.isEmpty)
         // Gornja granica je namjerno široka da CI ne bude nestabilan; cilj na uređaju je ispod 0,5 s.
