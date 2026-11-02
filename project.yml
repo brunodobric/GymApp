@@ -35,7 +35,7 @@ targets:
       - Shared/LiveActivity
     dependencies:
       - package: GymKit
-        products: [Units, Connectivity]
+        products: [Units, Connectivity, Models]
       - target: GymAppWatch
       - target: GymAppWidgets
     info:
@@ -79,7 +79,7 @@ targets:
       - Shared/Common
     dependencies:
       - package: GymKit
-        products: [Units, Connectivity]
+        products: [Units, Connectivity, Models]
     info:
       path: WatchApp/Info.plist
       properties:
