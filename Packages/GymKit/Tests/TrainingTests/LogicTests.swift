@@ -106,14 +106,16 @@ struct PersonalRecordTests {
         #expect(!kinds(result).contains(.maxWeight))
     }
 
-    @Test("Volumen je ukupan za vježbu u jednom treningu")
+    @Test("Volumen je rekord po jednoj seriji")
     func maxVolume() {
         let history = [[work(80, 8), work(80, 8)]]
         let better = PersonalRecordDetector.records(
-            current: [work(80, 8), work(80, 8), work(80, 1)], history: history, inputType: .weightReps
+            current: [work(80, 8), work(80, 9)], history: history, inputType: .weightReps
         )
-        #expect(better.first { $0.kind == .maxVolume }?.value == 1360)
-        let worse = PersonalRecordDetector.records(current: [work(80, 8)], history: history, inputType: .weightReps)
+        #expect(better.first { $0.kind == .maxVolume }?.value == 720)
+        let worse = PersonalRecordDetector.records(
+            current: [work(80, 8), work(80, 8), work(80, 8)], history: history, inputType: .weightReps
+        )
         #expect(!kinds(worse).contains(.maxVolume))
     }
 

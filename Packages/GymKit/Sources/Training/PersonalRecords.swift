@@ -36,7 +36,7 @@ public struct PersonalRecord: Equatable, Sendable {
 
 /// Prepoznavanje osobnih rekorda (samo radne serije). Pravila:
 /// * bez ranije povijesti nema rekorda (inače bi prvi trening bio sam po sebi rekord);
-/// * težina: najveća težina s barem jednim ponavljanjem; volumen: ukupni volumen vježbe u jednom treningu;
+/// * težina: najveća težina s barem jednim ponavljanjem; volumen: najveći volumen jedne serije;
 /// * ponavljanja: serija je rekord ako ranije nije bilo serije s istom ili većom težinom i barem toliko ponavljanja;
 /// * potpomognuta: rekord je manja pomoć, a ponavljanja se gledaju uz istu ili manju pomoć;
 /// * trajanje i udaljenost: najdulje u jednoj seriji.
@@ -89,8 +89,8 @@ public enum PersonalRecordDetector {
     }
 
     private static func volumeRecord(_ now: [SetValues], _ sessions: [[SetValues]], _ type: ExerciseInputType) -> [PersonalRecord] {
-        let total = now.reduce(0) { $0 + SetMetrics.volume($1, inputType: type) }
-        let before = sessions.map { $0.reduce(0) { $0 + SetMetrics.volume($1, inputType: type) } }.max() ?? 0
+        let total = now.map { SetMetrics.volume($0, inputType: type) }.max() ?? 0
+        let before = sessions.flatMap { $0 }.map { SetMetrics.volume($0, inputType: type) }.max() ?? 0
         guard total > before + epsilon else { return [] }
         return [PersonalRecord(kind: .maxVolume, value: total, previousBest: before)]
     }
