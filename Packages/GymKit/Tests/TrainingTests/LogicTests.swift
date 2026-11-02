@@ -320,3 +320,15 @@ struct PlateTests {
         #expect(result.isExact)
     }
 }
+
+@Suite("Grupiranje ploča")
+struct PlateGroupingTests {
+    @Test("Iste ploče se zbrajaju po veličini")
+    func grouping() {
+        let result = PlateCalculator.grouped([20, 20, 5, 1.25, 1.25])
+        #expect(result == [
+            .init(plate: 20, count: 2), .init(plate: 5, count: 1), .init(plate: 1.25, count: 2)
+        ])
+        #expect(PlateCalculator.grouped([]).isEmpty)
+    }
+}

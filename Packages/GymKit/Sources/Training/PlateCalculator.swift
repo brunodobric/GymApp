@@ -61,4 +61,26 @@ public enum PlateCalculator {
             shortfall: shortfall < 1e-6 ? 0 : shortfall, isExact: shortfall < 1e-6, isBelowBar: false
         )
     }
+
+    public struct PlateCount: Equatable, Sendable {
+        public let plate: Double
+        public let count: Int
+    }
+
+    /// Ploče jedne strane grupirane po veličini, od najteže: [20, 20, 5] daje 2×20 i 1×5.
+    public static func grouped(_ perSide: [Double]) -> [PlateCount] {
+        var result: [PlateCount] = []
+        for plate in perSide {
+            if let last = result.last, last.plate == plate {
+                result[result.count - 1] = PlateCount(plate: plate, count: last.count + 1)
+            } else {
+                result.append(PlateCount(plate: plate, count: 1))
+            }
+        }
+        return result
+    }
+
+    /// Uobičajene ploče i šipka za funte (postavke ploča čuvaju se u kilogramima).
+    public static let defaultPoundPlates: [Double] = [2.5, 5, 10, 25, 35, 45]
+    public static let defaultPoundBarbell: Double = 45
 }

@@ -15,6 +15,8 @@ struct HomeScreen: View {
     @State private var showsSettings = false
     @State private var presentedSession: Session?
     @State private var errorText: String?
+    @State private var checkedRecovery = false
+    @State private var recovery: RecoveryPrompt?
     #if DEBUG
     @State private var showsPrototypes = false
     #endif
@@ -62,6 +64,23 @@ struct HomeScreen: View {
             .fullScreenCover(item: $presentedSession) { session in
                 ActiveWorkoutScreen(session: session)
             }
+            .task { checkRecovery() }
+            .confirmationDialog(
+                LocalizedStringKey(recovery?.isStale == true ? "Zaboravljen trening" : "Prekinut trening"),
+                isPresented: Binding(get: { recovery != nil }, set: { if !$0 { recovery = nil } }),
+                titleVisibility: .visible,
+                presenting: recovery
+            ) { prompt in
+                Button("Nastavi trening") { presentedSession = prompt.session }
+                Button("Završi i spremi") { closeStale(prompt.session) }
+                Button("Odbaci trening", role: .destructive) { discard(prompt.session) }
+            } message: { prompt in
+                if prompt.isStale {
+                    Text("Trening je otvoren dulje od 6 sati bez aktivnosti. Završi ga na zadnjoj završenoj seriji ili ga odbaci.")
+                } else {
+                    Text("Trening je ostao otvoren. Možeš ga nastaviti, završiti ili odbaciti.")
+                }
+            }
             .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
                 Button("U redu") {}
             } message: {
@@ -75,6 +94,35 @@ struct HomeScreen: View {
         }
     }
 
+    /// Pri pokretanju aplikacije: ako je trening ostao otvoren, nudi nastavak, spremanje ili odbacivanje.
+    private func checkRecovery() {
+        guard !checkedRecovery else { return }
+        checkedRecovery = true
+        guard let active = activeSessions.first, presentedSession == nil else { return }
+        let engine = WorkoutEngine(context: context)
+        let assessment = RecoveryAssessment.assess(
+            startedAt: active.startedAt, lastActivityAt: active.lastActivityAt,
+            lastCompletedSetAt: engine.lastCompletedSetAt(in: active), now: Date()
+        )
+        recovery = RecoveryPrompt(session: active, isStale: assessment.isStale)
+    }
+
+    private func closeStale(_ session: Session) {
+        do {
+            try WorkoutEngine(context: context).closeStaleSession(session)
+        } catch WorkoutError.nothingCompleted {
+            // Bez završene serije nema što spremiti: trening se odbacuje.
+            discard(session)
+        } catch {
+            errorText = String(localized: "Trening se nije mogao spremiti.")
+        }
+    }
+
+    private func discard(_ session: Session) {
+        RestNotifications.cancel()
+        try? WorkoutEngine(context: context).discardSession(session)
+    }
+
     private func startWorkout() {
         do {
             presentedSession = try WorkoutEngine(context: context).startSession(name: String(localized: "Trening"))
@@ -82,6 +130,12 @@ struct HomeScreen: View {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
         }
     }
+}
+
+private struct RecoveryPrompt: Identifiable {
+    let session: Session
+    let isStale: Bool
+    var id: UUID { session.id }
 }
 
 struct HistoryScreen: View {
