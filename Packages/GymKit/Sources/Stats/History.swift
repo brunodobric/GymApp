@@ -16,6 +16,12 @@ public struct HistoryFilter: Equatable, Sendable {
         self.kinds = kinds
         self.sort = sort
     }
+
+    /// Primjenjuje filter i sortiranje na već učitane treninge (za žive upite u sučelju).
+    public func apply(to sessions: [Session]) -> [Session] {
+        let selected = kinds.isEmpty ? sessions : sessions.filter { kinds.contains($0.kind) }
+        return selected.sorted { sort == .newestFirst ? $0.startedAt > $1.startedAt : $0.startedAt < $1.startedAt }
+    }
 }
 
 /// Povijest odrađenih treninga: popis, dani s treningom za kalendar i brisanje.
@@ -28,13 +34,8 @@ public struct HistoryQueries {
 
     public func sessions(filter: HistoryFilter = HistoryFilter()) throws -> [Session] {
         let finished = SessionState.finished.rawValue
-        let order: SortOrder = filter.sort == .newestFirst ? .reverse : .forward
-        let all = try context.fetch(FetchDescriptor<Session>(
-            predicate: #Predicate { $0.stateRaw == finished },
-            sortBy: [SortDescriptor(\.startedAt, order: order)]
-        ))
-        guard !filter.kinds.isEmpty else { return all }
-        return all.filter { filter.kinds.contains($0.kind) }
+        let all = try context.fetch(FetchDescriptor<Session>(predicate: #Predicate { $0.stateRaw == finished }))
+        return filter.apply(to: all)
     }
 
     /// Početak svakog dana u rasponu u kojem postoji odrađen trening (točkice u kalendaru).

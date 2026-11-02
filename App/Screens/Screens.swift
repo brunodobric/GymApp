@@ -176,27 +176,16 @@ private struct RecoveryPrompt: Identifiable {
     var id: UUID { session.id }
 }
 
-struct HistoryScreen: View {
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView(
-                "Još nema treninga",
-                systemImage: "clock",
-                description: Text("Ovdje će biti svi odrađeni treninzi.")
-            )
-            .navigationTitle("Povijest")
-        }
-    }
-}
-
 struct StatisticsScreen: View {
     var body: some View {
         NavigationStack {
-            ContentUnavailableView(
-                "Još nema podataka",
-                systemImage: "chart.bar",
-                description: Text("Statistika se prikazuje nakon prvih treninga.")
-            )
+            List {
+                NavigationLink {
+                    BodyScreen()
+                } label: {
+                    Label("Praćenje tijela", systemImage: "figure.arms.open")
+                }
+            }
             .navigationTitle("Statistika")
         }
     }
