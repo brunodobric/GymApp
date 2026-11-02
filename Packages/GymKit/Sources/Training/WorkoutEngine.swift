@@ -64,6 +64,11 @@ public struct WorkoutEngine {
     /// Zatvara trening: briše nezavršene serije, prazne i izbačene vježbe. Trening bez ijedne završene serije
     /// ne može se spremiti (nudi se odbacivanje).
     public func finishSession(_ session: Session, notes: String? = nil, now: Date = Date()) throws {
+        let hasCompleted = (session.exercises ?? []).contains { exercise in
+            !exercise.isRemoved && (exercise.sets ?? []).contains { $0.isCompleted }
+        }
+        guard hasCompleted else { throw WorkoutError.nothingCompleted }
+
         for exercise in session.exercises ?? [] {
             if exercise.isRemoved {
                 context.delete(exercise)
@@ -75,13 +80,6 @@ public struct WorkoutEngine {
             if (exercise.sets ?? []).allSatisfy({ !$0.isCompleted }) {
                 context.delete(exercise)
             }
-        }
-        let hasCompleted = (session.exercises ?? []).contains { exercise in
-            !exercise.isRemoved && (exercise.sets ?? []).contains { $0.isCompleted }
-        }
-        guard hasCompleted else {
-            context.rollback()
-            throw WorkoutError.nothingCompleted
         }
         if let notes { session.notes = notes }
         session.state = .finished
