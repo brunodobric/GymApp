@@ -26,6 +26,7 @@ struct ActiveWorkoutScreen: View {
     @State private var showsFinishConfirmation = false
     @State private var showsDiscardConfirmation = false
     @State private var showsNothingCompleted = false
+    @State private var finishedSummary: WorkoutSummary?
     @State private var lastRemoved: SessionExercise?
     @State private var errorText: String?
     @State private var completedCount = 0
@@ -56,6 +57,18 @@ struct ActiveWorkoutScreen: View {
             .safeAreaInset(edge: .bottom) { bottomBars }
             .sensoryFeedback(.success, trigger: completedCount)
             .sensoryFeedback(.error, trigger: errorCount)
+            .onChange(of: session.restTimerEndsAt) { _, endsAt in
+                RestNotifications.sync(endsAt: endsAt, soundEnabled: settings?.restEndSoundEnabled ?? true)
+            }
+            .sheet(item: Binding(
+                get: { finishedSummary.map(SummaryBox.init) },
+                set: { if $0 == nil { finishedSummary = nil } }
+            )) { box in
+                WorkoutSummarySheet(session: session, summary: box.summary, unit: unit) {
+                    finishedSummary = nil
+                    dismiss()
+                }
+            }
             .sheet(isPresented: $showsPicker) {
                 ExercisePickerSheet(title: "Dodaj vježbu") { summary, inputType in
                     add(summary, inputType: inputType)
@@ -280,7 +293,9 @@ struct ActiveWorkoutScreen: View {
     private func finish() {
         do {
             try engine.finishSession(session)
-            dismiss()
+            RestNotifications.cancel()
+            let tracked = PRKind.kinds(fromSettings: settings?.trackedPRKinds ?? [])
+            finishedSummary = try engine.summary(of: session, trackedKinds: tracked)
         } catch WorkoutError.nothingCompleted {
             showsNothingCompleted = true
         } catch {
@@ -289,6 +304,7 @@ struct ActiveWorkoutScreen: View {
     }
 
     private func discard() {
+        RestNotifications.cancel()
         try? engine.discardSession(session)
         dismiss()
     }
@@ -367,4 +383,10 @@ private struct RemovedExercisesSheet: View {
         }
         .presentationDetents([.medium])
     }
+}
+
+/// Omot da se sažetak može koristiti kao `item` lista.
+private struct SummaryBox: Identifiable, Equatable {
+    let id = UUID()
+    let summary: WorkoutSummary
 }

@@ -291,4 +291,23 @@ struct WorkoutEngineTests {
         let fresh = try engine.addExercise(bench, inputType: .weightReps, to: second, now: base)
         #expect(fresh.orderedSets.allSatisfy { $0.weightKg == nil })
     }
+
+    @Test("Kardio trening sprema ukupnu udaljenost završenih serija")
+    func cardioDistance() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "Kardio", now: base)
+        let run = try engine.addExercise(row, inputType: .durationDistance, to: session, now: base)
+        for set in run.orderedSets { try engine.removeSet(set, now: base) }
+        for meters in [3000.0, 2000.0] {
+            let set = try engine.addSet(to: run, now: base)
+            set.durationSeconds = 900
+            set.distanceMeters = meters
+            try engine.completeSet(set, defaultRestSeconds: 60, now: base.addingTimeInterval(900))
+        }
+        let unfinished = try engine.addSet(to: run, now: base)
+        unfinished.durationSeconds = 60
+        unfinished.distanceMeters = 999
+        try engine.finishSession(session, now: base.addingTimeInterval(2000))
+        #expect(session.distanceMeters == 5000)
+    }
 }

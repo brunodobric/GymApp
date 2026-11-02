@@ -22,6 +22,7 @@ struct SetRow: View {
     @State private var reps: String
     @State private var duration: String
     @State private var distance: String
+    @State private var showsPlates = false
 
     init(
         set: SetLog, inputType: ExerciseInputType, position: Int, previousText: String?, isHighlighted: Bool,
@@ -69,6 +70,9 @@ struct SetRow: View {
         }
         .padding(.vertical, 4)
         .opacity(set.isCompleted ? 0.6 : 1)
+        .sheet(isPresented: $showsPlates) {
+            PlateCalculatorSheet(targetText: weightText, unit: unit)
+        }
         .listRowBackground(isHighlighted ? Color.accentColor.opacity(0.12) : nil)
     }
 
@@ -94,6 +98,7 @@ struct SetRow: View {
         switch inputType {
         case .weightReps:
             field("Težina", unit.symbol, $weightText) { applyWeight() }
+                .simultaneousGesture(LongPressGesture(minimumDuration: 0.6).onEnded { _ in showsPlates = true })
             field("Ponavljanja", "×", $reps) { applyReps() }
         case .bodyweight:
             field("Ponavljanja", "×", $reps) { applyReps() }
