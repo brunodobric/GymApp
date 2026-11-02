@@ -294,3 +294,35 @@ struct StatisticsPerformanceTests {
         #expect(elapsed < 3, "Statistika je trajala \(elapsed) s")
     }
 }
+
+@Suite("ExerciseInfoBuilder")
+struct ExerciseInfoBuilderTests {
+    @Test func customExerciseGetsRegionsFromMuscles() {
+        let custom = CustomExercise(name: "Moja")
+        custom.muscles = [.chest, .middleBack, .neck, .traps]
+        let provider = ExerciseInfoBuilder.provider(catalog: nil, custom: [custom])
+        let info = provider("u:\(custom.id.uuidString)")
+        #expect(info?.primary == [.chest, .middleBack, .neck, .traps])
+        #expect(info?.primaryRegions == ["chest", "upperBack", "traps"])
+        #expect(provider("c:nepoznato") == nil)
+    }
+
+    @Test func everyMuscleHasKnownRegion() {
+        for muscle in Muscle.allCases {
+            #expect(BodyRegion.all.contains(BodyRegion.region(for: muscle)))
+        }
+    }
+}
+
+@Suite("ExerciseRef ključ")
+struct ExerciseRefKeyTests {
+    @Test func roundTrip() {
+        let catalogRef = ExerciseRef(catalogId: "bench", name: "A")
+        #expect(ExerciseRef(key: catalogRef.key, name: "A") == catalogRef)
+        let customRef = ExerciseRef(customExerciseId: UUID(), name: "B")
+        #expect(ExerciseRef(key: customRef.key, name: "B") == customRef)
+        #expect(ExerciseRef(key: "x:1", name: "C") == nil)
+        #expect(ExerciseRef(key: "u:nije-uuid", name: "C") == nil)
+        #expect(ExerciseRef(key: "c:", name: "C") == nil)
+    }
+}

@@ -176,21 +176,6 @@ private struct RecoveryPrompt: Identifiable {
     var id: UUID { session.id }
 }
 
-struct StatisticsScreen: View {
-    var body: some View {
-        NavigationStack {
-            List {
-                NavigationLink {
-                    BodyScreen()
-                } label: {
-                    Label("Praćenje tijela", systemImage: "figure.arms.open")
-                }
-            }
-            .navigationTitle("Statistika")
-        }
-    }
-}
-
 struct SettingsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context

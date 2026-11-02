@@ -25,6 +25,17 @@ public struct ExerciseRef: Hashable, Codable, Sendable {
         self.name = name
     }
 
+    /// Obnavlja referencu iz ključa (`c:<id>` ili `u:<UUID>`). Nil za neispravan ključ.
+    public init?(key: String, name: String) {
+        if key.hasPrefix("c:"), key.count > 2 {
+            self.init(catalogId: String(key.dropFirst(2)), name: name)
+        } else if key.hasPrefix("u:"), let id = UUID(uuidString: String(key.dropFirst(2))) {
+            self.init(customExerciseId: id, name: name)
+        } else {
+            return nil
+        }
+    }
+
     /// Stabilan ključ za upite: "c:<id kataloga>" ili "u:<UUID vlastite vježbe>".
     public var key: String {
         if let catalogId { return "c:\(catalogId)" }
