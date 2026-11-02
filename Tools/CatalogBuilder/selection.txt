@@ -145,7 +145,6 @@ Glute_Ham_Raise
 Ball_Leg_Curl
 Reverse_Hyperextension
 Kettlebell_One-Legged_Deadlift
-One-Arm_Kettlebell_Swings
 Barbell_Hip_Thrust
 Barbell_Glute_Bridge
 Single_Leg_Glute_Bridge
@@ -176,7 +175,6 @@ Sit-Up
 Jackknife_Sit-Up
 Russian_Twist
 Plank
-Side_Bridge
 Dead_Bug
 Flat_Bench_Lying_Leg_Raise
 Ab_Roller

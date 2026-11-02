@@ -4997,44 +4997,6 @@
    ]
   },
   {
-   "id": "One-Arm_Kettlebell_Swings",
-   "name": {
-    "en": "One-Arm Kettlebell Swings",
-    "hr": "Jednoručni zamah kettlebellom"
-   },
-   "instructions": {
-    "en": []
-   },
-   "category": "legs",
-   "primaryMuscles": [
-    "hamstrings"
-   ],
-   "secondaryMuscles": [
-    "calves",
-    "glutes",
-    "lower back",
-    "shoulders"
-   ],
-   "equipment": "kettlebell",
-   "level": "intermediate",
-   "mechanic": "compound",
-   "movement": "legs",
-   "inputType": "weightReps",
-   "primaryRegions": [
-    "hamstrings"
-   ],
-   "secondaryRegions": [
-    "calves",
-    "glutes",
-    "lowerBack",
-    "shoulders"
-   ],
-   "images": [
-    "Images/One-Arm_Kettlebell_Swings/0.jpg",
-    "Images/One-Arm_Kettlebell_Swings/1.jpg"
-   ]
-  },
-  {
    "id": "Barbell_Hip_Thrust",
    "name": {
     "en": "Barbell Hip Thrust",
@@ -5949,38 +5911,6 @@
    "images": [
     "Images/Plank/0.jpg",
     "Images/Plank/1.jpg"
-   ]
-  },
-  {
-   "id": "Side_Bridge",
-   "name": {
-    "en": "Side Bridge",
-    "hr": "Bočni plank"
-   },
-   "instructions": {
-    "en": []
-   },
-   "category": "core",
-   "primaryMuscles": [
-    "abdominals"
-   ],
-   "secondaryMuscles": [
-    "shoulders"
-   ],
-   "equipment": "bodyweight",
-   "level": "beginner",
-   "mechanic": null,
-   "movement": null,
-   "inputType": "duration",
-   "primaryRegions": [
-    "abs"
-   ],
-   "secondaryRegions": [
-    "shoulders"
-   ],
-   "images": [
-    "Images/Side_Bridge/0.jpg",
-    "Images/Side_Bridge/1.jpg"
    ]
   },
   {

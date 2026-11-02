@@ -386,9 +386,6 @@
  "Kettlebell_One-Legged_Deadlift": {
   "name": "Mrtvo dizanje na jednoj nozi s kettlebellom"
  },
- "One-Arm_Kettlebell_Swings": {
-  "name": "Jednoručni zamah kettlebellom"
- },
  "Barbell_Hip_Thrust": {
   "name": "Hip thrust sa šipkom"
  },
@@ -466,9 +463,6 @@
  },
  "Plank": {
   "name": "Plank"
- },
- "Side_Bridge": {
-  "name": "Bočni plank"
  },
  "Dead_Bug": {
   "name": "Dead bug"

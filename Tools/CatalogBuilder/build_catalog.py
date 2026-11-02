@@ -150,6 +150,11 @@ def main() -> int:
         raise BuildError(f"Prijevodi za vježbe koje nisu odabrane: {unknown_translations}")
 
     exercises = [convert(database[i], mapping, hr) for i in selection]
+    for exercise in exercises:
+        if not exercise["instructions"]["en"]:
+            raise BuildError(f"{exercise['id']}: nema uputa, izbaciti iz selection.txt")
+        if not exercise["images"]:
+            raise BuildError(f"{exercise['id']}: nema slika, izbaciti iz selection.txt")
 
     if not args.no_images:
         jobs = []
@@ -160,6 +165,15 @@ def main() -> int:
         print(f"Preuzimam {len(jobs)} slika …")
         with ThreadPoolExecutor(max_workers=8) as pool:
             list(pool.map(lambda job: download(*job), jobs))
+
+    # Mape slika vježbi koje više nisu u odabiru brišu se, da build uvijek odgovara selection.txt.
+    images_root = OUTPUT / "Images"
+    if images_root.exists():
+        for folder in images_root.iterdir():
+            if folder.is_dir() and folder.name not in selection:
+                for file in folder.iterdir():
+                    file.unlink()
+                folder.rmdir()
 
     catalog = {
         "version": CATALOG_VERSION,
