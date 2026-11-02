@@ -212,7 +212,7 @@ struct StatisticsTests {
         ])
 
         let result = try StatisticsEngine(context: context).heatmap(
-            from: base.addingTimeInterval(-day), to: base.addingTimeInterval(3 * day), info: infoProvider
+            from: base.addingTimeInterval(-day), until: base.addingTimeInterval(3 * day), info: infoProvider
         )
         #expect(result["chest"] == RegionLoad(sessions: 2, volumeKg: 1000, intensity: 1))
         #expect(result["triceps"]?.volumeKg == 500)
@@ -285,7 +285,7 @@ struct StatisticsPerformanceTests {
         let records = try engine.personalRecords()
         let weekly = try engine.volumeBuckets(size: .week, count: 52, endingAt: base, calendar: calendar, info: provider)
         let points = try engine.progress(of: refs[0])
-        let heat = try engine.heatmap(from: base.addingTimeInterval(-400 * day), to: base, info: provider)
+        let heat = try engine.heatmap(from: base.addingTimeInterval(-400 * day), until: base, info: provider)
         let elapsed = Date().timeIntervalSince(start)
 
         #expect(!records.isEmpty && weekly.count == 52 && points.count == 156 && !heat.isEmpty)

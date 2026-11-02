@@ -197,9 +197,9 @@ public struct StatisticsEngine {
     // MARK: Body heatmap
 
     /// Opterećenje po regiji tijela u razdoblju. Primarne regije računaju puni volumen, sekundarne pola.
-    public func heatmap(from: Date, to: Date, info: ExerciseInfoProvider) throws -> [String: RegionLoad] {
+    public func heatmap(from start: Date, until end: Date, info: ExerciseInfoProvider) throws -> [String: RegionLoad] {
         var result: [String: RegionLoad] = [:]
-        for session in try GymQueries(context: context).finishedSessions(from: from, to: to) {
+        for session in try GymQueries(context: context).finishedSessions(from: start, to: end) {
             var touched = Set<String>()
             for exercise in session.orderedExercises where !exercise.isRemoved {
                 guard let details = info(exercise.exerciseKey) else { continue }
@@ -218,8 +218,8 @@ public struct StatisticsEngine {
         }
         let peak = result.values.map(\.sessions).max() ?? 0
         guard peak > 0 else { return result }
-        for region in result.keys {
-            result[region]?.intensity = Double(result[region]?.sessions ?? 0) / Double(peak)
+        for (region, load) in result {
+            result[region]?.intensity = Double(load.sessions) / Double(peak)
         }
         return result
     }
