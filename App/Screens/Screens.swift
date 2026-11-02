@@ -69,19 +69,6 @@ struct SchedulesScreen: View {
     }
 }
 
-struct ExercisesScreen: View {
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView(
-                "Katalog vježbi",
-                systemImage: "dumbbell",
-                description: Text("Katalog stiže u fazi 2.")
-            )
-            .navigationTitle("Vježbe")
-        }
-    }
-}
-
 struct StatisticsScreen: View {
     var body: some View {
         NavigationStack {
