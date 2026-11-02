@@ -1,0 +1,133 @@
+import Catalog
+import Models
+import SwiftUI
+import Training
+import Units
+
+/// Vježba u aktivnom treningu: zaglavlje i, kad je otvorena, retci serija.
+struct ExerciseCard: View {
+    let exercise: SessionExercise
+    let isOpen: Bool
+    let isEditing: Bool
+    let highlightedSetID: UUID?
+    let previous: [SetValues]
+    let unit: WeightUnit
+    let effortScale: EffortScale
+
+    let onToggleOpen: () -> Void
+    let onEdit: () -> Void
+    let onToggleComplete: (SetLog) -> Void
+    let onChangeKind: (SetLog, SetKind) -> Void
+    let onDeleteSet: (SetLog) -> Void
+    let onAddSet: (SetKind) -> Void
+    let onRemove: () -> Void
+    let onSuperset: () -> Void
+    let onLeaveSuperset: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            header
+            if isOpen && !isEditing {
+                ForEach(rows, id: \.set.id) { row in
+                    SetRow(
+                        set: row.set, inputType: exercise.inputType, position: row.position,
+                        previousText: row.previous, isHighlighted: row.set.id == highlightedSetID, unit: unit,
+                        effortScale: effortScale, onEdit: onEdit, onToggleComplete: { onToggleComplete(row.set) },
+                        onChangeKind: { onChangeKind(row.set, $0) }, onDelete: { onDeleteSet(row.set) }
+                    )
+                    Divider()
+                }
+                HStack {
+                    Button("Dodaj seriju", systemImage: "plus") { onAddSet(.working) }
+                    Spacer()
+                    Button("Zagrijavanje", systemImage: "flame") { onAddSet(.warmUp) }
+                }
+                .font(.subheadline)
+                .buttonStyle(.borderless)
+            }
+        }
+        .padding(.vertical, 6)
+    }
+
+    private var header: some View {
+        HStack {
+            Button(action: onToggleOpen) {
+                VStack(alignment: .leading, spacing: 2) {
+                    if exercise.supersetGroupId != nil {
+                        Text("Superset")
+                            .font(.caption.bold())
+                            .foregroundStyle(.tint)
+                    }
+                    Text(exercise.exerciseName).font(.headline)
+                    Text("\(completedCount) od \(exercise.orderedSets.count) serija")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint(Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu"))
+
+            if !isEditing {
+                Menu("Više", systemImage: "ellipsis.circle") {
+                    Button("Superset", systemImage: "rectangle.stack", action: onSuperset)
+                    if exercise.supersetGroupId != nil {
+                        Button("Izbaci iz superseta", systemImage: "rectangle.stack.badge.minus", action: onLeaveSuperset)
+                    }
+                    Button("Izbaci vježbu", systemImage: "trash", role: .destructive, action: onRemove)
+                }
+                .labelStyle(.iconOnly)
+            }
+        }
+    }
+
+    private var completedCount: Int {
+        exercise.orderedSets.filter(\.isCompleted).count
+    }
+
+    private struct Row {
+        let set: SetLog
+        let position: Int
+        let previous: String?
+    }
+
+    /// Redni broj se računa zasebno za radne serije, a zagrijavanje se označava slovom.
+    private var rows: [Row] {
+        var working = 0
+        var warmUp = 0
+        return exercise.orderedSets.map { set in
+            let index: Int
+            if set.kind == .working {
+                working += 1
+                index = working - 1
+            } else {
+                warmUp += 1
+                index = warmUp - 1
+            }
+            let old = SmartDefaults.defaults(forPosition: index, kind: set.kind, previous: previous)
+            return Row(set: set, position: set.kind == .working ? working : warmUp, previous: old.flatMap(previousText))
+        }
+    }
+
+    private func previousText(_ values: SetValues) -> String? {
+        let formatter = WeightFormatter(unit: unit)
+        switch exercise.inputType {
+        case .weightReps:
+            guard let weight = values.weightKg, let reps = values.reps else { return nil }
+            return "\(formatter.number(fromKilograms: weight)) × \(reps)"
+        case .bodyweight:
+            return values.reps.map { "× \($0)" }
+        case .weightedBodyweight, .assisted:
+            guard let reps = values.reps else { return nil }
+            let load = values.extraWeightKg.map { formatter.number(fromKilograms: $0) } ?? "0"
+            return "\(load) × \(reps)"
+        case .duration:
+            return values.durationSeconds.map { DurationInput.format($0) }
+        case .durationDistance:
+            let time = values.durationSeconds.map { DurationInput.format($0) }
+            let km = values.distanceMeters.map { NumberInput.format($0 / 1000) + " km" }
+            return [time, km].compactMap { $0 }.joined(separator: " · ")
+        }
+    }
+}
