@@ -1,0 +1,17 @@
+included:
+  - App
+  - WatchApp
+  - Widgets
+  - Shared
+  - Packages/GymKit/Sources
+  - Packages/GymKit/Tests
+excluded:
+  - Packages/GymKit/.build
+disabled_rules:
+  - todo
+  - force_unwrapping
+line_length:
+  warning: 160
+  error: 220
+identifier_name:
+  excluded: [id, ok]

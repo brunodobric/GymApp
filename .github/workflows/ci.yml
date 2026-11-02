@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verzija Xcodea
+        run: xcodebuild -version
+
+      - name: Alati
+        run: brew install xcodegen swiftlint
+
+      - name: SwiftLint
+        run: swiftlint lint --quiet
+
+      - name: Testovi paketa GymKit
+        run: swift test --package-path Packages/GymKit
+
+      - name: Generiranje projekta
+        run: xcodegen generate
+
+      - name: Build iOS (simulator)
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project GymApp.xcodeproj \
+            -scheme GymApp \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO | tail -n 60
+
+      - name: Build watchOS (simulator)
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project GymApp.xcodeproj \
+            -scheme GymAppWatch \
+            -configuration Debug \
+            -destination 'generic/platform=watchOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO | tail -n 60

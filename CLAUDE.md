@@ -1,0 +1,43 @@
+# GymApp
+
+iOS, iPadOS i watchOS aplikacija za bilježenje treninga. Swift + SwiftUI, SwiftData, CloudKit, HealthKit, WatchConnectivity.
+
+## Dokumenti
+
+* `docs/SPECIFIKACIJA.md`: što aplikacija radi (izvor istine za funkcionalnost)
+* `docs/PLAN_IZRADE.md`: faze, redoslijed i kriteriji "gotovo kad"
+* `docs/DIZAJN.md`: pravila Apple HIG-a za ovu aplikaciju
+* `docs/PRAVNO_I_PRIVATNOST.md`: privatnost, licence, App Store pravila
+* `docs/prototipi.md`: prototipi faze 0 i nalazi
+
+Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi tipova, funkcija i varijabli su na engleskom.
+
+## Struktura
+
+* `project.yml`: XcodeGen specifikacija. `GymApp.xcodeproj` se ne commita, generira se s `xcodegen generate`.
+* `App/`: iPhone i iPad aplikacija
+* `WatchApp/`: watchOS aplikacija
+* `Widgets/`: Live Activity (i kasnije widgeti)
+* `Shared/Common/`: kod koji dijele iPhone i Watch
+* `Shared/LiveActivity/`: kod koji dijele aplikacija i widget extension
+* `Packages/GymKit/`: logika bez sučelja, s unit testovima (Swift Testing)
+
+## Pravila
+
+* **Logika ide u `GymKit`**, ne u viewove. Svaka nova logika dobiva testove.
+* **Težina se uvijek sprema u kg** (`Units`). Pretvorba u lbs samo za prikaz i unos.
+* **SwiftData modeli koji se sinkroniziraju poštuju pravila CloudKita:** svako svojstvo opcionalno ili sa zadanom vrijednošću, bez `@Attribute(.unique)`, opcionalne relacije, redoslijed u `orderIndex`. Shema se nakon izdanja samo proširuje.
+* **Bez SDK-ova trećih strana** i bez vanjskih resursa (fontovi, CDN, analitika). Svaka nova ovisnost ide u `docs/PRAVNO_I_PRIVATNOST.md` s licencom.
+* **Dizajn prema `docs/DIZAJN.md`:** sistemske komponente, tab bar samo za navigaciju, Dynamic Type, iPad preko size classa.
+* Debug-only kod (prototipi, alati) ide unutar `#if DEBUG`.
+
+## Naredbe
+
+```sh
+brew install xcodegen swiftlint
+xcodegen generate                              # generira GymApp.xcodeproj
+swift test --package-path Packages/GymKit      # testovi logike
+swiftlint lint
+```
+
+CI (`.github/workflows/ci.yml`) na svaki push i PR pokreće SwiftLint, testove paketa te build za iOS i watchOS simulator.

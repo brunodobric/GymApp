@@ -1,0 +1,126 @@
+# XcodeGen specifikacija projekta.
+# GymApp.xcodeproj se ne commita: generira se naredbom `xcodegen generate`.
+name: GymApp
+
+options:
+  bundleIdPrefix: com.brunodobric
+  developmentLanguage: hr
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "18.0"
+    watchOS: "11.0"
+
+settings:
+  base:
+    DEVELOPMENT_TEAM: ""            # upisati svoj Team ID prije pokretanja na uređaju
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    SWIFT_STRICT_CONCURRENCY: targeted
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+
+packages:
+  GymKit:
+    path: Packages/GymKit
+
+targets:
+
+  # iPhone + iPad aplikacija
+  GymApp:
+    type: application
+    platform: iOS
+    sources:
+      - App
+      - Shared/Common
+      - Shared/LiveActivity
+    dependencies:
+      - package: GymKit
+        products: [Units, Connectivity]
+      - target: GymAppWatch
+      - target: GymAppWidgets
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: GymApp
+        CFBundleDevelopmentRegion: hr
+        CFBundleLocalizations: [hr, en]
+        UILaunchScreen: {}
+        UIApplicationSupportsIndirectInputEvents: true
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIBackgroundModes: [remote-notification]
+        NSSupportsLiveActivities: true
+        NSHealthShareUsageDescription: "GymApp čita tvoje treninge, tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
+        NSHealthUpdateUsageDescription: "GymApp sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
+    entitlements:
+      path: App/GymApp.entitlements
+      properties:
+        aps-environment: development
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.brunodobric.gymapp]
+        com.apple.developer.icloud-services: [CloudKit]
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+        com.apple.security.application-groups: [group.com.brunodobric.gymapp]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: NO
+    scheme:
+      testTargets: []
+
+  # Apple Watch aplikacija (single-target watchOS app)
+  GymAppWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - WatchApp
+      - Shared/Common
+    dependencies:
+      - package: GymKit
+        products: [Units, Connectivity]
+    info:
+      path: WatchApp/Info.plist
+      properties:
+        CFBundleDisplayName: GymApp
+        CFBundleDevelopmentRegion: hr
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.brunodobric.gymapp
+        NSHealthShareUsageDescription: "GymApp čita puls i potrošnju energije tijekom treninga."
+        NSHealthUpdateUsageDescription: "GymApp sprema tvoje treninge u Zdravlje."
+    entitlements:
+      path: WatchApp/GymAppWatch.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+        com.apple.security.application-groups: [group.com.brunodobric.gymapp]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp.watchkitapp
+        GENERATE_INFOPLIST_FILE: NO
+    scheme: {}
+
+  # Widget extension: Live Activity (faza 9). Za sada samo kostur.
+  GymAppWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Widgets
+      - Shared/LiveActivity
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: GymApp
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp.widgets
+        GENERATE_INFOPLIST_FILE: NO
