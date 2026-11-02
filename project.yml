@@ -1,5 +1,6 @@
 # XcodeGen specifikacija projekta.
 # GymApp.xcodeproj se ne commita: generira se naredbom `xcodegen generate`.
+# Tim i potpisivanje: Config/Local.xcconfig (vidi Config/Local.xcconfig.example).
 name: GymApp
 
 options:
@@ -12,7 +13,6 @@ options:
 
 settings:
   base:
-    DEVELOPMENT_TEAM: ""            # upisati svoj Team ID prije pokretanja na uređaju
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.0"
@@ -59,15 +59,9 @@ targets:
         NSSupportsLiveActivities: true
         NSHealthShareUsageDescription: "GymApp čita tvoje treninge, tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
         NSHealthUpdateUsageDescription: "GymApp sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
-    entitlements:
-      path: App/GymApp.entitlements
-      properties:
-        aps-environment: development
-        com.apple.developer.icloud-container-identifiers: [iCloud.com.brunodobric.gymapp]
-        com.apple.developer.icloud-services: [CloudKit]
-        com.apple.developer.healthkit: true
-        com.apple.developer.healthkit.access: []
-        com.apple.security.application-groups: [group.com.brunodobric.gymapp]
+    configFiles:
+      Debug: Config/App.xcconfig
+      Release: Config/App.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp
@@ -95,12 +89,9 @@ targets:
         WKCompanionAppBundleIdentifier: com.brunodobric.gymapp
         NSHealthShareUsageDescription: "GymApp čita puls i potrošnju energije tijekom treninga."
         NSHealthUpdateUsageDescription: "GymApp sprema tvoje treninge u Zdravlje."
-    entitlements:
-      path: WatchApp/GymAppWatch.entitlements
-      properties:
-        com.apple.developer.healthkit: true
-        com.apple.developer.healthkit.access: []
-        com.apple.security.application-groups: [group.com.brunodobric.gymapp]
+    configFiles:
+      Debug: Config/Watch.xcconfig
+      Release: Config/Watch.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp.watchkitapp
@@ -120,6 +111,9 @@ targets:
         CFBundleDisplayName: GymApp
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    configFiles:
+      Debug: Config/Widgets.xcconfig
+      Release: Config/Widgets.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp.widgets

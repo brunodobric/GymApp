@@ -13,12 +13,13 @@ iOS, iPadOS i watchOS aplikacija za bilježenje treninga (Swift + SwiftUI).
 Potreban je Mac s aktualnim Xcodeom.
 
 ```sh
+cp Config/Local.xcconfig.example Config/Local.xcconfig   # upisati svoj Team ID
 brew install xcodegen
 xcodegen generate
 open GymApp.xcodeproj
 ```
 
-Prije pokretanja na uređaju odabrati svoj tim (Signing & Capabilities) za targete `GymApp`, `GymAppWatch` i `GymAppWidgets`, ili ga upisati kao `DEVELOPMENT_TEAM` u `project.yml`.
+Tim se upisuje u `Config/Local.xcconfig`, a ne u Xcodeu, kako se ne bi izgubio pri ponovnom generiranju. Za besplatni Personal Team u toj datoteci ostaviti retke koji isključuju iCloud i push (vidi komentare u primjeru).
 
 Testovi logike rade i bez Xcode projekta:
 

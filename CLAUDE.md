@@ -15,6 +15,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 ## Struktura
 
 * `project.yml`: XcodeGen specifikacija. `GymApp.xcodeproj` se ne commita, generira se s `xcodegen generate`.
+* `Config/`: xcconfig datoteke za potpisivanje. Tim je u `Config/Local.xcconfig` (ne commita se). Entitlements su datoteke u `App/` i `WatchApp/`, a `GymApp-PersonalTeam.entitlements` je verzija bez iCloud i push za besplatni tim (uvjet kompajliranja `PERSONAL_TEAM`).
 * `App/`: iPhone i iPad aplikacija
 * `WatchApp/`: watchOS aplikacija
 * `Widgets/`: Live Activity (i kasnije widgeti)
