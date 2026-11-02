@@ -33,8 +33,11 @@ struct WorkoutEventTests {
     func deduplication() {
         var deduplicator = WorkoutEventDeduplicator()
         let event = WorkoutEvent(origin: .phone, kind: .restTimerCancelled)
-        #expect(deduplicator.accept(event))
-        #expect(!deduplicator.accept(event))
-        #expect(deduplicator.accept(WorkoutEvent(origin: .phone, kind: .restTimerCancelled)))
+        let first = deduplicator.accept(event)
+        let repeated = deduplicator.accept(event)
+        let other = deduplicator.accept(WorkoutEvent(origin: .phone, kind: .restTimerCancelled))
+        #expect(first)
+        #expect(!repeated)
+        #expect(other)
     }
 }
