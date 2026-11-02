@@ -14,23 +14,26 @@ let package = Package(
     products: [
         .library(name: "Units", targets: ["Units"]),
         .library(name: "Connectivity", targets: ["Connectivity"]),
+        .library(name: "Catalog", targets: ["Catalog"]),
         .library(name: "Models", targets: ["Models"]),
     ],
     targets: [
         .target(name: "Units"),
         .target(name: "Connectivity"),
+        .target(name: "Catalog"),
         .target(
             name: "Models",
-            dependencies: ["Units"],
+            dependencies: ["Units", "Catalog"],
             // SwiftData makro generira kod koji još nije u potpunosti prilagođen Swift 6 modu.
             // Isto kao u project.yml (SWIFT_VERSION 5.0).
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(name: "UnitsTests", dependencies: ["Units"]),
         .testTarget(name: "ConnectivityTests", dependencies: ["Connectivity"]),
+        .testTarget(name: "CatalogTests", dependencies: ["Catalog"]),
         .testTarget(
             name: "ModelsTests",
-            dependencies: ["Models", "Units"],
+            dependencies: ["Models", "Units", "Catalog"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
     ]

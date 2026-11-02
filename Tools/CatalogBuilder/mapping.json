@@ -1,0 +1,82 @@
+{
+  "_opis": "Tablica mapiranja free-exercise-db vrijednosti na naše kategorije, mišiće, opremu, vrste unosa i regije body heatmapa.",
+
+  "muscles": {
+    "chest":       { "category": "chest",     "movement": "push", "region": "chest" },
+    "shoulders":   { "category": "shoulders", "movement": "push", "region": "shoulders" },
+    "triceps":     { "category": "arms",      "movement": "push", "region": "triceps" },
+    "biceps":      { "category": "arms",      "movement": "pull", "region": "biceps" },
+    "forearms":    { "category": "arms",      "movement": "pull", "region": "forearms" },
+    "lats":        { "category": "back",      "movement": "pull", "region": "lats" },
+    "middle back": { "category": "back",      "movement": "pull", "region": "upperBack" },
+    "lower back":  { "category": "back",      "movement": "pull", "region": "lowerBack" },
+    "traps":       { "category": "back",      "movement": "pull", "region": "traps" },
+    "neck":        { "category": "shoulders", "movement": "pull", "region": "neck" },
+    "quadriceps":  { "category": "legs",      "movement": "legs", "region": "quads" },
+    "hamstrings":  { "category": "legs",      "movement": "legs", "region": "hamstrings" },
+    "glutes":      { "category": "legs",      "movement": "legs", "region": "glutes" },
+    "calves":      { "category": "legs",      "movement": "legs", "region": "calves" },
+    "adductors":   { "category": "legs",      "movement": "legs", "region": "innerThigh" },
+    "abductors":   { "category": "legs",      "movement": "legs", "region": "outerThigh" },
+    "abdominals":  { "category": "core",      "movement": null,   "region": "abs" }
+  },
+
+  "equipment": {
+    "barbell": "barbell",
+    "e-z curl bar": "ezBar",
+    "dumbbell": "dumbbell",
+    "cable": "cable",
+    "machine": "machine",
+    "body only": "bodyweight",
+    "kettlebells": "kettlebell",
+    "bands": "bands",
+    "medicine ball": "other",
+    "exercise ball": "other",
+    "foam roll": "other",
+    "other": "other",
+    "null": "other"
+  },
+
+  "levels": { "beginner": "beginner", "intermediate": "intermediate", "expert": "advanced" },
+  "mechanics": { "compound": "compound", "isolation": "isolation", "null": null },
+
+  "_kardio": "Vježbe iz kategorije cardio dobivaju našu kategoriju cardio, bez vrste pokreta, i unos vrijeme + udaljenost.",
+  "cardioInputType": "durationDistance",
+
+  "inputTypeOverrides": {
+    "Pullups": "bodyweight",
+    "Chin-Up": "bodyweight",
+    "Weighted_Pull_Ups": "weightedBodyweight",
+    "Band_Assisted_Pull-Up": "assisted",
+    "Dips_-_Chest_Version": "bodyweight",
+    "Dips_-_Triceps_Version": "bodyweight",
+    "Parallel_Bar_Dip": "bodyweight",
+    "Inverted_Row": "bodyweight",
+    "Hyperextensions_Back_Extensions": "bodyweight",
+    "Knee_Hip_Raise_On_Parallel_Bars": "bodyweight",
+    "Ab_Roller": "bodyweight",
+    "Plank": "duration",
+    "Side_Bridge": "duration",
+    "Air_Bike": "duration",
+    "Rope_Jumping": "duration"
+  },
+
+  "equipmentOverrides": {
+    "Inverted_Row": "bodyweight",
+    "Mountain_Climbers": "bodyweight",
+    "Bicycling": "machine",
+    "Rope_Jumping": "other",
+    "Trail_Running_Walking": "bodyweight"
+  },
+
+  "categoryOverrides": {
+    "Mountain_Climbers": "core",
+    "Clean_and_Press": "shoulders",
+    "Power_Clean": "legs",
+    "Clean": "legs",
+    "Hang_Clean": "legs",
+    "Snatch": "legs",
+    "Barbell_Deadlift": "back",
+    "Trap_Bar_Deadlift": "legs"
+  }
+}

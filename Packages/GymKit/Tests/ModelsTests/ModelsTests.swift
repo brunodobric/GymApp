@@ -1,3 +1,4 @@
+import Catalog
 import Foundation
 import SwiftData
 import Testing
@@ -249,5 +250,65 @@ struct QueriesTests {
         #expect(removed == 2)
         #expect(try context.fetch(FetchDescriptor<BodyMeasurement>()).count == 2)
         #expect(try Deduplication.removeAllDuplicates(in: context) == 0)
+    }
+}
+
+@Suite("Vlastite vježbe")
+struct CustomExerciseTests {
+
+    @Test("Vlastita vježba bez povijesti se briše")
+    func deletedWithoutHistory() throws {
+        let context = try makeContext()
+        let exercise = CustomExercise(name: "Moja vježba")
+        context.insert(exercise)
+        try context.save()
+
+        #expect(try CustomExerciseStore.remove(exercise, in: context) == .deleted)
+        #expect(try context.fetch(FetchDescriptor<CustomExercise>()).isEmpty)
+    }
+
+    @Test("Vlastita vježba s poviješću se arhivira, a povijest ostaje")
+    func archivedWithHistory() throws {
+        let context = try makeContext()
+        let exercise = CustomExercise(name: "Moja vježba")
+        context.insert(exercise)
+        makeSession(in: context, exercise: exercise.ref, startedAt: Date())
+        try context.save()
+
+        #expect(try CustomExerciseStore.remove(exercise, in: context) == .archived)
+        let stored = try context.fetch(FetchDescriptor<CustomExercise>())
+        #expect(stored.count == 1)
+        #expect(stored[0].isArchived)
+        #expect(try context.fetch(FetchDescriptor<SessionExercise>()).count == 1)
+    }
+
+    @Test("Vlastita vježba u predlošku se također arhivira")
+    func archivedWhenInTemplate() throws {
+        let context = try makeContext()
+        let exercise = CustomExercise(name: "Moja vježba")
+        context.insert(exercise)
+        let template = WorkoutTemplate(name: "Dan A")
+        context.insert(template)
+        let templateExercise = TemplateExercise(orderIndex: 0, exercise: exercise.ref)
+        templateExercise.template = template
+        try context.save()
+
+        #expect(try CustomExerciseStore.remove(exercise, in: context) == .archived)
+    }
+
+    @Test("Svojstva vlastite vježbe i sažetak")
+    func summaryAndAccessors() {
+        let exercise = CustomExercise(name: "Povlačenje užeta", inputType: .duration)
+        exercise.category = .back
+        exercise.equipment = .other
+        exercise.muscles = [.lats, .biceps]
+
+        #expect(exercise.inputType == .duration)
+        #expect(exercise.muscles == [.lats, .biceps])
+        let summary = exercise.summary
+        #expect(summary.isCustom)
+        #expect(summary.category == .back)
+        #expect(summary.ref.customExerciseId == exercise.id)
+        #expect(summary.ref.key == "u:\(exercise.id.uuidString)")
     }
 }
