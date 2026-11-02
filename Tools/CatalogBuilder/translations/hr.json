@@ -1,0 +1,545 @@
+{
+ "Barbell_Bench_Press_-_Medium_Grip": {
+  "name": "Potisak šipkom s klupe"
+ },
+ "Barbell_Incline_Bench_Press_-_Medium_Grip": {
+  "name": "Potisak šipkom s kose klupe"
+ },
+ "Decline_Barbell_Bench_Press": {
+  "name": "Potisak šipkom s negativne klupe"
+ },
+ "Dumbbell_Bench_Press": {
+  "name": "Potisak bučicama s klupe"
+ },
+ "Incline_Dumbbell_Press": {
+  "name": "Potisak bučicama s kose klupe"
+ },
+ "Dumbbell_Flyes": {
+  "name": "Razvlačenje bučicama na klupi"
+ },
+ "Incline_Dumbbell_Flyes": {
+  "name": "Razvlačenje bučicama na kosoj klupi"
+ },
+ "Cable_Crossover": {
+  "name": "Prekrižavanje kablova"
+ },
+ "Low_Cable_Crossover": {
+  "name": "Prekrižavanje kablova odozdo"
+ },
+ "Cable_Chest_Press": {
+  "name": "Potisak na kablovima"
+ },
+ "Incline_Cable_Flye": {
+  "name": "Razvlačenje na kablovima s kose klupe"
+ },
+ "Butterfly": {
+  "name": "Leptir sprava"
+ },
+ "Machine_Bench_Press": {
+  "name": "Potisak prsa na spravi"
+ },
+ "Smith_Machine_Bench_Press": {
+  "name": "Potisak s klupe na Smith spravi"
+ },
+ "Pushups": {
+  "name": "Sklekovi"
+ },
+ "Incline_Push-Up": {
+  "name": "Sklekovi s povišenim rukama"
+ },
+ "Decline_Push-Up": {
+  "name": "Sklekovi s povišenim nogama"
+ },
+ "Dips_-_Chest_Version": {
+  "name": "Propadanja na razboju (prsa)"
+ },
+ "Bent-Arm_Dumbbell_Pullover": {
+  "name": "Pullover bučicom sa savijenim rukama"
+ },
+ "Pullups": {
+  "name": "Zgibovi"
+ },
+ "Chin-Up": {
+  "name": "Zgibovi podhvatom"
+ },
+ "Weighted_Pull_Ups": {
+  "name": "Zgibovi s dodatnim teretom"
+ },
+ "Band_Assisted_Pull-Up": {
+  "name": "Zgibovi uz pomoć trake"
+ },
+ "Wide-Grip_Lat_Pulldown": {
+  "name": "Povlačenje na lat spravi širokim hvatom"
+ },
+ "Close-Grip_Front_Lat_Pulldown": {
+  "name": "Povlačenje na lat spravi uskim hvatom"
+ },
+ "V-Bar_Pulldown": {
+  "name": "Povlačenje na lat spravi V-ručkom"
+ },
+ "Underhand_Cable_Pulldowns": {
+  "name": "Povlačenje na lat spravi podhvatom"
+ },
+ "One_Arm_Lat_Pulldown": {
+  "name": "Jednoručno povlačenje na lat spravi"
+ },
+ "Straight-Arm_Pulldown": {
+  "name": "Povlačenje ravnim rukama"
+ },
+ "Rope_Straight-Arm_Pulldown": {
+  "name": "Povlačenje ravnim rukama s užetom"
+ },
+ "Bent_Over_Barbell_Row": {
+  "name": "Veslanje šipkom u pretklonu"
+ },
+ "Reverse_Grip_Bent-Over_Rows": {
+  "name": "Veslanje šipkom podhvatom"
+ },
+ "Bent_Over_Two-Dumbbell_Row": {
+  "name": "Veslanje s dvije bučice u pretklonu"
+ },
+ "One-Arm_Dumbbell_Row": {
+  "name": "Jednoručno veslanje bučicom"
+ },
+ "Dumbbell_Incline_Row": {
+  "name": "Veslanje bučicama na kosoj klupi"
+ },
+ "Seated_Cable_Rows": {
+  "name": "Veslanje na kablu sjedeći"
+ },
+ "Seated_One-arm_Cable_Pulley_Rows": {
+  "name": "Jednoručno veslanje na kablu sjedeći"
+ },
+ "T-Bar_Row_with_Handle": {
+  "name": "Veslanje T-šipkom"
+ },
+ "Lying_T-Bar_Row": {
+  "name": "Veslanje T-šipkom ležeći"
+ },
+ "Leverage_High_Row": {
+  "name": "Visoko veslanje na spravi"
+ },
+ "Inverted_Row": {
+  "name": "Obrnuto veslanje"
+ },
+ "Barbell_Deadlift": {
+  "name": "Mrtvo dizanje"
+ },
+ "Rack_Pulls": {
+  "name": "Mrtvo dizanje iz stalka"
+ },
+ "Hyperextensions_Back_Extensions": {
+  "name": "Hiperekstenzije"
+ },
+ "Barbell_Shrug": {
+  "name": "Slijeganje ramenima sa šipkom"
+ },
+ "Dumbbell_Shrug": {
+  "name": "Slijeganje ramenima s bučicama"
+ },
+ "Leverage_Shrug": {
+  "name": "Slijeganje ramenima na spravi"
+ },
+ "Barbell_Shoulder_Press": {
+  "name": "Potisak šipkom iznad glave"
+ },
+ "Standing_Military_Press": {
+  "name": "Vojnički potisak stojeći"
+ },
+ "Seated_Barbell_Military_Press": {
+  "name": "Vojnički potisak sjedeći"
+ },
+ "Dumbbell_Shoulder_Press": {
+  "name": "Potisak bučicama za ramena"
+ },
+ "Seated_Dumbbell_Press": {
+  "name": "Potisak bučicama za ramena sjedeći"
+ },
+ "Standing_Dumbbell_Press": {
+  "name": "Potisak bučicama za ramena stojeći"
+ },
+ "Arnold_Dumbbell_Press": {
+  "name": "Arnoldov potisak"
+ },
+ "Machine_Shoulder_Military_Press": {
+  "name": "Potisak za ramena na spravi"
+ },
+ "Smith_Machine_Overhead_Shoulder_Press": {
+  "name": "Potisak za ramena na Smith spravi"
+ },
+ "Side_Lateral_Raise": {
+  "name": "Bočno podizanje bučica"
+ },
+ "Cable_Seated_Lateral_Raise": {
+  "name": "Bočno podizanje na kablu sjedeći"
+ },
+ "Front_Dumbbell_Raise": {
+  "name": "Prednje podizanje bučica"
+ },
+ "Reverse_Flyes": {
+  "name": "Obrnuto razvlačenje bučicama"
+ },
+ "Reverse_Machine_Flyes": {
+  "name": "Obrnuti leptir"
+ },
+ "Cable_Rear_Delt_Fly": {
+  "name": "Stražnja ramena na kablovima"
+ },
+ "Face_Pull": {
+  "name": "Face pull"
+ },
+ "Upright_Barbell_Row": {
+  "name": "Veslanje šipkom uz tijelo"
+ },
+ "Band_Pull_Apart": {
+  "name": "Razvlačenje trake"
+ },
+ "Clean_and_Press": {
+  "name": "Zaleti i potisni"
+ },
+ "Barbell_Curl": {
+  "name": "Pregib šipkom"
+ },
+ "EZ-Bar_Curl": {
+  "name": "Pregib EZ šipkom"
+ },
+ "Dumbbell_Bicep_Curl": {
+  "name": "Pregib bučicama"
+ },
+ "Dumbbell_Alternate_Bicep_Curl": {
+  "name": "Naizmjenični pregib bučicama"
+ },
+ "Hammer_Curls": {
+  "name": "Čekić pregibi"
+ },
+ "Incline_Dumbbell_Curl": {
+  "name": "Pregib bučicama na kosoj klupi"
+ },
+ "Concentration_Curls": {
+  "name": "Koncentracijski pregib"
+ },
+ "Preacher_Curl": {
+  "name": "Pregib na Scott klupi"
+ },
+ "Machine_Preacher_Curls": {
+  "name": "Pregib na Scott spravi"
+ },
+ "Machine_Bicep_Curl": {
+  "name": "Pregib na spravi"
+ },
+ "Standing_Biceps_Cable_Curl": {
+  "name": "Pregib na kablu stojeći"
+ },
+ "Cable_Hammer_Curls_-_Rope_Attachment": {
+  "name": "Čekić pregibi na kablu s užetom"
+ },
+ "Reverse_Barbell_Curl": {
+  "name": "Obrnuti pregib šipkom"
+ },
+ "Zottman_Curl": {
+  "name": "Zottman pregib"
+ },
+ "Triceps_Pushdown": {
+  "name": "Potisak za triceps na kablu"
+ },
+ "Triceps_Pushdown_-_Rope_Attachment": {
+  "name": "Potisak za triceps s užetom"
+ },
+ "Triceps_Pushdown_-_V-Bar_Attachment": {
+  "name": "Potisak za triceps V-ručkom"
+ },
+ "Cable_Rope_Overhead_Triceps_Extension": {
+  "name": "Ekstenzija tricepsa iznad glave s užetom"
+ },
+ "EZ-Bar_Skullcrusher": {
+  "name": "Skull crusher EZ šipkom"
+ },
+ "Lying_Dumbbell_Tricep_Extension": {
+  "name": "Ekstenzija tricepsa bučicom ležeći"
+ },
+ "Standing_Dumbbell_Triceps_Extension": {
+  "name": "Ekstenzija tricepsa bučicom stojeći"
+ },
+ "Seated_Triceps_Press": {
+  "name": "Ekstenzija tricepsa bučicom sjedeći"
+ },
+ "Standing_Overhead_Barbell_Triceps_Extension": {
+  "name": "Ekstenzija tricepsa šipkom iznad glave"
+ },
+ "Tricep_Dumbbell_Kickback": {
+  "name": "Zamah bučicom za triceps"
+ },
+ "Close-Grip_Barbell_Bench_Press": {
+  "name": "Potisak šipkom uskim hvatom"
+ },
+ "Dips_-_Triceps_Version": {
+  "name": "Propadanja na razboju (triceps)"
+ },
+ "Parallel_Bar_Dip": {
+  "name": "Propadanja na razboju"
+ },
+ "Bench_Dips": {
+  "name": "Propadanja na klupi"
+ },
+ "Dip_Machine": {
+  "name": "Propadanja na spravi"
+ },
+ "Machine_Triceps_Extension": {
+  "name": "Ekstenzija tricepsa na spravi"
+ },
+ "Palms-Up_Barbell_Wrist_Curl_Over_A_Bench": {
+  "name": "Pregib zapešća šipkom podhvatom"
+ },
+ "Palms-Down_Wrist_Curl_Over_A_Bench": {
+  "name": "Pregib zapešća šipkom nadhvatom"
+ },
+ "Seated_Dumbbell_Palms-Up_Wrist_Curl": {
+  "name": "Pregib zapešća bučicom sjedeći"
+ },
+ "Wrist_Roller": {
+  "name": "Kolut za podlaktice"
+ },
+ "Barbell_Squat": {
+  "name": "Čučanj sa šipkom"
+ },
+ "Front_Squat_Clean_Grip": {
+  "name": "Prednji čučanj"
+ },
+ "Box_Squat": {
+  "name": "Čučanj na klupu"
+ },
+ "Bodyweight_Squat": {
+  "name": "Čučanj s vlastitom težinom"
+ },
+ "Goblet_Squat": {
+  "name": "Goblet čučanj"
+ },
+ "Smith_Machine_Squat": {
+  "name": "Čučanj na Smith spravi"
+ },
+ "Hack_Squat": {
+  "name": "Hack čučanj"
+ },
+ "Leg_Press": {
+  "name": "Potisak nogama"
+ },
+ "Leg_Extensions": {
+  "name": "Ekstenzija nogu"
+ },
+ "Barbell_Lunge": {
+  "name": "Iskorak sa šipkom"
+ },
+ "Barbell_Walking_Lunge": {
+  "name": "Hodajući iskoraci sa šipkom"
+ },
+ "Dumbbell_Lunges": {
+  "name": "Iskoraci s bučicama"
+ },
+ "Dumbbell_Rear_Lunge": {
+  "name": "Stražnji iskorak s bučicama"
+ },
+ "Bodyweight_Walking_Lunge": {
+  "name": "Hodajući iskoraci"
+ },
+ "Split_Squat_with_Dumbbells": {
+  "name": "Bugarski čučanj s bučicama"
+ },
+ "Dumbbell_Step_Ups": {
+  "name": "Penjanje na klupu s bučicama"
+ },
+ "Trap_Bar_Deadlift": {
+  "name": "Mrtvo dizanje s trap šipkom"
+ },
+ "Romanian_Deadlift": {
+  "name": "Rumunjsko mrtvo dizanje"
+ },
+ "Stiff-Legged_Barbell_Deadlift": {
+  "name": "Mrtvo dizanje s ravnim nogama"
+ },
+ "Stiff-Legged_Dumbbell_Deadlift": {
+  "name": "Mrtvo dizanje s ravnim nogama s bučicama"
+ },
+ "Sumo_Deadlift": {
+  "name": "Sumo mrtvo dizanje"
+ },
+ "Good_Morning": {
+  "name": "Good morning"
+ },
+ "Lying_Leg_Curls": {
+  "name": "Pregib nogu ležeći"
+ },
+ "Seated_Leg_Curl": {
+  "name": "Pregib nogu sjedeći"
+ },
+ "Standing_Leg_Curl": {
+  "name": "Pregib nogu stojeći"
+ },
+ "Glute_Ham_Raise": {
+  "name": "Glute-ham raise"
+ },
+ "Ball_Leg_Curl": {
+  "name": "Pregib nogu na lopti"
+ },
+ "Reverse_Hyperextension": {
+  "name": "Obrnuta hiperekstenzija"
+ },
+ "Kettlebell_One-Legged_Deadlift": {
+  "name": "Mrtvo dizanje na jednoj nozi s kettlebellom"
+ },
+ "Barbell_Hip_Thrust": {
+  "name": "Hip thrust sa šipkom"
+ },
+ "Barbell_Glute_Bridge": {
+  "name": "Glute most sa šipkom"
+ },
+ "Single_Leg_Glute_Bridge": {
+  "name": "Glute most na jednoj nozi"
+ },
+ "Glute_Kickback": {
+  "name": "Zamah nogom unatrag"
+ },
+ "One-Legged_Cable_Kickback": {
+  "name": "Zamah nogom unatrag na kablu"
+ },
+ "Pull_Through": {
+  "name": "Pull through na kablu"
+ },
+ "Thigh_Abductor": {
+  "name": "Abduktor sprava"
+ },
+ "Thigh_Adductor": {
+  "name": "Adduktor sprava"
+ },
+ "Cable_Hip_Adduction": {
+  "name": "Addukcija kuka na kablu"
+ },
+ "Monster_Walk": {
+  "name": "Monster walk"
+ },
+ "Standing_Calf_Raises": {
+  "name": "Podizanje na prste stojeći"
+ },
+ "Seated_Calf_Raise": {
+  "name": "Podizanje na prste sjedeći"
+ },
+ "Standing_Barbell_Calf_Raise": {
+  "name": "Podizanje na prste sa šipkom"
+ },
+ "Standing_Dumbbell_Calf_Raise": {
+  "name": "Podizanje na prste s bučicama"
+ },
+ "Calf_Press_On_The_Leg_Press_Machine": {
+  "name": "Listovi na spravi za potisak nogu"
+ },
+ "Smith_Machine_Calf_Raise": {
+  "name": "Podizanje na prste na Smith spravi"
+ },
+ "Donkey_Calf_Raises": {
+  "name": "Donkey podizanje na prste"
+ },
+ "Crunches": {
+  "name": "Trbušnjaci"
+ },
+ "Cable_Crunch": {
+  "name": "Trbušnjaci na kablu"
+ },
+ "Ab_Crunch_Machine": {
+  "name": "Trbušnjaci na spravi"
+ },
+ "Decline_Crunch": {
+  "name": "Trbušnjaci na negativnoj klupi"
+ },
+ "Reverse_Crunch": {
+  "name": "Obrnuti trbušnjaci"
+ },
+ "Sit-Up": {
+  "name": "Pregib trupa"
+ },
+ "Jackknife_Sit-Up": {
+  "name": "Jackknife pregib"
+ },
+ "Russian_Twist": {
+  "name": "Ruski twist"
+ },
+ "Plank": {
+  "name": "Plank"
+ },
+ "Dead_Bug": {
+  "name": "Dead bug"
+ },
+ "Flat_Bench_Lying_Leg_Raise": {
+  "name": "Podizanje nogu ležeći na klupi"
+ },
+ "Ab_Roller": {
+  "name": "Kotačić za trbuh"
+ },
+ "Barbell_Ab_Rollout": {
+  "name": "Kotrljanje sa šipkom za trbuh"
+ },
+ "Pallof_Press": {
+  "name": "Pallof potisak"
+ },
+ "Standing_Cable_Wood_Chop": {
+  "name": "Drvosječa na kablu"
+ },
+ "Dumbbell_Side_Bend": {
+  "name": "Bočni pregib s bučicom"
+ },
+ "Mountain_Climbers": {
+  "name": "Penjač"
+ },
+ "Air_Bike": {
+  "name": "Zračni bicikl"
+ },
+ "Bent-Knee_Hip_Raise": {
+  "name": "Podizanje kukova sa savijenim koljenima"
+ },
+ "Knee_Hip_Raise_On_Parallel_Bars": {
+  "name": "Podizanje koljena na razboju"
+ },
+ "Power_Clean": {
+  "name": "Power clean"
+ },
+ "Clean": {
+  "name": "Clean"
+ },
+ "Hang_Clean": {
+  "name": "Hang clean"
+ },
+ "Snatch": {
+  "name": "Snatch"
+ },
+ "Running_Treadmill": {
+  "name": "Trčanje na traci"
+ },
+ "Jogging_Treadmill": {
+  "name": "Lagano trčanje na traci"
+ },
+ "Walking_Treadmill": {
+  "name": "Hodanje na traci"
+ },
+ "Bicycling": {
+  "name": "Vožnja biciklom"
+ },
+ "Bicycling_Stationary": {
+  "name": "Sobni bicikl"
+ },
+ "Recumbent_Bike": {
+  "name": "Ležeći sobni bicikl"
+ },
+ "Elliptical_Trainer": {
+  "name": "Eliptični trenažer"
+ },
+ "Rowing_Stationary": {
+  "name": "Veslački trenažer"
+ },
+ "Stairmaster": {
+  "name": "Stepenice (Stairmaster)"
+ },
+ "Rope_Jumping": {
+  "name": "Preskakanje užeta"
+ },
+ "Trail_Running_Walking": {
+  "name": "Trčanje ili hodanje u prirodi"
+ }
+}

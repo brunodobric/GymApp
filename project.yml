@@ -33,9 +33,13 @@ targets:
       - App
       - Shared/Common
       - Shared/LiveActivity
+      # Katalog vježbi (catalog.json i slike) kao mapa u bundleu: Catalog/...
+      - path: Resources/Catalog
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: GymKit
-        products: [Units, Connectivity, Models]
+        products: [Units, Connectivity, Catalog, Models]
       - target: GymAppWatch
       - target: GymAppWidgets
     info:

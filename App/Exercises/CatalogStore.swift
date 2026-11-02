@@ -1,0 +1,45 @@
+import Catalog
+import Foundation
+import Observation
+
+/// Učitava službeni katalog iz bundlea (`Catalog/catalog.json`) i čuva ga u memoriji.
+@MainActor
+@Observable
+final class CatalogStore {
+    private(set) var catalog: ExerciseCatalog?
+    private(set) var summaries: [ExerciseSummary] = []
+    private(set) var errorText: String?
+
+    /// Jezik za nazive vježbi: "hr" ili "en" (za sve ostale engleski, dok nema prijevoda).
+    let language: String
+
+    private let directory: URL?
+
+    init(bundle: Bundle = .main, locale: Locale = .current) {
+        let code = locale.language.languageCode?.identifier ?? "en"
+        language = code == "hr" ? "hr" : "en"
+        directory = bundle.resourceURL?.appendingPathComponent("Catalog")
+        load()
+    }
+
+    private func load() {
+        guard let directory else {
+            errorText = String(localized: "Katalog nije pronađen u aplikaciji.")
+            return
+        }
+        do {
+            let data = try Data(contentsOf: directory.appendingPathComponent("catalog.json"))
+            let loaded = try ExerciseCatalog(data: data)
+            catalog = loaded
+            summaries = loaded.summaries(language: language)
+        } catch {
+            errorText = String(localized: "Katalog se nije mogao učitati.")
+        }
+    }
+
+    /// Slike su u bundleu i nikad ne idu u iCloud.
+    func imageURLs(for exercise: CatalogExercise) -> [URL] {
+        guard let directory else { return [] }
+        return exercise.images.map { directory.appendingPathComponent($0) }
+    }
+}

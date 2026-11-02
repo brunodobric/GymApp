@@ -3,16 +3,6 @@ import Foundation
 // Vrijednosti se u bazi spremaju kao tekst (rawValue), a modeli ih izlažu preko računanih svojstava.
 // Tako se novi slučajevi mogu dodati bez migracije sheme, a CloudKit vidi samo osnovne tipove.
 
-/// Vrsta unosa vježbe: određuje polja u retku serije i način računanja volumena (specifikacija, odjeljak 2).
-public enum ExerciseInputType: String, Codable, CaseIterable, Sendable {
-    case weightReps
-    case bodyweight
-    case weightedBodyweight
-    case assisted
-    case duration
-    case durationDistance
-}
-
 public enum SetKind: String, Codable, CaseIterable, Sendable {
     case working
     case warmUp

@@ -25,6 +25,9 @@ jobs:
       - name: SwiftLint
         run: swiftlint lint --quiet
 
+      - name: Testovi CatalogBuildera
+        run: python3 -m unittest discover -s Tools/CatalogBuilder
+
       - name: Testovi paketa GymKit
         run: swift test --package-path Packages/GymKit
 

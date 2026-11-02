@@ -1,3 +1,4 @@
+import Catalog
 import Foundation
 import SwiftData
 
@@ -30,9 +31,19 @@ extension GymSchemaV1 {
             set { inputTypeRaw = newValue.rawValue }
         }
 
-        public var muscles: [String] {
-            get { musclesRaw.split(separator: ",").map(String.init) }
-            set { musclesRaw = newValue.joined(separator: ",") }
+        public var category: ExerciseCategory? {
+            get { ExerciseCategory(rawValue: categoryRaw) }
+            set { categoryRaw = newValue?.rawValue ?? "" }
+        }
+
+        public var equipment: Equipment? {
+            get { Equipment(rawValue: equipmentRaw) }
+            set { equipmentRaw = newValue?.rawValue ?? "" }
+        }
+
+        public var muscles: [Muscle] {
+            get { musclesRaw.split(separator: ",").compactMap { Muscle(rawValue: String($0)) } }
+            set { musclesRaw = newValue.map(\.rawValue).joined(separator: ",") }
         }
 
         public var ref: ExerciseRef {

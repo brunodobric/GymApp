@@ -17,3 +17,5 @@ Packages/GymKit/Package.resolved
 
 # Lokalne postavke potpisivanja (tim)
 Config/Local.xcconfig
+Tools/CatalogBuilder/.cache/
+__pycache__/

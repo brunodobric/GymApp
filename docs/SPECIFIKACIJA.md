@@ -31,7 +31,7 @@ Ovaj dokument sadrži ažuriranu i proširenu specifikaciju moderne iOS (Swift) 
 * **Brisanje custom vježbe koja ima povijest:** vježba se ne briše fizički nego se arhivira (skriva iz kataloga i odabira), kako odrađeni treninzi i statistika ne bi izgubili podatke.
 
 ### Pohrana kataloga
-* Službeni katalog isporučuje se uz aplikaciju kao **zasebna baza samo za čitanje** (zaseban SwiftData `ModelConfiguration` bez CloudKita). Ne sinkronizira se, jer bi se inače ~870 vježbi slalo u iCloud svakog korisnika.
+* Službeni katalog isporučuje se uz aplikaciju kao **datoteka samo za čitanje** (`catalog.json`, koju generira `Tools/CatalogBuilder`) i učitava se u memoriju. Nije u SwiftData bazi: nepromjenjiv je i malen, pa nema migracija ni sinkronizacije, a pretraga je trenutna. Ne sinkronizira se, jer bi se inače vježbe slale u iCloud svakog korisnika.
 * Slike vježbi isporučuju se u bundleu (ili kao On-Demand Resources ako veličina postane problem) i nikad ne idu u iCloud.
 * Custom vježbe žive u korisničkoj bazi koja se sinkronizira.
 * Korisnički podaci na službenu vježbu pokazuju preko stabilnog tekstualnog identifikatora (`catalogId`, npr. id iz free-exercise-db), a ne preko relacije između baza. Tako ažuriranje kataloga u novoj verziji aplikacije ne lomi povijest.
