@@ -50,3 +50,15 @@ jobs:
             -configuration Debug \
             -destination 'generic/platform=watchOS Simulator' \
             CODE_SIGNING_ALLOWED=NO | tail -n 60
+
+      - name: Build iOS za besplatni Personal Team (simulator)
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project GymApp.xcodeproj \
+            -scheme GymApp \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            GYMAPP_ENTITLEMENTS_SUFFIX=-PersonalTeam \
+            GYMAPP_EXTRA_CONDITIONS=PERSONAL_TEAM \
+            CODE_SIGNING_ALLOWED=NO | tail -n 60

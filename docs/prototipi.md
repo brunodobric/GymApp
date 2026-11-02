@@ -6,8 +6,10 @@ Prototipi se moraju isprobati na **stvarnim uređajima**: simulator ne pokazuje 
 
 ## Priprema
 
-1. Na Macu: `brew install xcodegen`, pa u korijenu repozitorija `xcodegen generate`.
-2. U `project.yml` upisati svoj `DEVELOPMENT_TEAM` (ili ga odabrati u Xcodeu za sva tri targeta).
+1. Kopirati `Config/Local.xcconfig.example` u `Config/Local.xcconfig` i upisati svoj Team ID. Ta datoteka se ne commita, a tim ostaje i nakon ponovnog generiranja projekta.
+   * **Besplatni Personal Team:** ostaviti retke `GYMAPP_ENTITLEMENTS_SUFFIX` i `GYMAPP_EXTRA_CONDITIONS`. Aplikacija se tada potpisuje bez iCloud i push dozvola. Prototipi 2 i 3 rade, a prototip 1 (CloudKit) treba plaćeni Apple Developer Program.
+   * **Plaćeni račun:** obrisati ta dva retka.
+2. Na Macu: `brew install xcodegen`, pa u korijenu repozitorija `xcodegen generate`. U Xcodeu ne mijenjati tim ručno, jer se promjena gubi pri sljedećem generiranju.
 3. U Apple Developer računu Xcode će sam stvoriti App ID-ove. Potrebno je da postoje:
    * iCloud kontejner `iCloud.com.brunodobric.gymapp`,
    * App Group `group.com.brunodobric.gymapp`,

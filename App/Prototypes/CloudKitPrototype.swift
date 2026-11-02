@@ -78,6 +78,11 @@ struct CloudKitPrototypeView: View {
         }
         .navigationTitle("CloudKit")
         .task {
+            #if PERSONAL_TEAM
+            errorText = "Aplikacija je potpisana besplatnim Personal Teamom, koji ne podržava iCloud. Ovaj prototip treba plaćeni Apple Developer Program."
+            accountStatus = "nije dostupno"
+            return
+            #endif
             do {
                 container = try CloudKitPrototypeStore.makeContainer()
             } catch {

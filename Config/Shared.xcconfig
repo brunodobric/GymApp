@@ -1,0 +1,14 @@
+// Zajedničke postavke potpisivanja za sve targete.
+// Zadane vrijednosti odgovaraju plaćenom Apple Developer Programu.
+// Lokalne postavke (tim, besplatni tim) idu u Config/Local.xcconfig, koji se ne commita.
+
+DEVELOPMENT_TEAM =
+CODE_SIGN_STYLE = Automatic
+
+// Prazno = puna prava (iCloud, push). "-PersonalTeam" = bez njih, za besplatni Personal Team.
+GYMAPP_ENTITLEMENTS_SUFFIX =
+
+// Dodatni uvjeti kompajliranja, npr. PERSONAL_TEAM.
+GYMAPP_EXTRA_CONDITIONS =
+
+#include? "Local.xcconfig"
