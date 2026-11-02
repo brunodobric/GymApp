@@ -183,7 +183,11 @@ public struct WorkoutEngine {
     /// Drag & drop: premješta vidljive vježbe, izbačene ostaju na kraju.
     public func moveExercises(in session: Session, from source: IndexSet, to destination: Int, now: Date = Date()) throws {
         var visible = visibleExercises(in: session)
-        visible.move(fromOffsets: source, toOffset: destination)
+        // Isto kao SwiftUI `move(fromOffsets:toOffset:)`, koji ovdje nije dostupan (paket ne uvozi SwiftUI).
+        let moving = source.sorted().map { visible[$0] }
+        let target = destination - source.filter { $0 < destination }.count
+        for index in source.sorted(by: >) { visible.remove(at: index) }
+        visible.insert(contentsOf: moving, at: min(max(target, 0), visible.count))
         for (index, exercise) in (visible + removedExercises(in: session)).enumerated() {
             exercise.orderIndex = index
         }
