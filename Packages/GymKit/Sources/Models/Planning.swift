@@ -83,6 +83,7 @@ extension GymSchemaV1 {
         public var exerciseCatalogId: String?
         public var exerciseCustomId: UUID?
         public var exerciseName: String = ""
+        public var inputTypeRaw: String = ExerciseInputType.weightReps.rawValue
         /// Vježbe s istom vrijednošću čine superset.
         public var supersetGroupId: UUID?
         /// Pauza u sekundama; nil znači zadana pauza iz Postavki.
@@ -92,9 +93,15 @@ extension GymSchemaV1 {
         @Relationship(deleteRule: .cascade, inverse: \TemplateSet.exercise)
         public var sets: [TemplateSet]? = []
 
-        public init(orderIndex: Int, exercise: ExerciseRef) {
+        public init(orderIndex: Int, exercise: ExerciseRef, inputType: ExerciseInputType = .weightReps) {
             self.orderIndex = orderIndex
             self.exercise = exercise
+            self.inputTypeRaw = inputType.rawValue
+        }
+
+        public var inputType: ExerciseInputType {
+            get { ExerciseInputType(rawValue: inputTypeRaw) ?? .weightReps }
+            set { inputTypeRaw = newValue.rawValue }
         }
 
         public var exercise: ExerciseRef {
@@ -146,6 +153,8 @@ extension GymSchemaV1 {
         public var weekdaysRaw: String = ""
         /// Vrijeme podsjetnika u minutama od ponoći; nil znači bez podsjetnika.
         public var reminderMinutes: Int?
+        /// Fleksibilni podsjetnik: toliko dana nakon zadnjeg odrađenog treninga.
+        public var reminderGapDays: Int = 1
         public var isActive: Bool = false
         public var currentCycle: Int = 1
         /// Pozicija u nizu (indeks u `orderedItems`).
@@ -207,6 +216,7 @@ extension GymSchemaV1 {
         public var replacementCatalogId: String?
         public var replacementCustomId: UUID?
         public var replacementName: String?
+        public var replacementInputTypeRaw: String?
 
         public init(scheduleId: UUID, cycleNumber: Int, scheduleItemId: UUID, kind: CycleOverrideKind) {
             self.scheduleId = scheduleId
@@ -234,6 +244,11 @@ extension GymSchemaV1 {
                 replacementCustomId = newValue?.customExerciseId
                 replacementName = newValue?.name
             }
+        }
+
+        public var replacementInputType: ExerciseInputType? {
+            get { replacementInputTypeRaw.flatMap(ExerciseInputType.init(rawValue:)) }
+            set { replacementInputTypeRaw = newValue?.rawValue }
         }
     }
 }

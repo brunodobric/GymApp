@@ -465,12 +465,12 @@ Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening**
 * **ExerciseRef** (ugrađena vrijednost, ne zaseban model): `catalogId` ili `customExerciseId`, plus spremljeni naziv za prikaz ako vježba nestane.
 
 **Planiranje**
-* **Schedule** (raspored): `id`, naziv, opis, broj ciklusa (ili neograničeno), način podsjetnika (fiksni dani / fleksibilno), dani u tjednu, vrijeme podsjetnika, `isActive`, trenutni ciklus i pozicija u nizu.
+* **Schedule** (raspored): `id`, naziv, opis, broj ciklusa (ili neograničeno), način podsjetnika (fiksni dani / fleksibilno), dani u tjednu, vrijeme podsjetnika, razmak za fleksibilni podsjetnik u danima (zadano 1), `isActive`, trenutni ciklus i pozicija u nizu. Pozicija je indeks sljedeće stavke; rest dani i preskočeni treninzi se prelaze, ciklus završava nakon zadnjeg treninga (rest dani na kraju niza se ne čekaju), a nakon zadnjeg ciklusa raspored postaje neaktivan. Raspored napreduje samo kad je odrađen upravo njegov sljedeći trening.
 * **ScheduleItem:** `scheduleId`, `orderIndex`, vrsta (trening ili rest dan), `workoutTemplateId`.
 * **WorkoutTemplate** (trening/predložak): `id`, naziv, opis, vrsta (snaga / kardio).
-* **TemplateExercise:** `templateId`, `orderIndex`, `ExerciseRef`, `supersetGroupId` (opcionalno; vježbe s istom vrijednošću čine superset), pauza u sekundama (opcionalno, inače zadana), napomena.
+* **TemplateExercise:** `templateId`, `orderIndex`, `ExerciseRef`, vrsta unosa, `supersetGroupId` (opcionalno; vježbe s istom vrijednošću čine superset), pauza u sekundama (opcionalno, inače zadana), napomena.
 * **TemplateSet:** `templateExerciseId`, `orderIndex`, vrsta (radna / warm-up), ciljana težina i ponavljanja (opcionalno).
-* **CycleOverride** (privremena izmjena): `scheduleId`, broj ciklusa, `scheduleItemId`, vrsta izmjene (preskoči trening / izbaci vježbu / zamijeni vježbu), ciljna vježba i zamjena.
+* **CycleOverride** (privremena izmjena): `scheduleId`, broj ciklusa, `scheduleItemId`, vrsta izmjene (preskoči trening / izbaci vježbu / zamijeni vježbu), ciljna vježba i zamjena (s vrstom unosa). Izmjena vrijedi samo za taj ciklus; preskakanje se poništava dok raspored ne prođe tu stavku.
 
 **Izvedba**
 * **Session** (odrađeni trening): `id`, `templateId` i `scheduleId` (opcionalno, samo za praćenje odakle je pokrenut), naziv u trenutku pokretanja, vrsta, početak, kraj, stanje (u tijeku / završen / odbačen), uređaj koji ga vodi, bilješke, kalorije (opcionalno, iz HealthKita), `healthKitWorkoutId` (opcionalno), uvezen iz Workouts aplikacije (da/ne), udaljenost i prosječni puls za kardio.
