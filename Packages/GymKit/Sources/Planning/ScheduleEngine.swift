@@ -4,12 +4,14 @@ import Models
 import SwiftData
 
 /// Vježba kakva će biti u sljedećem treningu, nakon privremenih izmjena ciklusa.
-public struct PlannedExercise: Equatable, Sendable {
+public struct PlannedExercise: Equatable, Sendable, Identifiable {
     public let source: UUID
     public let ref: ExerciseRef
     public let inputType: ExerciseInputType
     /// Vježba je zamijenjena u ovom ciklusu (ciljevi originalne vježbe se ne primjenjuju).
     public let isReplacement: Bool
+
+    public var id: UUID { source }
 }
 
 /// Sljedeći trening koji "Započni" nudi za jedan raspored.

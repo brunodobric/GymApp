@@ -143,7 +143,3 @@ struct UpcomingWorkoutScreen: View {
         }
     }
 }
-
-extension PlannedExercise: Identifiable {
-    var id: UUID { source }
-}
