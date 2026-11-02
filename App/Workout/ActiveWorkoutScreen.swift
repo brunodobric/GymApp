@@ -1,6 +1,7 @@
 import AudioToolbox
 import Catalog
 import Models
+import Planning
 import SwiftData
 import SwiftUI
 import Training
@@ -294,6 +295,9 @@ struct ActiveWorkoutScreen: View {
         do {
             try engine.finishSession(session)
             RestNotifications.cancel()
+            // Raspored napreduje samo ako je ovo bio njegov sljedeći trening; podsjetnici se zakazuju iznova.
+            _ = try? ScheduleEngine(context: context).sessionFinished(session)
+            ReminderScheduler.refresh(context: context)
             let tracked = PRKind.kinds(fromSettings: settings?.trackedPRKinds ?? [])
             finishedSummary = try engine.summary(of: session, trackedKinds: tracked)
         } catch WorkoutError.nothingCompleted {
@@ -306,6 +310,7 @@ struct ActiveWorkoutScreen: View {
     private func discard() {
         RestNotifications.cancel()
         try? engine.discardSession(session)
+        ReminderScheduler.refresh(context: context)
         dismiss()
     }
 

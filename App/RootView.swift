@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 /// Glavna navigacija: pet tabova (specifikacija, odjeljak 3).
@@ -13,6 +14,8 @@ struct RootView: View {
     }
 
     @State private var selection: Section = .home
+    @Environment(\.modelContext) private var context
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView(selection: $selection) {
@@ -33,6 +36,10 @@ struct RootView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .task { ReminderScheduler.refresh(context: context) }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { ReminderScheduler.refresh(context: context) }
+        }
     }
 }
 

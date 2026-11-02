@@ -1,4 +1,5 @@
 import Models
+import Planning
 import SwiftData
 import SwiftUI
 import Training
@@ -12,6 +13,8 @@ struct HomeScreen: View {
     @Query(filter: #Predicate<Session> { $0.stateRaw == "active" }, sort: \Session.startedAt, order: .reverse)
     private var activeSessions: [Session]
 
+    @Query private var schedules: [Schedule]
+    @Query private var cycleOverrides: [CycleOverride]
     @State private var showsSettings = false
     @State private var presentedSession: Session?
     @State private var errorText: String?
@@ -37,9 +40,26 @@ struct HomeScreen: View {
                 } else {
                     Text("Spremni za trening")
                         .font(.title2.bold())
-                    Button("Započni trening", systemImage: "plus") { startWorkout() }
+                    ForEach(upcomingWorkouts, id: \.item.id) { planned in
+                        Button {
+                            start(planned)
+                        } label: {
+                            VStack(spacing: 2) {
+                                Label("Započni: \(planned.template.name)", systemImage: "play.fill")
+                                Text(planned.schedule.name).font(.caption)
+                            }
+                        }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.large)
+                    }
+                    if upcomingWorkouts.isEmpty {
+                        Button("Započni trening", systemImage: "plus") { startWorkout() }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.large)
+                    } else {
+                        Button("Prazan trening", systemImage: "plus") { startWorkout() }
+                            .buttonStyle(.bordered)
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -121,11 +141,29 @@ struct HomeScreen: View {
     private func discard(_ session: Session) {
         RestNotifications.cancel()
         try? WorkoutEngine(context: context).discardSession(session)
+        ReminderScheduler.refresh(context: context)
+    }
+
+    /// Sljedeći trening svakog aktivnog rasporeda. `schedules` i `cycleOverrides` su ovdje samo da se
+    /// zaslon osvježi kad se napredovanje ili izmjene promijene.
+    private var upcomingWorkouts: [PlannedWorkout] {
+        _ = (schedules.count, cycleOverrides.count)
+        return (try? ScheduleEngine(context: context).upcomingWorkouts()) ?? []
+    }
+
+    private func start(_ planned: PlannedWorkout) {
+        do {
+            presentedSession = try TemplateStarter(context: context).start(planned)
+            ReminderScheduler.refresh(context: context)
+        } catch {
+            errorText = String(localized: "Trening se nije mogao pokrenuti.")
+        }
     }
 
     private func startWorkout() {
         do {
             presentedSession = try WorkoutEngine(context: context).startSession(name: String(localized: "Trening"))
+            ReminderScheduler.refresh(context: context)
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
         }
@@ -147,19 +185,6 @@ struct HistoryScreen: View {
                 description: Text("Ovdje će biti svi odrađeni treninzi.")
             )
             .navigationTitle("Povijest")
-        }
-    }
-}
-
-struct SchedulesScreen: View {
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView(
-                "Nema rasporeda",
-                systemImage: "calendar",
-                description: Text("Ovdje ćeš slagati svoje rasporede treninga.")
-            )
-            .navigationTitle("Rasporedi")
         }
     }
 }
