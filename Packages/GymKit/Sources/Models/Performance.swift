@@ -1,3 +1,4 @@
+import Catalog
 import Foundation
 import SwiftData
 
@@ -25,6 +26,12 @@ extension GymSchemaV1 {
         public var isImportedFromWorkoutsApp: Bool = false
         public var distanceMeters: Double?
         public var averageHeartRate: Double?
+        /// Rest timer se sprema kao trenutak početka i završetka (ne kao preostale sekunde), pa se nakon
+        /// oporavka ispravno nastavlja ili je već istekao. nil znači da timer nije aktivan.
+        public var restTimerStartedAt: Date?
+        public var restTimerEndsAt: Date?
+        /// Zadnja promjena u treningu (za prepoznavanje zaboravljenog treninga i oporavak).
+        public var lastActivityAt: Date = Date()
         @Relationship(deleteRule: .cascade, inverse: \SessionExercise.session)
         public var exercises: [SessionExercise]? = []
 
@@ -64,15 +71,20 @@ extension GymSchemaV1 {
         /// Ključ za upite (`ExerciseRef.key`), održava se pri svakoj promjeni vježbe.
         public var exerciseKey: String = ""
         public var supersetGroupId: UUID?
+        /// Vrsta unosa u trenutku dodavanja: povijest ostaje ispravna i ako se vlastita vježba kasnije promijeni.
+        public var inputTypeRaw: String = ExerciseInputType.weightReps.rawValue
+        /// Pauza u sekundama za ovu vježbu (ili superset); nil znači zadana pauza iz Postavki.
+        public var restSeconds: Int?
         /// Izbačena vježba ostaje do kraja treninga kako bi se mogla vratiti.
         public var isRemoved: Bool = false
         public var session: Session?
         @Relationship(deleteRule: .cascade, inverse: \SetLog.exercise)
         public var sets: [SetLog]? = []
 
-        public init(orderIndex: Int, exercise: ExerciseRef) {
+        public init(orderIndex: Int, exercise: ExerciseRef, inputType: ExerciseInputType = .weightReps) {
             self.orderIndex = orderIndex
             self.exercise = exercise
+            self.inputTypeRaw = inputType.rawValue
         }
 
         public var exercise: ExerciseRef {
@@ -83,6 +95,11 @@ extension GymSchemaV1 {
                 exerciseName = newValue.name
                 exerciseKey = newValue.key
             }
+        }
+
+        public var inputType: ExerciseInputType {
+            get { ExerciseInputType(rawValue: inputTypeRaw) ?? .weightReps }
+            set { inputTypeRaw = newValue.rawValue }
         }
 
         public var orderedSets: [SetLog] {

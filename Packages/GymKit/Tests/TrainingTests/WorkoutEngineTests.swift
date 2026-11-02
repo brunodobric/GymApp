@@ -1,0 +1,294 @@
+import Catalog
+import Foundation
+import Models
+import SwiftData
+import Testing
+@testable import Training
+
+private let bench = ExerciseRef(catalogId: "bench", name: "Potisak s klupe")
+private let row = ExerciseRef(catalogId: "row", name: "Veslanje")
+private let base = Date(timeIntervalSince1970: 1_800_000_000)
+
+private func makeEngine() throws -> (WorkoutEngine, ModelContext) {
+    let context = ModelContext(try GymPersistence.makeUserContainer(storage: .inMemory))
+    return (WorkoutEngine(context: context), context)
+}
+
+/// Odradi i završi trening s jednom vježbom: svaka serija je (težina, ponavljanja).
+@discardableResult
+private func finishedWorkout(
+    _ engine: WorkoutEngine, ref: ExerciseRef = bench, at start: Date, sets: [(Double, Int)]
+) throws -> Session {
+    let session = try engine.startSession(name: "Trening", now: start)
+    let exercise = try engine.addExercise(ref, inputType: .weightReps, to: session, now: start)
+    // Višak serija koje je addExercise stvorio se miče, pa ostaju točno zadane.
+    for set in exercise.orderedSets { try engine.removeSet(set, now: start) }
+    for values in sets {
+        let set = try engine.addSet(to: exercise, now: start)
+        set.weightKg = values.0
+        set.reps = values.1
+        try engine.completeSet(set, defaultRestSeconds: 90, now: start.addingTimeInterval(60))
+    }
+    try engine.finishSession(session, now: start.addingTimeInterval(3600))
+    return session
+}
+
+@Suite("Tijek treninga")
+struct WorkoutEngineTests {
+
+    @Test("Samo jedan aktivan trening istovremeno")
+    func singleActive() throws {
+        let (engine, _) = try makeEngine()
+        try engine.startSession(name: "A", now: base)
+        #expect(throws: WorkoutError.alreadyActive) { try engine.startSession(name: "B", now: base) }
+    }
+
+    @Test("Vježba bez povijesti dobiva tri prazne radne serije")
+    func firstTimeExercise() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        #expect(exercise.orderedSets.count == WorkoutEngine.defaultWorkingSets)
+        #expect(exercise.orderedSets.allSatisfy { $0.kind == .working && $0.weightKg == nil })
+    }
+
+    @Test("Nova vježba preuzima serije i vrijednosti iz zadnjeg treninga")
+    func smartDefaultsFromHistory() throws {
+        let (engine, _) = try makeEngine()
+        try finishedWorkout(engine, at: base, sets: [(80, 8), (85, 8), (90, 6)])
+        let session = try engine.startSession(name: "B", now: base.addingTimeInterval(86_400))
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base.addingTimeInterval(86_400))
+        #expect(exercise.orderedSets.map(\.weightKg) == [80, 85, 90])
+        #expect(exercise.orderedSets.map(\.reps) == [8, 8, 6])
+        #expect(exercise.orderedSets.allSatisfy { !$0.isCompleted })
+    }
+
+    @Test("Dodana serija preko povijesti uzima zadnju vrijednost, a bez povijesti prethodnu seriju")
+    func addedSetDefaults() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        exercise.orderedSets[2].weightKg = 70
+        exercise.orderedSets[2].reps = 10
+        let added = try engine.addSet(to: exercise, now: base)
+        #expect(added.weightKg == 70)
+        #expect(added.reps == 10)
+        #expect(added.orderIndex == 3)
+    }
+
+    @Test("Označavanje serije traži sve vrijednosti i pokreće rest timer")
+    func completeSetStartsRest() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let set = exercise.orderedSets[0]
+
+        #expect(throws: WorkoutError.setIncomplete) { try engine.completeSet(set, defaultRestSeconds: 90, now: base) }
+        #expect(!set.isCompleted)
+
+        set.weightKg = 80
+        set.reps = 8
+        let timer = try engine.completeSet(set, defaultRestSeconds: 90, now: base)
+        #expect(set.isCompleted)
+        #expect(timer?.totalSeconds == 90)
+        #expect(engine.restTimer(of: session)?.endsAt == base.addingTimeInterval(90))
+
+        let adjusted = try engine.adjustRest(of: session, bySeconds: 10, now: base.addingTimeInterval(30))
+        #expect(adjusted?.endsAt == base.addingTimeInterval(100))
+        #expect(engine.restTimer(of: session)?.endsAt == base.addingTimeInterval(100))
+
+        try engine.cancelRest(of: session, now: base)
+        #expect(engine.restTimer(of: session) == nil)
+    }
+
+    @Test("Pauza vježbe nadjačava zadanu")
+    func exerciseRestOverride() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, restSeconds: 150, now: base)
+        let set = exercise.orderedSets[0]
+        set.weightKg = 80
+        set.reps = 8
+        #expect(try engine.completeSet(set, defaultRestSeconds: 90, now: base)?.totalSeconds == 150)
+    }
+
+    @Test("Superset: bez pauze nakon prve vježbe, zadana nakon zadnje")
+    func supersetRest() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let first = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let second = try engine.addExercise(row, inputType: .weightReps, to: session, now: base)
+        try engine.makeSuperset([first, second], in: session, now: base)
+
+        for set in [first.orderedSets[0], second.orderedSets[0]] {
+            set.weightKg = 50
+            set.reps = 10
+        }
+        #expect(try engine.completeSet(first.orderedSets[0], defaultRestSeconds: 90, now: base) == nil)
+        #expect(try engine.completeSet(second.orderedSets[0], defaultRestSeconds: 90, now: base)?.totalSeconds == 90)
+    }
+
+    @Test("Superset stavlja vježbe jednu do druge, a samac se raspušta")
+    func supersetGrouping() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let a = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let middle = try engine.addExercise(ExerciseRef(catalogId: "squat", name: "Čučanj"), inputType: .weightReps, to: session, now: base)
+        let c = try engine.addExercise(row, inputType: .weightReps, to: session, now: base)
+
+        try engine.makeSuperset([a, c], in: session, now: base)
+        #expect(engine.visibleExercises(in: session).map(\.id) == [a.id, c.id, middle.id])
+        #expect(a.supersetGroupId != nil && a.supersetGroupId == c.supersetGroupId)
+        #expect(engine.group(of: a).map(\.id) == [a.id, c.id])
+
+        try engine.removeFromSuperset(c, now: base)
+        #expect(a.supersetGroupId == nil)
+        #expect(c.supersetGroupId == nil)
+
+        #expect(throws: WorkoutError.needsTwoExercises) { try engine.makeSuperset([a], in: session, now: base) }
+    }
+
+    @Test("Izbacivanje vježbe se poništava i redoslijed se mijenja povlačenjem")
+    func removeRestoreMove() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let a = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let b = try engine.addExercise(row, inputType: .weightReps, to: session, now: base)
+        let c = try engine.addExercise(ExerciseRef(catalogId: "squat", name: "Čučanj"), inputType: .weightReps, to: session, now: base)
+
+        try engine.moveExercises(in: session, from: IndexSet(integer: 2), to: 0, now: base)
+        #expect(engine.visibleExercises(in: session).map(\.id) == [c.id, a.id, b.id])
+
+        try engine.removeExercise(a, now: base)
+        #expect(engine.visibleExercises(in: session).map(\.id) == [c.id, b.id])
+        #expect(engine.removedExercises(in: session).map(\.id) == [a.id])
+
+        try engine.restoreExercise(a, now: base)
+        #expect(engine.visibleExercises(in: session).map(\.id) == [c.id, b.id, a.id])
+        #expect(engine.removedExercises(in: session).isEmpty)
+    }
+
+    @Test("Završetak briše nezavršene serije, prazne i izbačene vježbe")
+    func finishCleansUp() throws {
+        let (engine, context) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let kept = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let empty = try engine.addExercise(row, inputType: .weightReps, to: session, now: base)
+        let removed = try engine.addExercise(ExerciseRef(catalogId: "squat", name: "Čučanj"), inputType: .weightReps, to: session, now: base)
+        let set = kept.orderedSets[0]
+        set.weightKg = 80
+        set.reps = 8
+        try engine.completeSet(set, defaultRestSeconds: 90, now: base)
+        try engine.removeExercise(removed, now: base)
+
+        try engine.finishSession(session, notes: "Dobro", now: base.addingTimeInterval(1800))
+
+        #expect(session.state == .finished)
+        #expect(session.notes == "Dobro")
+        #expect(session.endedAt == base.addingTimeInterval(1800))
+        #expect(engine.restTimer(of: session) == nil)
+        let exercises = try context.fetch(FetchDescriptor<SessionExercise>())
+        #expect(exercises.map(\.id) == [kept.id])
+        #expect(exercises[0].orderedSets.count == 1)
+        _ = empty
+    }
+
+    @Test("Trening bez ijedne završene serije ne može se spremiti i ostaje netaknut")
+    func nothingCompleted() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        #expect(throws: WorkoutError.nothingCompleted) { try engine.finishSession(session, now: base) }
+        #expect(session.state == .active)
+        #expect(exercise.orderedSets.count == WorkoutEngine.defaultWorkingSets)
+    }
+
+    @Test("Odbacivanje briše trening sa svim serijama")
+    func discard() throws {
+        let (engine, context) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        try engine.discardSession(session)
+        #expect(try context.fetch(FetchDescriptor<Session>()).isEmpty)
+        #expect(try context.fetch(FetchDescriptor<SessionExercise>()).isEmpty)
+        #expect(try context.fetch(FetchDescriptor<SetLog>()).isEmpty)
+    }
+
+    @Test("Prekinuti trening se pronalazi i rest timer preživi ponovno otvaranje")
+    func recoveryOfActiveSession() throws {
+        let (engine, context) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let set = exercise.orderedSets[0]
+        set.weightKg = 80
+        set.reps = 8
+        try engine.completeSet(set, defaultRestSeconds: 120, now: base)
+
+        // "Ponovno pokretanje": novi engine nad istim kontekstom, sve se čita iz baze.
+        let restarted = WorkoutEngine(context: context)
+        let found = try #require(try GymQueries(context: context).activeSession())
+        #expect(found.id == session.id)
+        let timer = try #require(restarted.restTimer(of: found))
+        #expect(timer.remaining(at: base.addingTimeInterval(100)) == 20)
+        #expect(timer.isExpired(at: base.addingTimeInterval(200)))
+        #expect(restarted.lastCompletedSetAt(in: found) == base)
+    }
+
+    @Test("Zaboravljeni trening se zatvara na zadnju završenu seriju")
+    func closeStale() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let set = exercise.orderedSets[0]
+        set.weightKg = 80
+        set.reps = 8
+        try engine.completeSet(set, defaultRestSeconds: 90, now: base.addingTimeInterval(600))
+        try engine.closeStaleSession(session)
+        #expect(session.state == .finished)
+        #expect(session.endedAt == base.addingTimeInterval(600))
+    }
+
+    @Test("Sažetak: trajanje, volumen bez warm-upa i rekordi samo prema ranijim treninzima")
+    func summary() throws {
+        let (engine, _) = try makeEngine()
+        try finishedWorkout(engine, at: base, sets: [(80, 8)])
+
+        let start = base.addingTimeInterval(86_400)
+        let session = try engine.startSession(name: "B", now: start)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: start)
+        for set in exercise.orderedSets { try engine.removeSet(set, now: start) }
+        let warmUp = try engine.addSet(to: exercise, kind: .warmUp, now: start)
+        warmUp.weightKg = 40
+        warmUp.reps = 10
+        let working = try engine.addSet(to: exercise, kind: .working, now: start)
+        working.weightKg = 85
+        working.reps = 8
+        try engine.completeSet(warmUp, defaultRestSeconds: 90, now: start.addingTimeInterval(60))
+        try engine.completeSet(working, defaultRestSeconds: 90, now: start.addingTimeInterval(300))
+        try engine.finishSession(session, now: start.addingTimeInterval(1800))
+
+        let summary = try engine.summary(of: session)
+        #expect(summary.durationSeconds == 1800)
+        #expect(summary.completedSets == 2)
+        #expect(summary.totalVolumeKg == 680)
+        let records = try #require(summary.records.first)
+        #expect(records.exerciseName == "Potisak s klupe")
+        #expect(records.records.contains { $0.kind == .maxWeight && $0.value == 85 })
+    }
+
+    @Test("Zadnje izvođenje koristi samo završene treninge, ne aktivni")
+    func historyIgnoresActive() throws {
+        let (engine, _) = try makeEngine()
+        let first = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: first, now: base)
+        let set = exercise.orderedSets[0]
+        set.weightKg = 100
+        set.reps = 5
+        try engine.completeSet(set, defaultRestSeconds: 90, now: base)
+        try engine.discardSession(first)
+
+        let second = try engine.startSession(name: "B", now: base)
+        let fresh = try engine.addExercise(bench, inputType: .weightReps, to: second, now: base)
+        #expect(fresh.orderedSets.allSatisfy { $0.weightKg == nil })
+    }
+}
