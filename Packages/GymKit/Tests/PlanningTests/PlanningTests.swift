@@ -284,18 +284,26 @@ struct ScheduleProgressTests {
 @Suite("Privremene izmjene ciklusa")
 struct CycleOverrideTests {
 
-    private func setup() throws -> (ModelContext, ScheduleEngine, Schedule, WorkoutTemplate) {
+    private struct Fixture {
+        let context: ModelContext
+        let engine: ScheduleEngine
+        let schedule: Schedule
+        let push: WorkoutTemplate
+    }
+
+    private func setup() throws -> Fixture {
         let context = try makeContext()
         let engine = ScheduleEngine(context: context)
         let push = try template("Push", in: context, exercises: [bench, row, curl])
         let schedule = try engine.createSchedule(name: "Raspored")
         try engine.addWorkout(push, to: schedule)
-        return (context, engine, schedule, push)
+        return Fixture(context: context, engine: engine, schedule: schedule, push: push)
     }
 
     @Test("Izbacivanje i zamjena vježbe vrijede samo za taj ciklus i mogu se poništiti")
     func removeAndReplace() throws {
-        let (_, engine, schedule, push) = try setup()
+        let fixture = try setup()
+        let engine = fixture.engine, schedule = fixture.schedule, push = fixture.push
         let planned = try #require(try engine.nextWorkout(of: schedule))
         let list = push.orderedExercises
         let removal = try engine.removeExercise(list[0], from: planned)
@@ -314,7 +322,8 @@ struct CycleOverrideTests {
 
     @Test("Druga izmjena iste vježbe zamjenjuje prvu")
     func replacesPreviousOverride() throws {
-        let (_, engine, schedule, push) = try setup()
+        let fixture = try setup()
+        let engine = fixture.engine, schedule = fixture.schedule, push = fixture.push
         let planned = try #require(try engine.nextWorkout(of: schedule))
         let target = push.orderedExercises[0]
         try engine.removeExercise(target, from: planned)
@@ -325,7 +334,8 @@ struct CycleOverrideTests {
 
     @Test("Trening pokrenut nakon izmjena ne sadrži izbačenu vježbu, a sljedeći ciklus je netaknut")
     func nextCycleUntouched() throws {
-        let (context, engine, schedule, push) = try setup()
+        let fixture = try setup()
+        let context = fixture.context, engine = fixture.engine, schedule = fixture.schedule, push = fixture.push
         let planned = try #require(try engine.nextWorkout(of: schedule))
         try engine.removeExercise(push.orderedExercises[0], from: planned)
 
