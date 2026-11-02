@@ -128,43 +128,43 @@ struct WorkoutEngineTests {
         #expect(try engine.completeSet(second.orderedSets[0], defaultRestSeconds: 90, now: base)?.totalSeconds == 90)
     }
 
-    @Test("Superset stavlja vježbe jednu do druge, a samac se raspušta")
+    @Test("Superset stavlja vježbe jednu do druge, first samac se raspušta")
     func supersetGrouping() throws {
         let (engine, _) = try makeEngine()
         let session = try engine.startSession(name: "A", now: base)
-        let a = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let first = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
         let middle = try engine.addExercise(ExerciseRef(catalogId: "squat", name: "Čučanj"), inputType: .weightReps, to: session, now: base)
-        let c = try engine.addExercise(row, inputType: .weightReps, to: session, now: base)
+        let last = try engine.addExercise(row, inputType: .weightReps, to: session, now: base)
 
-        try engine.makeSuperset([a, c], in: session, now: base)
-        #expect(engine.visibleExercises(in: session).map(\.id) == [a.id, c.id, middle.id])
-        #expect(a.supersetGroupId != nil && a.supersetGroupId == c.supersetGroupId)
-        #expect(engine.group(of: a).map(\.id) == [a.id, c.id])
+        try engine.makeSuperset([first, last], in: session, now: base)
+        #expect(engine.visibleExercises(in: session).map(\.id) == [first.id, last.id, middle.id])
+        #expect(first.supersetGroupId != nil && first.supersetGroupId == last.supersetGroupId)
+        #expect(engine.group(of: first).map(\.id) == [first.id, last.id])
 
-        try engine.removeFromSuperset(c, now: base)
-        #expect(a.supersetGroupId == nil)
-        #expect(c.supersetGroupId == nil)
+        try engine.removeFromSuperset(last, now: base)
+        #expect(first.supersetGroupId == nil)
+        #expect(last.supersetGroupId == nil)
 
-        #expect(throws: WorkoutError.needsTwoExercises) { try engine.makeSuperset([a], in: session, now: base) }
+        #expect(throws: WorkoutError.needsTwoExercises) { try engine.makeSuperset([first], in: session, now: base) }
     }
 
     @Test("Izbacivanje vježbe se poništava i redoslijed se mijenja povlačenjem")
     func removeRestoreMove() throws {
         let (engine, _) = try makeEngine()
         let session = try engine.startSession(name: "A", now: base)
-        let a = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
-        let b = try engine.addExercise(row, inputType: .weightReps, to: session, now: base)
-        let c = try engine.addExercise(ExerciseRef(catalogId: "squat", name: "Čučanj"), inputType: .weightReps, to: session, now: base)
+        let first = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let second = try engine.addExercise(row, inputType: .weightReps, to: session, now: base)
+        let third = try engine.addExercise(ExerciseRef(catalogId: "squat", name: "Čučanj"), inputType: .weightReps, to: session, now: base)
 
         try engine.moveExercises(in: session, from: IndexSet(integer: 2), to: 0, now: base)
-        #expect(engine.visibleExercises(in: session).map(\.id) == [c.id, a.id, b.id])
+        #expect(engine.visibleExercises(in: session).map(\.id) == [third.id, first.id, second.id])
 
-        try engine.removeExercise(a, now: base)
-        #expect(engine.visibleExercises(in: session).map(\.id) == [c.id, b.id])
-        #expect(engine.removedExercises(in: session).map(\.id) == [a.id])
+        try engine.removeExercise(first, now: base)
+        #expect(engine.visibleExercises(in: session).map(\.id) == [third.id, second.id])
+        #expect(engine.removedExercises(in: session).map(\.id) == [first.id])
 
-        try engine.restoreExercise(a, now: base)
-        #expect(engine.visibleExercises(in: session).map(\.id) == [c.id, b.id, a.id])
+        try engine.restoreExercise(first, now: base)
+        #expect(engine.visibleExercises(in: session).map(\.id) == [third.id, second.id, first.id])
         #expect(engine.removedExercises(in: session).isEmpty)
     }
 
