@@ -1,0 +1,18 @@
+# Generira XcodeGen (project.yml je izvor istine)
+*.xcodeproj/
+App/Info.plist
+App/GymApp.entitlements
+WatchApp/Info.plist
+WatchApp/GymAppWatch.entitlements
+Widgets/Info.plist
+
+# Xcode i SwiftPM
+DerivedData/
+xcuserdata/
+*.xcuserstate
+.build/
+.swiftpm/
+Packages/GymKit/Package.resolved
+
+# macOS
+.DS_Store
