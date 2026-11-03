@@ -51,7 +51,9 @@ final class HealthService {
 
     /// Sprema završeni trening s iPhonea u Zdravlje, ako je korisnik to dopustio.
     func saveWorkout(of session: Session, context: ModelContext) async {
-        guard isAvailable, Self.isConnected(context: context),
+        // Trening koji je vodio sat sat je i spremio u Zdravlje (HKWorkoutSession).
+        guard isAvailable, Self.isConnected(context: context), session.controllingDevice == .phone,
+              session.healthKitWorkoutId == nil,
               store.authorizationStatus(for: Self.workoutType) == .sharingAuthorized,
               let export = HealthWorkoutExport.make(for: session)
         else { return }

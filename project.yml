@@ -87,7 +87,7 @@ targets:
       - Shared/Common
     dependencies:
       - package: GymKit
-        products: [Units, Connectivity, Models]
+        products: [Units, Catalog, Connectivity, Models, Training]
     info:
       path: WatchApp/Info.plist
       properties:
@@ -95,6 +95,8 @@ targets:
         CFBundleDevelopmentRegion: hr
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.brunodobric.gymapp
+        # HKWorkoutSession: aplikacija radi i sa spuštenim zapešćem dok traje trening.
+        WKBackgroundModes: [workout-processing]
         NSHealthShareUsageDescription: "GymApp čita puls i potrošnju energije tijekom treninga."
         NSHealthUpdateUsageDescription: "GymApp sprema tvoje treninge u Zdravlje."
     configFiles:

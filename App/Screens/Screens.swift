@@ -175,6 +175,7 @@ struct HomeScreen: View {
     private func closeStale(_ session: Session) {
         do {
             try WorkoutEngine(context: context).closeStaleSession(session)
+            PhoneWatchSync.shared.sessionChanged(session)
             Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {
             // Bez završene serije nema što spremiti: trening se odbacuje.
@@ -186,6 +187,7 @@ struct HomeScreen: View {
 
     private func discard(_ session: Session) {
         RestNotifications.cancel()
+        PhoneWatchSync.shared.willDiscard(session)
         try? WorkoutEngine(context: context).discardSession(session)
         ReminderScheduler.refresh(context: context)
     }

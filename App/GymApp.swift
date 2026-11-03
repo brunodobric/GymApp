@@ -17,7 +17,7 @@ struct GymApp: App {
         }
         // WatchConnectivity sesija mora se aktivirati što ranije, da poruke sa sata
         // stignu i kad se aplikacija pokrene u pozadini.
-        ConnectivityPrototypeSession.shared.activate()
+        PhoneWatchSync.shared.start(container: container)
     }
 
     var body: some Scene {

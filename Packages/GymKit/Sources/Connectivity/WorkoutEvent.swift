@@ -1,10 +1,5 @@
 import Foundation
-
-/// Uređaj koji je poslao događaj.
-public enum DeviceRole: String, Codable, Sendable {
-    case phone
-    case watch
-}
+import Models
 
 /// Događaj koji se tijekom treninga razmjenjuje između iPhonea i Watcha
 /// preko WatchConnectivityja (specifikacija, odjeljak 6).
@@ -15,11 +10,10 @@ public enum DeviceRole: String, Codable, Sendable {
 public struct WorkoutEvent: Codable, Sendable, Equatable, Identifiable {
 
     public enum Kind: Codable, Sendable, Equatable {
-        /// Samo za prototip: provjera veze i mjerenje kašnjenja.
-        case ping(note: String)
-        case setCompleted(setID: UUID)
-        case restTimerStarted(endsAt: Date)
-        case restTimerCancelled
+        /// Cijelo stanje treninga s uređaja koji ga vodi.
+        case snapshot(SessionSnapshot)
+        /// Izmjene s uređaja koji trening zrcali, za uređaj koji ga vodi.
+        case commands([WorkoutCommand])
     }
 
     public let id: UUID
@@ -43,33 +37,35 @@ public enum WorkoutEventCodingError: Error, Equatable {
     case missingPayload
 }
 
-extension WorkoutEvent {
-    /// Ključ pod kojim se događaj šalje u WatchConnectivity rječniku.
-    public static let payloadKey = "workoutEvent"
-
-    private static func makeEncoder() -> JSONEncoder {
+enum ConnectivityCoding {
+    static func makeEncoder() -> JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .millisecondsSince1970
         return encoder
     }
 
-    private static func makeDecoder() -> JSONDecoder {
+    static func makeDecoder() -> JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .millisecondsSince1970
         return decoder
     }
+}
 
-    /// Rječnik spreman za `sendMessage`, `transferUserInfo` ili `updateApplicationContext`.
+extension WorkoutEvent {
+    /// Ključ pod kojim se događaj šalje u WatchConnectivity rječniku.
+    public static let payloadKey = "workoutEvent"
+
+    /// Rječnik spreman za `sendMessage` ili `transferUserInfo`.
     /// Sadrži samo `Data`, što WatchConnectivity podržava (property list).
     public func payload() throws -> [String: Any] {
-        [Self.payloadKey: try Self.makeEncoder().encode(self)]
+        [Self.payloadKey: try ConnectivityCoding.makeEncoder().encode(self)]
     }
 
     public init(payload: [String: Any]) throws {
         guard let data = payload[Self.payloadKey] as? Data else {
             throw WorkoutEventCodingError.missingPayload
         }
-        self = try Self.makeDecoder().decode(WorkoutEvent.self, from: data)
+        self = try ConnectivityCoding.makeDecoder().decode(WorkoutEvent.self, from: data)
     }
 }
 
