@@ -435,3 +435,42 @@ struct SessionRegionsTests {
         #expect(regions["triceps"]?.intensity == 1)
     }
 }
+
+@Suite("Usporedba volumena")
+struct VolumeComparisonTests {
+
+    @Test("Zadnje razdoblje uspoređuje se s prethodnim, mišići od najvećeg volumena")
+    func compareLastTwo() throws {
+        let buckets = [
+            VolumeBucket(start: base.addingTimeInterval(-14 * day), loads: [.chest: MuscleLoad(volumeKg: 5000, sets: 9)]),
+            VolumeBucket(start: base.addingTimeInterval(-7 * day), loads: [
+                .chest: MuscleLoad(volumeKg: 1000, sets: 3),
+                .quadriceps: MuscleLoad(volumeKg: 3000, sets: 4),
+            ]),
+            VolumeBucket(start: base, loads: [
+                .chest: MuscleLoad(volumeKg: 1500, sets: 4),
+                .biceps: MuscleLoad(volumeKg: 300, sets: 2),
+            ]),
+        ]
+        let comparison = try #require(VolumeComparison(buckets: buckets))
+        #expect(comparison.currentStart == base)
+        #expect(comparison.previousStart == base.addingTimeInterval(-7 * day))
+        #expect(comparison.currentKg == 1800)
+        #expect(comparison.previousKg == 4000)
+        #expect(comparison.change == -0.55)
+        #expect(comparison.muscles.map(\.muscle) == [.quadriceps, .chest, .biceps])
+        #expect(comparison.muscles[0] == MuscleComparison(muscle: .quadriceps, currentKg: 0, previousKg: 3000))
+        #expect(comparison.muscles[2] == MuscleComparison(muscle: .biceps, currentKg: 300, previousKg: 0))
+    }
+
+    @Test("Bez prethodnog volumena nema postotka, a s jednim razdobljem nema usporedbe")
+    func edgeCases() {
+        #expect(VolumeComparison(buckets: [VolumeBucket(start: base, loads: [:])]) == nil)
+        let comparison = VolumeComparison(buckets: [
+            VolumeBucket(start: base.addingTimeInterval(-7 * day), loads: [:]),
+            VolumeBucket(start: base, loads: [.chest: MuscleLoad(volumeKg: 100, sets: 1)]),
+        ])
+        #expect(comparison?.change == nil)
+        #expect(comparison?.muscles.count == 1)
+    }
+}

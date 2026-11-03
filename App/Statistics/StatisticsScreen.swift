@@ -7,7 +7,7 @@ import SwiftUI
 import Training
 import Units
 
-/// Statistika: kartice s grafovima. Na iPadu se kartice slažu u više stupaca.
+/// Statistika: kartice s grafovima. Na iPadu se kartice slažu u više stupaca, a grafovi su viši.
 struct StatisticsScreen: View {
     @Environment(\.modelContext) private var context
     @Environment(CatalogStore.self) private var catalogStore
@@ -48,6 +48,7 @@ struct StatisticsScreen: View {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)], spacing: 16) {
                     if !sessions.isEmpty {
                         VolumeCard(period: $period, buckets: buckets, unit: unit)
+                        ComparisonCard(comparison: VolumeComparison(buckets: buckets), period: period, unit: unit)
                         FrequencyCard(points: frequency)
                         HeatmapCard(days: $heatmapDays, heatmap: heatmap, female: settingsList.first?.bodyMapFemale ?? false)
                         RecordsCard(records: records, unit: unit)
@@ -78,6 +79,23 @@ struct StatisticsScreen: View {
 }
 
 // MARK: - Kartica
+
+extension View {
+    /// Visina grafa: na iPadu (regular širina) graf je viši.
+    func chartHeight(_ compact: CGFloat, regular: CGFloat) -> some View {
+        modifier(ChartHeight(compact: compact, regular: regular))
+    }
+}
+
+private struct ChartHeight: ViewModifier {
+    let compact: CGFloat
+    let regular: CGFloat
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    func body(content: Content) -> some View {
+        content.frame(height: sizeClass == .regular ? regular : compact)
+    }
+}
 
 struct StatisticsCard<Content: View>: View {
     let title: LocalizedStringKey
@@ -155,10 +173,83 @@ private struct VolumeCard: View {
                     )
                     .foregroundStyle(by: .value("Mišić", entry.name))
                 }
-                .frame(height: 220)
+                .chartHeight(220, regular: 320)
                 .accessibilityLabel(Text("Graf volumena po mišićnim skupinama"))
             }
         }
+    }
+}
+
+// MARK: - Usporedba s prethodnim razdobljem
+
+private struct ComparisonCard: View {
+    let comparison: VolumeComparison?
+    let period: BucketSize
+    let unit: WeightUnit
+
+    private struct Entry: Identifiable {
+        let id = UUID()
+        let muscle: String
+        let series: String
+        let volume: Double
+    }
+
+    private var currentTitle: String {
+        period == .week ? String(localized: "Ovaj tjedan") : String(localized: "Ovaj mjesec")
+    }
+
+    private var previousTitle: String {
+        period == .week ? String(localized: "Prošli tjedan") : String(localized: "Prošli mjesec")
+    }
+
+    /// Šest mišića s najvećim volumenom, svaki s dva stupca (ovo i prethodno razdoblje).
+    private var entries: [Entry] {
+        guard let comparison else { return [] }
+        return comparison.muscles.prefix(6).flatMap { item in
+            let name = String(localized: item.muscle.title)
+            return [
+                Entry(muscle: name, series: previousTitle, volume: WeightConversion.value(fromKilograms: item.previousKg, in: unit)),
+                Entry(muscle: name, series: currentTitle, volume: WeightConversion.value(fromKilograms: item.currentKg, in: unit)),
+            ]
+        }
+    }
+
+    var body: some View {
+        StatisticsCard(title: "Usporedba s prethodnim") {
+            if let comparison, !entries.isEmpty {
+                Text(summary(comparison))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Chart(entries) { entry in
+                    BarMark(
+                        x: .value("Mišić", entry.muscle),
+                        y: .value("Volumen (\(unit.symbol))", entry.volume)
+                    )
+                    .foregroundStyle(by: .value("Razdoblje", entry.series))
+                    .position(by: .value("Razdoblje", entry.series))
+                }
+                .chartForegroundStyleScale([previousTitle: Color.secondary.opacity(0.5), currentTitle: Color.accentColor])
+                .chartHeight(220, regular: 320)
+                .accessibilityLabel(Text("Graf usporedbe volumena po mišićima s prethodnim razdobljem"))
+            } else {
+                Text("Usporedba se pojavi kad u ovom ili prethodnom razdoblju postoji trening.")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    /// Npr. "Ovaj tjedan dosad: 12.300 kg, 8 % više nego prošli tjedan."
+    private func summary(_ comparison: VolumeComparison) -> String {
+        let formatter = WeightFormatter(unit: unit)
+        let current = formatter.string(fromKilograms: comparison.currentKg)
+        guard let change = comparison.change else {
+            return String(localized: "\(currentTitle) dosad: \(current).")
+        }
+        let percent = abs(change).formatted(.percent.precision(.fractionLength(0)))
+        if change >= 0 {
+            return String(localized: "\(currentTitle) dosad: \(current), \(percent) više nego \(previousTitle.lowercased()).")
+        }
+        return String(localized: "\(currentTitle) dosad: \(current), \(percent) manje nego \(previousTitle.lowercased()).")
     }
 }
 
@@ -183,7 +274,7 @@ private struct FrequencyCard: View {
                 )
             }
             .chartYAxis { AxisMarks(values: .automatic(desiredCount: 4)) }
-            .frame(height: 160)
+            .chartHeight(160, regular: 240)
             .accessibilityLabel(Text("Graf broja treninga po tjednima"))
         }
     }
