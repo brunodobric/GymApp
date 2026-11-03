@@ -55,6 +55,10 @@ struct DataSettingsSection: View {
     @State private var messageTitle: LocalizedStringKey = ""
     @State private var messageText = ""
     @State private var showsMessage = false
+    @State private var isDeleting = false
+
+    /// Briše li "Obriši sve podatke" i iCloud.
+    private var deletesCloud: Bool { AppServices.isSyncRunning }
 
     var body: some View {
         Section {
@@ -62,7 +66,10 @@ struct DataSettingsSection: View {
             Button("Izvezi treninge (CSV)", systemImage: "tablecells") { export(.history) }
             Button("Izvezi mjerenja tijela (CSV)", systemImage: "tablecells") { export(.body) }
             Button("Uvezi iz datoteke", systemImage: "square.and.arrow.down") { showsImporter = true }
-            Button("Obriši sve podatke", systemImage: "trash", role: .destructive) { showsDeleteStart = true }
+            Button(isDeleting ? "Brišem…" : "Obriši sve podatke", systemImage: "trash", role: .destructive) {
+                showsDeleteStart = true
+            }
+            .disabled(isDeleting)
         } header: {
             Text("Podaci")
         } footer: {
@@ -80,7 +87,14 @@ struct DataSettingsSection: View {
             Button("Prvo izvezi sigurnosnu kopiju") { export(.json) }
             Button("Nastavi s brisanjem", role: .destructive) { showsDeleteConfirm = true }
         } message: {
-            Text("Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja.")
+            if deletesCloud {
+                Text("""
+                    Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja \
+                    i iz tvog iClouda, pa time i s ostalih tvojih uređaja.
+                    """)
+            } else {
+                Text("Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja.")
+            }
         }
         .alert("Jesi li siguran?", isPresented: $showsDeleteConfirm) {
             Button("Obriši sve", role: .destructive) { deleteAll() }
@@ -141,6 +155,31 @@ struct DataSettingsSection: View {
     }
 
     private func deleteAll() {
+        let scope = DataResetScope.resolve(isSyncRunning: AppServices.isSyncRunning, account: SyncMonitor.shared.account)
+        switch scope {
+        case .deviceOnly:
+            deleteOnDevice()
+        case .cloudUnavailable:
+            show("Brisanje nije uspjelo.", String(localized: "iCloud trenutno nije dostupan, pa se podaci u njemu ne mogu obrisati. Ništa nije obrisano."))
+        case .deviceAndCloud:
+            isDeleting = true
+            Task {
+                do {
+                    // Prvo iCloud: da se ne uspije, podaci obrisani samo na uređaju vratili bi se sinkronizacijom.
+                    try await CloudDataReset.deleteCloudData()
+                    deleteOnDevice()
+                } catch {
+                    show(
+                        "Brisanje nije uspjelo.",
+                        String(localized: "Podaci u iCloudu nisu obrisani. Provjeri internetsku vezu i pokušaj ponovno. Ništa nije obrisano.")
+                    )
+                }
+                isDeleting = false
+            }
+        }
+    }
+
+    private func deleteOnDevice() {
         do {
             try DataReset.deleteAll(in: context)
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
