@@ -194,6 +194,8 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 
 **Gotovo kad:** trening od početka do kraja odrađen je samo na satu, s iPhoneom izvan dosega dio vremena, i završni zapis na iPhoneu je potpun i bez duplikata.
 
+**Stanje (studeni 2026.):** kod je spojen (PR #22) i provjeren na uparenim simulatorima iPhonea i sata. Na stvarnom satu još treba provjeriti Digital Crown, haptiku kraja odmora sa spuštenim zapešćem i trening s iPhoneom izvan dosega. Provjera čeka TestFlight (faza 14) ili instalaciju na sat iz Xcodea.
+
 ## Faza 9: Live Activity i notifikacije odmora (1,5 tj.)
 
 * Live Activity (Zaključani zaslon i Dynamic Island): rest timer sustavskim odbrojavanjem, trenutna i sljedeća vježba, broj serija, gumb za potvrdu serije (App Intent).
