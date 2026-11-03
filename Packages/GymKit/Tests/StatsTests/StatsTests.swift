@@ -326,3 +326,57 @@ struct ExerciseRefKeyTests {
         #expect(ExerciseRef(key: "c:", name: "C") == nil)
     }
 }
+
+@Suite("BodyMap")
+struct BodyMapTests {
+    @Test func parsesMoveLineCurveClose() {
+        let commands = SVGPathParser.parse("M1.5 2L3-4C1 2 3 4 5 6Z")
+        #expect(commands == [
+            .move(x: 1.5, y: 2), .line(x: 3, y: -4),
+            .curve(c1x: 1, c1y: 2, c2x: 3, c2y: 4, x: 5, y: 6), .close
+        ])
+    }
+
+    @Test func repeatsImplicitArguments() {
+        let commands = SVGPathParser.parse("M0 0 1 1 2 2C1 1 2 2 3 3 4 4 5 5 6 6")
+        #expect(commands.count == 5)
+        #expect(commands[1] == .line(x: 1, y: 1))
+        #expect(commands[4] == .curve(c1x: 4, c1y: 4, c2x: 5, c2y: 5, x: 6, y: 6))
+    }
+
+    @Test func handlesAdjacentDecimalsAndMultipleSubpaths() {
+        let commands = SVGPathParser.parse("M1.5.5L2 2ZM5 5L6 6Z")
+        #expect(commands.first == .move(x: 1.5, y: 0.5))
+        #expect(commands.filter { $0 == .close }.count == 2)
+    }
+
+    @Test func stopsOnUnsupportedOrIncompleteInput() {
+        #expect(SVGPathParser.parse("M0 0A1 1 0 0 1 2 2") == [.move(x: 0, y: 0)])
+        #expect(SVGPathParser.parse("M0 0L5") == [.move(x: 0, y: 0)])
+        #expect(SVGPathParser.parse("").isEmpty)
+    }
+
+    @Test func decodesDiagramAndMapsGroups() throws {
+        let json = """
+        {"male-front":{"viewBox":[0,0,10,20],"outline":[{"id":"BODY","d":"M0 0Z"}],
+        "muscles":[{"id":"A","group":"QUADS","d":"M0 0Z"}]}}
+        """
+        let diagrams = try BodyMap.decode(Data(json.utf8))
+        let diagram = try #require(diagrams[BodyMap.key(female: false, back: false)])
+        #expect(diagram.muscles.first?.group == "QUADS")
+        #expect(diagram.outline.first?.group == nil)
+    }
+
+    @Test func everyBodyMapGroupMapsToKnownRegion() {
+        let groups = [
+            "CHEST", "SHOULDERS_FRONT", "SHOULDERS_SIDE", "SHOULDERS_REAR", "BICEPS", "TRICEPS", "FOREARMS", "CORE",
+            "OBLIQUES", "QUADS", "HAMSTRINGS", "ADDUCTORS", "ABDUCTORS", "TRAPEZIUS", "RHOMBOIDS", "LATS",
+            "BACK_LOWER", "GLUTES", "CALVES"
+        ]
+        for group in groups {
+            let region = BodyRegion.region(forBodyMapGroup: group)
+            #expect(region != nil && BodyRegion.all.contains(region ?? ""))
+        }
+        #expect(BodyRegion.region(forBodyMapGroup: "HIP_FLEXORS") == nil)
+    }
+}

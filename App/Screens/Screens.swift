@@ -200,6 +200,12 @@ struct SettingsScreen: View {
                     Link(destination: URL(string: "https://github.com/yuhonas/free-exercise-db")!) {
                         LabeledContent("Katalog vježbi", value: "free-exercise-db")
                     }
+                    // Atribucija crteža tijela (MIT licenca zahtijeva copyright napomenu i tekst licence).
+                    NavigationLink {
+                        MuscleMapLicenseScreen()
+                    } label: {
+                        LabeledContent("Crteži tijela", value: "MuscleMap")
+                    }
                     // TODO(faza 13): javni URL pravila privatnosti.
                     LabeledContent("Pravila privatnosti", value: "Uskoro")
                 }
@@ -236,5 +242,28 @@ private struct TrainingSettingsSection: View {
             }
             Toggle("Zvuk kraja odmora", isOn: $settings.restEndSoundEnabled)
         }
+    }
+}
+
+/// Izvor i licenca crteža tijela za heatmap.
+struct MuscleMapLicenseScreen: View {
+    private var licenseText: String {
+        let url = Bundle.main.resourceURL?.appendingPathComponent("BodyMap/LICENSE-MuscleMap.txt")
+        return url.flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? "MIT License"
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Crteži tijela u heatmapu preuzeti su iz projekta MuscleMap (MIT licenca).")
+                Link("github.com/Jsplice/MuscleMap", destination: URL(string: "https://github.com/Jsplice/MuscleMap")!)
+                Divider()
+                Text(licenseText).font(.footnote).foregroundStyle(.secondary)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .navigationTitle("MuscleMap")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

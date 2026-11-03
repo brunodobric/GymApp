@@ -37,6 +37,10 @@ targets:
       - path: Resources/Catalog
         type: folder
         buildPhase: resources
+      # Crteži tijela za heatmap (MuscleMap, MIT) i tekst licence: BodyMap/...
+      - path: Resources/BodyMap
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: GymKit
         products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats]
