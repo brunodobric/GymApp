@@ -181,6 +181,11 @@ struct SettingsScreen: View {
     @Environment(\.modelContext) private var context
     @State private var settings: UserSettings?
 
+    private var systemScheme: ColorScheme? {
+        guard settings != nil else { return nil }
+        return UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
+    }
+
     private var version: String {
         let info = Bundle.main.infoDictionary
         let short = info?["CFBundleShortVersionString"] as? String ?? "?"
@@ -218,7 +223,9 @@ struct SettingsScreen: View {
             }
             .navigationTitle("Postavke")
             // Otvoreni list ne preuzima promjenu teme i boje iz korijena dok je prikazan, pa ih primjenjuje sam.
-            .preferredColorScheme(settings?.theme.colorScheme)
+            // Za "Sustav" nil ne poništava već prisilno postavljenu shemu na prikazanom listu, pa se šalje
+            // sistemska shema izričito.
+            .preferredColorScheme(settings?.theme.colorScheme ?? systemScheme)
             .tint(settings?.accent.color ?? AccentChoice.blue.color)
             .task { settings = try? GymQueries(context: context).settings() }
             .toolbar {
