@@ -42,4 +42,12 @@ final class CatalogStore {
         guard let directory else { return [] }
         return exercise.images.map { directory.appendingPathComponent($0) }
     }
+
+    /// Prva slika službene vježbe, za sličicu u mreži kataloga.
+    func thumbnailURL(for summary: ExerciseSummary) -> URL? {
+        guard case .catalog(let id) = summary.source,
+              let first = catalog?.exercise(withID: id)?.images.first,
+              let directory else { return nil }
+        return directory.appendingPathComponent(first)
+    }
 }

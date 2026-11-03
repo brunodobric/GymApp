@@ -5,6 +5,9 @@ import Stats
 import Units
 
 /// Povijest odrađenih treninga: popis s filterom i sortiranjem te kalendar s točkicama.
+///
+/// U regular širini (iPad) popis i detalji treninga stoje jedan pored drugog (`NavigationSplitView`).
+/// U compact širini split view se sklapa u običan stog, pa se iPhone ponaša kao prije.
 struct HistoryScreen: View {
     @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }, sort: \Session.startedAt, order: .reverse)
     private var sessions: [Session]
@@ -14,6 +17,8 @@ struct HistoryScreen: View {
     @State private var showsCalendar = false
     @State private var selectedDay: Date?
     @State private var month = Date()
+    /// Odabrani trening u popisu (id, da obrisani trening ne ostane odabran).
+    @State private var selectedId: UUID?
 
     private var unit: WeightUnit { settingsList.first?.weightUnit ?? .kilograms }
     private var visible: [Session] { filter.apply(to: sessions) }
@@ -23,54 +28,80 @@ struct HistoryScreen: View {
         showsCalendar ? filter.apply(to: sessions, month: month, day: selectedDay) : visible
     }
 
+    private var selectedSession: Session? {
+        guard let selectedId else { return nil }
+        return sessions.first { $0.id == selectedId }
+    }
+
     var body: some View {
-        NavigationStack {
-            List {
-                if showsCalendar {
-                    Section {
-                        CalendarMonthView(
-                            month: $month, selectedDay: $selectedDay,
-                            workoutDays: Set(visible.map { Calendar.current.startOfDay(for: $0.startedAt) })
-                        )
-                    }
-                }
-                Section {
-                    ForEach(listed) { session in
-                        NavigationLink(value: session) { SessionRow(session: session) }
-                    }
-                    // Poruka ide u popis ispod kalendara, ne preko cijelog ekrana.
-                    if showsCalendar && listed.isEmpty && !sessions.isEmpty {
-                        Text(selectedDay == nil ? "U ovom mjesecu nema odrađenih treninga." : "Za odabrani dan nema odrađenih treninga.")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .overlay {
-                if sessions.isEmpty {
+        NavigationSplitView {
+            sessionList
+                .navigationSplitViewColumnWidth(min: 320, ideal: 380, max: 460)
+        } detail: {
+            NavigationStack {
+                if let session = selectedSession {
+                    SessionDetailScreen(session: session, unit: unit)
+                        .id(session.id)
+                } else {
                     ContentUnavailableView(
-                        "Još nema treninga",
+                        "Odaberi trening",
                         systemImage: "clock",
-                        description: Text("Ovdje će biti svi odrađeni treninzi.")
-                    )
-                } else if listed.isEmpty && !showsCalendar {
-                    ContentUnavailableView(
-                        "Nema treninga",
-                        systemImage: "magnifyingglass",
-                        description: Text("Nijedan trening ne odgovara filteru.")
+                        description: Text("Detalji odabranog treninga prikazuju se ovdje.")
                     )
                 }
             }
-            .navigationTitle("Povijest")
-            .navigationDestination(for: Session.self) { SessionDetailScreen(session: $0, unit: unit) }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(showsCalendar ? "Popis" : "Kalendar", systemImage: showsCalendar ? "list.bullet" : "calendar") {
-                        showsCalendar.toggle()
-                        if !showsCalendar { selectedDay = nil }
-                    }
+        }
+        // Obrisan trening (npr. iz detalja) više nije odabran, pa se na iPhoneu vraća popis.
+        .onChange(of: sessions.map(\.id)) { _, ids in
+            if let selectedId, !ids.contains(selectedId) { self.selectedId = nil }
+        }
+    }
+
+    private var sessionList: some View {
+        List(selection: $selectedId) {
+            if showsCalendar {
+                Section {
+                    CalendarMonthView(
+                        month: $month, selectedDay: $selectedDay,
+                        workoutDays: Set(visible.map { Calendar.current.startOfDay(for: $0.startedAt) })
+                    )
                 }
-                ToolbarItem(placement: .topBarTrailing) { filterMenu }
             }
+            Section {
+                ForEach(listed) { session in
+                    NavigationLink(value: session.id) { SessionRow(session: session) }
+                }
+                // Poruka ide u popis ispod kalendara, ne preko cijelog ekrana.
+                if showsCalendar && listed.isEmpty && !sessions.isEmpty {
+                    Text(selectedDay == nil ? "U ovom mjesecu nema odrađenih treninga." : "Za odabrani dan nema odrađenih treninga.")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .overlay {
+            if sessions.isEmpty {
+                ContentUnavailableView(
+                    "Još nema treninga",
+                    systemImage: "clock",
+                    description: Text("Ovdje će biti svi odrađeni treninzi.")
+                )
+            } else if listed.isEmpty && !showsCalendar {
+                ContentUnavailableView(
+                    "Nema treninga",
+                    systemImage: "magnifyingglass",
+                    description: Text("Nijedan trening ne odgovara filteru.")
+                )
+            }
+        }
+        .navigationTitle("Povijest")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(showsCalendar ? "Popis" : "Kalendar", systemImage: showsCalendar ? "list.bullet" : "calendar") {
+                    showsCalendar.toggle()
+                    if !showsCalendar { selectedDay = nil }
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) { filterMenu }
         }
     }
 

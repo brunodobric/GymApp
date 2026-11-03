@@ -4,8 +4,11 @@ import SwiftData
 import SwiftUI
 
 /// Tab Vježbe: službeni katalog i vlastite vježbe u jednom popisu, s pretragom i filterima.
+///
+/// U regular širini (iPad) katalog je mreža sa slikama, a u compact širini popis.
 struct ExercisesScreen: View {
     @Environment(CatalogStore.self) private var catalogStore
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Query(sort: \CustomExercise.name) private var customExercises: [CustomExercise]
 
     @State private var filter = ExerciseFilter()
@@ -65,6 +68,8 @@ struct ExercisesScreen: View {
             } else {
                 ContentUnavailableView.search(text: filter.query)
             }
+        } else if sizeClass == .regular {
+            grid
         } else {
             List(results) { summary in
                 NavigationLink(value: summary) {
@@ -72,6 +77,67 @@ struct ExercisesScreen: View {
                 }
             }
         }
+    }
+
+    private var grid: some View {
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), spacing: 16, alignment: .top)], spacing: 16) {
+                ForEach(results) { summary in
+                    NavigationLink(value: summary) {
+                        ExerciseGridCell(summary: summary, thumbnail: thumbnail(for: summary))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding()
+        }
+        .background(Color(.systemGroupedBackground))
+    }
+
+    private func thumbnail(for summary: ExerciseSummary) -> ExerciseThumbnail.Source? {
+        switch summary.source {
+        case .catalog:
+            return catalogStore.thumbnailURL(for: summary).map { .file($0) }
+        case .custom(let id):
+            guard let data = customExercises.first(where: { $0.id == id })?.imageData else { return nil }
+            return .data(key: id.uuidString, data)
+        }
+    }
+}
+
+/// Ćelija mreže kataloga: slika, naziv te kategorija i oprema.
+private struct ExerciseGridCell: View {
+    let summary: ExerciseSummary
+    let thumbnail: ExerciseThumbnail.Source?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ExerciseThumbnail(source: thumbnail)
+            Text(summary.name)
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+            Text(details)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14))
+        .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 14))
+        .hoverEffect()
+        .accessibilityElement(children: .combine)
+    }
+
+    private var details: String {
+        var parts: [String] = []
+        if let category = summary.category { parts.append(String(localized: category.title)) }
+        if let equipment = summary.equipment { parts.append(String(localized: equipment.title)) }
+        if summary.isCustom {
+            parts.append(summary.isArchived ? String(localized: "Arhivirana") : String(localized: "Vlastita"))
+        }
+        return parts.joined(separator: " · ")
     }
 }
 

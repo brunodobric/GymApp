@@ -39,7 +39,7 @@ struct MeasurementDetailScreen: View {
                         )
                     }
                     .chartYScale(domain: .automatic(includesZero: false))
-                    .frame(height: 200)
+                    .chartHeight(200, regular: 320)
                     .accessibilityLabel(Text("Graf mjere \(title)"))
                 }
             }
