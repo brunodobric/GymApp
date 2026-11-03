@@ -32,6 +32,16 @@ def section(text: str, name: str) -> str:
     return text[text.index("\n", start):text.index("\n];", start)]
 
 
+def bounds_of(shapes: list) -> list:
+    """Granice (x0, y0, x1, y1) svih točaka u putanjama; sve su naredbe apsolutne."""
+    xs, ys = [], []
+    for shape in shapes:
+        numbers = [float(n) for n in re.findall(r"-?\d+(?:\.\d+)?", shape["d"])]
+        xs += numbers[0::2]
+        ys += numbers[1::2]
+    return [min(xs), min(ys), max(xs), max(ys)]
+
+
 def convert(source: Path) -> dict:
     text = source.read_text(encoding="utf-8")
     view_box = re.search(r'viewBox: "([^"]+)"', text).group(1)
@@ -48,12 +58,22 @@ def convert(source: Path) -> dict:
         if not set(item["d"]) <= allowed:
             raise SystemExit(f"Neočekivana naredba u putanji {item['id']}")
     return {"viewBox": [float(v) for v in view_box.split()], "centerX": center_x,
-            "outline": outline, "muscles": muscles}
+            "bounds": bounds_of(outline), "outline": outline, "muscles": muscles}
 
 
 def main() -> None:
     source_dir, target = Path(sys.argv[1]), Path(sys.argv[2])
     result = {name: convert(source_dir / file) for name, file in DIAGRAMS.items()}
+    # Prednja i stražnja strana istog spola dijele okvir, pa su figure iste veličine.
+    margin = 12.0
+    for sex in ("male", "female"):
+        pair = [result[f"{sex}-front"], result[f"{sex}-back"]]
+        x0 = min(d["bounds"][0] for d in pair) - margin
+        y0 = min(d["bounds"][1] for d in pair) - margin
+        x1 = max(d["bounds"][2] for d in pair) + margin
+        y1 = max(d["bounds"][3] for d in pair) + margin
+        for diagram in pair:
+            diagram["bounds"] = [round(x0, 1), round(y0, 1), round(x1 - x0, 1), round(y1 - y0, 1)]
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(result, separators=(",", ":")), encoding="utf-8")
     for name, diagram in result.items():

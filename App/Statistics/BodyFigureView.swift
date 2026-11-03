@@ -15,6 +15,7 @@ final class BodyMapStore {
     }
 
     struct Parsed {
+        let bounds: [Double]
         let outline: [ParsedShape]
         let muscles: [ParsedShape]
     }
@@ -43,7 +44,7 @@ final class BodyMapStore {
                 )
             }
         }
-        let parsed = Parsed(outline: parse(raw.outline), muscles: parse(raw.muscles))
+        let parsed = Parsed(bounds: raw.bounds, outline: parse(raw.outline), muscles: parse(raw.muscles))
         cache[key] = parsed
         return parsed
     }
@@ -52,9 +53,9 @@ final class BodyMapStore {
 /// SwiftUI oblik iz naredbi SVG putanje, skaliran iz vidljivog dijela crteža na zadani pravokutnik.
 struct SVGShape: Shape {
     let commands: [PathCommand]
+    let box: [Double]
 
     func path(in rect: CGRect) -> Path {
-        let box = BodyMap.visibleBox
         let scaleX = rect.width / box[2]
         let scaleY = rect.height / box[3]
         func point(_ px: Double, _ py: Double) -> CGPoint {
@@ -82,19 +83,20 @@ struct BodyFigureView: View {
     @Binding var selected: String?
 
     var body: some View {
-        let box = BodyMap.visibleBox
+        let parsed = BodyMapStore.shared.diagram(female: female, back: back)
+        let box = parsed?.bounds ?? [0, 0, 1, 2]
         ZStack {
-            if let parsed = BodyMapStore.shared.diagram(female: female, back: back) {
+            if let parsed {
                 ForEach(parsed.outline) { shape in
-                    SVGShape(commands: shape.commands).fill(Color.secondary.opacity(0.12))
+                    SVGShape(commands: shape.commands, box: parsed.bounds).fill(Color.secondary.opacity(0.12))
                 }
                 ForEach(parsed.muscles) { shape in
                     let intensity = shape.region.flatMap { heatmap[$0]?.intensity } ?? 0
-                    SVGShape(commands: shape.commands)
+                    SVGShape(commands: shape.commands, box: parsed.bounds)
                         .fill(intensity > 0 ? Color.accentColor.opacity(0.25 + 0.75 * intensity) : Color.secondary.opacity(0.22))
                         .overlay {
                             if let region = shape.region, region == selected {
-                                SVGShape(commands: shape.commands).stroke(Color.primary, lineWidth: 1.5)
+                                SVGShape(commands: shape.commands, box: parsed.bounds).stroke(Color.primary, lineWidth: 1.5)
                             }
                         }
                         .onTapGesture {

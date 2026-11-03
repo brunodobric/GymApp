@@ -261,7 +261,11 @@ private struct TrainingSettingsSection: View {
 struct MuscleMapLicenseScreen: View {
     private var licenseText: String {
         let url = Bundle.main.resourceURL?.appendingPathComponent("BodyMap/LICENSE-MuscleMap.txt")
-        return url.flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? "MIT License"
+        let raw = url.flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? "MIT License"
+        // Tvrdi prijelomi unutar odlomaka se spajaju da tekst teče po širini ekrana; prazni redovi ostaju.
+        return raw.components(separatedBy: "\n\n")
+            .map { $0.split(separator: "\n").joined(separator: " ") }
+            .joined(separator: "\n\n")
     }
 
     var body: some View {

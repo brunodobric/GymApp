@@ -112,14 +112,13 @@ public struct BodyMapShape: Codable, Equatable, Sendable {
 /// Tijelo jednog spola i strane (sprijeda ili straga) s obrisom i mišićnim plohama.
 public struct BodyMapDiagram: Codable, Equatable, Sendable {
     public let viewBox: [Double]
+    /// Vidljivi dio crteža (x, y, širina, visina). Prednja i stražnja strana istog spola imaju isti okvir.
+    public let bounds: [Double]
     public let outline: [BodyMapShape]
     public let muscles: [BodyMapShape]
 }
 
 public enum BodyMap {
-    /// Dio crteža u kojem je tijelo (x, y, širina, visina); ostatak je prazan rub.
-    public static let visibleBox: [Double] = [180, 34, 663, 1440]
-
     public static func key(female: Bool, back: Bool) -> String {
         "\(female ? "female" : "male")-\(back ? "back" : "front")"
     }

@@ -358,13 +358,14 @@ struct BodyMapTests {
 
     @Test func decodesDiagramAndMapsGroups() throws {
         let json = """
-        {"male-front":{"viewBox":[0,0,10,20],"outline":[{"id":"BODY","d":"M0 0Z"}],
+        {"male-front":{"viewBox":[0,0,10,20],"bounds":[1,2,8,16],"outline":[{"id":"BODY","d":"M0 0Z"}],
         "muscles":[{"id":"A","group":"QUADS","d":"M0 0Z"}]}}
         """
         let diagrams = try BodyMap.decode(Data(json.utf8))
         let diagram = try #require(diagrams[BodyMap.key(female: false, back: false)])
         #expect(diagram.muscles.first?.group == "QUADS")
         #expect(diagram.outline.first?.group == nil)
+        #expect(diagram.bounds == [1, 2, 8, 16])
     }
 
     @Test func everyBodyMapGroupMapsToKnownRegion() {
