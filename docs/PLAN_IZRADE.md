@@ -59,6 +59,7 @@ GymApp/
 | 5 | Povijest, statistika i praćenje tijela | 3 tj. | 3 |
 | 6 | Dashboard, postavke, onboarding, export | 2 tj. | 3, 4 |
 | 7 | HealthKit | 2 tj. | 3 |
+| 7a | Crteži vježbi (Everkinetic) | 1 tj. | 2 |
 | 8 | Apple Watch aplikacija | 5 tj. | 3, 7 |
 | 9 | Live Activity i notifikacije odmora | 1,5 tj. | 3, 8 |
 | 10 | WorkoutKit za kardio | 1,5 tj. | 4, 7 |
@@ -66,7 +67,7 @@ GymApp/
 | 12 | CloudKit sinkronizacija | 2 tj. | 1 do 11 |
 | 13 | Lokalizacija, pristupačnost, privatnost | 1,5 tj. | sve |
 | 14 | Beta, poliranje i izdanje | 3 tj. | sve |
-| | **Ukupno** | **≈ 40 tj.** | |
+| | **Ukupno** | **≈ 41 tj.** | |
 
 Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski. Počinje u fazi 2 i mora biti gotov prije faze 13.
 
@@ -180,6 +181,20 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 
 **Gotovo kad:** trening se pojavljuje u aplikaciji Zdravlje i zatvara Activity Rings, a trčanje iz Workouts aplikacije pojavi se u povijesti točno jednom.
 
+## Faza 7a: Crteži vježbi (Everkinetic) (1 tj.)
+
+**Cilj:** fotografije iz free-exercise-db zamjenjuju se crtežima iz Everkinetica gdje postoje. Nazivi, upute, mišići i regije ostaju iz sadašnjeg kataloga.
+
+* Izvor: [everkinetic/data](https://github.com/everkinetic/data), CC BY-SA 4.0 (© Everkinetic, Greg Priday). Oko 290 vježbi, svaka s dva SVG crteža: početni (`relaxation`) i završni (`tension`) položaj. Fiksira se commit, kao kod free-exercise-db.
+* Ručna tablica `Tools/CatalogBuilder/everkinetic.json`: naš `catalogId` → Everkinetic id. Gruba automatska usporedba nalazi oko 76 od 181 vježbe, a ručno mapiranje više. Vježbe bez crteža zadržavaju sadašnje slike.
+* `CatalogBuilder`: preuzima crteže, uklanja bijelu pozadinu da linije mogu dobiti boju teme, pretvara ih u format koji iOS crta vektorski (PDF ili asset catalog s očuvanim vektorima, odluka pri implementaciji) i upisuje ih u `catalog.json` kao novo opcionalno polje uz postojeće `images`.
+* Prikaz u detalju vježbe i kartici: dva položaja se izmjenjuju pretapanjem. Uz Reduce Motion nema animacije, nego se prikazuju oba položaja jedan do drugoga. U tamnom načinu linije su svijetle.
+* Licenca: atribucija u "O aplikaciji" (autor, licenca s poveznicom, izvor, napomena da su crteži izmijenjeni), unos u `docs/PRAVNO_I_PRIVATNOST.md` i ažuriranje odjeljka 1 u `docs/SPECIFIKACIJA.md`.
+* Share-alike: izmijenjeni crteži objavljuju se javno pod CC BY-SA 4.0 (javni repozitorij ili poveznica iz "O aplikaciji"), jer kopija u App Storeu ima Appleovu zaštitu. Obveza vrijedi samo za crteže, ne za kod aplikacije.
+* Testovi `CatalogBuilder`a: svaki unos iz tablice postoji u Everkineticu, nijedan `catalogId` nije dvaput, katalog bez crteža i dalje se učitava.
+
+**Gotovo kad:** katalog se gradi skriptom bez ručnih koraka, svaka mapirana vježba prikazuje animirane crteže u svijetlom i tamnom načinu, nemapirane vježbe prikazuju sadašnje slike, a atribucija i javna kopija izmijenjenih crteža postoje.
+
 ## Faza 8: Apple Watch aplikacija (5 tj.)
 
 **Cilj:** cijeli trening snage može se voditi sa sata.
@@ -263,6 +278,7 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 | Sinkronizacija sata i iPhonea gubi ili duplicira serije | Visok | Događaji s UUID-om, jedan uređaj vodi trening, testovi protokola |
 | Faza 3 traje dulje od procjene | Visok | Ne skraćuje se. Ako kasni, kasnije faze se pomiču, a opseg ostaje |
 | Prijevod kataloga kasni | Srednji | Počinje u fazi 2 kao usporedni posao. Nepregledane vježbe privremeno ostaju na engleskom |
+| Licenca crteža (CC BY-SA 4.0) se krivo primijeni | Nizak | Atribucija u "O aplikaciji" i javna kopija izmijenjenih crteža, provjera u fazi 13 |
 | App Store review odbije zbog HealthKita ili privatnosti | Srednji | Faza 13 i jasni opisi dozvola. Rezerva u fazi 14 |
 
 ## Prvi koraci
