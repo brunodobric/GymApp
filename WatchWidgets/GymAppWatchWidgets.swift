@@ -15,7 +15,7 @@ struct GymComplication: Widget {
             ComplicationView(entry: entry)
                 .containerBackground(for: .widget) {}
         }
-        .configurationDisplayName("GymApp")
+        .configurationDisplayName("Apollo")
         .description("Sljedeći trening i odmor između serija.")
         .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline, .accessoryCorner])
     }
@@ -84,7 +84,7 @@ struct ComplicationView: View {
                 AccessoryWidgetBackground()
                 Image(systemName: "dumbbell.fill").font(.title3)
             }
-            .accessibilityLabel(Text(state.activeWorkoutName ?? state.nextWorkoutName ?? "GymApp"))
+            .accessibilityLabel(Text(state.activeWorkoutName ?? state.nextWorkoutName ?? "Apollo"))
         }
     }
 
@@ -105,7 +105,7 @@ struct ComplicationView: View {
                     Text(schedule).foregroundStyle(.secondary).lineLimit(1)
                 }
             } else {
-                Label("GymApp", systemImage: "dumbbell.fill").font(.headline).widgetAccentable()
+                Label("Apollo", systemImage: "dumbbell.fill").font(.headline).widgetAccentable()
                 Text("Nema zakazanog treninga").foregroundStyle(.secondary).lineLimit(2)
             }
         }
@@ -123,7 +123,7 @@ struct ComplicationView: View {
         } else if let name = state.activeWorkoutName ?? state.nextWorkoutName {
             Label(name, systemImage: "dumbbell.fill")
         } else {
-            Label("GymApp", systemImage: "dumbbell.fill")
+            Label("Apollo", systemImage: "dumbbell.fill")
         }
     }
 
@@ -139,7 +139,7 @@ struct ComplicationView: View {
             Image(systemName: "dumbbell.fill")
                 .font(.title3)
                 .widgetLabel {
-                    Text(state.activeWorkoutName ?? state.nextWorkoutName ?? "GymApp")
+                    Text(state.activeWorkoutName ?? state.nextWorkoutName ?? "Apollo")
                 }
         }
     }

@@ -99,8 +99,8 @@ targets:
         WKCompanionAppBundleIdentifier: com.brunodobric.gymapp
         # HKWorkoutSession: aplikacija radi i sa spuštenim zapešćem dok traje trening.
         WKBackgroundModes: [workout-processing]
-        NSHealthShareUsageDescription: "GymApp čita puls i potrošnju energije tijekom treninga."
-        NSHealthUpdateUsageDescription: "GymApp sprema tvoje treninge u Zdravlje."
+        NSHealthShareUsageDescription: "Apollo čita puls i potrošnju energije tijekom treninga."
+        NSHealthUpdateUsageDescription: "Apollo sprema tvoje treninge u Zdravlje."
     configFiles:
       Debug: Config/Watch.xcconfig
       Release: Config/Watch.xcconfig
@@ -141,7 +141,7 @@ targets:
     info:
       path: WatchWidgets/Info.plist
       properties:
-        CFBundleDisplayName: GymApp
+        CFBundleDisplayName: Apollo
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     configFiles:
