@@ -64,7 +64,9 @@ struct WorkoutSummarySheet: View {
                         .frame(maxHeight: 300)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(Text("Prikaz tijela. Rađeno: \(workedRegionNames)"))
-                        Text(workedRegionNames).font(.subheadline).foregroundStyle(.secondary)
+                        Text(workedRegionNames).font(.subheadline)
+                        Text("Tamnije: glavni mišići. Svjetlije: pomoćni mišići.")
+                            .font(.footnote).foregroundStyle(.secondary)
                     }
                 }
                 Section("Osobni rekordi") {
