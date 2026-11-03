@@ -166,12 +166,18 @@ struct NotificationSettingsSection: View {
     var body: some View {
         Section {
             Toggle("Obavijesti", isOn: $settings.notificationsEnabled)
-                .onChange(of: settings.notificationsEnabled) { _, enabled in
-                    if !enabled { RestNotifications.cancel() }
+                .onChange(of: settings.notificationsEnabled) {
+                    try? context.save()
+                    WorkoutLiveUpdates.shared.refresh()
                     ReminderScheduler.refresh(context: context)
                 }
+            NavigationLink {
+                FocusTipScreen()
+            } label: {
+                Label("Fokus tijekom treninga", systemImage: "moon.fill")
+            }
         } footer: {
-            Text("Podsjetnici rasporeda i obavijest o kraju pauze kad je aplikacija u pozadini. Dopuštenje se traži kad prvi put zatrebaju.")
+            Text("Podsjetnici rasporeda i obavijest o kraju odmora kad je iPhone zaključan. Dopuštenje se traži kad prvi put zatrebaju.")
         }
     }
 }

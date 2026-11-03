@@ -203,6 +203,10 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 * Lokalna notifikacija kraja odmora samo kad je iPhone zaključan i trening se vodi na iPhoneu, uz premještanje kod +10/−10.
 * Uputa za Focus način u postavkama.
 
+**Kako je napravljeno:** stanje za Live Activity (sljedeća serija, sljedeća vježba, broj serija) i pravilo za obavijest o kraju odmora su u GymKitu (`LiveStatus.swift`, s testovima). `WorkoutLiveUpdates` u aplikaciji slaže Live Activity i obavijest iz aktivnog treninga u bazi nakon svake promjene: s ekrana treninga, sa sata, iz gumba u Live Activityju i pri povratku u aplikaciju. Gumb "Potvrdi seriju" je `LiveActivityIntent`, koji sustav izvodi u procesu aplikacije, pa radi i kad je iPhone zaključan. Gumb se prikazuje samo kad serija ima upisane vrijednosti, inače dodir na Live Activity otvara aplikaciju. Trening započet na satu dok je iPhone zaključan dobiva Live Activity tek kad se aplikacija otvori, jer je iOS dopušta pokrenuti samo iz otvorene aplikacije.
+
+**Provjera na uređaju:** Dynamic Island, gumb na zaključanom zaslonu i obavijest sa zaključanim iPhoneom provjeravaju se na stvarnom iPhoneu (simulator ne zaključava ekran kao uređaj).
+
 ## Faza 10: WorkoutKit za kardio (1,5 tj.)
 
 * Kardio predlošci (trčanje, intervali) u rasporedima.

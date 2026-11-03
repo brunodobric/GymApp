@@ -65,6 +65,9 @@ struct RootView: View {
             if phase != .inactive { PhoneWatchSync.shared.refreshContext() }
             guard phase == .active else { return }
             ReminderScheduler.refresh(context: context)
+            // Trening započet na satu dok je iPhone bio zaključan dobiva Live Activity tek sad:
+            // sustav je dopušta pokrenuti samo dok je aplikacija otvorena.
+            WorkoutLiveUpdates.shared.refresh()
             // Novi treninzi, težina i visina iz Zdravlja (samo ako je korisnik povezao Zdravlje).
             Task { await HealthService.shared.importNewData(context: context) }
         }
