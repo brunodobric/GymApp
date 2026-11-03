@@ -299,6 +299,7 @@ struct SettingsScreen: View {
                     NotificationSettingsSection(settings: settings)
                     HealthSettingsSection(settings: settings)
                 }
+                SyncSettingsSection()
                 DataSettingsSection {
                     settings = try? GymQueries(context: context).settings()
                     // Nakon brisanja svih podataka Početna prikazuje onboarding, pa se list zatvara.
