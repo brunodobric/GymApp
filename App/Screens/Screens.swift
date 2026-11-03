@@ -249,6 +249,8 @@ struct SettingsScreen: View {
                 }
                 DataSettingsSection {
                     settings = try? GymQueries(context: context).settings()
+                    // Nakon brisanja svih podataka Početna prikazuje onboarding, pa se list zatvara.
+                    if settings?.onboardingCompleted == false { dismiss() }
                 }
                 Section("O aplikaciji") {
                     LabeledContent("Verzija", value: version)

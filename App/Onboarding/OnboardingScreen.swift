@@ -54,6 +54,8 @@ struct OnboardingScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
+                    Text("Korak \(step.rawValue + 1) od \(Step.allCases.count)")
+                        .font(.footnote).foregroundStyle(.secondary)
                     content
                 }
                 .padding()
@@ -138,13 +140,13 @@ struct OnboardingScreen: View {
                 .font(.footnote).foregroundStyle(.secondary)
             LabeledContent("Visina") {
                 HStack {
-                    TextField("cm", text: $heightText).keyboardType(.decimalPad).multilineTextAlignment(.trailing)
+                    TextField("Neobavezno", text: $heightText).keyboardType(.decimalPad).multilineTextAlignment(.trailing)
                     Text("cm").foregroundStyle(.secondary)
                 }
             }
             LabeledContent("Težina") {
                 HStack {
-                    TextField(answers.unit.symbol, text: $weightText).keyboardType(.decimalPad).multilineTextAlignment(.trailing)
+                    TextField("Neobavezno", text: $weightText).keyboardType(.decimalPad).multilineTextAlignment(.trailing)
                     Text(answers.unit.symbol).foregroundStyle(.secondary)
                 }
             }
