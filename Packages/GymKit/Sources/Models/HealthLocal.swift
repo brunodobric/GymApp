@@ -208,9 +208,9 @@ public struct HealthLocalStore {
 
     /// Briše sve podatke iz Zdravlja na uređaju ("Obriši sve podatke").
     public func deleteAll() throws {
-        try context.delete(model: HealthWorkout.self)
-        try context.delete(model: HealthMeasurement.self)
-        try context.delete(model: SessionHealthData.self)
+        try context.deleteEvery(HealthWorkout.self)
+        try context.deleteEvery(HealthMeasurement.self)
+        try context.deleteEvery(SessionHealthData.self)
         try context.save()
     }
 

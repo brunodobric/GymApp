@@ -47,3 +47,13 @@ public enum GymPersistence {
         return try ModelContainer(for: fullSchema, configurations: [user, health])
     }
 }
+
+public extension ModelContext {
+    /// Briše sve zapise modela jedan po jedan. Skupno brisanje (`delete(model:)`) ne radi kad kontejner
+    /// ima više konfiguracija: Core Data ga šalje svakoj bazi, a baza bez tog modela javlja grešku.
+    func deleteEvery<T: PersistentModel>(_ model: T.Type) throws {
+        for item in try fetch(FetchDescriptor<T>()) {
+            delete(item)
+        }
+    }
+}
