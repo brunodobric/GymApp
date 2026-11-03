@@ -104,6 +104,16 @@ extension GymSchemaV1 {
             set { weightUnitRaw = newValue.rawValue }
         }
 
+        public var theme: AppTheme {
+            get { AppTheme(rawValue: themeRaw) ?? .system }
+            set { themeRaw = newValue.rawValue }
+        }
+
+        public var accent: AccentChoice {
+            get { AccentChoice(rawValue: accentColorRaw) ?? .blue }
+            set { accentColorRaw = newValue.rawValue }
+        }
+
         public var availablePlatesKg: [Double] {
             get { availablePlatesRaw.split(separator: ",").compactMap { Double($0) } }
             set { availablePlatesRaw = newValue.map { String($0) }.joined(separator: ",") }

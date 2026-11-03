@@ -59,7 +59,8 @@ struct ActiveWorkoutScreen: View {
             .sensoryFeedback(.success, trigger: completedCount)
             .sensoryFeedback(.error, trigger: errorCount)
             .onChange(of: session.restTimerEndsAt) { _, endsAt in
-                RestNotifications.sync(endsAt: endsAt, soundEnabled: settings?.restEndSoundEnabled ?? true)
+                let enabled = settings?.notificationsEnabled ?? true
+                RestNotifications.sync(endsAt: enabled ? endsAt : nil, soundEnabled: settings?.restEndSoundEnabled ?? true)
             }
             .sheet(item: Binding(
                 get: { finishedSummary.map(SummaryBox.init) },
@@ -298,7 +299,7 @@ struct ActiveWorkoutScreen: View {
             // Raspored napreduje samo ako je ovo bio njegov sljedeći trening; podsjetnici se zakazuju iznova.
             _ = try? ScheduleEngine(context: context).sessionFinished(session)
             ReminderScheduler.refresh(context: context)
-            let tracked = PRKind.kinds(fromSettings: settings?.trackedPRKinds ?? [])
+            let tracked = PRKind.tracked(by: settings)
             finishedSummary = try engine.summary(of: session, trackedKinds: tracked)
         } catch WorkoutError.nothingCompleted {
             showsNothingCompleted = true

@@ -25,8 +25,7 @@ struct StatisticsScreen: View {
     private var unit: WeightUnit { settingsList.first?.weightUnit ?? .kilograms }
 
     private var trackedKinds: Set<PRKind> {
-        guard let raw = settingsList.first?.trackedPRKinds else { return Set(PRKind.allCases) }
-        return PRKind.kinds(fromSettings: raw)
+        PRKind.tracked(by: settingsList.first)
     }
 
     private struct LoadKey: Equatable {

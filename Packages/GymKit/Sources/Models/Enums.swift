@@ -69,6 +69,18 @@ public enum ExperienceLevel: String, Codable, CaseIterable, Sendable {
     case advanced
 }
 
+/// Tema aplikacije: prati sustav ili je uvijek svijetla odnosno tamna.
+public enum AppTheme: String, Codable, CaseIterable, Sendable {
+    case system
+    case light
+    case dark
+}
+
+/// Naglasna boja aplikacije. `blue` je zadana (sistemska plava).
+public enum AccentChoice: String, Codable, CaseIterable, Sendable {
+    case blue, green, orange, red, purple, pink, teal
+}
+
 public enum EffortScale: String, Codable, CaseIterable, Sendable {
     case rpe
     case rir

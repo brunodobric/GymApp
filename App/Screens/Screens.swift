@@ -192,20 +192,10 @@ struct SettingsScreen: View {
         NavigationStack {
             Form {
                 if let settings {
+                    AppearanceSettingsSection(settings: settings)
                     TrainingSettingsSection(settings: settings)
-                }
-                Section {
-                    Picker("Tijelo na prikazu mišića", selection: Binding(
-                        get: { settings?.bodyMapFemale ?? false },
-                        set: { settings?.bodyMapFemale = $0 }
-                    )) {
-                        Text("Muško").tag(false)
-                        Text("Žensko").tag(true)
-                    }
-                } header: {
-                    Text("Prikaz")
-                } footer: {
-                    Text("Određuje koje se tijelo crta u statistici i u sažetku treninga.")
+                    PlatesSettingsSection(settings: settings)
+                    NotificationSettingsSection(settings: settings)
                 }
                 DataSettingsSection {
                     settings = try? GymQueries(context: context).settings()
@@ -257,6 +247,13 @@ private struct TrainingSettingsSection: View {
                 Text("RIR").tag(EffortScale.rir)
             }
             Toggle("Zvuk kraja odmora", isOn: $settings.restEndSoundEnabled)
+            Toggle("Rekordi (PR)", isOn: $settings.prEnabled)
+            if settings.prEnabled {
+                ForEach(PRSettingOption.allCases) { option in
+                    Toggle(option.title, isOn: option.binding(for: settings))
+                        .padding(.leading)
+                }
+            }
         }
     }
 }

@@ -188,6 +188,30 @@ struct PersonalRecordTests {
         #expect(kinds(result) == [.maxVolume])
         #expect(PRKind.kinds(fromSettings: []).isEmpty)
     }
+
+    @Test("PR-ovi isključeni u postavkama ne prate ništa")
+    func trackingFollowsSettings() {
+        let settings = UserSettings()
+        #expect(PRKind.tracked(by: settings) == PRKind.kinds(fromSettings: ["maxWeight", "maxVolume", "maxReps"]))
+        settings.trackedPRKinds = ["maxVolume"]
+        #expect(PRKind.tracked(by: settings) == [.maxVolume])
+        settings.prEnabled = false
+        #expect(PRKind.tracked(by: settings).isEmpty)
+        #expect(PRKind.tracked(by: nil) == Set(PRKind.allCases))
+    }
+
+    @Test("Tema i boja imaju zadane vrijednosti i ignoriraju nepoznate")
+    func themeAndAccent() {
+        let settings = UserSettings()
+        #expect(settings.theme == .system)
+        #expect(settings.accent == .blue)
+        settings.theme = .dark
+        settings.accent = .teal
+        #expect(settings.themeRaw == "dark" && settings.accentColorRaw == "teal")
+        settings.themeRaw = "nepoznato"
+        settings.accentColorRaw = "nepoznato"
+        #expect(settings.theme == .system && settings.accent == .blue)
+    }
 }
 
 @Suite("Rest timer i tijek")
