@@ -205,7 +205,8 @@ struct ScheduleProgressTests {
         let context = try makeContext()
         let engine = ScheduleEngine(context: context)
         let (schedule, _) = try abcSchedule(in: context, cycles: nil)
-        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        let first = try #require(try engine.nextWorkout(of: schedule))
+        try doWorkout(first, in: context, at: base)
         // Tri tjedna bez treninga: sljedeći je i dalje B, u istom ciklusu.
         let next = try #require(try engine.nextWorkout(of: schedule))
         #expect(next.template.name == "B" && next.cycle == 1)
@@ -230,7 +231,8 @@ struct ScheduleProgressTests {
         let context = try makeContext()
         let engine = ScheduleEngine(context: context)
         let (schedule, _) = try abcSchedule(in: context, cycles: nil)
-        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        let first = try #require(try engine.nextWorkout(of: schedule))
+        try doWorkout(first, in: context, at: base)
 
         let skip = try #require(try engine.skipNextWorkout(of: schedule))
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
@@ -254,7 +256,8 @@ struct ScheduleProgressTests {
         let engine = ScheduleEngine(context: context)
         let (schedule, templates) = try abcSchedule(in: context, cycles: nil)
         try TemplateEngine(context: context).delete(templates[1])
-        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        let first = try #require(try engine.nextWorkout(of: schedule))
+        try doWorkout(first, in: context, at: base)
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
     }
 
@@ -511,5 +514,61 @@ struct ProgramTests {
         let plank = try #require(templates.flatMap(\.orderedExercises).first { $0.exerciseName == "Plank" })
         #expect(plank.inputType == .duration)
         #expect(plank.orderedSets.allSatisfy { $0.targetReps == nil })
+    }
+}
+
+@Suite("Slaganje na iPadu: više stavki odjednom")
+struct BulkEditingTests {
+
+    @Test("Više vježbi odjednom ide na kraj ili na zadano mjesto, redom odabira i sa serijama")
+    func addSeveralExercises() throws {
+        let context = try makeContext()
+        let engine = TemplateEngine(context: context)
+        let result = try template("T", in: context, exercises: [squat, bench])
+
+        let appended = try engine.addExercises(
+            [ExerciseChoice(ref: row, inputType: .weightReps), ExerciseChoice(ref: curl, inputType: .weightReps)],
+            to: result
+        )
+        #expect(appended.count == 2)
+        #expect(result.orderedExercises.map(\.exerciseName) == ["Čučanj", "Potisak s klupe", "Veslanje", "Pregib"])
+        #expect(appended.allSatisfy { $0.orderedSets.count == TemplateEngine.defaultSetCount })
+
+        let pull = ExerciseRef(catalogId: "pullup", name: "Zgib")
+        try engine.addExercises([ExerciseChoice(ref: pull, inputType: .bodyweight)], to: result, at: 1)
+        #expect(result.orderedExercises.map(\.exerciseName) == ["Čučanj", "Zgib", "Potisak s klupe", "Veslanje", "Pregib"])
+        #expect(result.orderedExercises.map(\.orderIndex) == [0, 1, 2, 3, 4])
+        #expect(result.orderedExercises[1].inputType == .bodyweight)
+
+        // Mjesto izvan raspona ide na kraj, a prazan odabir ništa ne mijenja.
+        try engine.addExercises([ExerciseChoice(ref: pull, inputType: .bodyweight)], to: result, at: 99)
+        #expect(result.orderedExercises.last?.exerciseName == "Zgib")
+        #expect(try engine.addExercises([], to: result).isEmpty)
+        #expect(result.orderedExercises.count == 6)
+    }
+
+    @Test("Umetnuti treninzi ne pomiču sljedeći trening rasporeda")
+    func insertWorkouts() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, templates) = try abcSchedule(in: context, cycles: nil)
+        let names = Dictionary(uniqueKeysWithValues: templates.map { ($0.id, $0.name) })
+        func sequence() -> [String] {
+            schedule.orderedItems.map { $0.kind == .restDay ? "-" : (names[$0.workoutTemplateId ?? UUID()] ?? "?") }
+        }
+
+        // Odradi A: sljedeći je B (pozicija 2).
+        let first = try #require(try engine.nextWorkout(of: schedule))
+        try doWorkout(first, in: context, at: base)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+
+        let added = try engine.insertWorkouts([templates[2], templates[0]], into: schedule, at: 1)
+        #expect(added.count == 2)
+        #expect(sequence() == ["A", "C", "A", "-", "B", "C"])
+        #expect(schedule.orderedItems.map(\.orderIndex) == [0, 1, 2, 3, 4, 5])
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+
+        try engine.insertWorkouts([templates[1]], into: schedule)
+        #expect(sequence() == ["A", "C", "A", "-", "B", "C", "B"])
     }
 }

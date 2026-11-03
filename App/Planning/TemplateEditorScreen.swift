@@ -6,11 +6,16 @@ import SwiftUI
 import Units
 
 /// Uređivač treninga (predloška): vježbe, redoslijed, supersetovi, ciljane serije i pauze.
+///
+/// Vježbe se dodaju iz kataloga u bočnoj ploči (inspector): na iPadu stoji uz popis, pa se vježbe mogu
+/// odabrati više odjednom ili povući na željeno mjesto u popisu. Na iPhoneu se ploča otvara kao list.
 struct TemplateEditorScreen: View {
     @Bindable var template: WorkoutTemplate
 
     @Environment(\.modelContext) private var context
-    @State private var showsPicker = false
+    @Environment(CatalogStore.self) private var catalogStore
+    @Query private var customExercises: [CustomExercise]
+    @State private var showsCatalog = false
     @State private var errorText: String?
 
     private var engine: TemplateEngine { TemplateEngine(context: context) }
@@ -32,21 +37,32 @@ struct TemplateEditorScreen: View {
                     let list = template.orderedExercises
                     for index in offsets { try? engine.removeExercise(list[index]) }
                 }
-                Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
+                // Vježba povučena iz kataloga umeće se na mjesto gdje je puštena.
+                .dropDestination(for: String.self) { payloads, index in
+                    add(catalogStore.choices(from: payloads, custom: customExercises), at: index)
+                }
+                Button("Dodaj vježbe", systemImage: "plus") { showsCatalog = true }
+                    // Puštena na gumb (i u praznom treningu) vježba ide na kraj.
+                    .dropDestination(for: String.self) { payloads, _ in
+                        let choices = catalogStore.choices(from: payloads, custom: customExercises)
+                        add(choices, at: nil)
+                        return !choices.isEmpty
+                    }
             }
         }
         .navigationTitle(template.name.isEmpty ? String(localized: "Trening") : template.name)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { EditButton() }
-        .navigationDestination(for: TemplateExercise.self) { TemplateExerciseEditor(exercise: $0) }
-        .sheet(isPresented: $showsPicker) {
-            ExercisePickerSheet(title: "Dodaj vježbu") { summary, inputType in
-                do {
-                    try engine.addExercise(summary.ref, inputType: inputType, to: template)
-                } catch {
-                    errorText = String(localized: "Vježba se nije mogla dodati.")
-                }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Katalog", systemImage: "sidebar.trailing") { showsCatalog.toggle() }
+                    .keyboardShortcut("k", modifiers: .command)
             }
+            ToolbarItem(placement: .primaryAction) { EditButton() }
+        }
+        .navigationDestination(for: TemplateExercise.self) { TemplateExerciseEditor(exercise: $0) }
+        .inspector(isPresented: $showsCatalog) {
+            ExerciseCatalogPanel(isPresented: $showsCatalog) { add($0, at: nil) }
+                .inspectorColumnWidth(min: 300, ideal: 360, max: 480)
         }
         .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
             Button("U redu") {}
@@ -54,6 +70,15 @@ struct TemplateEditorScreen: View {
             Text(errorText ?? "")
         }
         .onDisappear { try? context.save() }
+    }
+
+    private func add(_ choices: [ExerciseChoice], at index: Int?) {
+        guard !choices.isEmpty else { return }
+        do {
+            try engine.addExercises(choices, to: template, at: index)
+        } catch {
+            errorText = String(localized: "Vježba se nije mogla dodati.")
+        }
     }
 
     private func row(for exercise: TemplateExercise) -> some View {
