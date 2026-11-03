@@ -407,7 +407,6 @@ final class WatchWorkoutStore {
         let visible = active.visibleExercises
         currentExerciseID = visible.first { !$0.isFullyCompleted }?.id ?? visible.first?.id
     }
-}
 
     // MARK: Spremanje
 

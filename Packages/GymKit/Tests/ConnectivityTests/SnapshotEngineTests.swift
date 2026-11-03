@@ -102,7 +102,8 @@ struct SnapshotEngineTests {
         var engine = SnapshotEngine(snapshot: SnapshotEngine.start(plan(), device: .watch, now: base))
         let exercise = engine.snapshot.exercises[0]
         engine.updateSet(exercise.orderedSets[1].id, now: base) { $0.rpe = 8 }
-        let added = try #require(engine.addSet(to: exercise.id, now: base.addingTimeInterval(5)))
+        let addedID = engine.addSet(to: exercise.id, now: base.addingTimeInterval(5))
+        let added = try #require(addedID)
         let set = try #require(engine.snapshot.set(withID: added))
         #expect(set.orderIndex == 2)
         #expect(set.kind == .working)
