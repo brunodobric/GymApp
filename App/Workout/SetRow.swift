@@ -131,7 +131,11 @@ struct SetRow: View {
     }
 
     private var completeButton: some View {
-        Button(action: onToggleComplete) {
+        Button {
+            // Tekst iz polja ide u model prije provjere, i kad je polje još u fokusu, da prvi dodir ne javi lažnu grešku.
+            if !set.isCompleted { applyAllFields() }
+            onToggleComplete()
+        } label: {
             Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
                 .font(.title)
                 .frame(minWidth: 44, minHeight: 44)
@@ -177,6 +181,21 @@ struct SetRow: View {
     }
 
     // MARK: Primjena unosa
+
+    private func applyAllFields() {
+        switch inputType {
+        case .weightReps, .weightedBodyweight, .assisted:
+            applyWeight()
+            applyReps()
+        case .bodyweight:
+            applyReps()
+        case .duration:
+            applyDuration()
+        case .durationDistance:
+            applyDuration()
+            applyDistance()
+        }
+    }
 
     private func applyWeight() {
         let kilograms = NumberInput.parse(weightText).map { WeightConversion.kilograms(from: $0, in: unit) }
