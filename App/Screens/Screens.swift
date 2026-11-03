@@ -180,6 +180,8 @@ struct SettingsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @State private var settings: UserSettings?
+    /// Isti ključ koristi kartica heatmapa u Statistici.
+    @AppStorage("bodyMapFemale") private var bodyMapFemale = false
 
     private var version: String {
         let info = Bundle.main.infoDictionary
@@ -193,6 +195,16 @@ struct SettingsScreen: View {
             Form {
                 if let settings {
                     TrainingSettingsSection(settings: settings)
+                }
+                Section {
+                    Picker("Tijelo u statistici", selection: $bodyMapFemale) {
+                        Text("Muško").tag(false)
+                        Text("Žensko").tag(true)
+                    }
+                } header: {
+                    Text("Prikaz")
+                } footer: {
+                    Text("Određuje koje se tijelo crta u heatmapu opterećenja.")
                 }
                 Section("O aplikaciji") {
                     LabeledContent("Verzija", value: version)
