@@ -20,7 +20,7 @@ struct HistoryScreen: View {
     /// Odabrani trening u popisu (id, da obrisani trening ne ostane odabran).
     @State private var selectedId: UUID?
 
-    private var unit: WeightUnit { settingsList.first?.weightUnit ?? .kilograms }
+    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
     private var visible: [Session] { filter.apply(to: sessions) }
 
     /// S kalendarom: treninzi prikazanog mjeseca ili odabranog dana.

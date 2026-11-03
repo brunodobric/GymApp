@@ -125,7 +125,7 @@ struct HomeScreen: View {
         }
     }
 
-    private var unit: WeightUnit { settingsList.first?.weightUnit ?? .kilograms }
+    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
     private var lastSession: Session? { finishedSessions.first }
 
     private var visibleCards: [DashboardCard] {
@@ -275,7 +275,9 @@ private struct RecoveryPrompt: Identifiable {
 struct SettingsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
-    @State private var settings: UserSettings?
+    // Postavke iz upita, a ne zapamćeni objekt: nakon sinkronizacije duplikat postavki može biti obrisan.
+    @Query private var settingsList: [UserSettings]
+    private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
 
     private var systemScheme: ColorScheme? {
         guard settings != nil else { return nil }
@@ -301,9 +303,9 @@ struct SettingsScreen: View {
                 }
                 SyncSettingsSection()
                 DataSettingsSection {
-                    settings = try? GymQueries(context: context).settings()
                     // Nakon brisanja svih podataka Početna prikazuje onboarding, pa se list zatvara.
-                    if settings?.onboardingCompleted == false { dismiss() }
+                    let fresh = try? GymQueries(context: context).settings()
+                    if fresh?.onboardingCompleted == false { dismiss() }
                 }
                 Section("O aplikaciji") {
                     LabeledContent("Verzija", value: version)
@@ -327,7 +329,7 @@ struct SettingsScreen: View {
             // sistemska shema izričito.
             .preferredColorScheme(settings?.theme.colorScheme ?? systemScheme)
             .tint(settings?.accent.color ?? AccentChoice.blue.color)
-            .task { settings = try? GymQueries(context: context).settings() }
+            .task { _ = try? GymQueries(context: context).settings() }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Gotovo") { dismiss() }

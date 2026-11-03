@@ -29,6 +29,7 @@ final class SyncMonitor {
     private var enabledStorage = SyncPreferences().isEnabled
 
     @ObservationIgnored private var isStarted = false
+    @ObservationIgnored private var deduplicationTask: Task<Void, Never>?
     @ObservationIgnored private var observers: [NSObjectProtocol] = []
     @ObservationIgnored private let logger = Logger(subsystem: "com.brunodobric.gymapp", category: "Sync")
 
@@ -59,6 +60,8 @@ final class SyncMonitor {
             MainActor.assumeIsolated { self?.refreshAccount() }
         })
         refreshAccount()
+        // Duplikati su mogli stići i u prethodnom pokretanju, prije nego što je uvoz javio kraj.
+        if AppServices.isSyncRunning { scheduleDeduplication() }
     }
 
     /// Ponovno provjerava iCloud račun (npr. kad se otvore Postavke).
@@ -81,7 +84,22 @@ final class SyncMonitor {
         if let failure = event.failure {
             logger.error("Sinkronizacija nije uspjela: \(String(describing: failure))")
         }
-        tracker.apply(event)
+        if tracker.apply(event) { scheduleDeduplication() }
+    }
+
+    /// Uklanja duplikate nakon uvoza s iClouda. Uvozi često dolaze jedan za drugim, pa se čeka kratka pauza.
+    private func scheduleDeduplication() {
+        deduplicationTask?.cancel()
+        deduplicationTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            do {
+                let removed = try Deduplication.removeAllDuplicates(in: AppServices.container.mainContext)
+                if removed > 0 { self?.logger.info("Nakon sinkronizacije uklonjeno duplikata: \(removed)") }
+            } catch {
+                self?.logger.error("Uklanjanje duplikata nije uspjelo: \(String(describing: error))")
+            }
+        }
     }
 
     // MARK: Pretvorba iz CloudKita

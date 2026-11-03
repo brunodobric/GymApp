@@ -56,7 +56,7 @@ enum AppServices {
 
     private static var isStarted = false
 
-    /// Pokreće vezu sa satom. Poziva se što ranije (i iz pozadinskih radnji), a više poziva ne smeta.
+    /// Pokreće vezu sa satom i praćenje sinkronizacije. Poziva se što ranije (i iz pozadinskih radnji), a više poziva ne smeta.
     static func start() {
         guard !isStarted else { return }
         isStarted = true

@@ -36,6 +36,8 @@ public enum Deduplication {
         total += try removeDuplicates(of: BodyMeasurement.self, id: \.id, in: context)
         total += try removeDuplicates(of: CustomExercise.self, id: \.id, in: context)
         total += try removeDuplicateHealthImports(in: context)
+        total += try removeDuplicateSettings(in: context)
+        total += try removeDuplicateDashboardCards(in: context)
         return total
     }
 
@@ -62,5 +64,87 @@ public enum Deduplication {
         }
         if removed > 0 { try context.save() }
         return removed
+    }
+
+    /// Svaki uređaj stvara svoj zapis postavki, pa ih nakon sinkronizacije može biti više.
+    /// Ostaje jedan, po istom pravilu na svim uređajima (`UserSettings.preferred(in:)`).
+    @discardableResult
+    public static func removeDuplicateSettings(in context: ModelContext) throws -> Int {
+        let all = try context.fetch(FetchDescriptor<UserSettings>())
+        guard all.count > 1, let kept = UserSettings.preferred(in: all) else { return 0 }
+        var removed = 0
+        for settings in all where settings.persistentModelID != kept.persistentModelID {
+            context.delete(settings)
+            removed += 1
+        }
+        try context.save()
+        return removed
+    }
+
+    /// Ista vrsta kartice dodana na dva uređaja. Ostaje kartica s manjim `orderIndex`, a redoslijed se ponovno numerira.
+    /// Kartice nepoznate vrste (iz novije verzije aplikacije) se ne diraju.
+    @discardableResult
+    public static func removeDuplicateDashboardCards(in context: ModelContext) throws -> Int {
+        let cards = try context.fetch(FetchDescriptor<DashboardCard>())
+            .sorted { ($0.orderIndex, $0.id.uuidString) < ($1.orderIndex, $1.id.uuidString) }
+        var seen = Set<String>()
+        var kept: [DashboardCard] = []
+        var removed = 0
+        for card in cards {
+            if DashboardCardKind(rawValue: card.kindRaw) != nil, !seen.insert(card.kindRaw).inserted {
+                context.delete(card)
+                removed += 1
+            } else {
+                kept.append(card)
+            }
+        }
+        guard removed > 0 else { return 0 }
+        for (index, card) in kept.enumerated() where card.orderIndex != index {
+            card.orderIndex = index
+        }
+        try context.save()
+        return removed
+    }
+}
+
+public extension UserSettings {
+    /// Koji od više zapisa postavki vrijedi. Isti zapis promijenjen na dva uređaja razrješava CloudKit
+    /// (vrijedi zadnja promjena), a više zapisa nastaje samo kad novi uređaj stvori svoje postavke prije
+    /// nego što stignu one iz iClouda. Tada prednost ima zapis s obavljenim onboardingom, zatim onaj koji
+    /// se više razlikuje od zadanih vrijednosti (korisnik ga je mijenjao), zatim najmanji `id`.
+    /// Pravilo je isto na svim uređajima, pa svi zadrže isti zapis.
+    static func preferred(in all: [UserSettings]) -> UserSettings? {
+        let defaults = UserSettings()
+        return all.min { lhs, rhs in
+            if lhs.onboardingCompleted != rhs.onboardingCompleted { return lhs.onboardingCompleted }
+            let lhsChanges = lhs.changeCount(from: defaults)
+            let rhsChanges = rhs.changeCount(from: defaults)
+            if lhsChanges != rhsChanges { return lhsChanges > rhsChanges }
+            return lhs.id.uuidString < rhs.id.uuidString
+        }
+    }
+
+    /// Koliko se postavki razlikuje od zadanih.
+    func changeCount(from defaults: UserSettings) -> Int {
+        let pairs: [(AnyHashable, AnyHashable)] = [
+            (weightUnitRaw, defaults.weightUnitRaw),
+            (defaultRestSeconds, defaults.defaultRestSeconds),
+            (themeRaw, defaults.themeRaw),
+            (accentColorRaw, defaults.accentColorRaw),
+            (effortScaleRaw, defaults.effortScaleRaw),
+            (prEnabled, defaults.prEnabled),
+            (trackedPRKindsRaw, defaults.trackedPRKindsRaw),
+            (restEndSoundEnabled, defaults.restEndSoundEnabled),
+            (availablePlatesRaw, defaults.availablePlatesRaw),
+            (barbellWeightKg, defaults.barbellWeightKg),
+            (goalRaw, defaults.goalRaw),
+            (experienceRaw, defaults.experienceRaw),
+            (equipmentRaw, defaults.equipmentRaw),
+            (trainingDaysPerWeek, defaults.trainingDaysPerWeek),
+            (wantsHealthKit, defaults.wantsHealthKit),
+            (notificationsEnabled, defaults.notificationsEnabled),
+            (bodyMapFemale, defaults.bodyMapFemale),
+        ]
+        return pairs.filter { $0.0 != $0.1 }.count
     }
 }

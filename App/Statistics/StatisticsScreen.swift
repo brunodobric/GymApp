@@ -22,10 +22,10 @@ struct StatisticsScreen: View {
     @State private var heatmap: [String: RegionLoad] = [:]
     @State private var records: [RecordEntry] = []
 
-    private var unit: WeightUnit { settingsList.first?.weightUnit ?? .kilograms }
+    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
 
     private var trackedKinds: Set<PRKind> {
-        PRKind.tracked(by: settingsList.first)
+        PRKind.tracked(by: UserSettings.preferred(in: settingsList))
     }
 
     private struct LoadKey: Equatable {
@@ -50,7 +50,7 @@ struct StatisticsScreen: View {
                         VolumeCard(period: $period, buckets: buckets, unit: unit)
                         ComparisonCard(comparison: VolumeComparison(buckets: buckets), period: period, unit: unit)
                         FrequencyCard(points: frequency)
-                        HeatmapCard(days: $heatmapDays, heatmap: heatmap, female: settingsList.first?.bodyMapFemale ?? false)
+                        HeatmapCard(days: $heatmapDays, heatmap: heatmap, female: UserSettings.preferred(in: settingsList)?.bodyMapFemale ?? false)
                         RecordsCard(records: records, unit: unit)
                     }
                     ProgressCard()

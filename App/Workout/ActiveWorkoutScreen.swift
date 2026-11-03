@@ -15,7 +15,9 @@ struct ActiveWorkoutScreen: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
-    @State private var settings: UserSettings?
+    // Postavke iz upita, a ne zapamćeni objekt: nakon sinkronizacije duplikat postavki može biti obrisan.
+    @Query private var settingsList: [UserSettings]
+    private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
     @State private var previousSets: [UUID: [SetValues]] = [:]
     @State private var openExerciseID: UUID?
     @State private var editMode: EditMode = .inactive
@@ -142,7 +144,7 @@ struct ActiveWorkoutScreen: View {
                 dismiss()
                 return
             }
-            settings = try? GymQueries(context: context).settings()
+            _ = try? GymQueries(context: context).settings()
             if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
             reloadPrevious()
             if openExerciseID == nil {

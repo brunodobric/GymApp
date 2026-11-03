@@ -91,7 +91,7 @@ struct ExerciseProgressScreen: View {
     @State private var compared: ExerciseRef?
     @State private var comparedPoints: [ExercisePoint] = []
 
-    private var unit: WeightUnit { settingsList.first?.weightUnit ?? .kilograms }
+    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
 
     private func value(_ point: ExercisePoint) -> Double? {
         let kilograms: Double?
