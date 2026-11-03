@@ -49,7 +49,7 @@ targets:
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: GymApp
+        CFBundleDisplayName: Apollo
         CFBundleDevelopmentRegion: hr
         CFBundleLocalizations: [hr, en]
         UILaunchScreen: {}
@@ -65,8 +65,8 @@ targets:
           - UIInterfaceOrientationLandscapeRight
         UIBackgroundModes: [remote-notification]
         NSSupportsLiveActivities: true
-        NSHealthShareUsageDescription: "GymApp čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
-        NSHealthUpdateUsageDescription: "GymApp sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
+        NSHealthShareUsageDescription: "Apollo čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
+        NSHealthUpdateUsageDescription: "Apollo sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
     configFiles:
       Debug: Config/App.xcconfig
       Release: Config/App.xcconfig
@@ -93,7 +93,7 @@ targets:
     info:
       path: WatchApp/Info.plist
       properties:
-        CFBundleDisplayName: GymApp
+        CFBundleDisplayName: Apollo
         CFBundleDevelopmentRegion: hr
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.brunodobric.gymapp
@@ -120,7 +120,7 @@ targets:
     info:
       path: Widgets/Info.plist
       properties:
-        CFBundleDisplayName: GymApp
+        CFBundleDisplayName: Apollo
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     configFiles:
