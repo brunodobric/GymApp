@@ -15,11 +15,15 @@ struct RootView: View {
     }
 
     @State private var selection: Section = .home
+    @State private var showsOnboarding = false
     @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
     @Query private var settingsList: [UserSettings]
 
     private var settings: UserSettings? { settingsList.first }
+
+    /// Dok postavke ne postoje ili onboarding nije obavljen, prikazuje se onboarding.
+    private var needsOnboarding: Bool { !(settings?.onboardingCompleted ?? false) }
 
     var body: some View {
         TabView(selection: $selection) {
@@ -42,6 +46,15 @@ struct RootView: View {
         .tabViewStyle(.sidebarAdaptable)
         .tint(settings?.accent.color ?? AccentChoice.blue.color)
         .preferredColorScheme(settings?.theme.colorScheme)
+        .fullScreenCover(isPresented: $showsOnboarding) {
+            OnboardingScreen()
+                .tint(settings?.accent.color ?? AccentChoice.blue.color)
+        }
+        // Kratka odgoda: ako je onboarding potreban zbog brisanja podataka, list Postavki se prvo mora zatvoriti.
+        .task(id: needsOnboarding) {
+            if needsOnboarding { try? await Task.sleep(for: .milliseconds(600)) }
+            showsOnboarding = needsOnboarding
+        }
         .task { ReminderScheduler.refresh(context: context) }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { ReminderScheduler.refresh(context: context) }

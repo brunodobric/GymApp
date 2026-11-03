@@ -364,3 +364,54 @@ struct DashboardLayoutTests {
         #expect(try layout.allCards().count == 2)
     }
 }
+
+@Suite("Onboarding")
+struct OnboardingTests {
+    @Test("Odgovori ulaze u postavke i mjerenja")
+    func appliesAnswers() throws {
+        let context = try makeContext()
+        var answers = OnboardingAnswers()
+        answers.goal = .strength
+        answers.unit = .pounds
+        answers.weight = 200
+        answers.heightCm = 180
+        answers.wantsHealthKit = true
+        answers.experience = .intermediate
+        answers.equipment = [.barbell, .dumbbell]
+        answers.daysPerWeek = 4
+        try OnboardingApplier(context: context).apply(answers)
+
+        let settings = try GymQueries(context: context).settings()
+        #expect(settings.goal == .strength && settings.weightUnit == .pounds)
+        #expect(settings.experience == .intermediate && settings.equipment == [.barbell, .dumbbell])
+        #expect(settings.trainingDaysPerWeek == 4 && settings.wantsHealthKit && settings.onboardingCompleted)
+
+        let measurements = try context.fetch(FetchDescriptor<BodyMeasurement>())
+        let weight = try #require(measurements.first { $0.kindRaw == "weight" })
+        #expect(abs(weight.value - 90.718474) < 0.0001) // 200 lbs spremljeno u kg
+        #expect(measurements.first { $0.kindRaw == "height" }?.value == 180)
+    }
+
+    @Test("Prazni i nerazumni odgovori se ne spremaju")
+    func ignoresInvalid() throws {
+        let context = try makeContext()
+        var answers = OnboardingAnswers()
+        answers.weight = 5
+        answers.heightCm = 20
+        answers.daysPerWeek = 9
+        try OnboardingApplier(context: context).apply(answers)
+
+        let settings = try GymQueries(context: context).settings()
+        #expect(settings.goal == nil && settings.experience == nil && settings.equipment.isEmpty)
+        #expect(settings.trainingDaysPerWeek == nil && settings.onboardingCompleted)
+        #expect(try context.fetch(FetchDescriptor<BodyMeasurement>()).isEmpty)
+    }
+
+    @Test("Preskakanje samo označava da je onboarding obavljen")
+    func skipOnlyMarksDone() throws {
+        let context = try makeContext()
+        try OnboardingApplier(context: context).skip()
+        let settings = try GymQueries(context: context).settings()
+        #expect(settings.onboardingCompleted && settings.goal == nil && settings.weightUnit == .kilograms)
+    }
+}
