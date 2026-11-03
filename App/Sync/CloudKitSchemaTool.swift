@@ -7,7 +7,7 @@ import SwiftUI
 /// Alat za razvoj: stvara cijelu shemu korisničke baze u CloudKit Development okruženju.
 ///
 /// SwiftData sam stvara samo tipove i polja zapisa koje je stvarno poslao, pa bi polje koje je uvijek nil
-/// (npr. `UserSettings.modifiedAt` na novom uređaju) nedostajalo u shemi. `initializeCloudKitSchema` šalje
+/// (npr. `Session.endedAt` dok trening traje) moglo nedostajati u shemi. `initializeCloudKitSchema` šalje
 /// po jedan probni zapis svakog tipa sa svim poljima i odmah ga briše. Nakon toga se shema u CloudKit konzoli
 /// objavljuje u produkcijsko okruženje (vidi docs/sinkronizacija.md).
 @MainActor
@@ -22,7 +22,7 @@ enum CloudKitSchemaTool {
                 containerIdentifier: AppServices.cloudContainerIdentifier
             )
             description.shouldAddStoreAsynchronously = false
-            guard let model = NSManagedObjectModel.makeManagedObjectModel(for: GymSchemaV2.models) else {
+            guard let model = NSManagedObjectModel.makeManagedObjectModel(for: GymSchemaV1.models) else {
                 throw CocoaError(.featureUnsupported)
             }
             let container = NSPersistentCloudKitContainer(name: GymPersistence.userStoreName, managedObjectModel: model)
