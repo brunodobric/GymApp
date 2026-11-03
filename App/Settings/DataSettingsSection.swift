@@ -38,16 +38,16 @@ struct DataSettingsSection: View {
         var fileExtension: String { self == .json ? "json" : "csv" }
         var baseName: String {
             switch self {
-            case .json: "GymApp-sigurnosna-kopija"
-            case .history: "GymApp-treninzi"
-            case .body: "GymApp-mjerenja"
+            case .json: "Apollo-sigurnosna-kopija"
+            case .history: "Apollo-treninzi"
+            case .body: "Apollo-mjerenja"
             }
         }
     }
 
     @State private var document = BackupDocument()
     @State private var exportType: UTType = .json
-    @State private var exportName = "GymApp"
+    @State private var exportName = "Apollo"
     @State private var showsExporter = false
     @State private var showsImporter = false
     @State private var showsDeleteStart = false

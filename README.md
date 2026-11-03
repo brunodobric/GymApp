@@ -2,6 +2,8 @@
 
 iOS, iPadOS i watchOS aplikacija za bilježenje treninga (Swift + SwiftUI).
 
+Korisnici aplikaciju vide pod imenom **Apollo** (`CFBundleDisplayName` u `project.yml`). Interno ime projekta, targeta i sheme ostaje GymApp. Ikona je u `App/Assets.xcassets` i `WatchApp/Assets.xcassets` (jedna slika 1024×1024 bez prozirnosti).
+
 * [Specifikacija (v3)](docs/SPECIFIKACIJA.md)
 * [Plan izrade](docs/PLAN_IZRADE.md)
 * [Pravila dizajna (Apple HIG)](docs/DIZAJN.md)
