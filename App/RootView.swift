@@ -57,9 +57,12 @@ struct RootView: View {
         }
         .task {
             ReminderScheduler.refresh(context: context)
+            PhoneWatchSync.shared.refreshContext()
             await HealthService.shared.importNewData(context: context)
         }
         .onChange(of: scenePhase) { _, phase in
+            // Satu se šalju svježi treninzi i postavke, i kad korisnik izađe iz aplikacije nakon izmjena.
+            if phase != .inactive { PhoneWatchSync.shared.refreshContext() }
             guard phase == .active else { return }
             ReminderScheduler.refresh(context: context)
             // Novi treninzi, težina i visina iz Zdravlja (samo ako je korisnik povezao Zdravlje).

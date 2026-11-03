@@ -163,7 +163,8 @@ struct HomeScreen: View {
     private func checkRecovery() {
         guard !checkedRecovery else { return }
         checkedRecovery = true
-        guard let active = activeSessions.first, presentedSession == nil else { return }
+        // Trening koji vodi sat nije prekinut na iPhoneu: sat je izvor istine i javlja njegov kraj.
+        guard let active = activeSessions.first, presentedSession == nil, active.controllingDevice == .phone else { return }
         let engine = WorkoutEngine(context: context)
         let assessment = RecoveryAssessment.assess(
             startedAt: active.startedAt, lastActivityAt: active.lastActivityAt,
@@ -175,6 +176,7 @@ struct HomeScreen: View {
     private func closeStale(_ session: Session) {
         do {
             try WorkoutEngine(context: context).closeStaleSession(session)
+            PhoneWatchSync.shared.sessionChanged(session)
             Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {
             // Bez završene serije nema što spremiti: trening se odbacuje.
@@ -186,6 +188,7 @@ struct HomeScreen: View {
 
     private func discard(_ session: Session) {
         RestNotifications.cancel()
+        PhoneWatchSync.shared.willDiscard(session)
         try? WorkoutEngine(context: context).discardSession(session)
         ReminderScheduler.refresh(context: context)
     }

@@ -19,11 +19,6 @@ struct PrototypesView: View {
                 } label: {
                     Label("WorkoutKit zakazivanje", systemImage: "figure.run")
                 }
-                NavigationLink {
-                    ConnectivityPrototypeView()
-                } label: {
-                    Label("Veza sa satom", systemImage: "applewatch")
-                }
             }
             .navigationTitle("Prototipi")
             .toolbar {

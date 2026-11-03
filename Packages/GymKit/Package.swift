@@ -24,7 +24,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "Units"),
-        .target(name: "Connectivity"),
         .target(name: "Catalog"),
         .target(
             name: "Models",
@@ -53,13 +52,23 @@ let package = Package(
             dependencies: ["Models", "Catalog", "Units"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
+        // Veza iPhone ↔ Watch: snimke treninga, naredbe, kontekst za sat i logika treninga na satu.
+        .target(
+            name: "Connectivity",
+            dependencies: ["Models", "Catalog", "Training", "Planning", "Units"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .target(
             name: "HealthSync",
             dependencies: ["Models"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(name: "UnitsTests", dependencies: ["Units"]),
-        .testTarget(name: "ConnectivityTests", dependencies: ["Connectivity"]),
+        .testTarget(
+            name: "ConnectivityTests",
+            dependencies: ["Connectivity", "Models", "Catalog", "Training", "Planning", "Units"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .testTarget(name: "CatalogTests", dependencies: ["Catalog"]),
         .testTarget(
             name: "TrainingTests",
