@@ -25,7 +25,7 @@ final class HealthService {
     private static let activeEnergy = HKQuantityType(.activeEnergyBurned)
     private static let heartRate = HKQuantityType(.heartRate)
     private static let distanceTypes = [
-        HKQuantityType(.distanceWalkingRunning), HKQuantityType(.distanceCycling), HKQuantityType(.distanceSwimming),
+        HKQuantityType(.distanceWalkingRunning), HKQuantityType(.distanceCycling), HKQuantityType(.distanceSwimming)
     ]
 
     private static let shareTypes: Set<HKSampleType> = [workoutType]
@@ -64,7 +64,7 @@ final class HealthService {
             try await builder.beginCollection(at: export.start)
             try await builder.addMetadata([
                 HKMetadataKeyExternalUUID: export.sessionId.uuidString,
-                HKMetadataKeyIndoorWorkout: true,
+                HKMetadataKeyIndoorWorkout: true
             ])
             try await builder.endCollection(at: export.end)
             guard let workout = try await builder.finishWorkout() else { return }
@@ -173,6 +173,7 @@ final class HealthService {
 }
 
 extension HealthActivity {
+    // swiftlint:disable:next cyclomatic_complexity
     init(_ type: HKWorkoutActivityType) {
         switch type {
         case .running: self = .running

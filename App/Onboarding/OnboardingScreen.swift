@@ -156,7 +156,7 @@ struct OnboardingScreen: View {
     private var healthStep: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Povezati s Apple Zdravljem?").font(.title3.bold())
-            Text("Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove, a kardio treninzi iz aplikacije Trening, težina i visina dolaze u aplikaciju. Aplikacija radi i bez toga, a odluku možeš promijeniti u Postavkama.")
+            Text("Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove, a kardio treninzi, težina i visina dolaze iz njega. Aplikacija radi i bez toga, a odluku mijenjaš u Postavkama.")
                 .font(.subheadline).foregroundStyle(.secondary)
             ChoiceRow(isSelected: answers.wantsHealthKit) {
                 answers.wantsHealthKit = true

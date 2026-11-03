@@ -82,7 +82,7 @@ struct WorkoutImportTests {
             run(activity: .walking, source: "com.apple.Fitness"),
             run(activity: .traditionalStrengthTraining),
             run(activity: .running, source: "com.strava.stravaride"),
-            run(activity: .other),
+            run(activity: .other)
         ]
         #expect(try HealthImporter(context: context).importWorkouts(records, name: name) == 2)
     }
@@ -120,7 +120,7 @@ struct BodyImportTests {
         let context = try makeContext()
         let samples = [
             HealthBodySample(uuid: UUID(), kind: .weight, value: 81.3, date: base),
-            HealthBodySample(uuid: UUID(), kind: .height, value: 182, date: base),
+            HealthBodySample(uuid: UUID(), kind: .height, value: 182, date: base)
         ]
         let importer = HealthImporter(context: context)
         #expect(try importer.importBodySamples(samples) == 2)
@@ -138,7 +138,7 @@ struct BodyImportTests {
         try context.save()
         let samples = [
             HealthBodySample(uuid: UUID(), kind: .weight, value: 0, date: base),
-            HealthBodySample(uuid: UUID(), kind: .waist, value: 85, date: base),
+            HealthBodySample(uuid: UUID(), kind: .waist, value: 85, date: base)
         ]
         #expect(try HealthImporter(context: context).importBodySamples(samples) == 0)
         #expect(try context.fetchCount(FetchDescriptor<BodyMeasurement>()) == 1)
