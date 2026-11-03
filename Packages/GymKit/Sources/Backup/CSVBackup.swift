@@ -12,6 +12,15 @@ public enum CSVBackup {
     ]
     static let bodyColumns = ["id", "kind", "custom_name", "value", "date", "source"]
 
+    /// Uvozi CSV prema zaglavlju: povijest treninga ili tjelesna mjerenja.
+    @discardableResult
+    public static func importAny(_ text: String, into context: ModelContext) throws -> BackupImportResult {
+        let header = CSV.parse(text).first
+        if header == historyColumns { return try importHistory(text, into: context) }
+        if header == bodyColumns { return try importBody(text, into: context) }
+        throw BackupError.invalidCSV(line: 1)
+    }
+
     // MARK: Povijest treninga
 
     public static func exportHistory(from context: ModelContext) throws -> String {

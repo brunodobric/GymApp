@@ -206,6 +206,9 @@ struct SettingsScreen: View {
                 } footer: {
                     Text("Određuje koje se tijelo crta u statistici i u sažetku treninga.")
                 }
+                DataSettingsSection {
+                    settings = try? GymQueries(context: context).settings()
+                }
                 Section("O aplikaciji") {
                     LabeledContent("Verzija", value: version)
                     // Atribucija kataloga (specifikacija, odjeljak 10), iako je javno vlasništvo.

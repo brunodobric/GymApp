@@ -254,6 +254,20 @@ struct CSVBackupTests {
         #expect(custom?.customName == "Bicepsi, lijevi" && custom?.source == .healthKit)
     }
 
+    @Test("importAny prepoznaje vrstu CSV-a po zaglavlju")
+    func importAnyDetectsKind() throws {
+        let source = try makeContext()
+        try fillSample(source)
+        let history = try CSVBackup.exportHistory(from: source)
+        let body = try CSVBackup.exportBody(from: source)
+        let target = try makeContext()
+        #expect(try CSVBackup.importAny(history, into: target) == BackupImportResult(added: 1, skipped: 0))
+        #expect(try CSVBackup.importAny(body, into: target) == BackupImportResult(added: 2, skipped: 0))
+        #expect(throws: BackupError.invalidCSV(line: 1)) {
+            try CSVBackup.importAny("x,y\n1,2\n", into: target)
+        }
+    }
+
     @Test("CSV parser: navodnici, zarezi, novi redovi i CRLF")
     func parser() {
         let rows = CSV.parse("a,\"b,\"\"c\"\"\nd\",e\r\n1,,3\r\n")
