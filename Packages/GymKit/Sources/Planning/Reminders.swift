@@ -8,6 +8,34 @@ public struct PlannedReminder: Equatable, Sendable {
     public let scheduleName: String
     public let workoutName: String?
     public let fireDate: Date
+    /// Sljedeći trening rasporeda na koji podsjetnik upućuje.
+    public var scheduleItemId: UUID?
+    public var templateId: UUID?
+    public var cycle: Int = 1
+    /// Kardio trening se pokreće na satu u aplikaciji Workout (faza 10).
+    public var isCardio = false
+
+    public init(
+        scheduleId: UUID, scheduleName: String, workoutName: String?, fireDate: Date,
+        scheduleItemId: UUID? = nil, templateId: UUID? = nil, cycle: Int = 1, isCardio: Bool = false
+    ) {
+        self.scheduleId = scheduleId
+        self.scheduleName = scheduleName
+        self.workoutName = workoutName
+        self.fireDate = fireDate
+        self.scheduleItemId = scheduleItemId
+        self.templateId = templateId
+        self.cycle = cycle
+        self.isCardio = isCardio
+    }
+
+    init(_ planned: PlannedWorkout, fireDate: Date) {
+        self.init(
+            scheduleId: planned.schedule.id, scheduleName: planned.schedule.name, workoutName: planned.template.name,
+            fireDate: fireDate, scheduleItemId: planned.item.id, templateId: planned.template.id, cycle: planned.cycle,
+            isCardio: planned.template.kind == .cardio
+        )
+    }
 
     /// Stabilan identifikator za zakazivanje i otkazivanje.
     public var identifier: String { "schedule-\(scheduleId.uuidString)-\(Int(fireDate.timeIntervalSince1970))" }
@@ -70,6 +98,12 @@ public struct ReminderBuilder {
     /// za raspored bez vremena podsjetnika, neaktivan raspored i raspored bez sljedećeg treninga.
     public func reminders(now: Date = Date(), calendar: Calendar = .current) throws -> [PlannedReminder] {
         if try GymQueries(context: context).activeSession() != nil { return [] }
+        return try plannedReminders(now: now, calendar: calendar)
+    }
+
+    /// Termini podsjetnika bez obzira na aktivni trening. Kardio planovi na satu se prema njima zakazuju
+    /// i tijekom treninga snage, jer plan na satu ne smeta kao obavijest.
+    public func plannedReminders(now: Date = Date(), calendar: Calendar = .current) throws -> [PlannedReminder] {
         let engine = ScheduleEngine(context: context)
         let finished = try context.fetch(FetchDescriptor<Session>()).filter { $0.state == .finished }
         var result: [PlannedReminder] = []
@@ -86,9 +120,7 @@ public struct ReminderBuilder {
                     weekdays: schedule.weekdays, minutesOfDay: minutes, now: now,
                     completedDays: completed, calendar: calendar
                 )
-                result += dates.map {
-                    PlannedReminder(scheduleId: schedule.id, scheduleName: schedule.name, workoutName: next.template.name, fireDate: $0)
-                }
+                result += dates.map { PlannedReminder(next, fireDate: $0) }
             case .flexible:
                 let last = own.map { $0.endedAt ?? $0.startedAt }.max()
                 let items = schedule.orderedItems
@@ -99,9 +131,7 @@ public struct ReminderBuilder {
                     lastWorkoutAt: last, gapDays: schedule.reminderGapDays, restDaysBeforeNext: rests,
                     minutesOfDay: minutes, now: now, calendar: calendar
                 ) {
-                    result.append(PlannedReminder(
-                        scheduleId: schedule.id, scheduleName: schedule.name, workoutName: next.template.name, fireDate: date
-                    ))
+                    result.append(PlannedReminder(next, fireDate: date))
                 }
             }
         }

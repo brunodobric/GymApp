@@ -24,6 +24,8 @@ extension GymSchemaV1 {
         public var activeEnergyKilocalories: Double?
         public var healthKitWorkoutId: UUID?
         public var isImportedFromWorkoutsApp: Bool = false
+        /// Plan iz WorkoutKita po kojem je uvezeni trening odrađen na satu (veza s rasporedom, faza 10).
+        public var workoutPlanId: UUID?
         public var distanceMeters: Double?
         public var averageHeartRate: Double?
         /// Rest timer se sprema kao trenutak početka i završetka (ne kao preostale sekunde), pa se nakon

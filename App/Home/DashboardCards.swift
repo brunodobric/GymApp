@@ -111,6 +111,9 @@ struct NextWorkoutCard: View {
     }
 
     private func exercisesText(_ workout: PlannedWorkout) -> String {
+        if workout.template.kind == .cardio {
+            return workout.template.cardioPlan.map(CardioText.summary) ?? ""
+        }
         let names = workout.exercises.map(\.ref.name)
         let shown = names.prefix(4).joined(separator: ", ")
         return names.count > 4 ? "\(shown) +\(names.count - 4)" : shown

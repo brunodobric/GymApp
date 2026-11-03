@@ -4,6 +4,7 @@ import HealthSync
 import Models
 import OSLog
 import SwiftData
+import WorkoutKit
 
 /// Veza s Apple Zdravljem (specifikacija, odjeljak 6).
 ///
@@ -91,8 +92,10 @@ final class HealthService {
         let importer = HealthImporter(context: context)
         do {
             let records = try await newWorkouts()
-            try importer.importWorkouts(records.items) { $0.title }
+            let imported = try importer.importWorkouts(records.items) { $0.title }
             records.commit()
+            // Kardio odrađen po planu iz rasporeda povezuje se s rasporedom (faza 10) i raspored napreduje.
+            if imported > 0 { ReminderScheduler.refresh(context: context) }
 
             for (type, kind) in [(Self.bodyMass, BodyMeasurementKind.weight), (Self.height, .height)] {
                 let samples = try await newBodySamples(of: type, kind: kind)
@@ -116,7 +119,15 @@ final class HealthService {
         let key = "health.anchor.workouts"
         let descriptor = HKAnchoredObjectQueryDescriptor(predicates: [.workout(predicate)], anchor: Self.anchor(forKey: key))
         let result = try await descriptor.result(for: store)
-        let records = result.addedSamples.map(record(from:))
+        var records: [HealthWorkoutRecord] = []
+        for workout in result.addedSamples {
+            var item = record(from: workout)
+            // Plan iz WorkoutKita po kojem je trening odrađen na satu. Samo za Appleove kardio treninge.
+            if item.isFromApple, item.activity.isCardio, let plan = try? await workout.workoutPlan {
+                item.workoutPlanId = plan.id
+            }
+            records.append(item)
+        }
         return Batch(items: records) { Self.store(result.newAnchor, forKey: key) }
     }
 

@@ -29,11 +29,22 @@ public struct TemplateEngine {
         return template
     }
 
+    /// Kardio trening: plan umjesto vježbi (faza 10).
+    @discardableResult
+    public func createCardioTemplate(name: String, plan: CardioPlan) throws -> WorkoutTemplate {
+        let template = WorkoutTemplate(name: name, kind: .cardio)
+        template.cardioPlan = plan
+        context.insert(template)
+        try context.save()
+        return template
+    }
+
     /// Kopija predloška s novim id-evima (i novim grupama supersetova).
     @discardableResult
     public func duplicate(_ template: WorkoutTemplate, name: String) throws -> WorkoutTemplate {
         let copy = WorkoutTemplate(name: name, kind: template.kind)
         copy.details = template.details
+        copy.cardioPlanRaw = template.cardioPlanRaw
         context.insert(copy)
         var groups: [UUID: UUID] = [:]
         for exercise in template.orderedExercises {

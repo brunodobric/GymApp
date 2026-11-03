@@ -183,6 +183,31 @@ struct JSONBackupTests {
             try JSONBackup.importBackup(Data(newer.utf8), into: context)
         }
     }
+
+    @Test("Kardio plan i plan sa sata preživljavaju export i import")
+    func cardioRoundTrip() throws {
+        let source = try makeContext()
+        let plan = CardioPlan(
+            activity: .cycling, location: .indoor, warmup: .time(seconds: 300),
+            intervals: [CardioInterval(work: .distance(meters: 1_000), recovery: .open, repeats: 3)]
+        )
+        let template = WorkoutTemplate(name: "Bicikl", kind: .cardio)
+        template.cardioPlan = plan
+        source.insert(template)
+        let planId = UUID()
+        let session = Session(name: "Bicikl", kind: .cardio, startedAt: start)
+        session.state = .finished
+        session.endedAt = start.addingTimeInterval(1_800)
+        session.isImportedFromWorkoutsApp = true
+        session.workoutPlanId = planId
+        source.insert(session)
+        try source.save()
+
+        let target = try makeContext()
+        _ = try JSONBackup.importBackup(try JSONBackup.export(from: source, now: exportTime), into: target)
+        #expect(try target.fetch(FetchDescriptor<WorkoutTemplate>()).first?.cardioPlan == plan)
+        #expect(try target.fetch(FetchDescriptor<Session>()).first?.workoutPlanId == planId)
+    }
 }
 
 @Suite("CSV sigurnosna kopija")

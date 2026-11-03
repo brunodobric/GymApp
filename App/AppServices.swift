@@ -23,6 +23,8 @@ enum AppServices {
     static func start() {
         guard !isStarted else { return }
         isStarted = true
+        // Dodir na podsjetnik rasporeda otvara pregled treninga.
+        NotificationRouter.shared.start()
         // WatchConnectivity sesija mora se aktivirati što ranije, da poruke sa sata
         // stignu i kad se aplikacija pokrene u pozadini.
         PhoneWatchSync.shared.start(container: container)

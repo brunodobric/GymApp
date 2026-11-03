@@ -55,6 +55,21 @@ struct RootView: View {
             if needsOnboarding { try? await Task.sleep(for: .milliseconds(600)) }
             showsOnboarding = needsOnboarding
         }
+        .sheet(isPresented: Binding(
+            get: { notificationSchedule != nil },
+            set: { if !$0 { NotificationRouter.shared.openScheduleId = nil } }
+        )) {
+            if let schedule = notificationSchedule {
+                NavigationStack {
+                    UpcomingWorkoutScreen(schedule: schedule)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Gotovo") { NotificationRouter.shared.openScheduleId = nil }
+                            }
+                        }
+                }
+            }
+        }
         .task {
             ReminderScheduler.refresh(context: context)
             PhoneWatchSync.shared.refreshContext()
@@ -71,6 +86,16 @@ struct RootView: View {
             // Novi treninzi, težina i visina iz Zdravlja (samo ako je korisnik povezao Zdravlje).
             Task { await HealthService.shared.importNewData(context: context) }
         }
+    }
+}
+
+extension RootView {
+    /// Raspored iz dodirnutog podsjetnika (ako još postoji).
+    private var notificationSchedule: Schedule? {
+        guard let id = NotificationRouter.shared.openScheduleId else { return nil }
+        var descriptor = FetchDescriptor<Schedule>(predicate: #Predicate { $0.id == id })
+        descriptor.fetchLimit = 1
+        return try? context.fetch(descriptor).first
     }
 }
 
