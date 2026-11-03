@@ -180,6 +180,8 @@ struct SettingsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @State private var settings: UserSettings?
+    /// Isti ključ koristi kartica heatmapa u Statistici.
+    @AppStorage("bodyMapFemale") private var bodyMapFemale = false
 
     private var version: String {
         let info = Bundle.main.infoDictionary
@@ -194,11 +196,27 @@ struct SettingsScreen: View {
                 if let settings {
                     TrainingSettingsSection(settings: settings)
                 }
+                Section {
+                    Picker("Tijelo u statistici", selection: $bodyMapFemale) {
+                        Text("Muško").tag(false)
+                        Text("Žensko").tag(true)
+                    }
+                } header: {
+                    Text("Prikaz")
+                } footer: {
+                    Text("Određuje koje se tijelo crta u heatmapu opterećenja.")
+                }
                 Section("O aplikaciji") {
                     LabeledContent("Verzija", value: version)
                     // Atribucija kataloga (specifikacija, odjeljak 10), iako je javno vlasništvo.
                     Link(destination: URL(string: "https://github.com/yuhonas/free-exercise-db")!) {
                         LabeledContent("Katalog vježbi", value: "free-exercise-db")
+                    }
+                    // Atribucija crteža tijela (MIT licenca zahtijeva copyright napomenu i tekst licence).
+                    NavigationLink {
+                        MuscleMapLicenseScreen()
+                    } label: {
+                        LabeledContent("Crteži tijela", value: "MuscleMap")
                     }
                     // TODO(faza 13): javni URL pravila privatnosti.
                     LabeledContent("Pravila privatnosti", value: "Uskoro")
@@ -236,5 +254,43 @@ private struct TrainingSettingsSection: View {
             }
             Toggle("Zvuk kraja odmora", isOn: $settings.restEndSoundEnabled)
         }
+    }
+}
+
+/// Izvor i licenca crteža tijela za heatmap.
+struct MuscleMapLicenseScreen: View {
+    private var licenseText: String {
+        let url = Bundle.main.resourceURL?.appendingPathComponent("BodyMap/LICENSE-MuscleMap.txt")
+        let raw = url.flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? "MIT License"
+        // Tvrdi prijelomi unutar odlomaka se spajaju da tekst teče po širini ekrana; prazni redovi
+        // i stavke koje počinju s "- " ostaju zasebni odlomci.
+        var paragraphs: [String] = []
+        var current = ""
+        for line in raw.split(separator: "\n", omittingEmptySubsequences: false) {
+            let text = line.trimmingCharacters(in: .whitespaces)
+            if text.isEmpty || text.hasPrefix("- ") {
+                if !current.isEmpty { paragraphs.append(current) }
+                current = text
+            } else {
+                current += current.isEmpty ? text : " " + text
+            }
+        }
+        if !current.isEmpty { paragraphs.append(current) }
+        return paragraphs.joined(separator: "\n\n")
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Crteži tijela u heatmapu preuzeti su iz projekta MuscleMap (MIT licenca).")
+                Link("github.com/Jsplice/MuscleMap", destination: URL(string: "https://github.com/Jsplice/MuscleMap")!)
+                Divider()
+                Text(licenseText).font(.footnote).foregroundStyle(.secondary)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .navigationTitle("MuscleMap")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

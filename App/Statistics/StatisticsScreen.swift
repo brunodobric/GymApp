@@ -196,7 +196,12 @@ private struct HeatmapCard: View {
     @Binding var days: Int
     let heatmap: [String: RegionLoad]
 
-    private let columns = [GridItem(.adaptive(minimum: 76), spacing: 8)]
+    @AppStorage("bodyMapFemale") private var female = false
+    @State private var selected: String?
+
+    private var top: [(region: String, load: RegionLoad)] {
+        heatmap.sorted { $0.value.intensity > $1.value.intensity }.prefix(3).map { ($0.key, $0.value) }
+    }
 
     var body: some View {
         StatisticsCard(title: "Opterećenje po dijelovima tijela") {
@@ -206,29 +211,35 @@ private struct HeatmapCard: View {
                 Text("Godina").tag(365)
             }
             .pickerStyle(.segmented)
-            LazyVGrid(columns: columns, spacing: 8) {
-                ForEach(BodyRegion.all, id: \.self) { region in
-                    tile(region)
-                }
+            Picker("Tijelo", selection: $female) {
+                Text("Muško").tag(false)
+                Text("Žensko").tag(true)
             }
-            Text("Tamnija boja znači veće opterećenje. Broj je koliko je treninga opteretilo taj dio.")
+            .pickerStyle(.segmented)
+            HStack(alignment: .top, spacing: 8) {
+                BodyFigureView(female: female, back: false, heatmap: heatmap, selected: $selected)
+                BodyFigureView(female: female, back: true, heatmap: heatmap, selected: $selected)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text("Prikaz tijela s opterećenjem. \(summary)"))
+            Text(caption).font(.subheadline)
+            Text("Tamnija boja znači veće opterećenje. Dodirni dio tijela za broj treninga.")
                 .font(.footnote).foregroundStyle(.secondary)
         }
     }
 
-    private func tile(_ region: String) -> some View {
-        let load = heatmap[region]
-        let intensity = load?.intensity ?? 0
-        let sessions = load?.sessions ?? 0
-        return VStack(spacing: 2) {
-            Text(BodyRegion.title(region)).font(.caption).multilineTextAlignment(.center)
-            Text("\(sessions)×").font(.headline)
+    private var summary: String {
+        if top.isEmpty { return String(localized: "Nema podataka.") }
+        return top.map { "\(BodyRegion.title($0.region)): \($0.load.sessions)" }.joined(separator: ", ")
+    }
+
+    private var caption: String {
+        if let selected {
+            let sessions = heatmap[selected]?.sessions ?? 0
+            return "\(BodyRegion.title(selected)): \(sessions) treninga"
         }
-        .frame(maxWidth: .infinity, minHeight: 56)
-        .padding(4)
-        .background(Color.accentColor.opacity(0.08 + 0.7 * intensity), in: RoundedRectangle(cornerRadius: 10))
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("\(BodyRegion.title(region)): \(sessions) treninga"))
+        if top.isEmpty { return String(localized: "U ovom razdoblju još nema treninga.") }
+        return String(localized: "Najopterećenije") + ": " + top.map { BodyRegion.title($0.region) }.joined(separator: ", ")
     }
 }
 

@@ -24,6 +24,7 @@ GymApp je u dobrom položaju jer nema vlastiti server, korisničke račune, anal
 | Komponenta | Licenca | Gdje se koristi |
 |---|---|---|
 | free-exercise-db | Unlicense | Katalog vježbi (podaci i slike) |
+| MuscleMap (github.com/Jsplice/MuscleMap) | MIT, © 2026 Jsplice / MuscleMap contributors | SVG putanje muškog i ženskog tijela za heatmap (samo vektori, bez fotografija). Pretvara ih `scripts/convert-musclemap.py` u `Resources/BodyMap/body.json`. Copyright napomena i tekst licence (`LICENSE-MuscleMap.txt`) su u "O aplikaciji". |
 
 ## Ne vrijedi sada, ali treba provjeriti ako se uvede
 

@@ -290,8 +290,9 @@ struct StatisticsPerformanceTests {
         print("Statistika za godinu dana: \(elapsed) s")
 
         #expect(!records.isEmpty && weekly.count == 52 && points.count == 156 && !heat.isEmpty)
-        // Gornja granica je namjerno široka da CI ne bude nestabilan; cilj na uređaju je ispod 0,5 s.
-        #expect(elapsed < 3, "Statistika je trajala \(elapsed) s")
+        // Test hvata algoritamske kvarove (red veličine), ne mikro-razlike. Na Macu traje oko 1 s, a na dijeljenom
+        // CI runneru uz paralelne testove izmjereno je 4,7 s, zato je granica 10 s. Cilj na uređaju je ispod 0,5 s.
+        #expect(elapsed < 10, "Statistika je trajala \(elapsed) s")
     }
 }
 
@@ -324,5 +325,60 @@ struct ExerciseRefKeyTests {
         #expect(ExerciseRef(key: "x:1", name: "C") == nil)
         #expect(ExerciseRef(key: "u:nije-uuid", name: "C") == nil)
         #expect(ExerciseRef(key: "c:", name: "C") == nil)
+    }
+}
+
+@Suite("BodyMap")
+struct BodyMapTests {
+    @Test func parsesMoveLineCurveClose() {
+        let commands = SVGPathParser.parse("M1.5 2L3-4C1 2 3 4 5 6Z")
+        #expect(commands == [
+            .move(toX: 1.5, toY: 2), .line(toX: 3, toY: -4),
+            .curve(c1x: 1, c1y: 2, c2x: 3, c2y: 4, toX: 5, toY: 6), .close
+        ])
+    }
+
+    @Test func repeatsImplicitArguments() {
+        let commands = SVGPathParser.parse("M0 0 1 1 2 2C1 1 2 2 3 3 4 4 5 5 6 6")
+        #expect(commands.count == 5)
+        #expect(commands[1] == .line(toX: 1, toY: 1))
+        #expect(commands[4] == .curve(c1x: 4, c1y: 4, c2x: 5, c2y: 5, toX: 6, toY: 6))
+    }
+
+    @Test func handlesAdjacentDecimalsAndMultipleSubpaths() {
+        let commands = SVGPathParser.parse("M1.5.5L2 2ZM5 5L6 6Z")
+        #expect(commands.first == .move(toX: 1.5, toY: 0.5))
+        #expect(commands.filter { $0 == .close }.count == 2)
+    }
+
+    @Test func stopsOnUnsupportedOrIncompleteInput() {
+        #expect(SVGPathParser.parse("M0 0A1 1 0 0 1 2 2") == [.move(toX: 0, toY: 0)])
+        #expect(SVGPathParser.parse("M0 0L5") == [.move(toX: 0, toY: 0)])
+        #expect(SVGPathParser.parse("").isEmpty)
+    }
+
+    @Test func decodesDiagramAndMapsGroups() throws {
+        let json = """
+        {"male-front":{"viewBox":[0,0,10,20],"bounds":[1,2,8,16],"outline":[{"id":"BODY","d":"M0 0Z"}],
+        "muscles":[{"id":"A","group":"QUADS","d":"M0 0Z"}]}}
+        """
+        let diagrams = try BodyMap.decode(Data(json.utf8))
+        let diagram = try #require(diagrams[BodyMap.key(female: false, back: false)])
+        #expect(diagram.muscles.first?.group == "QUADS")
+        #expect(diagram.outline.first?.group == nil)
+        #expect(diagram.bounds == [1, 2, 8, 16])
+    }
+
+    @Test func everyBodyMapGroupMapsToKnownRegion() {
+        let groups = [
+            "CHEST", "SHOULDERS_FRONT", "SHOULDERS_SIDE", "SHOULDERS_REAR", "BICEPS", "TRICEPS", "FOREARMS", "CORE",
+            "OBLIQUES", "QUADS", "HAMSTRINGS", "ADDUCTORS", "ABDUCTORS", "TRAPEZIUS", "RHOMBOIDS", "LATS",
+            "BACK_LOWER", "GLUTES", "CALVES"
+        ]
+        for group in groups {
+            let region = BodyRegion.region(forBodyMapGroup: group)
+            #expect(region != nil && BodyRegion.all.contains(region ?? ""))
+        }
+        #expect(BodyRegion.region(forBodyMapGroup: "HIP_FLEXORS") == nil)
     }
 }
