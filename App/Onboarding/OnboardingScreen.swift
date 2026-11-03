@@ -156,10 +156,14 @@ struct OnboardingScreen: View {
     private var healthStep: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Povezati s Apple Zdravljem?").font(.title3.bold())
-            Text("Treninzi se mogu spremati u Zdravlje, a težina i visina čitati iz njega. Aplikacija radi i bez toga. Povezivanje stiže u jednoj od sljedećih verzija; tvoj odgovor se pamti do tada.")
+            Text("Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove, a kardio treninzi, težina i visina dolaze iz njega. Aplikacija radi i bez toga, a odluku mijenjaš u Postavkama.")
                 .font(.subheadline).foregroundStyle(.secondary)
-            ChoiceRow(isSelected: answers.wantsHealthKit) { answers.wantsHealthKit = true } label: {
-                Text("Da, povezat ću")
+            ChoiceRow(isSelected: answers.wantsHealthKit) {
+                answers.wantsHealthKit = true
+                // Sistemski list s dozvolama odmah, dok je objašnjenje na zaslonu.
+                Task { await HealthService.shared.requestAuthorization() }
+            } label: {
+                Text("Da, poveži")
             }
             ChoiceRow(isSelected: !answers.wantsHealthKit) { answers.wantsHealthKit = false } label: {
                 Text("Ne sada")
@@ -239,6 +243,9 @@ struct OnboardingScreen: View {
         answers.weight = NumberInput.parse(weightText)
         do {
             try OnboardingApplier(context: context).apply(answers)
+            if answers.wantsHealthKit {
+                Task { await HealthService.shared.importNewData(context: context) }
+            }
         } catch {
             errorText = String(localized: "Odgovori se nisu mogli spremiti.")
         }

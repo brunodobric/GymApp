@@ -20,6 +20,7 @@ let package = Package(
         .library(name: "Planning", targets: ["Planning"]),
         .library(name: "Stats", targets: ["Stats"]),
         .library(name: "Backup", targets: ["Backup"]),
+        .library(name: "HealthSync", targets: ["HealthSync"]),
     ],
     targets: [
         .target(name: "Units"),
@@ -52,6 +53,11 @@ let package = Package(
             dependencies: ["Models", "Catalog", "Units"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
+        .target(
+            name: "HealthSync",
+            dependencies: ["Models"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .testTarget(name: "UnitsTests", dependencies: ["Units"]),
         .testTarget(name: "ConnectivityTests", dependencies: ["Connectivity"]),
         .testTarget(name: "CatalogTests", dependencies: ["Catalog"]),
@@ -73,6 +79,11 @@ let package = Package(
         .testTarget(
             name: "BackupTests",
             dependencies: ["Backup", "Models", "Catalog", "Units"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .testTarget(
+            name: "HealthSyncTests",
+            dependencies: ["HealthSync", "Models"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(

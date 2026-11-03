@@ -467,6 +467,8 @@ struct MeasurementDTO: Codable {
     var value: Double
     var date: Date
     var sourceRaw: String
+    /// Nije postojalo u starijim kopijama, pa je opcionalno.
+    var healthKitSampleId: UUID?
 
     init(_ model: BodyMeasurement) {
         id = model.id
@@ -475,6 +477,7 @@ struct MeasurementDTO: Codable {
         value = model.value
         date = model.date
         sourceRaw = model.sourceRaw
+        healthKitSampleId = model.healthKitSampleId
     }
 
     func make() -> BodyMeasurement {
@@ -483,6 +486,7 @@ struct MeasurementDTO: Codable {
         model.kindRaw = kindRaw
         model.customName = customName
         model.sourceRaw = sourceRaw
+        model.healthKitSampleId = healthKitSampleId
         return model
     }
 }

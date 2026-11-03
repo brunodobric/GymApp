@@ -175,6 +175,7 @@ struct HomeScreen: View {
     private func closeStale(_ session: Session) {
         do {
             try WorkoutEngine(context: context).closeStaleSession(session)
+            Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {
             // Bez završene serije nema što spremiti: trening se odbacuje.
             discard(session)
@@ -246,6 +247,7 @@ struct SettingsScreen: View {
                     TrainingSettingsSection(settings: settings)
                     PlatesSettingsSection(settings: settings)
                     NotificationSettingsSection(settings: settings)
+                    HealthSettingsSection(settings: settings)
                 }
                 DataSettingsSection {
                     settings = try? GymQueries(context: context).settings()

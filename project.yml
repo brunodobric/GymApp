@@ -43,7 +43,7 @@ targets:
         buildPhase: resources
     dependencies:
       - package: GymKit
-        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup]
+        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup, HealthSync]
       - target: GymAppWatch
       - target: GymAppWidgets
     info:
@@ -65,7 +65,7 @@ targets:
           - UIInterfaceOrientationLandscapeRight
         UIBackgroundModes: [remote-notification]
         NSSupportsLiveActivities: true
-        NSHealthShareUsageDescription: "GymApp čita tvoje treninge, tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
+        NSHealthShareUsageDescription: "GymApp čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
         NSHealthUpdateUsageDescription: "GymApp sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
     configFiles:
       Debug: Config/App.xcconfig
