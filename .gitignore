@@ -3,6 +3,7 @@
 App/Info.plist
 WatchApp/Info.plist
 Widgets/Info.plist
+WatchWidgets/Info.plist
 
 # Xcode i SwiftPM
 DerivedData/

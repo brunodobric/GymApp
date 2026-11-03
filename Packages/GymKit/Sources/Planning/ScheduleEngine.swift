@@ -11,6 +11,13 @@ public struct PlannedExercise: Equatable, Sendable, Identifiable {
     /// Vježba je zamijenjena u ovom ciklusu (ciljevi originalne vježbe se ne primjenjuju).
     public let isReplacement: Bool
 
+    public init(source: UUID, ref: ExerciseRef, inputType: ExerciseInputType, isReplacement: Bool) {
+        self.source = source
+        self.ref = ref
+        self.inputType = inputType
+        self.isReplacement = isReplacement
+    }
+
     public var id: UUID { source }
 }
 

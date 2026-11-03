@@ -32,14 +32,22 @@ struct ActiveWorkoutScreen: View {
     @State private var errorText: String?
     @State private var completedCount = 0
     @State private var errorCount = 0
+    /// Trening se zatvara s ovog ekrana (a ne sa sata).
+    @State private var isClosingHere = false
 
     private var engine: WorkoutEngine { WorkoutEngine(context: context) }
     private var unit: WeightUnit { settings?.weightUnit ?? .kilograms }
     private var visible: [SessionExercise] { session.orderedExercises.filter { !$0.isRemoved } }
+    /// Trening vodi sat: ovdje se zrcali, a izmjene idu na sat.
+    private var isLedByWatch: Bool { session.controllingDevice == .watch }
 
     var body: some View {
         NavigationStack {
             List {
+                if isLedByWatch {
+                    Label("Trening vodi Apple Watch", systemImage: "applewatch")
+                        .foregroundStyle(.secondary)
+                }
                 ForEach(visible) { exercise in
                     card(for: exercise)
                 }
@@ -59,8 +67,16 @@ struct ActiveWorkoutScreen: View {
             .sensoryFeedback(.success, trigger: completedCount)
             .sensoryFeedback(.error, trigger: errorCount)
             .onChange(of: session.restTimerEndsAt) { _, endsAt in
-                let enabled = settings?.notificationsEnabled ?? true
+                // Kad trening vodi sat, kraj odmora javlja sat (haptika), a iPhone ne šalje obavijest.
+                let enabled = (settings?.notificationsEnabled ?? true) && !isLedByWatch
                 RestNotifications.sync(endsAt: enabled ? endsAt : nil, soundEnabled: settings?.restEndSoundEnabled ?? true)
+            }
+            .onChange(of: session.lastActivityAt) {
+                if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
+            }
+            .onChange(of: session.stateRaw) {
+                // Trening je završen ili odbačen na satu: ekran se zatvara.
+                if session.state != .active, !isClosingHere { dismiss() }
             }
             .sheet(item: Binding(
                 get: { finishedSummary.map(SummaryBox.init) },
@@ -121,13 +137,19 @@ struct ActiveWorkoutScreen: View {
             }
         }
         .task {
+            // Trening je u međuvremenu završen (npr. na satu): nema se što nastaviti.
+            if session.state != .active {
+                dismiss()
+                return
+            }
             settings = try? GymQueries(context: context).settings()
+            if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
             reloadPrevious()
             if openExerciseID == nil {
                 openExerciseID = visible.first { $0.orderedSets.contains { !$0.isCompleted } }?.id ?? visible.first?.id
             }
-            // Timer koji je istekao dok je aplikacija bila ugašena ne prikazuje se.
-            if let timer = engine.restTimer(of: session), timer.isExpired(at: Date()) {
+            // Timer koji je istekao dok je aplikacija bila ugašena ne prikazuje se (trening na satu čisti sat).
+            if !isLedByWatch, let timer = engine.restTimer(of: session), timer.isExpired(at: Date()) {
                 try? engine.cancelRest(of: session)
             }
         }
@@ -285,6 +307,8 @@ struct ActiveWorkoutScreen: View {
     }
 
     private func restExpired() {
+        // Trening na satu: kraj odmora javlja sat, a sat i gasi timer.
+        guard !isLedByWatch else { return }
         UINotificationFeedbackGenerator().notificationOccurred(.success)
         if settings?.restEndSoundEnabled ?? true {
             AudioServicesPlaySystemSound(1007)
@@ -293,8 +317,11 @@ struct ActiveWorkoutScreen: View {
     }
 
     private func finish() {
+        isClosingHere = true
         do {
             try engine.finishSession(session)
+            // Sat dobiva završetak (vodi li trening sat) ili završnu snimku (vodi li ga iPhone).
+            PhoneWatchSync.shared.sessionChanged(session)
             RestNotifications.cancel()
             // Raspored napreduje samo ako je ovo bio njegov sljedeći trening; podsjetnici se zakazuju iznova.
             _ = try? ScheduleEngine(context: context).sessionFinished(session)
@@ -303,14 +330,18 @@ struct ActiveWorkoutScreen: View {
             finishedSummary = try engine.summary(of: session, trackedKinds: tracked)
             Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {
+            isClosingHere = false
             showsNothingCompleted = true
         } catch {
+            isClosingHere = false
             errorText = String(localized: "Trening se nije mogao spremiti.")
         }
     }
 
     private func discard() {
+        isClosingHere = true
         RestNotifications.cancel()
+        PhoneWatchSync.shared.willDiscard(session)
         try? engine.discardSession(session)
         ReminderScheduler.refresh(context: context)
         dismiss()

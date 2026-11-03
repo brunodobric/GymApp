@@ -1,34 +1,44 @@
 import SwiftUI
+import WatchKit
 
 @main
 struct GymAppWatchApp: App {
+    @WKApplicationDelegateAdaptor private var delegate: WatchAppDelegate
+    @State private var store = WatchWorkoutStore.shared
+
     init() {
-        ConnectivityPrototypeSession.shared.activate()
+        // WatchConnectivity se aktivira odmah, da poruke s iPhonea stignu i kad se aplikacija pokrene u pozadini.
+        WatchWorkoutStore.shared.start()
     }
 
     var body: some Scene {
         WindowGroup {
             WatchRootView()
+                .environment(store)
         }
     }
 }
 
-/// Privremeni početni ekran sata. Pravi ekrani (specifikacija, odjeljak 6) dolaze u fazi 8.
+final class WatchAppDelegate: NSObject, WKApplicationDelegate {
+    /// Sustav ponovno pokreće aplikaciju ako se ugasila usred treninga: sesija u Zdravlju se nastavlja.
+    func handleActiveWorkoutRecovery() {
+        Task { @MainActor in
+            WatchWorkoutStore.shared.health.recover()
+        }
+    }
+}
+
+/// Početni ekran, aktivni trening ili sažetak (specifikacija, odjeljak 6, "Watch ekrani").
 struct WatchRootView: View {
+    @Environment(WatchWorkoutStore.self) private var store
+
     var body: some View {
-        NavigationStack {
-            List {
-                Label("Trening stiže u fazi 8", systemImage: "figure.strengthtraining.traditional")
-                    .foregroundStyle(.secondary)
-                #if DEBUG
-                NavigationLink {
-                    ConnectivityPrototypeView()
-                } label: {
-                    Label("Veza s iPhoneom", systemImage: "iphone")
-                }
-                #endif
-            }
-            .navigationTitle("Početna")
+        if let summary = store.summary {
+            WatchSummaryView(summary: summary) { store.closeSummary() }
+        } else if store.active != nil {
+            WatchWorkoutView()
+        } else {
+            WatchHomeView()
         }
     }
 }
