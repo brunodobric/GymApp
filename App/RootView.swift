@@ -1,3 +1,4 @@
+import Models
 import SwiftData
 import SwiftUI
 
@@ -16,6 +17,9 @@ struct RootView: View {
     @State private var selection: Section = .home
     @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
+    @Query private var settingsList: [UserSettings]
+
+    private var settings: UserSettings? { settingsList.first }
 
     var body: some View {
         TabView(selection: $selection) {
@@ -36,6 +40,8 @@ struct RootView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .tint(settings?.accent.color ?? AccentChoice.blue.color)
+        .preferredColorScheme(settings?.theme.colorScheme)
         .task { ReminderScheduler.refresh(context: context) }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { ReminderScheduler.refresh(context: context) }

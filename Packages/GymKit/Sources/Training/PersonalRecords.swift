@@ -24,6 +24,12 @@ public enum PRKind: String, CaseIterable, Hashable, Sendable {
         }
         return result
     }
+
+    /// Tipovi koji se stvarno prate: prazno kad su PR-ovi isključeni u Postavkama.
+    public static func tracked(by settings: UserSettings?) -> Set<PRKind> {
+        guard let settings else { return Set(PRKind.allCases) }
+        return settings.prEnabled ? kinds(fromSettings: settings.trackedPRKinds) : []
+    }
 }
 
 public struct PersonalRecord: Equatable, Sendable {

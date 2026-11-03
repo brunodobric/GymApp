@@ -12,7 +12,9 @@ enum ReminderScheduler {
 
     @MainActor
     static func refresh(context: ModelContext) {
-        let reminders = (try? ReminderBuilder(context: context).reminders()) ?? []
+        // Isključene obavijesti u Postavkama: samo se uklanjaju zakazani podsjetnici.
+        let enabled = (try? GymQueries(context: context).settings().notificationsEnabled) ?? true
+        let reminders = enabled ? ((try? ReminderBuilder(context: context).reminders()) ?? []) : []
         let center = UNUserNotificationCenter.current()
         center.getPendingNotificationRequests { pending in
             let stale = pending.map(\.identifier).filter { $0.hasPrefix(prefix) }
