@@ -236,7 +236,7 @@ final class WatchWorkoutStore {
     /// šalje se iPhoneu zajamčenim kanalom.
     private func completeFinish() async {
         guard var snapshot = active else { return }
-        let result = await endHealthSession(at: snapshot.endedAt ?? Date())
+        let result = await health.end(at: snapshot.endedAt ?? Date(), save: context.savesToHealth, timeout: .seconds(10))
         var engine = SnapshotEngine(snapshot: snapshot)
         engine.recordHealth(
             workoutId: result.workoutId, activeEnergyKilocalories: result.activeEnergyKilocalories,
@@ -247,23 +247,6 @@ final class WatchWorkoutStore {
         showSummary(of: snapshot, volume: engine.totalVolumeKg)
         clearActive()
         isFinishing = false
-    }
-
-    /// Zdravlje ima najviše 10 sekundi za zatvaranje sesije. Ako ne odgovori, trening se ipak
-    /// završava i šalje iPhoneu (bez pulsa i kalorija), da sat ne ostane zapeo u treningu.
-    private func endHealthSession(at date: Date) async -> WorkoutSessionManager.Result {
-        let save = context.savesToHealth
-        let gate = ResumeGate()
-        return await withCheckedContinuation { continuation in
-            Task { @MainActor in
-                let result = await self.health.end(at: date, save: save)
-                if gate.open() { continuation.resume(returning: result) }
-            }
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(10))
-                if gate.open() { continuation.resume(returning: WorkoutSessionManager.Result()) }
-            }
-        }
     }
 
     private func showSummary(of snapshot: SessionSnapshot, volume: Double) {
@@ -449,16 +432,5 @@ final class WatchWorkoutStore {
         context = state.context
         active = state.active
         mirrorBase = state.mirrorBase
-    }
-}
-
-/// Propušta samo prvi od dva rezultata (Zdravlje ili istek vremena).
-@MainActor
-private final class ResumeGate {
-    private var isOpen = true
-
-    func open() -> Bool {
-        defer { isOpen = false }
-        return isOpen
     }
 }

@@ -15,6 +15,12 @@ struct WatchControlsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
+                // Gumbi su gore, da ih točkice stranica pri dnu nikad ne prekriju.
+                HStack {
+                    Button("Završi") { confirmsFinish = true }
+                        .tint(.green)
+                    Button("Odbaci", role: .destructive) { confirmsDiscard = true }
+                }
                 if let active = store.active {
                     Text(active.startedAt, style: .timer)
                         .font(.system(.title, design: .rounded, weight: .semibold).monospacedDigit())
@@ -29,12 +35,8 @@ struct WatchControlsView: View {
                     Text("Serije: \(active.completedSetCount)")
                         .font(.footnote)
                 }
-                Button("Završi", systemImage: "flag.checkered") { confirmsFinish = true }
-                    .tint(.green)
-                Button("Odbaci", systemImage: "trash", role: .destructive) { confirmsDiscard = true }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            // Mjesto za točkice stranica, da ne prekriju zadnji gumb.
             .padding(.bottom, 16)
         }
         .scenePadding(.horizontal)

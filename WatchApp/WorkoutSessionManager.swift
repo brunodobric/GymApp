@@ -101,6 +101,22 @@ final class WorkoutSessionManager: NSObject {
         return result
     }
 
+    /// Kao `end`, ali čeka najviše `timeout`. Ako Zdravlje ne odgovori, trening se ipak završava
+    /// (bez pulsa i kalorija), da sat ne ostane zapeo u treningu.
+    func end(at date: Date, save: Bool, timeout: Duration) async -> Result {
+        let gate = ResumeGate()
+        return await withCheckedContinuation { continuation in
+            Task { @MainActor in
+                let result = await self.end(at: date, save: save)
+                if gate.open() { continuation.resume(returning: result) }
+            }
+            Task { @MainActor in
+                try? await Task.sleep(for: timeout)
+                if gate.open() { continuation.resume(returning: Result()) }
+            }
+        }
+    }
+
     func discard() {
         session?.end()
         builder?.discardWorkout()
@@ -158,5 +174,16 @@ extension WorkoutSessionManager: HKLiveWorkoutBuilderDelegate {
         Task { @MainActor [heartRate, energy] in
             WatchWorkoutStore.shared.health.update(heartRate: heartRate, energy: energy)
         }
+    }
+}
+
+/// Propušta samo prvi od dva rezultata (Zdravlje ili istek vremena).
+@MainActor
+private final class ResumeGate {
+    private var isOpen = true
+
+    func open() -> Bool {
+        defer { isOpen = false }
+        return isOpen
     }
 }
