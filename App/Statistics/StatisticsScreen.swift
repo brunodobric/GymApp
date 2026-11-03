@@ -196,6 +196,7 @@ private struct HeatmapCard: View {
     @Binding var days: Int
     let heatmap: [String: RegionLoad]
 
+    /// Spol tijela bira se samo u Postavkama.
     @AppStorage("bodyMapFemale") private var female = false
     @State private var selected: String?
 
@@ -209,11 +210,6 @@ private struct HeatmapCard: View {
                 Text("30 dana").tag(30)
                 Text("90 dana").tag(90)
                 Text("Godina").tag(365)
-            }
-            .pickerStyle(.segmented)
-            Picker("Tijelo", selection: $female) {
-                Text("Muško").tag(false)
-                Text("Žensko").tag(true)
             }
             .pickerStyle(.segmented)
             HStack(alignment: .top, spacing: 8) {

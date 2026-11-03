@@ -382,3 +382,39 @@ struct BodyMapTests {
         #expect(BodyRegion.region(forBodyMapGroup: "HIP_FLEXORS") == nil)
     }
 }
+
+@Suite("Regije treninga")
+struct SessionRegionsTests {
+    @Test("Primarne regije su označene, sekundarne slabije, a neodrađene ih nemaju")
+    func primaryAndSecondary() throws {
+        let context = try makeContext()
+        let session = try addSession(context, at: base, lifts: [Lift(ref: bench, sets: [Work(weight: 80, reps: 5)])])
+        let regions = SessionRegions.worked(in: session, info: infoProvider)
+        #expect(regions["chest"]?.intensity == 1)
+        #expect(regions["triceps"]?.intensity == SessionRegions.secondaryIntensity)
+        #expect(regions["quads"] == nil)
+    }
+
+    @Test("Primarna regija druge vježbe nadjača sekundarnu, a warm-up i nezavršene serije se ne broje")
+    func primaryWinsAndWarmupIgnored() throws {
+        let context = try makeContext()
+        let session = try addSession(context, at: base, lifts: [
+            Lift(ref: bench, sets: [Work(weight: 80, reps: 5)]),
+            Lift(ref: squat, sets: [Work(weight: 100, reps: 5, kind: .warmUp)])
+        ])
+        let first = SessionRegions.worked(in: session, info: infoProvider)
+        #expect(first["quads"] == nil && first["glutes"] == nil)
+
+        let curl = ExerciseRef(catalogId: "squat", name: "Čučanj")
+        let both = try addSession(context, at: base, lifts: [
+            Lift(ref: bench, sets: [Work(weight: 80, reps: 5)]),
+            Lift(ref: curl, sets: [Work(weight: 100, reps: 5)])
+        ])
+        let regions = SessionRegions.worked(in: both, info: { key in
+            key == "c:squat"
+                ? ExerciseInfo(primaryRegions: ["triceps"])
+                : infoProvider(key)
+        })
+        #expect(regions["triceps"]?.intensity == 1)
+    }
+}
