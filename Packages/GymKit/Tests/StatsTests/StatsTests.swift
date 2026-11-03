@@ -87,6 +87,23 @@ struct HistoryTests {
         #expect(try history.sessions(filter: HistoryFilter(kinds: [.cardio])).map(\.id) == [new.id])
     }
 
+    @Test("Ispod kalendara su treninzi prikazanog mjeseca, a s odabranim danom samo tog dana")
+    func calendarList() throws {
+        let context = try makeContext()
+        // 15. 1., 31. 1. u 23:00 i 1. 2. 2027.
+        let jan15 = try addSession(context, at: base, lifts: [])
+        let jan31 = try addSession(context, at: base.addingTimeInterval(16 * day + 15 * 3600), kind: .cardio, lifts: [])
+        let feb1 = try addSession(context, at: base.addingTimeInterval(17 * day), lifts: [])
+        let all = [jan15, jan31, feb1]
+        let filter = HistoryFilter()
+
+        #expect(filter.apply(to: all, month: base, day: nil, calendar: calendar).map(\.id) == [jan31.id, jan15.id])
+        #expect(filter.apply(to: all, month: feb1.startedAt, day: nil, calendar: calendar).map(\.id) == [feb1.id])
+        #expect(filter.apply(to: all, month: base, day: jan31.startedAt, calendar: calendar).map(\.id) == [jan31.id])
+        #expect(filter.apply(to: all, month: base, day: base.addingTimeInterval(day), calendar: calendar).isEmpty)
+        #expect(HistoryFilter(kinds: [.strength]).apply(to: all, month: base, day: nil, calendar: calendar).map(\.id) == [jan15.id])
+    }
+
     @Test("Treninzi koji nisu završeni nisu u povijesti")
     func onlyFinished() throws {
         let context = try makeContext()

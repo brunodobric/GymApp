@@ -18,10 +18,9 @@ struct HistoryScreen: View {
     private var unit: WeightUnit { settingsList.first?.weightUnit ?? .kilograms }
     private var visible: [Session] { filter.apply(to: sessions) }
 
-    /// Popis ispod kalendara: samo treninzi odabranog dana.
+    /// S kalendarom: treninzi prikazanog mjeseca ili odabranog dana.
     private var listed: [Session] {
-        guard showsCalendar, let selectedDay else { return visible }
-        return visible.filter { Calendar.current.isDate($0.startedAt, inSameDayAs: selectedDay) }
+        showsCalendar ? filter.apply(to: sessions, month: month, day: selectedDay) : visible
     }
 
     var body: some View {
@@ -39,6 +38,11 @@ struct HistoryScreen: View {
                     ForEach(listed) { session in
                         NavigationLink(value: session) { SessionRow(session: session) }
                     }
+                    // Poruka ide u popis ispod kalendara, ne preko cijelog ekrana.
+                    if showsCalendar && listed.isEmpty && !sessions.isEmpty {
+                        Text(selectedDay == nil ? "U ovom mjesecu nema odrađenih treninga." : "Za odabrani dan nema odrađenih treninga.")
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             .overlay {
@@ -48,11 +52,11 @@ struct HistoryScreen: View {
                         systemImage: "clock",
                         description: Text("Ovdje će biti svi odrađeni treninzi.")
                     )
-                } else if listed.isEmpty {
+                } else if listed.isEmpty && !showsCalendar {
                     ContentUnavailableView(
                         "Nema treninga",
                         systemImage: "magnifyingglass",
-                        description: Text(showsCalendar ? "Za odabrani dan nema odrađenih treninga." : "Nijedan trening ne odgovara filteru.")
+                        description: Text("Nijedan trening ne odgovara filteru.")
                     )
                 }
             }
@@ -159,15 +163,22 @@ private struct CalendarMonthView: View {
             }
             .buttonStyle(.borderless)
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 6) {
-                ForEach(weekdayHeaders, id: \.self) { symbol in
-                    Text(symbol).font(.caption).foregroundStyle(.secondary)
+            // Obični Grid umjesto LazyVGrida: lijena mreža unutar retka popisa smetala je pomicanju popisa.
+            Grid(horizontalSpacing: 0, verticalSpacing: 6) {
+                GridRow {
+                    ForEach(weekdayHeaders, id: \.self) { symbol in
+                        Text(symbol).font(.caption).foregroundStyle(.secondary).frame(maxWidth: .infinity)
+                    }
                 }
-                ForEach(Array(days.enumerated()), id: \.offset) { _, day in
-                    if let day {
-                        dayCell(day)
-                    } else {
-                        Color.clear.frame(height: 40)
+                ForEach(Array(weeks.enumerated()), id: \.offset) { _, week in
+                    GridRow {
+                        ForEach(Array(week.enumerated()), id: \.offset) { _, day in
+                            if let day {
+                                dayCell(day)
+                            } else {
+                                Color.clear.frame(maxWidth: .infinity, minHeight: 40)
+                            }
+                        }
                     }
                 }
             }
@@ -210,6 +221,15 @@ private struct CalendarMonthView: View {
         let leading = (weekday - calendar.firstWeekday + 7) % 7
         let dates = (0..<count).compactMap { calendar.date(byAdding: .day, value: $0, to: interval.start) }
         return Array(repeating: nil, count: leading) + dates.map { Optional($0) }
+    }
+
+    /// Dani po tjednima, zadnji tjedan dopunjen praznim mjestima do sedam.
+    private var weeks: [[Date?]] {
+        let all = days
+        return stride(from: 0, to: all.count, by: 7).map { start in
+            let week = Array(all[start..<min(start + 7, all.count)])
+            return week + Array(repeating: nil, count: 7 - week.count)
+        }
     }
 
     private func shift(_ months: Int) {

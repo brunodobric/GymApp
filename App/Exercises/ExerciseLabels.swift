@@ -95,3 +95,12 @@ extension [Muscle] {
         map { String(localized: $0.title) }.formatted(.list(type: .and))
     }
 }
+
+extension ExerciseSearchLabels {
+    /// Nazivi kakve korisnik vidi u aplikaciji, za pretragu po kategoriji, mišiću i opremi.
+    static let app = ExerciseSearchLabels(
+        category: { String(localized: $0.title) },
+        muscle: { String(localized: $0.title) },
+        equipment: { String(localized: $0.title) }
+    )
+}
