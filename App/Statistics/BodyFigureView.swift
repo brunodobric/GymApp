@@ -39,7 +39,7 @@ final class BodyMapStore {
                 ParsedShape(
                     id: "\(shape.id)#\(index)",
                     region: shape.group.flatMap { BodyRegion.region(forBodyMapGroup: $0) },
-                    commands: SVGPathParser.parse(shape.d)
+                    commands: SVGPathParser.parse(shape.pathData)
                 )
             }
         }
@@ -57,16 +57,16 @@ struct SVGShape: Shape {
         let box = BodyMap.visibleBox
         let scaleX = rect.width / box[2]
         let scaleY = rect.height / box[3]
-        func point(_ x: Double, _ y: Double) -> CGPoint {
-            CGPoint(x: rect.minX + (x - box[0]) * scaleX, y: rect.minY + (y - box[1]) * scaleY)
+        func point(_ px: Double, _ py: Double) -> CGPoint {
+            CGPoint(x: rect.minX + (px - box[0]) * scaleX, y: rect.minY + (py - box[1]) * scaleY)
         }
         var path = Path()
         for command in commands {
             switch command {
-            case let .move(x, y): path.move(to: point(x, y))
-            case let .line(x, y): path.addLine(to: point(x, y))
-            case let .curve(c1x, c1y, c2x, c2y, x, y):
-                path.addCurve(to: point(x, y), control1: point(c1x, c1y), control2: point(c2x, c2y))
+            case let .move(toX, toY): path.move(to: point(toX, toY))
+            case let .line(toX, toY): path.addLine(to: point(toX, toY))
+            case let .curve(c1x, c1y, c2x, c2y, toX, toY):
+                path.addCurve(to: point(toX, toY), control1: point(c1x, c1y), control2: point(c2x, c2y))
             case .close: path.closeSubpath()
             }
         }

@@ -332,27 +332,27 @@ struct BodyMapTests {
     @Test func parsesMoveLineCurveClose() {
         let commands = SVGPathParser.parse("M1.5 2L3-4C1 2 3 4 5 6Z")
         #expect(commands == [
-            .move(x: 1.5, y: 2), .line(x: 3, y: -4),
-            .curve(c1x: 1, c1y: 2, c2x: 3, c2y: 4, x: 5, y: 6), .close
+            .move(toX: 1.5, toY: 2), .line(toX: 3, toY: -4),
+            .curve(c1x: 1, c1y: 2, c2x: 3, c2y: 4, toX: 5, toY: 6), .close
         ])
     }
 
     @Test func repeatsImplicitArguments() {
         let commands = SVGPathParser.parse("M0 0 1 1 2 2C1 1 2 2 3 3 4 4 5 5 6 6")
         #expect(commands.count == 5)
-        #expect(commands[1] == .line(x: 1, y: 1))
-        #expect(commands[4] == .curve(c1x: 4, c1y: 4, c2x: 5, c2y: 5, x: 6, y: 6))
+        #expect(commands[1] == .line(toX: 1, toY: 1))
+        #expect(commands[4] == .curve(c1x: 4, c1y: 4, c2x: 5, c2y: 5, toX: 6, toY: 6))
     }
 
     @Test func handlesAdjacentDecimalsAndMultipleSubpaths() {
         let commands = SVGPathParser.parse("M1.5.5L2 2ZM5 5L6 6Z")
-        #expect(commands.first == .move(x: 1.5, y: 0.5))
+        #expect(commands.first == .move(toX: 1.5, toY: 0.5))
         #expect(commands.filter { $0 == .close }.count == 2)
     }
 
     @Test func stopsOnUnsupportedOrIncompleteInput() {
-        #expect(SVGPathParser.parse("M0 0A1 1 0 0 1 2 2") == [.move(x: 0, y: 0)])
-        #expect(SVGPathParser.parse("M0 0L5") == [.move(x: 0, y: 0)])
+        #expect(SVGPathParser.parse("M0 0A1 1 0 0 1 2 2") == [.move(toX: 0, toY: 0)])
+        #expect(SVGPathParser.parse("M0 0L5") == [.move(toX: 0, toY: 0)])
         #expect(SVGPathParser.parse("").isEmpty)
     }
 

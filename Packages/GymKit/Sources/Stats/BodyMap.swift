@@ -2,9 +2,9 @@ import Foundation
 
 /// Naredba SVG putanje. MuscleMap koristi samo apsolutne naredbe M, L, C i Z.
 public enum PathCommand: Equatable, Sendable {
-    case move(x: Double, y: Double)
-    case line(x: Double, y: Double)
-    case curve(c1x: Double, c1y: Double, c2x: Double, c2y: Double, x: Double, y: Double)
+    case move(toX: Double, toY: Double)
+    case line(toX: Double, toY: Double)
+    case curve(c1x: Double, c1y: Double, c2x: Double, c2y: Double, toX: Double, toY: Double)
     case close
 }
 
@@ -46,15 +46,15 @@ public enum SVGPathParser {
             guard let letter = current else { return commands }
             switch letter {
             case "M":
-                guard let v = numbers(2) else { return commands }
-                commands.append(.move(x: v[0], y: v[1]))
+                guard let values = numbers(2) else { return commands }
+                commands.append(.move(toX: values[0], toY: values[1]))
                 current = "L" // dodatni parovi iza M su linije
             case "L":
-                guard let v = numbers(2) else { return commands }
-                commands.append(.line(x: v[0], y: v[1]))
+                guard let values = numbers(2) else { return commands }
+                commands.append(.line(toX: values[0], toY: values[1]))
             case "C":
-                guard let v = numbers(6) else { return commands }
-                commands.append(.curve(c1x: v[0], c1y: v[1], c2x: v[2], c2y: v[3], x: v[4], y: v[5]))
+                guard let values = numbers(6) else { return commands }
+                commands.append(.curve(c1x: values[0], c1y: values[1], c2x: values[2], c2y: values[3], toX: values[4], toY: values[5]))
             default:
                 return commands
             }
@@ -101,7 +101,12 @@ public struct BodyMapShape: Codable, Equatable, Sendable {
     public let id: String
     /// Grupa mišića u MuscleMap nazivlju (npr. "QUADS"). Obris tijela je nema.
     public let group: String?
-    public let d: String
+    public let pathData: String
+
+    private enum CodingKeys: String, CodingKey {
+        case id, group
+        case pathData = "d"
+    }
 }
 
 /// Tijelo jednog spola i strane (sprijeda ili straga) s obrisom i mišićnim plohama.
