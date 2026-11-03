@@ -16,6 +16,8 @@ struct RootView: View {
 
     @State private var selection: Section = .home
     @State private var showsOnboarding = false
+    /// Zahtjev Početnoj iz tipkovničkog prečaca (⌘N, ⌘,).
+    @State private var homeRequest: HomeRequest?
     @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
     @Query private var settingsList: [UserSettings]
@@ -28,7 +30,7 @@ struct RootView: View {
     var body: some View {
         TabView(selection: $selection) {
             Tab("Početna", systemImage: "house.fill", value: Section.home) {
-                HomeScreen()
+                HomeScreen(request: $homeRequest)
             }
             Tab("Povijest", systemImage: "clock.fill", value: Section.history) {
                 HistoryScreen()
@@ -44,6 +46,14 @@ struct RootView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        // Prečaci iz izbornika (AppCommands) djeluju na prozor koji je u fokusu.
+        .focusedSceneValue(\.rootActions, RootActions(
+            select: { selection = $0 },
+            request: { request in
+                selection = .home
+                homeRequest = request
+            }
+        ))
         .tint(settings?.accent.color ?? AccentChoice.blue.color)
         .preferredColorScheme(settings?.theme.colorScheme)
         .fullScreenCover(isPresented: $showsOnboarding) {

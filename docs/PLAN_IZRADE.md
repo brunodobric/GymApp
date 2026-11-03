@@ -229,6 +229,10 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 
 **Gotovo kad:** svi ključni ekrani prolaze provjeru na iPadu 11", 13" i u Split Viewu.
 
+**Kako je napravljeno:** iPad i iPhone dijele iste ekrane, a razlika ovisi o size classu. Povijest i Rasporedi koriste `NavigationSplitView` (popis lijevo, detalji ili uređivač desno), koji se u compact širini sklapa u stog. Odabir se pamti po id-u, pa obrisana stavka više nije odabrana. Katalog je u regular širini mreža sa sličicama (prva slika vježbe ili fotografija vlastite vježbe), koje se umanjuju izvan glavne niti i pamte u memoriji. Statistika ima karticu usporedbe ovog razdoblja s prethodnim (`VolumeComparison` u GymKitu, s testovima), više grafove na iPadu i usporedbu dviju vježbi na grafu napretka. Uređivači treninga i rasporeda imaju bočnu ploču (`inspector`) s katalogom odnosno treninzima: stavke se odabiru više odjednom ili povlače na željeno mjesto (`TemplateEngine.addExercises`, `ScheduleEngine.insertWorkouts`, s testovima). Na iPhoneu se ista ploča otvara kao list. Trening iz povijesti i vježba iz kataloga mogu se otvoriti u zasebnom prozoru (kontekstni izbornik, samo gdje sustav podržava više prozora). Prečaci: ⌘1 do ⌘5 za tabove, ⌘N za početak treninga, ⌘, za Postavke i ⌘K za ploču u uređivačima.
+
+**Otvoreno:** provjera na iPadu 11", 13", u Split Viewu i Stage Manageru (simulator na Macu ili TestFlight). Početna i aktivni trening na iPadu ostaju jedan stupac ograničene širine.
+
 ## Faza 12: CloudKit sinkronizacija (2 tj.)
 
 * Uključivanje sinkronizacije za korisničku bazu i prikaz stanja (sinkronizirano, iCloud nije prijavljen, isključeno).
