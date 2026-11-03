@@ -22,6 +22,13 @@ public struct HistoryFilter: Equatable, Sendable {
         let selected = kinds.isEmpty ? sessions : sessions.filter { kinds.contains($0.kind) }
         return selected.sorted { sort == .newestFirst ? $0.startedAt > $1.startedAt : $0.startedAt < $1.startedAt }
     }
+
+    /// Popis ispod kalendara: treninzi odabranog dana ili, bez odabira, cijelog prikazanog mjeseca.
+    public func apply(to sessions: [Session], month: Date, day: Date?, calendar: Calendar = .current) -> [Session] {
+        let component: Calendar.Component = day == nil ? .month : .day
+        guard let interval = calendar.dateInterval(of: component, for: day ?? month) else { return [] }
+        return apply(to: sessions.filter { interval.contains($0.startedAt) && $0.startedAt < interval.end })
+    }
 }
 
 /// Povijest odrađenih treninga: popis, dani s treningom za kalendar i brisanje.

@@ -107,18 +107,18 @@ struct ActiveWorkoutScreen: View {
                     try? engine.restoreExercise(exercise)
                 }
             }
-            .confirmationDialog("Sve serije su završene", isPresented: $showsFinishPrompt, titleVisibility: .visible) {
+            .alert("Sve serije su završene", isPresented: $showsFinishPrompt) {
                 Button("Završi trening") { finish() }
                 Button("Dodaj vježbu") { showsPicker = true }
                 Button("Nastavi", role: .cancel) {}
             }
-            .confirmationDialog("Završiti trening?", isPresented: $showsFinishConfirmation, titleVisibility: .visible) {
+            .alert("Završiti trening?", isPresented: $showsFinishConfirmation) {
                 Button("Završi trening") { finish() }
                 Button("Nastavi", role: .cancel) {}
             } message: {
                 Text("Serije koje nisu označene završenima neće se spremiti.")
             }
-            .confirmationDialog("Odbaciti trening?", isPresented: $showsDiscardConfirmation, titleVisibility: .visible) {
+            .alert("Odbaciti trening?", isPresented: $showsDiscardConfirmation) {
                 Button("Odbaci trening", role: .destructive) { discard() }
                 Button("Nastavi", role: .cancel) {}
             } message: {

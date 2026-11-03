@@ -65,6 +65,36 @@ public struct ExerciseFilter: Equatable, Sendable {
     }
 }
 
+/// Nazivi kategorija, mišića i opreme kako ih korisnik vidi. Pretraga ih uspoređuje s upitom,
+/// pa "sprava" pronalazi sve vježbe na spravi, a "triceps" sve vježbe za triceps.
+public struct ExerciseSearchLabels: Sendable {
+    let categories: [ExerciseCategory: String]
+    let muscles: [Muscle: String]
+    let equipment: [Equipment: String]
+
+    public init(
+        category: (ExerciseCategory) -> String,
+        muscle: (Muscle) -> String,
+        equipment: (Equipment) -> String
+    ) {
+        categories = Dictionary(uniqueKeysWithValues: ExerciseCategory.allCases.map { ($0, ExerciseSearch.normalize(category($0))) })
+        muscles = Dictionary(uniqueKeysWithValues: Muscle.allCases.map { ($0, ExerciseSearch.normalize(muscle($0))) })
+        self.equipment = Dictionary(uniqueKeysWithValues: Equipment.allCases.map { ($0, ExerciseSearch.normalize(equipment($0))) })
+    }
+
+    /// Bez naziva: pretraga samo po nazivu vježbe.
+    public static let none = ExerciseSearchLabels(category: { _ in "" }, muscle: { _ in "" }, equipment: { _ in "" })
+
+    /// Svi nazivi vježbe u jednom tekstu, odvojeni razmakom.
+    func text(for item: ExerciseSummary) -> String {
+        var parts: [String] = []
+        if let category = item.category, let title = categories[category] { parts.append(title) }
+        parts += item.muscles.compactMap { muscles[$0] }
+        if let value = item.equipment, let title = equipment[value] { parts.append(title) }
+        return parts.filter { !$0.isEmpty }.joined(separator: " ")
+    }
+}
+
 public enum ExerciseSearch {
 
     /// Mala slova, bez dijakritika i s đ → d, pa "cucanj" pronalazi "Čučanj", a "dizanje" "Dizanje".
@@ -75,9 +105,12 @@ public enum ExerciseSearch {
             .folding(options: [.diacriticInsensitive, .caseInsensitive, .widthInsensitive], locale: nil)
     }
 
-    /// Filtrira i poredava: najprije nazivi koji počinju upitom, zatim riječi koje počinju upitom, pa ostalo.
-    /// Svaka riječ upita mora se pojaviti u nazivu. Bez upita rezultat je abecedni.
-    public static func apply(_ filter: ExerciseFilter, to items: [ExerciseSummary]) -> [ExerciseSummary] {
+    /// Filtrira i poredava: najprije nazivi koji počinju upitom, zatim riječi koje počinju upitom, pa ostalo,
+    /// a na kraju vježbe koje upitu odgovaraju tek po kategoriji, mišiću ili opremi.
+    /// Svaka riječ upita mora se pojaviti u nazivu ili u `labels`. Bez upita rezultat je abecedni.
+    public static func apply(
+        _ filter: ExerciseFilter, to items: [ExerciseSummary], labels: ExerciseSearchLabels = .none
+    ) -> [ExerciseSummary] {
         let tokens = normalize(filter.query).split(whereSeparator: \.isWhitespace).map(String.init)
 
         var scored: [(item: ExerciseSummary, score: Int)] = []
@@ -95,7 +128,8 @@ public enum ExerciseSearch {
             if !filter.equipment.isEmpty {
                 guard let equipment = item.equipment, filter.equipment.contains(equipment) else { continue }
             }
-            guard let score = relevance(of: tokens, in: item.searchText) else { continue }
+            guard let score = relevance(of: tokens, in: item.searchText, labels: tokens.isEmpty ? "" : labels.text(for: item))
+            else { continue }
             scored.append((item, score))
         }
 
@@ -107,15 +141,21 @@ public enum ExerciseSearch {
             .map(\.item)
     }
 
-    /// nil ako neka riječ ne postoji u tekstu. Manje je bolje.
-    private static func relevance(of tokens: [String], in text: String) -> Int? {
+    /// nil ako neka riječ ne postoji ni u nazivu ni u `labels`. Manje je bolje.
+    private static func relevance(of tokens: [String], in text: String, labels: String) -> Int? {
         guard !tokens.isEmpty else { return 0 }
         var worst = 0
         for (position, token) in tokens.enumerated() {
-            guard let range = text.range(of: token) else { return nil }
-            let atStart = range.lowerBound == text.startIndex
-            let atWordStart = atStart || text[text.index(before: range.lowerBound)] == " "
-            let score = atStart && position == 0 ? 0 : (atWordStart ? 1 : 2)
+            let score: Int
+            if let range = text.range(of: token) {
+                let atStart = range.lowerBound == text.startIndex
+                let atWordStart = atStart || text[text.index(before: range.lowerBound)] == " "
+                score = atStart && position == 0 ? 0 : (atWordStart ? 1 : 2)
+            } else if labels.range(of: token) != nil {
+                score = 3
+            } else {
+                return nil
+            }
             worst = max(worst, score)
         }
         return worst

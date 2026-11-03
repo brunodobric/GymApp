@@ -13,7 +13,7 @@ struct ExercisesScreen: View {
     @State private var showsNewExercise = false
 
     private var results: [ExerciseSummary] {
-        ExerciseSearch.apply(filter, to: catalogStore.summaries + customExercises.map(\.summary))
+        ExerciseSearch.apply(filter, to: catalogStore.summaries + customExercises.map(\.summary), labels: .app)
     }
 
     var body: some View {

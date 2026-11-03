@@ -62,6 +62,28 @@ struct SearchTests {
         #expect(ExerciseSearch.apply(filter, to: sample).isEmpty)
     }
 
+    @Test("Pronalazi po opremi, mišiću i kategoriji, a vježbe s upitom u nazivu idu prve")
+    func labels() {
+        let labels = ExerciseSearchLabels(
+            category: { $0 == .back ? "Leđa" : "Kategorija" },
+            muscle: { $0 == .biceps ? "Biceps" : "Mišić" },
+            equipment: { $0 == .dumbbell ? "Bučice" : "Šipka" }
+        )
+        var filter = ExerciseFilter()
+        filter.query = "bucice"
+        #expect(ExerciseSearch.apply(filter, to: sample, labels: labels).map(\.id) == ["c:curl"])
+        filter.query = "biceps"
+        #expect(ExerciseSearch.apply(filter, to: sample, labels: labels).map(\.id) == ["c:curl"])
+        filter.query = "leđa šipka"
+        #expect(ExerciseSearch.apply(filter, to: sample, labels: labels).map(\.id) == ["c:dead", "c:row"])
+        // "Šipka" je oprema svih osim pregiba, ali vježbe sa "šipkom" u nazivu idu ispred mrtvog dizanja.
+        filter.query = "sipk"
+        #expect(ExerciseSearch.apply(filter, to: sample, labels: labels).map(\.id).last == "c:dead")
+        // Bez naziva pretraga ostaje samo po nazivu vježbe.
+        filter.query = "bucice"
+        #expect(ExerciseSearch.apply(filter, to: sample).isEmpty)
+    }
+
     @Test("Nazivi koji počinju upitom idu prvi")
     func relevanceOrder() {
         var filter = ExerciseFilter()
