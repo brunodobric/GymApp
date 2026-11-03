@@ -1,7 +1,7 @@
 #if DEBUG
 import SwiftUI
 
-/// Ulaz u prototipe iz faze 0. Postoji samo u Debug buildu.
+/// Ulaz u prototipe iz faze 0 i alate za razvoj. Postoji samo u Debug buildu.
 /// Postupak provjere i mjesto za upis nalaza: docs/prototipi.md.
 struct PrototypesView: View {
     @Environment(\.dismiss) private var dismiss
@@ -10,9 +10,9 @@ struct PrototypesView: View {
         NavigationStack {
             List {
                 NavigationLink {
-                    CloudKitPrototypeView()
+                    CloudKitSchemaToolView()
                 } label: {
-                    Label("SwiftData + CloudKit", systemImage: "icloud")
+                    Label("CloudKit shema", systemImage: "icloud")
                 }
                 NavigationLink {
                     WorkoutKitPrototypeView()

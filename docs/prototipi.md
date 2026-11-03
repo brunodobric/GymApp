@@ -1,6 +1,6 @@
 # Prototipi (faza 0)
 
-Tri prototipa provjeravaju pretpostavke iz specifikacije prije nego što se na njima gradi. Kod je u Debug buildu: na ekranu **Početna** gumb s čekićem (gore lijevo) otvara **Prototipi**. Prototip 3 (WatchConnectivity) uklonjen je u fazi 8, kad ga je zamijenila prava veza sa satom (`Shared/Common/WatchTransport.swift`).
+Tri prototipa provjeravaju pretpostavke iz specifikacije prije nego što se na njima gradi. Kod je u Debug buildu: na ekranu **Početna** gumb s čekićem (gore lijevo) otvara **Prototipi**. Prototip 3 (WatchConnectivity) uklonjen je u fazi 8, kad ga je zamijenila prava veza sa satom (`Shared/Common/WatchTransport.swift`). Prototip 1 (CloudKit) uklonjen je u fazi 12, kad je korisnička baza počela sinkronizaciju. Na njegovom mjestu je alat **CloudKit shema** (vidi `docs/sinkronizacija.md`), a provjera na uređajima je u tablici u tom dokumentu.
 
 Prototipi se moraju isprobati na **stvarnim uređajima**: simulator ne pokazuje stvarno ponašanje iClouda, WorkoutKita i veze sa satom. Za CloudKit trebaju dva uređaja s istim Apple ID-om.
 

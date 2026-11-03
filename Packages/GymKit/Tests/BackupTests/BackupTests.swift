@@ -332,3 +332,17 @@ struct DataResetTests {
         #expect(settings.weightUnit == .kilograms && !settings.onboardingCompleted)
     }
 }
+
+@Suite("Brisanje svih podataka i iCloud")
+struct DataResetScopeTests {
+
+    @Test("iCloud se briše samo kad sinkronizacija radi i račun je dostupan")
+    func scope() {
+        #expect(DataResetScope.resolve(isSyncRunning: false, account: nil) == .deviceOnly)
+        #expect(DataResetScope.resolve(isSyncRunning: false, account: .noAccount) == .deviceOnly)
+        #expect(DataResetScope.resolve(isSyncRunning: true, account: .available) == .deviceAndCloud)
+        #expect(DataResetScope.resolve(isSyncRunning: true, account: .noAccount) == .cloudUnavailable)
+        #expect(DataResetScope.resolve(isSyncRunning: true, account: nil) == .cloudUnavailable)
+        #expect(DataResetScope.resolve(isSyncRunning: true, account: .temporarilyUnavailable) == .cloudUnavailable)
+    }
+}
