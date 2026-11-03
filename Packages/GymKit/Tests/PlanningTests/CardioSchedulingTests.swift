@@ -266,7 +266,8 @@ struct CardioLinkTests {
         let mixed = try mixedSchedule(in: context)
         let (schedule, run, strength) = (mixed.schedule, mixed.run, mixed.strength)
         let engine = ScheduleEngine(context: context)
-        let planId = try #require(CardioPlanID.make(for: try #require(try engine.nextWorkout(of: schedule))))
+        let next = try #require(try engine.nextWorkout(of: schedule))
+        let planId = try #require(CardioPlanID.make(for: next))
         let session = try importedRun(in: context, at: start, planId: planId)
 
         #expect(try CardioPlanLinker(context: context).linkImportedSessions(calendar: utc) == 1)
@@ -298,7 +299,8 @@ struct CardioLinkTests {
         let context = try makeContext()
         let mixed = try mixedSchedule(in: context)
         let (schedule, run) = (mixed.schedule, mixed.run)
-        let planId = try #require(CardioPlanID.make(for: try #require(try ScheduleEngine(context: context).nextWorkout(of: schedule))))
+        let next = try #require(try ScheduleEngine(context: context).nextWorkout(of: schedule))
+        let planId = try #require(CardioPlanID.make(for: next))
         let yesterday = try importedRun(in: context, at: start.addingTimeInterval(-oneDay), planId: nil)
         let today = try importedRun(in: context, at: start.addingTimeInterval(3600), planId: nil)
         let done = ScheduledCardioPlan(planId: planId, date: start, isComplete: true)
@@ -321,7 +323,8 @@ struct CardioLinkTests {
         try engine.addWorkout(first, to: schedule)
         try engine.addWorkout(second, to: schedule)
 
-        let firstId = try #require(CardioPlanID.make(for: try #require(try engine.nextWorkout(of: schedule))))
+        let next = try #require(try engine.nextWorkout(of: schedule))
+        let firstId = try #require(CardioPlanID.make(for: next))
         let secondItem = schedule.orderedItems[1]
         let secondId = CardioPlanID.make(
             scheduleId: schedule.id, scheduleItemId: secondItem.id, cycle: 1, planRaw: try #require(second.cardioPlanRaw)

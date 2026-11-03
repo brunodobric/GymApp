@@ -93,6 +93,11 @@ final class CardioWorkoutScheduler {
             limit: WorkoutScheduler.maxAllowedScheduledWorkoutCount
         )
         guard !changes.isEmpty else { return }
+        await apply(changes, current: current)
+    }
+
+    private func apply(_ changes: CardioScheduleChanges, current: [Current]) async {
+        let scheduler = WorkoutScheduler.shared
         for stale in changes.remove {
             for match in current where match.entry == stale {
                 await scheduler.remove(match.plan.plan, at: match.plan.date)
@@ -178,10 +183,14 @@ extension CardioGoal {
         switch self {
         case .open:
             .open
+        case .time(let seconds) where seconds.truncatingRemainder(dividingBy: 60) == 0:
+            .time(seconds / 60, .minutes)
         case .time(let seconds):
-            seconds.truncatingRemainder(dividingBy: 60) == 0 ? .time(seconds / 60, .minutes) : .time(seconds, .seconds)
+            .time(seconds, .seconds)
+        case .distance(let meters) where meters.truncatingRemainder(dividingBy: 1_000) == 0:
+            .distance(meters / 1_000, .kilometers)
         case .distance(let meters):
-            meters.truncatingRemainder(dividingBy: 1_000) == 0 ? .distance(meters / 1_000, .kilometers) : .distance(meters, .meters)
+            .distance(meters, .meters)
         }
     }
 }

@@ -173,7 +173,7 @@ struct CardioGoalEditor: View {
             }
             .onAppear { distanceText = NumberInput.format(meters / 1_000) }
             .onChange(of: distanceText) { _, text in
-                if let km = NumberInput.parse(text), km > 0 { goal = .distance(meters: km * 1_000) }
+                if let kilometers = NumberInput.parse(text), kilometers > 0 { goal = .distance(meters: kilometers * 1_000) }
             }
         }
     }
