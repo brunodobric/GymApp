@@ -34,6 +34,8 @@ struct WatchControlsView: View {
                 Button("Odbaci", systemImage: "trash", role: .destructive) { confirmsDiscard = true }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            // Mjesto za točkice stranica, da ne prekriju zadnji gumb.
+            .padding(.bottom, 16)
         }
         .scenePadding(.horizontal)
         .confirmationDialog("Završiti trening?", isPresented: $confirmsFinish) {

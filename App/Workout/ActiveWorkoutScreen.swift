@@ -137,6 +137,11 @@ struct ActiveWorkoutScreen: View {
             }
         }
         .task {
+            // Trening je u međuvremenu završen (npr. na satu): nema se što nastaviti.
+            if session.state != .active {
+                dismiss()
+                return
+            }
             settings = try? GymQueries(context: context).settings()
             if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
             reloadPrevious()
