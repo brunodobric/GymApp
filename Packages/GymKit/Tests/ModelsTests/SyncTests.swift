@@ -61,9 +61,11 @@ struct SyncActivityTrackerTests {
         var tracker = SyncActivityTracker()
         let id = UUID()
         let end = Date(timeIntervalSince1970: 500)
-        #expect(tracker.apply(SyncEvent(id: id, kind: .export)) == false)
+        let started = tracker.apply(SyncEvent(id: id, kind: .export))
+        #expect(started == false)
         #expect(tracker.activity == .syncing)
-        #expect(tracker.apply(SyncEvent(id: id, kind: .export, endDate: end)) == false)
+        let ended = tracker.apply(SyncEvent(id: id, kind: .export, endDate: end))
+        #expect(ended == false)
         #expect(tracker.activity == .idle(lastSync: end))
     }
 
@@ -72,8 +74,10 @@ struct SyncActivityTrackerTests {
         var tracker = SyncActivityTracker()
         let id = UUID()
         tracker.apply(SyncEvent(id: id, kind: .import))
-        #expect(tracker.apply(SyncEvent(id: id, kind: .import, endDate: .now)))
-        #expect(tracker.apply(SyncEvent(id: UUID(), kind: .import, endDate: .now, failure: .network)) == false)
+        let finished = tracker.apply(SyncEvent(id: id, kind: .import, endDate: .now))
+        #expect(finished)
+        let failed = tracker.apply(SyncEvent(id: UUID(), kind: .import, endDate: .now, failure: .network))
+        #expect(failed == false)
     }
 
     @Test("Greška ostaje do sljedećeg uspjeha")
