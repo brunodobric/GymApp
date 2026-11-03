@@ -1,6 +1,6 @@
 import SwiftData
 
-/// Verzija 1 sheme korisničke baze (sinkronizira se preko CloudKita). Trenutna je verzija 2 (`SchemaV2.swift`).
+/// Verzija 1 sheme korisničke baze (sinkronizira se preko CloudKita).
 /// Modeli su ugniježđeni u ovaj prostor imena kako bi se kasnije mogle dodati verzije (V2, ...)
 /// uz zadržavanje starih definicija za migraciju. Nakon prvog izdanja shema se samo proširuje.
 ///
@@ -31,7 +31,7 @@ public enum GymSchemaV1: VersionedSchema {
     }
 }
 
-// Trenutna verzija (V2): ostatak koda koristi ove nazive.
+// Trenutna verzija: ostatak koda koristi ove nazive.
 public typealias CustomExercise = GymSchemaV1.CustomExercise
 public typealias Schedule = GymSchemaV1.Schedule
 public typealias ScheduleItem = GymSchemaV1.ScheduleItem
@@ -44,12 +44,9 @@ public typealias SessionExercise = GymSchemaV1.SessionExercise
 public typealias SetLog = GymSchemaV1.SetLog
 public typealias BodyMeasurement = GymSchemaV1.BodyMeasurement
 public typealias DashboardCard = GymSchemaV1.DashboardCard
-public typealias UserSettings = GymSchemaV2.UserSettings
+public typealias UserSettings = GymSchemaV1.UserSettings
 
 public enum GymMigrationPlan: SchemaMigrationPlan {
-    public static var schemas: [any VersionedSchema.Type] { [GymSchemaV1.self, GymSchemaV2.self] }
-    public static var stages: [MigrationStage] { [v1ToV2] }
-
-    /// V2 samo dodaje opcionalno polje `UserSettings.modifiedAt`, pa je dovoljna laka migracija.
-    static var v1ToV2: MigrationStage { .lightweight(fromVersion: GymSchemaV1.self, toVersion: GymSchemaV2.self) }
+    public static var schemas: [any VersionedSchema.Type] { [GymSchemaV1.self] }
+    public static var stages: [MigrationStage] { [] }
 }

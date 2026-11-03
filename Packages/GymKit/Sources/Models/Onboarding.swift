@@ -57,7 +57,6 @@ public struct OnboardingApplier {
         settings.equipment = answers.equipment
         settings.trainingDaysPerWeek = answers.validDaysPerWeek
         settings.onboardingCompleted = true
-        settings.modifiedAt = now
         if let weightKg = answers.weightKg {
             context.insert(BodyMeasurement(kind: .weight, value: weightKg, date: now))
         }

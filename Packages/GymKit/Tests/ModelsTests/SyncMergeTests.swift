@@ -7,20 +7,20 @@ private func makeContext() throws -> ModelContext {
     ModelContext(try GymPersistence.makeUserContainer(storage: .inMemory))
 }
 
-@Suite("Sinkronizacija: duplikati i last write wins")
+@Suite("Sinkronizacija: duplikati")
 struct SyncMergeTests {
 
-    @Test("Od više postavki ostaju zadnje promijenjene")
-    func settingsLastWriteWins() throws {
+    @Test("Od više postavki ostaju one s obavljenim onboardingom")
+    func settingsOnboardedWins() throws {
         let context = try makeContext()
-        let untouched = UserSettings()
-        let older = UserSettings()
-        older.defaultRestSeconds = 60
-        older.modifiedAt = Date(timeIntervalSince1970: 1000)
-        let newer = UserSettings()
-        newer.defaultRestSeconds = 120
-        newer.modifiedAt = Date(timeIntervalSince1970: 2000)
-        for settings in [untouched, older, newer] { context.insert(settings) }
+        let fresh = UserSettings()
+        let customized = UserSettings()
+        customized.defaultRestSeconds = 60
+        customized.themeRaw = "dark"
+        let onboarded = UserSettings()
+        onboarded.defaultRestSeconds = 120
+        onboarded.onboardingCompleted = true
+        for settings in [fresh, customized, onboarded] { context.insert(settings) }
         try context.save()
 
         #expect(try GymQueries(context: context).settings().defaultRestSeconds == 120)
@@ -31,12 +31,16 @@ struct SyncMergeTests {
         #expect(try Deduplication.removeDuplicateSettings(in: context) == 0)
     }
 
-    @Test("Bez vremena promjene prednost ima obavljen onboarding, zatim najmanji id")
-    func settingsTieBreak() throws {
+    @Test("Zatim prednost imaju mijenjane postavke, pa najmanji id, neovisno o redoslijedu")
+    func settingsTieBreak() {
         let fresh = UserSettings()
-        let onboarded = UserSettings()
-        onboarded.onboardingCompleted = true
-        #expect(UserSettings.preferred(in: [fresh, onboarded]) === onboarded)
+        fresh.onboardingCompleted = true
+        let customized = UserSettings()
+        customized.onboardingCompleted = true
+        customized.weightUnitRaw = "lbs"
+        #expect(customized.changeCount(from: UserSettings()) == 1)
+        #expect(UserSettings.preferred(in: [fresh, customized]) === customized)
+        #expect(UserSettings.preferred(in: [customized, fresh]) === customized)
 
         let first = UserSettings()
         let second = UserSettings()
@@ -44,30 +48,6 @@ struct SyncMergeTests {
         #expect(UserSettings.preferred(in: [first, second]) === expected)
         #expect(UserSettings.preferred(in: [second, first]) === expected)
         #expect(UserSettings.preferred(in: []) == nil)
-    }
-
-    @Test("Promjena postavki dobiva vrijeme, a nove zadane postavke ne")
-    func stamping() throws {
-        let context = try makeContext()
-        let settings = UserSettings()
-        context.insert(settings)
-        let now = Date(timeIntervalSince1970: 5000)
-        SyncStamping.stampChanges(in: context, now: now)
-        try context.save()
-        #expect(settings.modifiedAt == nil)
-
-        settings.defaultRestSeconds = 150
-        SyncStamping.stampChanges(in: context, now: now)
-        try context.save()
-        #expect(settings.modifiedAt == now)
-    }
-
-    @Test("Onboarding bilježi vrijeme promjene postavki")
-    func onboardingStamps() throws {
-        let context = try makeContext()
-        let now = Date(timeIntervalSince1970: 7000)
-        try OnboardingApplier(context: context).apply(OnboardingAnswers(), now: now)
-        #expect(try GymQueries(context: context).settings().modifiedAt == now)
     }
 
     @Test("Ista vrsta kartice ostaje jednom, a redoslijed se zatvara")
@@ -96,39 +76,5 @@ struct SyncMergeTests {
         try context.save()
         #expect(try Deduplication.removeAllDuplicates(in: context) == 2)
         #expect(try Deduplication.removeAllDuplicates(in: context) == 0)
-    }
-}
-
-@Suite("Migracija sheme")
-struct MigrationTests {
-
-    @Test("Baza verzije 1 otvara se kao verzija 2 bez gubitka postavki")
-    func v1ToV2() throws {
-        let directory = FileManager.default.temporaryDirectory.appending(path: "GymKitMigration-\(UUID().uuidString)")
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: directory) }
-        let url = directory.appending(path: "User.store")
-
-        do {
-            let schema = Schema(versionedSchema: GymSchemaV1.self)
-            let configuration = ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)
-            let container = try ModelContainer(for: schema, configurations: [configuration])
-            let context = ModelContext(container)
-            let settings = GymSchemaV1.UserSettings()
-            settings.defaultRestSeconds = 135
-            settings.onboardingCompleted = true
-            context.insert(settings)
-            context.insert(BodyMeasurement(kind: .weight, value: 80))
-            try context.save()
-        }
-
-        let container = try GymPersistence.makeUserContainer(storage: .file(url))
-        let context = ModelContext(container)
-        let settings = try context.fetch(FetchDescriptor<UserSettings>())
-        #expect(settings.count == 1)
-        #expect(settings.first?.defaultRestSeconds == 135)
-        #expect(settings.first?.onboardingCompleted == true)
-        #expect(settings.first?.modifiedAt == nil)
-        #expect(try context.fetchCount(FetchDescriptor<BodyMeasurement>()) == 1)
     }
 }

@@ -66,11 +66,5 @@ enum AppServices {
         // stignu i kad se aplikacija pokrene u pozadini.
         PhoneWatchSync.shared.start(container: container)
         SyncMonitor.shared.start()
-        // Vrijeme promjene postavki za "last write wins" (vidi `SyncStamping`). Obavijest stiže sinkrono,
-        // na niti konteksta koji sprema, pa se vrijeme upiše prije spremanja.
-        NotificationCenter.default.addObserver(forName: ModelContext.willSave, object: nil, queue: nil) { note in
-            guard let context = note.object as? ModelContext else { return }
-            SyncStamping.stampChanges(in: context)
-        }
     }
 }

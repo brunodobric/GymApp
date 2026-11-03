@@ -67,7 +67,7 @@ public enum Deduplication {
     }
 
     /// Svaki uređaj stvara svoj zapis postavki, pa ih nakon sinkronizacije može biti više.
-    /// Ostaje zadnje promijenjeni ("last write wins", vidi `UserSettings.preferred(in:)`).
+    /// Ostaje jedan, po istom pravilu na svim uređajima (`UserSettings.preferred(in:)`).
     @discardableResult
     public static func removeDuplicateSettings(in context: ModelContext) throws -> Int {
         let all = try context.fetch(FetchDescriptor<UserSettings>())
@@ -108,26 +108,43 @@ public enum Deduplication {
 }
 
 public extension UserSettings {
-    /// Koji od više zapisa postavki vrijedi: zadnje promijenjeni, zatim onaj s obavljenim onboardingom,
-    /// zatim najmanji `id`. Pravilo je isto na svim uređajima, pa svi zadrže isti zapis.
+    /// Koji od više zapisa postavki vrijedi. Isti zapis promijenjen na dva uređaja razrješava CloudKit
+    /// (vrijedi zadnja promjena), a više zapisa nastaje samo kad novi uređaj stvori svoje postavke prije
+    /// nego što stignu one iz iClouda. Tada prednost ima zapis s obavljenim onboardingom, zatim onaj koji
+    /// se više razlikuje od zadanih vrijednosti (korisnik ga je mijenjao), zatim najmanji `id`.
+    /// Pravilo je isto na svim uređajima, pa svi zadrže isti zapis.
     static func preferred(in all: [UserSettings]) -> UserSettings? {
-        all.min { lhs, rhs in
-            let lhsDate = lhs.modifiedAt ?? .distantPast
-            let rhsDate = rhs.modifiedAt ?? .distantPast
-            if lhsDate != rhsDate { return lhsDate > rhsDate }
+        let defaults = UserSettings()
+        return all.min { lhs, rhs in
             if lhs.onboardingCompleted != rhs.onboardingCompleted { return lhs.onboardingCompleted }
+            let lhsChanges = lhs.changeCount(from: defaults)
+            let rhsChanges = rhs.changeCount(from: defaults)
+            if lhsChanges != rhsChanges { return lhsChanges > rhsChanges }
             return lhs.id.uuidString < rhs.id.uuidString
         }
     }
-}
 
-/// Bilježi vrijeme korisnikove promjene postavki, za "last write wins" nakon sinkronizacije.
-public enum SyncStamping {
-    /// Poziva se neposredno prije spremanja (`ModelContext.willSave`). Postavke stvorene u ovom spremanju
-    /// ostaju bez vremena, jer su to zadane vrijednosti koje ne smiju nadjačati postavke s drugog uređaja.
-    public static func stampChanges(in context: ModelContext, now: Date = Date()) {
-        for case let settings as UserSettings in context.changedModelsArray {
-            settings.modifiedAt = now
-        }
+    /// Koliko se postavki razlikuje od zadanih.
+    func changeCount(from defaults: UserSettings) -> Int {
+        let pairs: [(AnyHashable, AnyHashable)] = [
+            (weightUnitRaw, defaults.weightUnitRaw),
+            (defaultRestSeconds, defaults.defaultRestSeconds),
+            (themeRaw, defaults.themeRaw),
+            (accentColorRaw, defaults.accentColorRaw),
+            (effortScaleRaw, defaults.effortScaleRaw),
+            (prEnabled, defaults.prEnabled),
+            (trackedPRKindsRaw, defaults.trackedPRKindsRaw),
+            (restEndSoundEnabled, defaults.restEndSoundEnabled),
+            (availablePlatesRaw, defaults.availablePlatesRaw),
+            (barbellWeightKg, defaults.barbellWeightKg),
+            (goalRaw, defaults.goalRaw),
+            (experienceRaw, defaults.experienceRaw),
+            (equipmentRaw, defaults.equipmentRaw),
+            (trainingDaysPerWeek, defaults.trainingDaysPerWeek),
+            (wantsHealthKit, defaults.wantsHealthKit),
+            (notificationsEnabled, defaults.notificationsEnabled),
+            (bodyMapFemale, defaults.bodyMapFemale),
+        ]
+        return pairs.filter { $0.0 != $0.1 }.count
     }
 }
