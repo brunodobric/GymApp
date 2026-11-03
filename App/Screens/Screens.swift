@@ -22,6 +22,8 @@ struct HomeScreen: View {
     @State private var showsSettings = false
     @State private var showsCardEditor = false
     @State private var presentedSession: Session?
+    /// Kardio iz rasporeda: pregled plana s uputom za sat umjesto pokretanja treninga.
+    @State private var cardioSchedule: Schedule?
     @State private var errorText: String?
     @State private var checkedRecovery = false
     @State private var recovery: RecoveryPrompt?
@@ -68,6 +70,16 @@ struct HomeScreen: View {
             }
             .sheet(isPresented: $showsSettings) {
                 SettingsScreen()
+            }
+            .sheet(item: $cardioSchedule) { schedule in
+                NavigationStack {
+                    UpcomingWorkoutScreen(schedule: schedule)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Gotovo") { cardioSchedule = nil }
+                            }
+                        }
+                }
             }
             .sheet(isPresented: $showsCardEditor) {
                 DashboardEditor()
@@ -133,10 +145,18 @@ struct HomeScreen: View {
             } else {
                 ForEach(upcomingWorkouts, id: \.item.id) { planned in
                     Button {
-                        start(planned)
+                        if planned.template.kind == .cardio {
+                            cardioSchedule = planned.schedule
+                        } else {
+                            start(planned)
+                        }
                     } label: {
                         VStack(spacing: 2) {
-                            Label("Započni: \(planned.template.name)", systemImage: "play.fill")
+                            if planned.template.kind == .cardio {
+                                Label("Na satu: \(planned.template.name)", systemImage: "applewatch")
+                            } else {
+                                Label("Započni: \(planned.template.name)", systemImage: "play.fill")
+                            }
                             Text(planned.schedule.name).font(.caption)
                         }
                         .frame(maxWidth: .infinity)

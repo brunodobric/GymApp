@@ -7,11 +7,15 @@ import UserNotifications
 /// Zakazuje lokalne podsjetnike rasporeda. Svaki poziv briše stare i zakazuje nove prema stanju u bazi,
 /// pa se poziva pri pokretanju, nakon izmjene rasporeda i nakon početka ili kraja treninga.
 /// Tijekom aktivnog treninga `ReminderBuilder` vraća prazan popis, pa se podsjetnici otkazuju.
+/// Isti poziv usklađuje i kardio planove na satu (`CardioWorkoutScheduler`).
 enum ReminderScheduler {
     private static let prefix = "schedule-"
+    /// Ključ u `userInfo` obavijesti: raspored čiji se sljedeći trening otvara dodirom.
+    static let scheduleIdKey = "scheduleId"
 
     @MainActor
     static func refresh(context: ModelContext) {
+        CardioWorkoutScheduler.shared.refresh(context: context)
         // Isključene obavijesti u Postavkama: samo se uklanjaju zakazani podsjetnici.
         let enabled = (try? GymQueries(context: context).settings().notificationsEnabled) ?? true
         let reminders = enabled ? ((try? ReminderBuilder(context: context).reminders()) ?? []) : []
@@ -33,12 +37,15 @@ enum ReminderScheduler {
     private static func request(for reminder: PlannedReminder) -> UNNotificationRequest {
         let content = UNMutableNotificationContent()
         content.title = reminder.scheduleName
-        if let workout = reminder.workoutName {
+        if let workout = reminder.workoutName, reminder.isCardio {
+            content.body = String(localized: "Vrijeme za trening: \(workout). Pokreni ga na satu u aplikaciji Workout.")
+        } else if let workout = reminder.workoutName {
             content.body = String(localized: "Vrijeme za trening: \(workout)")
         } else {
             content.body = String(localized: "Vrijeme za trening.")
         }
         content.sound = .default
+        content.userInfo = [scheduleIdKey: reminder.scheduleId.uuidString]
         let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: reminder.fireDate)
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         return UNNotificationRequest(identifier: reminder.identifier, content: content, trigger: trigger)

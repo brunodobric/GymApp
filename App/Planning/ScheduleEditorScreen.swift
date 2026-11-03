@@ -73,7 +73,7 @@ struct ScheduleEditorScreen: View {
         Section("Niz") {
             ForEach(schedule.orderedItems) { item in
                 HStack {
-                    Image(systemName: item.kind == .restDay ? "moon.zzz" : "dumbbell")
+                    Image(systemName: symbol(of: item))
                         .foregroundStyle(.secondary)
                         .frame(width: 28)
                     Text(title(of: item))
@@ -106,6 +106,12 @@ struct ScheduleEditorScreen: View {
     private func title(of item: ScheduleItem) -> String {
         if item.kind == .restDay { return String(localized: "Dan odmora") }
         return templates.first { $0.id == item.workoutTemplateId }?.name ?? String(localized: "Obrisan trening")
+    }
+
+    private func symbol(of item: ScheduleItem) -> String {
+        if item.kind == .restDay { return "moon.zzz" }
+        let template = templates.first { $0.id == item.workoutTemplateId }
+        return template?.kind == .cardio ? (template?.cardioPlan?.activity.symbol ?? "figure.run") : "dumbbell"
     }
 
     private func isCurrent(_ item: ScheduleItem) -> Bool {
@@ -178,7 +184,10 @@ struct ScheduleEditorScreen: View {
         } header: {
             Text("Podsjetnici")
         } footer: {
-            Text("Podsjetnik se ne šalje ako je taj dan već odrađen trening iz rasporeda, niti tijekom aktivnog treninga.")
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Podsjetnik se ne šalje ako je taj dan već odrađen trening iz rasporeda, niti tijekom aktivnog treninga.")
+                Text("Kardio trening se za termin podsjetnika zakazuje i na sat, u aplikaciju Workout.")
+            }
         }
     }
 

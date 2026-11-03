@@ -6,6 +6,8 @@ import SwiftUI
 
 /// Sljedeći trening rasporeda s privremenim izmjenama samo za ovaj ciklus:
 /// preskoči trening, izbaci vježbu ili zamijeni vježbu. Izmjene se mogu poništiti dok trening nije završen.
+/// Kardio trening se ne pokreće ovdje: zaslon pokazuje plan i uputu za pokretanje na satu (faza 10).
+/// Ovaj zaslon otvara i dodir na podsjetnik rasporeda.
 struct UpcomingWorkoutScreen: View {
     let schedule: Schedule
 
@@ -46,6 +48,44 @@ struct UpcomingWorkoutScreen: View {
 
     @ViewBuilder
     private func content(for planned: PlannedWorkout) -> some View {
+        if planned.template.kind == .cardio {
+            cardioContent(for: planned)
+        } else {
+            strengthContent(for: planned)
+        }
+    }
+
+    @ViewBuilder
+    private func cardioContent(for planned: PlannedWorkout) -> some View {
+        Section {
+            Text(planned.template.name).font(.headline)
+            Text("\(schedule.name), ciklus \(planned.cycle)")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        if let plan = planned.template.cardioPlan {
+            Section("Plan") {
+                LabeledContent("Aktivnost") {
+                    Label(plan.activity.title, systemImage: plan.activity.symbol)
+                }
+                LabeledContent("Mjesto", value: plan.location.title)
+                if let warmup = plan.warmup {
+                    LabeledContent("Zagrijavanje", value: CardioText.goal(warmup))
+                }
+                ForEach(plan.intervals) { interval in
+                    LabeledContent("Blok", value: CardioText.interval(interval))
+                }
+                if let cooldown = plan.cooldown {
+                    LabeledContent("Hlađenje", value: CardioText.goal(cooldown))
+                }
+            }
+        }
+        CardioWatchSection(planned: planned)
+        skipSection
+    }
+
+    @ViewBuilder
+    private func strengthContent(for planned: PlannedWorkout) -> some View {
         Section {
             Text(planned.template.name).font(.headline)
             Text("\(schedule.name), ciklus \(planned.cycle)")
@@ -90,6 +130,10 @@ struct UpcomingWorkoutScreen: View {
                 Text("Raspored i trening ostaju nepromijenjeni za sljedeće cikluse.")
             }
         }
+        skipSection
+    }
+
+    private var skipSection: some View {
         Section {
             Button("Preskoči ovaj trening", systemImage: "forward.end") {
                 _ = try? engine.skipNextWorkout(of: schedule)
@@ -140,6 +184,65 @@ struct UpcomingWorkoutScreen: View {
             ReminderScheduler.refresh(context: context)
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
+        }
+    }
+}
+
+/// Stanje plana na satu i gumb za zakazivanje kad plan još nije na satu.
+private struct CardioWatchSection: View {
+    let planned: PlannedWorkout
+
+    @Environment(\.modelContext) private var context
+    @State private var isScheduling = false
+    @State private var failed = false
+
+    private var scheduler: CardioWorkoutScheduler { .shared }
+
+    var body: some View {
+        Section {
+            if !scheduler.isSupported {
+                Label("Za ovaj trening treba Apple Watch uparen s ovim iPhoneom.", systemImage: "applewatch.slash")
+            } else if planned.template.cardioPlan?.isValid != true {
+                Label("Plan nije potpun. Uredi trening i dodaj barem jedan blok.", systemImage: "exclamationmark.triangle")
+            } else if let entry = scheduler.scheduledPlan(for: planned) {
+                if entry.isComplete {
+                    Label("Odrađeno na satu. Trening se upisuje u povijest kad stigne iz Zdravlja.", systemImage: "checkmark.circle")
+                } else {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Zakazano na satu")
+                            Text(entry.date.formatted(date: .abbreviated, time: .shortened))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "applewatch")
+                    }
+                    Text("Pokreni na satu u aplikaciji Workout, pod nazivom „\(planned.template.name)”.")
+                }
+            } else {
+                Text("Plan još nije na satu.")
+                Button("Zakaži na satu", systemImage: "applewatch.and.arrow.forward") { schedule() }
+                    .disabled(isScheduling)
+                if failed {
+                    Text("Zakazivanje nije uspjelo. Provjeri je li sat uparen i je li Apollu dopušteno zakazivanje treninga.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } header: {
+            Text("Apple Watch")
+        } footer: {
+            Text("Trening se pokreće na satu u aplikaciji Workout. Kad ga završiš, Apollo ga uvozi iz Zdravlja i raspored ide dalje.")
+        }
+        .task { CardioWorkoutScheduler.shared.refresh(context: context) }
+    }
+
+    private func schedule() {
+        isScheduling = true
+        Task {
+            failed = !(await CardioWorkoutScheduler.shared.scheduleNow(planned))
+            isScheduling = false
         }
     }
 }

@@ -50,6 +50,17 @@ struct WorkoutImportTests {
         #expect(session.activeEnergyKilocalories == 320 && session.distanceMeters == 5_200 && session.averageHeartRate == 148)
     }
 
+    @Test("Plan sa sata (WorkoutKit) sprema se uz uvezeni trening")
+    func keepsWorkoutPlan() throws {
+        let context = try makeContext()
+        var record = run()
+        let planId = UUID()
+        record.workoutPlanId = planId
+        try HealthImporter(context: context).importWorkouts([record, run(start: base.addingTimeInterval(86_400))], name: name)
+        let sessions = try context.fetch(FetchDescriptor<Session>(sortBy: [SortDescriptor(\.startedAt)]))
+        #expect(sessions.map(\.workoutPlanId) == [planId, nil])
+    }
+
     @Test("Isti trening uvezen dvaput pojavi se točno jednom")
     func importIsIdempotent() throws {
         let context = try makeContext()

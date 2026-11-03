@@ -58,6 +58,8 @@ extension GymSchemaV1 {
         public var details: String = ""
         public var kindRaw: String = WorkoutKind.strength.rawValue
         public var createdAt: Date = Date()
+        /// Plan kardio treninga (`CardioPlan` kao JSON), samo za vrstu `cardio`. Kardio trening nema vježbe.
+        public var cardioPlanRaw: String?
         @Relationship(deleteRule: .cascade, inverse: \TemplateExercise.template)
         public var exercises: [TemplateExercise]? = []
 
@@ -73,6 +75,11 @@ extension GymSchemaV1 {
 
         public var orderedExercises: [TemplateExercise] {
             (exercises ?? []).sorted { $0.orderIndex < $1.orderIndex }
+        }
+
+        public var cardioPlan: CardioPlan? {
+            get { CardioPlan.decode(cardioPlanRaw) }
+            set { cardioPlanRaw = newValue?.encoded }
         }
     }
 

@@ -58,11 +58,13 @@ public struct HealthWorkoutRecord: Sendable, Equatable {
     public var activeEnergyKilocalories: Double?
     public var distanceMeters: Double?
     public var averageHeartRate: Double?
+    /// Plan iz WorkoutKita po kojem je trening odrađen na satu (`HKWorkout.workoutPlan`).
+    public var workoutPlanId: UUID?
 
     public init(
         uuid: UUID, activity: HealthActivity, start: Date, end: Date, sourceBundleIdentifier: String,
         externalUUID: UUID? = nil, activeEnergyKilocalories: Double? = nil,
-        distanceMeters: Double? = nil, averageHeartRate: Double? = nil
+        distanceMeters: Double? = nil, averageHeartRate: Double? = nil, workoutPlanId: UUID? = nil
     ) {
         self.uuid = uuid
         self.activity = activity
@@ -73,6 +75,7 @@ public struct HealthWorkoutRecord: Sendable, Equatable {
         self.activeEnergyKilocalories = activeEnergyKilocalories
         self.distanceMeters = distanceMeters
         self.averageHeartRate = averageHeartRate
+        self.workoutPlanId = workoutPlanId
     }
 
     /// Appleovi izvori: aplikacija Trening na satu (`com.apple.health.<uređaj>`) i Fitness na iPhoneu.

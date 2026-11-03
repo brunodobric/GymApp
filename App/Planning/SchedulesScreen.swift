@@ -38,7 +38,7 @@ struct SchedulesScreen: View {
                         NavigationLink(value: template) {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(template.name)
-                                Text("\((template.exercises ?? []).count) vježbi")
+                                Text(subtitle(of: template))
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
                             }
@@ -57,12 +57,23 @@ struct SchedulesScreen: View {
                     Menu("Dodaj", systemImage: "plus") {
                         Button("Novi raspored", systemImage: "calendar.badge.plus") { newSchedule() }
                         Button("Novi trening", systemImage: "dumbbell") { newTemplate() }
+                        Menu("Novi kardio trening", systemImage: "figure.run") {
+                            ForEach(CardioPreset.allCases) { preset in
+                                Button(preset.title) { newCardioTemplate(preset) }
+                            }
+                        }
                         Button("Gotovi programi", systemImage: "square.stack.3d.up") { showsPrograms = true }
                     }
                 }
             }
             .navigationDestination(for: Schedule.self) { ScheduleEditorScreen(schedule: $0) }
-            .navigationDestination(for: WorkoutTemplate.self) { TemplateEditorScreen(template: $0) }
+            .navigationDestination(for: WorkoutTemplate.self) { template in
+                if template.kind == .cardio {
+                    CardioTemplateEditor(template: template)
+                } else {
+                    TemplateEditorScreen(template: template)
+                }
+            }
             .sheet(isPresented: $showsPrograms) { ProgramsScreen() }
             .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
                 Button("U redu") {}
@@ -78,6 +89,22 @@ struct SchedulesScreen: View {
             path.append(schedule)
         } catch {
             errorText = String(localized: "Raspored se nije mogao stvoriti.")
+        }
+    }
+
+    private func subtitle(of template: WorkoutTemplate) -> String {
+        if template.kind == .cardio {
+            return template.cardioPlan.map(CardioText.summary) ?? String(localized: "Kardio")
+        }
+        return String(localized: "\((template.exercises ?? []).count) vježbi")
+    }
+
+    private func newCardioTemplate(_ preset: CardioPreset) {
+        do {
+            let template = try TemplateEngine(context: context).createCardioTemplate(name: preset.title, plan: preset.plan)
+            path.append(template)
+        } catch {
+            errorText = String(localized: "Trening se nije mogao stvoriti.")
         }
     }
 
