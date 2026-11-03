@@ -7,6 +7,17 @@ public enum PlanningError: Error, Equatable {
     case needsTwoExercises
 }
 
+/// Vježba odabrana za dodavanje u predložak: referenca i način unosa.
+public struct ExerciseChoice: Equatable, Sendable {
+    public let ref: ExerciseRef
+    public let inputType: ExerciseInputType
+
+    public init(ref: ExerciseRef, inputType: ExerciseInputType) {
+        self.ref = ref
+        self.inputType = inputType
+    }
+}
+
 /// Uređivanje predložaka treninga: vježbe, ciljane serije, supersetovi, pauze i redoslijed.
 /// Svaka promjena odmah se sprema.
 public struct TemplateEngine {
@@ -96,6 +107,32 @@ public struct TemplateEngine {
         }
         try context.save()
         return exercise
+    }
+
+    /// Dodaje više vježbi odjednom (odabir više vježbi ili drag & drop na iPadu), redom kojim su zadane.
+    /// S `index` se umeću na to mjesto u predlošku, a bez njega idu na kraj. Svaka dobiva zadane serije.
+    @discardableResult
+    public func addExercises(
+        _ choices: [ExerciseChoice], to template: WorkoutTemplate, at index: Int? = nil,
+        setCount: Int = TemplateEngine.defaultSetCount
+    ) throws -> [TemplateExercise] {
+        var ordered = template.orderedExercises
+        let position = min(max(index ?? ordered.count, 0), ordered.count)
+        let added = choices.map { choice in
+            let exercise = TemplateExercise(orderIndex: 0, exercise: choice.ref, inputType: choice.inputType)
+            context.insert(exercise)
+            exercise.template = template
+            for setIndex in 0..<max(setCount, 0) {
+                let set = TemplateSet(orderIndex: setIndex)
+                context.insert(set)
+                set.exercise = exercise
+            }
+            return exercise
+        }
+        ordered.insert(contentsOf: added, at: position)
+        for (order, exercise) in ordered.enumerated() { exercise.orderIndex = order }
+        try context.save()
+        return added
     }
 
     public func removeExercise(_ exercise: TemplateExercise) throws {

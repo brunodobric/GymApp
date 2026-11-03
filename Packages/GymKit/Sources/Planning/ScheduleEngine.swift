@@ -56,6 +56,28 @@ public struct ScheduleEngine {
         try append(kind: .workout, templateId: template.id, to: schedule)
     }
 
+    /// Umeće više treninga odjednom (odabir više treninga ili drag & drop na iPadu), redom kojim su zadani.
+    /// Bez `index` idu na kraj niza. Pozicija rasporeda prati stavku na kojoj je stao, kao kod premještanja.
+    @discardableResult
+    public func insertWorkouts(_ templates: [WorkoutTemplate], into schedule: Schedule, at index: Int? = nil) throws -> [ScheduleItem] {
+        var ordered = schedule.orderedItems
+        let currentId = currentItem(of: schedule)?.id
+        let position = min(max(index ?? ordered.count, 0), ordered.count)
+        let added = templates.map { template in
+            let item = ScheduleItem(orderIndex: 0, kind: .workout, workoutTemplateId: template.id)
+            context.insert(item)
+            item.schedule = schedule
+            return item
+        }
+        ordered.insert(contentsOf: added, at: position)
+        for (order, item) in ordered.enumerated() { item.orderIndex = order }
+        if let currentId, let current = ordered.firstIndex(where: { $0.id == currentId }) {
+            schedule.currentPosition = current
+        }
+        try context.save()
+        return added
+    }
+
     @discardableResult
     public func addRestDay(to schedule: Schedule) throws -> ScheduleItem {
         try append(kind: .restDay, templateId: nil, to: schedule)

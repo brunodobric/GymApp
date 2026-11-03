@@ -4,8 +4,12 @@ import SwiftData
 import SwiftUI
 
 /// Uređivač rasporeda: niz treninga i dana odmora, trajanje, aktivnost i podsjetnici.
+///
+/// Treninzi se dodaju iz izbornika ili iz bočne ploče (inspector), gdje se mogu odabrati više odjednom
+/// ili na iPadu povući na željeno mjesto u nizu.
 struct ScheduleEditorScreen: View {
     @Bindable var schedule: Schedule
+    @State private var showsTemplates = false
 
     @Environment(\.modelContext) private var context
     @Query(sort: \WorkoutTemplate.name) private var templates: [WorkoutTemplate]
@@ -29,7 +33,17 @@ struct ScheduleEditorScreen: View {
         }
         .navigationTitle(schedule.name.isEmpty ? String(localized: "Raspored") : schedule.name)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { EditButton() }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Treninzi", systemImage: "sidebar.trailing") { showsTemplates.toggle() }
+                    .keyboardShortcut("k", modifiers: .command)
+            }
+            ToolbarItem(placement: .primaryAction) { EditButton() }
+        }
+        .inspector(isPresented: $showsTemplates) {
+            TemplateListPanel(isPresented: $showsTemplates) { insert($0, at: nil) }
+                .inspectorColumnWidth(min: 280, ideal: 320, max: 420)
+        }
         .onChange(of: overrides.count) { _, _ in refreshReminders() }
         .onDisappear {
             try? context.save()
@@ -93,14 +107,36 @@ struct ScheduleEditorScreen: View {
                 let list = schedule.orderedItems
                 for index in offsets { try? engine.removeItem(list[index]) }
             }
+            // Trening povučen iz ploče umeće se na mjesto gdje je pušten.
+            .dropDestination(for: String.self) { payloads, index in
+                insert(droppedTemplates(payloads), at: index)
+            }
             Menu("Dodaj trening", systemImage: "plus") {
                 ForEach(templates) { template in
                     Button(template.name) { try? engine.addWorkout(template, to: schedule) }
                 }
             }
             .disabled(templates.isEmpty)
+            Button("Odaberi više treninga", systemImage: "checklist") { showsTemplates = true }
+                .disabled(templates.isEmpty)
+                // Puštena na gumb (i u praznom nizu) stavka ide na kraj.
+                .dropDestination(for: String.self) { payloads, _ in
+                    let dropped = droppedTemplates(payloads)
+                    insert(dropped, at: nil)
+                    return !dropped.isEmpty
+                }
             Button("Dodaj dan odmora", systemImage: "moon.zzz") { _ = try? engine.addRestDay(to: schedule) }
         }
+    }
+
+    private func droppedTemplates(_ payloads: [String]) -> [WorkoutTemplate] {
+        payloads.compactMap(PlanningDrag.templateId(from:)).compactMap { id in templates.first { $0.id == id } }
+    }
+
+    private func insert(_ added: [WorkoutTemplate], at index: Int?) {
+        guard !added.isEmpty else { return }
+        try? engine.insertWorkouts(added, into: schedule, at: index)
+        refreshReminders()
     }
 
     private func title(of item: ScheduleItem) -> String {
