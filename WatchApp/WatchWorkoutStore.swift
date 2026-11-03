@@ -7,6 +7,7 @@ import OSLog
 import Training
 import Units
 import WatchKit
+import WidgetKit
 
 /// Stanje aplikacije na satu: kontekst s iPhonea, aktivni trening i sažetak završenog.
 ///
@@ -421,6 +422,7 @@ final class WatchWorkoutStore {
     }
 
     private func persist() {
+        updateComplication()
         let state = StoredState(context: context, active: active, mirrorBase: mirrorBase)
         do {
             try FileManager.default.createDirectory(at: URL.applicationSupportDirectory, withIntermediateDirectories: true)
@@ -428,6 +430,17 @@ final class WatchWorkoutStore {
         } catch {
             logger.error("Spremanje stanja: \(error.localizedDescription)")
         }
+    }
+
+    /// Complications prikazuju sljedeći trening, trening u tijeku i odmor; osvježavaju se samo kad se to promijeni.
+    private func updateComplication() {
+        let next = context.upcoming.first
+        let timer = restTimer.flatMap { $0.isExpired(at: Date()) ? nil : $0 }
+        let state = ComplicationState(
+            nextWorkoutName: next?.name, nextScheduleName: next?.scheduleName, activeWorkoutName: active?.name,
+            restStartedAt: timer?.startedAt, restEndsAt: timer?.endsAt
+        )
+        if state.save() { WidgetCenter.shared.reloadAllTimelines() }
     }
 
     private func restore() {

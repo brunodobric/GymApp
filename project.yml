@@ -85,9 +85,11 @@ targets:
     sources:
       - WatchApp
       - Shared/Common
+      - Shared/WatchComplication
     dependencies:
       - package: GymKit
         products: [Units, Catalog, Connectivity, Models, Training]
+      - target: GymAppWatchWidgets
     info:
       path: WatchApp/Info.plist
       properties:
@@ -127,4 +129,25 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp.widgets
+        GENERATE_INFOPLIST_FILE: NO
+
+  # Complications na satu (WidgetKit za watchOS): sljedeći trening i aktivni odmor.
+  GymAppWatchWidgets:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - WatchWidgets
+      - Shared/WatchComplication
+    info:
+      path: WatchWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: GymApp
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    configFiles:
+      Debug: Config/WatchWidgets.xcconfig
+      Release: Config/WatchWidgets.xcconfig
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp.watchkitapp.widgets
         GENERATE_INFOPLIST_FILE: NO
