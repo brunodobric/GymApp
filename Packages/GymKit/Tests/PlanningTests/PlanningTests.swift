@@ -205,7 +205,8 @@ struct ScheduleProgressTests {
         let context = try makeContext()
         let engine = ScheduleEngine(context: context)
         let (schedule, _) = try abcSchedule(in: context, cycles: nil)
-        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        let first = try #require(try engine.nextWorkout(of: schedule))
+        try doWorkout(first, in: context, at: base)
         // Tri tjedna bez treninga: sljedeći je i dalje B, u istom ciklusu.
         let next = try #require(try engine.nextWorkout(of: schedule))
         #expect(next.template.name == "B" && next.cycle == 1)
@@ -230,7 +231,8 @@ struct ScheduleProgressTests {
         let context = try makeContext()
         let engine = ScheduleEngine(context: context)
         let (schedule, _) = try abcSchedule(in: context, cycles: nil)
-        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        let first = try #require(try engine.nextWorkout(of: schedule))
+        try doWorkout(first, in: context, at: base)
 
         let skip = try #require(try engine.skipNextWorkout(of: schedule))
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
@@ -254,7 +256,8 @@ struct ScheduleProgressTests {
         let engine = ScheduleEngine(context: context)
         let (schedule, templates) = try abcSchedule(in: context, cycles: nil)
         try TemplateEngine(context: context).delete(templates[1])
-        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        let first = try #require(try engine.nextWorkout(of: schedule))
+        try doWorkout(first, in: context, at: base)
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
     }
 
@@ -555,7 +558,8 @@ struct BulkEditingTests {
         }
 
         // Odradi A: sljedeći je B (pozicija 2).
-        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        let first = try #require(try engine.nextWorkout(of: schedule))
+        try doWorkout(first, in: context, at: base)
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
 
         let added = try engine.insertWorkouts([templates[2], templates[0]], into: schedule, at: 1)
