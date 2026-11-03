@@ -13,7 +13,9 @@ struct PlateCalculatorSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @State private var text: String
-    @State private var settings: UserSettings?
+    // Postavke iz upita, a ne zapamćeni objekt: nakon sinkronizacije duplikat postavki može biti obrisan.
+    @Query private var settingsList: [UserSettings]
+    private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
 
     init(targetText: String, unit: WeightUnit) {
         self.targetText = targetText
@@ -77,6 +79,6 @@ struct PlateCalculatorSheet: View {
             }
         }
         .presentationDetents([.medium, .large])
-        .task { settings = try? GymQueries(context: context).settings() }
+        .task { _ = try? GymQueries(context: context).settings() }
     }
 }

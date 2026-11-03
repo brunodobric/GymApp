@@ -22,7 +22,7 @@ struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Query private var settingsList: [UserSettings]
 
-    private var settings: UserSettings? { settingsList.first }
+    private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
 
     /// Dok postavke ne postoje ili onboarding nije obavljen, prikazuje se onboarding.
     private var needsOnboarding: Bool { !(settings?.onboardingCompleted ?? false) }

@@ -1,3 +1,4 @@
+import Foundation
 import SwiftData
 
 /// Izrada `ModelContainera` za korisničku bazu.
@@ -11,12 +12,14 @@ public enum GymPersistence {
         case cloudKit(containerIdentifier: String)
         /// Za testove i preglede.
         case inMemory
+        /// Lokalna baza na zadanoj putanji (za testove migracije).
+        case file(URL)
     }
 
     public static let userStoreName = "User"
 
     public static func makeUserContainer(storage: Storage) throws -> ModelContainer {
-        let schema = Schema(GymSchemaV1.models, version: GymSchemaV1.versionIdentifier)
+        let schema = Schema(GymSchemaV2.models, version: GymSchemaV2.versionIdentifier)
         let configuration: ModelConfiguration
         switch storage {
         case .local:
@@ -27,6 +30,8 @@ public enum GymPersistence {
             configuration = ModelConfiguration(
                 userStoreName, schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none
             )
+        case .file(let url):
+            configuration = ModelConfiguration(userStoreName, schema: schema, url: url, cloudKitDatabase: .none)
         }
         return try ModelContainer(for: schema, migrationPlan: GymMigrationPlan.self, configurations: [configuration])
     }

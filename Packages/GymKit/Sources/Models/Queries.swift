@@ -44,10 +44,10 @@ public struct GymQueries {
     }
 
     /// Jedini zapis postavki. Ako ga nema, stvara se sa zadanim vrijednostima.
-    /// Ako ih zbog sinkronizacije ima više, vraća najranije stvoreni po `id` radi stabilnosti.
+    /// Ako ih zbog sinkronizacije ima više, vraća onaj koji ostaje nakon uklanjanja duplikata
+    /// (`UserSettings.preferred(in:)`).
     public func settings() throws -> UserSettings {
-        let all = try context.fetch(FetchDescriptor<UserSettings>())
-        if let existing = all.min(by: { $0.id.uuidString < $1.id.uuidString }) {
+        if let existing = UserSettings.preferred(in: try context.fetch(FetchDescriptor<UserSettings>())) {
             return existing
         }
         let created = UserSettings()

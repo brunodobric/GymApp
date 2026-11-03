@@ -50,7 +50,7 @@ extension GymSchemaV1 {
         }
     }
 
-    /// Postavke korisnika: u bazi mora postojati najviše jedan zapis (vidi `GymQueries.settings`).
+    /// Postavke u verziji 1 sheme. Zamrznuto: služi samo za migraciju, trenutna verzija je `GymSchemaV2.UserSettings`.
     @Model
     public final class UserSettings {
         public var id: UUID = UUID()
@@ -80,50 +80,5 @@ extension GymSchemaV1 {
         public var bodyMapFemale: Bool = false
 
         public init() {}
-
-        public var goal: TrainingGoal? {
-            get { TrainingGoal(rawValue: goalRaw) }
-            set { goalRaw = newValue?.rawValue ?? "" }
-        }
-
-        public var experience: ExperienceLevel? {
-            get { ExperienceLevel(rawValue: experienceRaw) }
-            set { experienceRaw = newValue?.rawValue ?? "" }
-        }
-
-        public var equipment: [Equipment] {
-            get { equipmentRaw.split(separator: ",").compactMap { Equipment(rawValue: String($0)) } }
-            set { equipmentRaw = newValue.map(\.rawValue).joined(separator: ",") }
-        }
-
-        public var effortScale: EffortScale {
-            get { EffortScale(rawValue: effortScaleRaw) ?? .rpe }
-            set { effortScaleRaw = newValue.rawValue }
-        }
-
-        public var weightUnit: WeightUnit {
-            get { WeightUnit(rawValue: weightUnitRaw) ?? .kilograms }
-            set { weightUnitRaw = newValue.rawValue }
-        }
-
-        public var theme: AppTheme {
-            get { AppTheme(rawValue: themeRaw) ?? .system }
-            set { themeRaw = newValue.rawValue }
-        }
-
-        public var accent: AccentChoice {
-            get { AccentChoice(rawValue: accentColorRaw) ?? .blue }
-            set { accentColorRaw = newValue.rawValue }
-        }
-
-        public var availablePlatesKg: [Double] {
-            get { availablePlatesRaw.split(separator: ",").compactMap { Double($0) } }
-            set { availablePlatesRaw = newValue.map { String($0) }.joined(separator: ",") }
-        }
-
-        public var trackedPRKinds: [String] {
-            get { trackedPRKindsRaw.split(separator: ",").map(String.init) }
-            set { trackedPRKindsRaw = newValue.joined(separator: ",") }
-        }
     }
 }

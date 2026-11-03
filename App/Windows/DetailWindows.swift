@@ -56,12 +56,12 @@ struct SessionWindow: View {
     var body: some View {
         NavigationStack {
             if let session = sessions.first {
-                SessionDetailScreen(session: session, unit: settingsList.first?.weightUnit ?? .kilograms)
+                SessionDetailScreen(session: session, unit: UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms)
             } else {
                 ContentUnavailableView("Trening nije pronađen", systemImage: "clock")
             }
         }
-        .windowAppearance(settingsList.first)
+        .windowAppearance(UserSettings.preferred(in: settingsList))
     }
 }
 
@@ -86,7 +86,7 @@ struct ExerciseWindow: View {
                 ContentUnavailableView("Vježba nije pronađena", systemImage: "questionmark.circle")
             }
         }
-        .windowAppearance(settingsList.first)
+        .windowAppearance(UserSettings.preferred(in: settingsList))
     }
 }
 

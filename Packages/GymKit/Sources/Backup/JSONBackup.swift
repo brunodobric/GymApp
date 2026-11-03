@@ -15,8 +15,7 @@ public enum JSONBackup {
         ))
         let file = BackupFile(
             format: format, version: version, exportedAt: now,
-            settings: try context.fetch(FetchDescriptor<UserSettings>())
-                .min { $0.id.uuidString < $1.id.uuidString }.map(SettingsDTO.init),
+            settings: UserSettings.preferred(in: try context.fetch(FetchDescriptor<UserSettings>())).map(SettingsDTO.init),
             customExercises: try context.fetch(FetchDescriptor<CustomExercise>())
                 .sorted { $0.id.uuidString < $1.id.uuidString }.map(CustomExerciseDTO.init),
             templates: try context.fetch(FetchDescriptor<WorkoutTemplate>())

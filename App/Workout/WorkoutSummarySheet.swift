@@ -16,6 +16,7 @@ struct WorkoutSummarySheet: View {
     @Environment(CatalogStore.self) private var catalogStore
     @Query private var customExercises: [CustomExercise]
     @Query private var settingsList: [UserSettings]
+    private var bodyMapFemale: Bool { UserSettings.preferred(in: settingsList)?.bodyMapFemale ?? false }
     @State private var bodyMapSelection: String?
     @State private var notes: String
     @State private var heartRateText: String
@@ -58,8 +59,8 @@ struct WorkoutSummarySheet: View {
                 if !workedRegions.isEmpty {
                     Section("Mišići u ovom treningu") {
                         HStack(alignment: .top, spacing: 8) {
-                            BodyFigureView(female: settingsList.first?.bodyMapFemale ?? false, back: false, heatmap: workedRegions, selected: $bodyMapSelection)
-                            BodyFigureView(female: settingsList.first?.bodyMapFemale ?? false, back: true, heatmap: workedRegions, selected: $bodyMapSelection)
+                            BodyFigureView(female: bodyMapFemale, back: false, heatmap: workedRegions, selected: $bodyMapSelection)
+                            BodyFigureView(female: bodyMapFemale, back: true, heatmap: workedRegions, selected: $bodyMapSelection)
                         }
                         .frame(maxHeight: 300)
                         .accessibilityElement(children: .ignore)

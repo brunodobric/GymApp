@@ -36,6 +36,8 @@ public enum Deduplication {
         total += try removeDuplicates(of: BodyMeasurement.self, id: \.id, in: context)
         total += try removeDuplicates(of: CustomExercise.self, id: \.id, in: context)
         total += try removeDuplicateHealthImports(in: context)
+        total += try removeDuplicateSettings(in: context)
+        total += try removeDuplicateDashboardCards(in: context)
         return total
     }
 
@@ -62,5 +64,70 @@ public enum Deduplication {
         }
         if removed > 0 { try context.save() }
         return removed
+    }
+
+    /// Svaki uređaj stvara svoj zapis postavki, pa ih nakon sinkronizacije može biti više.
+    /// Ostaje zadnje promijenjeni ("last write wins", vidi `UserSettings.preferred(in:)`).
+    @discardableResult
+    public static func removeDuplicateSettings(in context: ModelContext) throws -> Int {
+        let all = try context.fetch(FetchDescriptor<UserSettings>())
+        guard all.count > 1, let kept = UserSettings.preferred(in: all) else { return 0 }
+        var removed = 0
+        for settings in all where settings.persistentModelID != kept.persistentModelID {
+            context.delete(settings)
+            removed += 1
+        }
+        try context.save()
+        return removed
+    }
+
+    /// Ista vrsta kartice dodana na dva uređaja. Ostaje kartica s manjim `orderIndex`, a redoslijed se ponovno numerira.
+    /// Kartice nepoznate vrste (iz novije verzije aplikacije) se ne diraju.
+    @discardableResult
+    public static func removeDuplicateDashboardCards(in context: ModelContext) throws -> Int {
+        let cards = try context.fetch(FetchDescriptor<DashboardCard>())
+            .sorted { ($0.orderIndex, $0.id.uuidString) < ($1.orderIndex, $1.id.uuidString) }
+        var seen = Set<String>()
+        var kept: [DashboardCard] = []
+        var removed = 0
+        for card in cards {
+            if DashboardCardKind(rawValue: card.kindRaw) != nil, !seen.insert(card.kindRaw).inserted {
+                context.delete(card)
+                removed += 1
+            } else {
+                kept.append(card)
+            }
+        }
+        guard removed > 0 else { return 0 }
+        for (index, card) in kept.enumerated() where card.orderIndex != index {
+            card.orderIndex = index
+        }
+        try context.save()
+        return removed
+    }
+}
+
+public extension UserSettings {
+    /// Koji od više zapisa postavki vrijedi: zadnje promijenjeni, zatim onaj s obavljenim onboardingom,
+    /// zatim najmanji `id`. Pravilo je isto na svim uređajima, pa svi zadrže isti zapis.
+    static func preferred(in all: [UserSettings]) -> UserSettings? {
+        all.min { lhs, rhs in
+            let lhsDate = lhs.modifiedAt ?? .distantPast
+            let rhsDate = rhs.modifiedAt ?? .distantPast
+            if lhsDate != rhsDate { return lhsDate > rhsDate }
+            if lhs.onboardingCompleted != rhs.onboardingCompleted { return lhs.onboardingCompleted }
+            return lhs.id.uuidString < rhs.id.uuidString
+        }
+    }
+}
+
+/// Bilježi vrijeme korisnikove promjene postavki, za "last write wins" nakon sinkronizacije.
+public enum SyncStamping {
+    /// Poziva se neposredno prije spremanja (`ModelContext.willSave`). Postavke stvorene u ovom spremanju
+    /// ostaju bez vremena, jer su to zadane vrijednosti koje ne smiju nadjačati postavke s drugog uređaja.
+    public static func stampChanges(in context: ModelContext, now: Date = Date()) {
+        for case let settings as UserSettings in context.changedModelsArray {
+            settings.modifiedAt = now
+        }
     }
 }
