@@ -175,3 +175,34 @@ struct NotificationSettingsSection: View {
         }
     }
 }
+
+/// Apple Zdravlje: spremanje treninga te uvoz kardio treninga, težine i visine.
+struct HealthSettingsSection: View {
+    @Bindable var settings: UserSettings
+    @Environment(\.modelContext) private var context
+
+    private var isAvailable: Bool { HealthService.shared.isAvailable }
+
+    var body: some View {
+        Section {
+            Toggle("Apple Zdravlje", isOn: $settings.wantsHealthKit)
+                .disabled(!isAvailable)
+                .onChange(of: settings.wantsHealthKit) { _, connected in
+                    try? context.save()
+                    guard connected else { return }
+                    Task {
+                        await HealthService.shared.requestAuthorization()
+                        await HealthService.shared.importNewData(context: context)
+                    }
+                }
+        } header: {
+            Text("Zdravlje")
+        } footer: {
+            if isAvailable {
+                Text("Treninzi s iPhonea spremaju se u Zdravlje, a kardio treninzi iz aplikacije Trening, težina i visina uvoze se u aplikaciju. Što smije čitati i pisati mijenjaš u aplikaciji Zdravlje: Profil > Aplikacije > GymApp.")
+            } else {
+                Text("Zdravlje nije dostupno na ovom uređaju.")
+            }
+        }
+    }
+}

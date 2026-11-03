@@ -35,6 +35,32 @@ public enum Deduplication {
         total += try removeDuplicates(of: Schedule.self, id: \.id, in: context)
         total += try removeDuplicates(of: BodyMeasurement.self, id: \.id, in: context)
         total += try removeDuplicates(of: CustomExercise.self, id: \.id, in: context)
+        total += try removeDuplicateHealthImports(in: context)
         return total
+    }
+
+    /// Isti trening ili mjerenje iz Zdravlja uvezeno više puta (npr. na iPhoneu i iPadu prije sinkronizacije)
+    /// ima različit `id`, ali isti UUID uzorka u HealthKitu. Ostaje najranije uvezeni zapis.
+    @discardableResult
+    public static func removeDuplicateHealthImports(in context: ModelContext) throws -> Int {
+        var removed = 0
+        let imported = try context.fetch(FetchDescriptor<Session>(predicate: #Predicate { $0.isImportedFromWorkoutsApp == true }))
+        var seenWorkouts = Set<UUID>()
+        for session in imported.sorted(by: { $0.id.uuidString < $1.id.uuidString }) {
+            guard let workoutId = session.healthKitWorkoutId else { continue }
+            if seenWorkouts.insert(workoutId).inserted { continue }
+            context.delete(session)
+            removed += 1
+        }
+        let measurements = try context.fetch(FetchDescriptor<BodyMeasurement>())
+        var seenSamples = Set<UUID>()
+        for measurement in measurements.sorted(by: { $0.id.uuidString < $1.id.uuidString }) {
+            guard let sampleId = measurement.healthKitSampleId else { continue }
+            if seenSamples.insert(sampleId).inserted { continue }
+            context.delete(measurement)
+            removed += 1
+        }
+        if removed > 0 { try context.save() }
+        return removed
     }
 }

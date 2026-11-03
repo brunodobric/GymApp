@@ -301,6 +301,7 @@ struct ActiveWorkoutScreen: View {
             ReminderScheduler.refresh(context: context)
             let tracked = PRKind.tracked(by: settings)
             finishedSummary = try engine.summary(of: session, trackedKinds: tracked)
+            Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {
             showsNothingCompleted = true
         } catch {

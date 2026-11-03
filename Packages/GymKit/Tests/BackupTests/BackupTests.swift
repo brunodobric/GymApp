@@ -105,6 +105,7 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     let custom2 = BodyMeasurement(kind: .custom, value: 36.5, date: start.addingTimeInterval(86_400))
     custom2.customName = "Bicepsi, lijevi"
     custom2.source = .healthKit
+    custom2.healthKitSampleId = UUID(uuidString: "6F1C2B9E-0000-4000-8000-00000000BEEF")
     context.insert(custom2)
     context.insert(DashboardCard(kindRaw: "plateCalculator", orderIndex: 0))
 
@@ -139,6 +140,8 @@ struct JSONBackupTests {
         #expect(session.orderedExercises[0].orderedSets.count == 2)
         #expect(try GymQueries(context: target).settings().weightUnit == .pounds)
         #expect(try GymQueries(context: target).settings().bodyMapFemale)
+        let measurements = try target.fetch(FetchDescriptor<BodyMeasurement>())
+        #expect(measurements.contains { $0.healthKitSampleId == UUID(uuidString: "6F1C2B9E-0000-4000-8000-00000000BEEF") })
     }
 
     @Test("Trening u tijeku i odbačeni se ne izvoze")

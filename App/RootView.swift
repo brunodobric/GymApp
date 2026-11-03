@@ -55,9 +55,15 @@ struct RootView: View {
             if needsOnboarding { try? await Task.sleep(for: .milliseconds(600)) }
             showsOnboarding = needsOnboarding
         }
-        .task { ReminderScheduler.refresh(context: context) }
+        .task {
+            ReminderScheduler.refresh(context: context)
+            await HealthService.shared.importNewData(context: context)
+        }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { ReminderScheduler.refresh(context: context) }
+            guard phase == .active else { return }
+            ReminderScheduler.refresh(context: context)
+            // Novi treninzi, težina i visina iz Zdravlja (samo ako je korisnik povezao Zdravlje).
+            Task { await HealthService.shared.importNewData(context: context) }
         }
     }
 }

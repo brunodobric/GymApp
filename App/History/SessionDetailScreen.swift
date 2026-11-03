@@ -29,6 +29,16 @@ struct SessionDetailScreen: View {
                 if let heartRate = session.averageHeartRate {
                     LabeledContent("Prosječni puls", value: "\(Int(heartRate)) otk/min")
                 }
+                // Kalorije samo iz Zdravlja; bez njih se redak ne prikazuje (ni nula ni procjena).
+                if let energy = session.activeEnergyKilocalories {
+                    LabeledContent("Aktivne kalorije", value: "\(Int(energy.rounded())) kcal")
+                }
+            } footer: {
+                if session.isImportedFromWorkoutsApp {
+                    Text("Uvezeno iz Zdravlja.")
+                } else if session.healthKitWorkoutId != nil {
+                    Text("Spremljeno u Zdravlje.")
+                }
             }
             ForEach(session.orderedExercises.filter { !$0.isRemoved }) { exercise in
                 Section(exercise.exerciseName) {

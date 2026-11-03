@@ -14,6 +14,8 @@ extension GymSchemaV1 {
         public var value: Double = 0
         public var date: Date = Date()
         public var sourceRaw: String = MeasurementSource.manual.rawValue
+        /// UUID uzorka u Zdravlju za mjerenja uvezena iz HealthKita (sprječava dvostruki uvoz).
+        public var healthKitSampleId: UUID?
 
         public init(kind: BodyMeasurementKind, value: Double, date: Date = Date(), source: MeasurementSource = .manual) {
             self.kindRaw = kind.rawValue
@@ -71,7 +73,7 @@ extension GymSchemaV1 {
         public var equipmentRaw: String = ""
         public var trainingDaysPerWeek: Int?
         public var onboardingCompleted: Bool = false
-        /// Odgovor na pitanje o Apple Zdravlju u onboardingu (povezivanje je u fazi 7).
+        /// Povezivanje s Apple Zdravljem: odgovor iz onboardinga, mijenja se u Postavkama.
         public var wantsHealthKit: Bool = false
         public var notificationsEnabled: Bool = true
         /// Tijelo koje se crta na prikazu mišića (statistika, sažetak treninga).
