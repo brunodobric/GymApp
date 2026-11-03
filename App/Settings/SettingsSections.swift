@@ -83,19 +83,41 @@ struct AppearanceSettingsSection: View {
             Picker("Tema", selection: $settings.theme) {
                 ForEach(AppTheme.allCases, id: \.self) { Text($0.title).tag($0) }
             }
-            Picker("Boja", selection: $settings.accent) {
-                ForEach(AccentChoice.allCases, id: \.self) { choice in
-                    Label {
-                        Text(choice.title)
-                    } icon: {
-                        Image(systemName: "circle.fill").foregroundStyle(choice.color)
-                    }
-                    .tag(choice)
-                }
-            }
+            AccentPicker(selection: $settings.accent)
             Picker("Tijelo na prikazu mišića", selection: $settings.bodyMapFemale) {
                 Text("Muško").tag(false)
                 Text("Žensko").tag(true)
+            }
+        }
+    }
+}
+
+/// Izbor naglasne boje kao red obojenih krugova (izbornik bi ih obojio trenutnom bojom).
+private struct AccentPicker: View {
+    @Binding var selection: AccentChoice
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Boja")
+            HStack {
+                ForEach(AccentChoice.allCases, id: \.self) { choice in
+                    Button {
+                        selection = choice
+                    } label: {
+                        Circle()
+                            .fill(choice.color)
+                            .frame(width: 30, height: 30)
+                            .overlay {
+                                if selection == choice {
+                                    Image(systemName: "checkmark").font(.footnote.bold()).foregroundStyle(.white)
+                                }
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text(choice.title))
+                    .accessibilityAddTraits(selection == choice ? .isSelected : [])
+                    if choice != AccentChoice.allCases.last { Spacer(minLength: 0) }
+                }
             }
         }
     }

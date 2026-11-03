@@ -217,6 +217,9 @@ struct SettingsScreen: View {
                 }
             }
             .navigationTitle("Postavke")
+            // Otvoreni list ne preuzima promjenu teme i boje iz korijena dok je prikazan, pa ih primjenjuje sam.
+            .preferredColorScheme(settings?.theme.colorScheme)
+            .tint(settings?.accent.color ?? AccentChoice.blue.color)
             .task { settings = try? GymQueries(context: context).settings() }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
