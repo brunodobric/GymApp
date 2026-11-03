@@ -21,13 +21,20 @@ public struct GymQueries {
     }
 
     /// Završeni treninzi čiji je početak u rasponu [from, to), od najnovijeg prema starijem.
+    /// Uključuje treninge uvezene iz Zdravlja (iz lokalne baze, kao `Session` za prikaz).
     public func finishedSessions(from: Date, to: Date) throws -> [Session] {
         let finished = SessionState.finished.rawValue
         let descriptor = FetchDescriptor<Session>(
-            predicate: #Predicate { $0.stateRaw == finished && $0.startedAt >= from && $0.startedAt < to },
-            sortBy: [SortDescriptor(\.startedAt, order: .reverse)]
+            predicate: #Predicate { $0.stateRaw == finished && $0.startedAt >= from && $0.startedAt < to }
         )
-        return try context.fetch(descriptor)
+        let own = try context.fetch(descriptor)
+        let imported = try HealthLocalStore(context: context).sessions(from: from, to: to)
+        return (own + imported).sorted { $0.startedAt > $1.startedAt }
+    }
+
+    /// Svi završeni treninzi, i oni uvezeni iz Zdravlja, od najnovijeg prema starijem.
+    public func allFinishedSessions() throws -> [Session] {
+        try finishedSessions(from: .distantPast, to: .distantFuture)
     }
 
     /// Zadnje izvođenje vježbe u završenom treningu (izvor za smart defaults i inline povijest).

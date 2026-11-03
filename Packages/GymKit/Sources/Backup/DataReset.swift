@@ -20,6 +20,10 @@ public enum DataReset {
         try context.delete(model: BodyMeasurement.self)
         try context.delete(model: DashboardCard.self)
         try context.delete(model: UserSettings.self)
+        // Lokalna baza podataka iz Zdravlja (u Zdravlju sve ostaje).
+        try context.delete(model: HealthWorkout.self)
+        try context.delete(model: HealthMeasurement.self)
+        try context.delete(model: SessionHealthData.self)
         try context.save()
     }
 }

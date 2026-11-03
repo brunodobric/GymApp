@@ -27,13 +27,12 @@ public struct BodyTracking {
         return measurement
     }
 
-    /// Povijest jedne mjere, od najstarije. Za vlastitu mjeru se razlikuje po nazivu.
+    /// Povijest jedne mjere, od najstarije, s mjerenjima iz Zdravlja. Za vlastitu mjeru se razlikuje po nazivu.
     public func measurements(of kind: BodyMeasurementKind, customName: String? = nil) throws -> [BodyMeasurement] {
         let raw = kind.rawValue
-        let found = try context.fetch(FetchDescriptor<BodyMeasurement>(
-            predicate: #Predicate { $0.kindRaw == raw },
-            sortBy: [SortDescriptor(\.date)]
-        ))
+        let manual = try context.fetch(FetchDescriptor<BodyMeasurement>(predicate: #Predicate { $0.kindRaw == raw }))
+        let health = try context.fetch(FetchDescriptor<HealthMeasurement>(predicate: #Predicate { $0.kindRaw == raw }))
+        let found = BodyMeasurement.merged(manual, health: health)
         guard kind == .custom else { return found }
         return found.filter { $0.customName == customName }
     }
@@ -56,7 +55,12 @@ public struct BodyTracking {
         return Array(Set(names)).sorted()
     }
 
+    /// Mjerenje iz Zdravlja briše se iz lokalne baze (u Zdravlju ostaje).
     public func delete(_ measurement: BodyMeasurement) throws {
+        if measurement.source == .healthKit, try HealthLocalStore(context: context).measurement(id: measurement.id) != nil {
+            try HealthLocalStore(context: context).deleteMeasurement(id: measurement.id)
+            return
+        }
         context.delete(measurement)
         try context.save()
     }

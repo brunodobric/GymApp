@@ -8,7 +8,10 @@ import Units
 /// Praćenje tijela: popis mjera s zadnjom vrijednošću i promjenom, a svaka mjera ima povijest i graf.
 struct BodyScreen: View {
     @Environment(\.modelContext) private var context
-    @Query(sort: \BodyMeasurement.date) private var measurements: [BodyMeasurement]
+    @Query private var manual: [BodyMeasurement]
+    /// Težina i visina iz Zdravlja su u lokalnoj bazi (ne sinkroniziraju se).
+    @Query private var fromHealth: [HealthMeasurement]
+    private var measurements: [BodyMeasurement] { BodyMeasurement.merged(manual, health: fromHealth) }
     @Query private var settingsList: [UserSettings]
     @State private var showsNewCustom = false
     @State private var customName = ""

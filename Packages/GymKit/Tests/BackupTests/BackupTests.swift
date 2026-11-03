@@ -206,7 +206,9 @@ struct JSONBackupTests {
         let target = try makeContext()
         _ = try JSONBackup.importBackup(try JSONBackup.export(from: source, now: exportTime), into: target)
         #expect(try target.fetch(FetchDescriptor<WorkoutTemplate>()).first?.cardioPlan == plan)
-        #expect(try target.fetch(FetchDescriptor<Session>()).first?.workoutPlanId == planId)
+        // Uvezeni trening iz kopije završava u lokalnoj bazi podataka iz Zdravlja.
+        #expect(try target.fetch(FetchDescriptor<Session>()).allSatisfy { !$0.isImportedFromWorkoutsApp })
+        #expect(try HealthLocalStore(context: target).workouts().first?.workoutPlanId == planId)
     }
 }
 

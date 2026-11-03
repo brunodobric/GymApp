@@ -15,6 +15,9 @@ struct SessionDetailScreen: View {
     @State private var confirmsDelete = false
     @State private var errorText: String?
 
+    /// Kalorije i puls su u lokalnoj bazi podataka iz Zdravlja.
+    private var health: HealthLocalStore { HealthLocalStore(context: context) }
+
     var body: some View {
         List {
             Section {
@@ -26,11 +29,11 @@ struct SessionDetailScreen: View {
                 if let meters = session.distanceMeters {
                     LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
                 }
-                if let heartRate = session.averageHeartRate {
+                if let heartRate = health.averageHeartRate(of: session) {
                     LabeledContent("Prosječni puls", value: "\(Int(heartRate)) otk/min")
                 }
                 // Kalorije samo iz Zdravlja; bez njih se redak ne prikazuje (ni nula ni procjena).
-                if let energy = session.activeEnergyKilocalories {
+                if let energy = health.activeEnergy(of: session) {
                     LabeledContent("Aktivne kalorije", value: "\(Int(energy.rounded())) kcal")
                 }
             } footer: {

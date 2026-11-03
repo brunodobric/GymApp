@@ -18,6 +18,7 @@ struct HomeScreen: View {
 
     @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }, sort: \Session.startedAt, order: .reverse)
     private var finishedSessions: [Session]
+    @Query(sort: \HealthWorkout.startedAt, order: .reverse) private var healthWorkouts: [HealthWorkout]
     @Query(sort: \DashboardCard.orderIndex) private var dashboardCards: [DashboardCard]
     @Query private var settingsList: [UserSettings]
     @Query private var schedules: [Schedule]
@@ -126,7 +127,9 @@ struct HomeScreen: View {
     }
 
     private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
-    private var lastSession: Session? { finishedSessions.first }
+    private var lastSession: Session? {
+        Session.merged(Array(finishedSessions.prefix(1)), health: Array(healthWorkouts.prefix(1))).first
+    }
 
     private var visibleCards: [DashboardCard] {
         _ = dashboardCards.map(\.orderIndex)

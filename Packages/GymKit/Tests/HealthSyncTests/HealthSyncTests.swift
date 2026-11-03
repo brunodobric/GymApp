@@ -43,7 +43,9 @@ struct WorkoutImportTests {
         let record = run()
         #expect(try HealthImporter(context: context).importWorkouts([record], name: name) == 1)
 
-        let session = try #require(try context.fetch(FetchDescriptor<Session>()).first)
+        // Uvezeni trening je samo u lokalnoj bazi, a povijest ga vidi kao trening.
+        #expect(try context.fetchCount(FetchDescriptor<Session>()) == 0)
+        let session = try #require(try GymQueries(context: context).allFinishedSessions().first)
         #expect(session.name == "Trčanje" && session.kind == .cardio && session.state == .finished)
         #expect(session.startedAt == record.start && session.endedAt == record.end)
         #expect(session.isImportedFromWorkoutsApp && session.healthKitWorkoutId == record.uuid)
@@ -57,8 +59,8 @@ struct WorkoutImportTests {
         let planId = UUID()
         record.workoutPlanId = planId
         try HealthImporter(context: context).importWorkouts([record, run(start: base.addingTimeInterval(86_400))], name: name)
-        let sessions = try context.fetch(FetchDescriptor<Session>(sortBy: [SortDescriptor(\.startedAt)]))
-        #expect(sessions.map(\.workoutPlanId) == [planId, nil])
+        let workouts = try HealthLocalStore(context: context).workouts()
+        #expect(workouts.map(\.workoutPlanId) == [planId, nil])
     }
 
     @Test("Isti trening uvezen dvaput pojavi se točno jednom")
@@ -68,7 +70,7 @@ struct WorkoutImportTests {
         let importer = HealthImporter(context: context)
         #expect(try importer.importWorkouts([record, record], name: name) == 1)
         #expect(try importer.importWorkouts([record], name: name) == 0)
-        #expect(try context.fetchCount(FetchDescriptor<Session>()) == 1)
+        #expect(try context.fetchCount(FetchDescriptor<HealthWorkout>()) == 1)
     }
 
     @Test("Treninzi koje je spremila ova aplikacija se ne uvoze natrag")
@@ -83,6 +85,7 @@ struct WorkoutImportTests {
         let imported = try HealthImporter(context: context).importWorkouts([fromOwnApp, ownCardio, appleWithOwnId], name: name)
         #expect(imported == 0)
         #expect(try context.fetchCount(FetchDescriptor<Session>()) == 1)
+        #expect(try context.fetchCount(FetchDescriptor<HealthWorkout>()) == 0)
     }
 
     @Test("Uvoze se samo kardio treninzi iz Appleovih aplikacija")
@@ -102,12 +105,12 @@ struct WorkoutImportTests {
     func missingEnergyStaysNil() throws {
         let context = try makeContext()
         try HealthImporter(context: context).importWorkouts([run(energy: nil), run(energy: 0)], name: name)
-        let sessions = try context.fetch(FetchDescriptor<Session>())
-        #expect(sessions.count == 2 && sessions.allSatisfy { $0.activeEnergyKilocalories == nil })
+        let workouts = try HealthLocalStore(context: context).workouts()
+        #expect(workouts.count == 2 && workouts.allSatisfy { $0.activeEnergyKilocalories == nil })
     }
 
-    @Test("Dvostruki uvoz s dva uređaja nakon sinkronizacije ostavlja jedan trening")
-    func removesCrossDeviceDuplicates() throws {
+    @Test("Uvezeni treninzi iz korisničke baze (starije verzije, dva uređaja) prelaze u lokalnu bazu jednom")
+    func movesLegacyImports() throws {
         let context = try makeContext()
         let workoutId = UUID()
         for _ in 0..<2 {
@@ -118,8 +121,10 @@ struct WorkoutImportTests {
             context.insert(session)
         }
         try context.save()
-        #expect(try Deduplication.removeDuplicateHealthImports(in: context) == 1)
-        #expect(try context.fetchCount(FetchDescriptor<Session>()) == 1)
+        #expect(try HealthLocalStore(context: context).moveHealthDataOutOfUserStore() == 2)
+        #expect(try context.fetchCount(FetchDescriptor<Session>()) == 0)
+        #expect(try context.fetchCount(FetchDescriptor<HealthWorkout>()) == 1)
+        #expect(try HealthLocalStore(context: context).moveHealthDataOutOfUserStore() == 0)
     }
 }
 
@@ -137,7 +142,8 @@ struct BodyImportTests {
         #expect(try importer.importBodySamples(samples) == 2)
         #expect(try importer.importBodySamples(samples) == 0)
 
-        let measurements = try context.fetch(FetchDescriptor<BodyMeasurement>())
+        #expect(try context.fetchCount(FetchDescriptor<BodyMeasurement>()) == 0)
+        let measurements = try HealthLocalStore(context: context).measurements().map { $0.makeMeasurement() }
         #expect(measurements.count == 2 && measurements.allSatisfy { $0.source == .healthKit && $0.healthKitSampleId != nil })
         #expect(measurements.contains { $0.kind == .weight && $0.value == 81.3 })
     }
@@ -153,6 +159,21 @@ struct BodyImportTests {
         ]
         #expect(try HealthImporter(context: context).importBodySamples(samples) == 0)
         #expect(try context.fetchCount(FetchDescriptor<BodyMeasurement>()) == 1)
+        #expect(try context.fetchCount(FetchDescriptor<HealthMeasurement>()) == 0)
+    }
+
+    @Test("Mjerenja iz Zdravlja u korisničkoj bazi prelaze u lokalnu, a ručna ostaju")
+    func movesLegacyMeasurements() throws {
+        let context = try makeContext()
+        context.insert(BodyMeasurement(kind: .weight, value: 80, date: base))
+        let fromHealth = BodyMeasurement(kind: .weight, value: 81, date: base, source: .healthKit)
+        fromHealth.healthKitSampleId = UUID()
+        context.insert(fromHealth)
+        try context.save()
+        #expect(try HealthLocalStore(context: context).moveHealthDataOutOfUserStore() == 1)
+        let manual = try context.fetch(FetchDescriptor<BodyMeasurement>())
+        #expect(manual.count == 1 && manual.first?.source == .manual)
+        #expect(try HealthLocalStore(context: context).measurements().map(\.value) == [81])
     }
 }
 
@@ -193,7 +214,13 @@ struct WorkoutExportTests {
         let workoutId = UUID()
         try HealthImporter(context: context).markExported(sessionId: session.id, workoutId: workoutId, activeEnergyKilocalories: 0)
         #expect(session.healthKitWorkoutId == workoutId && session.activeEnergyKilocalories == nil)
+        #expect(HealthLocalStore(context: context).activeEnergy(of: session) == nil)
         #expect(HealthWorkoutExport.make(for: session) == nil)
+
+        try HealthImporter(context: context).markExported(sessionId: session.id, workoutId: workoutId, activeEnergyKilocalories: 410)
+        // Kalorije su samo u lokalnoj bazi, nikad u treningu koji se sinkronizira.
+        #expect(session.activeEnergyKilocalories == nil)
+        #expect(HealthLocalStore(context: context).activeEnergy(of: session) == 410)
     }
 
     @Test("Prvi uvoz ide od početka dana prije zadanog broja dana")

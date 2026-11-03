@@ -9,10 +9,9 @@ public enum JSONBackup {
     public static let version = 1
 
     public static func export(from context: ModelContext, now: Date = Date()) throws -> Data {
-        let finished = SessionState.finished.rawValue
-        let sessions = try context.fetch(FetchDescriptor<Session>(
-            predicate: #Predicate { $0.stateRaw == finished }, sortBy: [SortDescriptor(\.startedAt)]
-        ))
+        // Kopija je korisnikova datoteka, pa uključuje i podatke iz Zdravlja iz lokalne baze.
+        let sessions = try GymQueries(context: context).allFinishedSessions()
+        let health = HealthLocalStore(context: context)
         let file = BackupFile(
             format: format, version: version, exportedAt: now,
             settings: UserSettings.preferred(in: try context.fetch(FetchDescriptor<UserSettings>())).map(SettingsDTO.init),
@@ -25,8 +24,15 @@ public enum JSONBackup {
             cycleOverrides: try context.fetch(FetchDescriptor<CycleOverride>())
                 .sorted { $0.id.uuidString < $1.id.uuidString }.map(CycleOverrideDTO.init),
             sessions: sessions.sorted { ($0.startedAt, $0.id.uuidString) < ($1.startedAt, $1.id.uuidString) }
-                .map(SessionDTO.init),
-            measurements: try context.fetch(FetchDescriptor<BodyMeasurement>())
+                .map { session in
+                    var dto = SessionDTO(session)
+                    dto.activeEnergyKilocalories = health.activeEnergy(of: session)
+                    dto.averageHeartRate = health.averageHeartRate(of: session)
+                    return dto
+                },
+            measurements: BodyMeasurement.merged(
+                try context.fetch(FetchDescriptor<BodyMeasurement>()), health: try health.measurements()
+            )
                 .sorted { ($0.date, $0.id.uuidString) < ($1.date, $1.id.uuidString) }.map(MeasurementDTO.init),
             dashboardCards: try context.fetch(FetchDescriptor<DashboardCard>())
                 .sorted { ($0.orderIndex, $0.id.uuidString) < ($1.orderIndex, $1.id.uuidString) }
@@ -94,6 +100,8 @@ public enum JSONBackup {
             context.insert($0.make())
         }
         try context.save()
+        // Podaci iz Zdravlja iz datoteke idu u lokalnu bazu, ne u korisničku koja se sinkronizira.
+        try HealthLocalStore(context: context).moveHealthDataOutOfUserStore()
         return result
     }
 }
