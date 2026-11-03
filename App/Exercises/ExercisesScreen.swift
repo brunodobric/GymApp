@@ -75,6 +75,7 @@ struct ExercisesScreen: View {
                 NavigationLink(value: summary) {
                     ExerciseRow(summary: summary)
                 }
+                .openInWindowMenu(DetailWindow.exercise, value: summary.id)
             }
         }
     }
@@ -87,6 +88,7 @@ struct ExercisesScreen: View {
                         ExerciseGridCell(summary: summary, thumbnail: thumbnail(for: summary))
                     }
                     .buttonStyle(.plain)
+                    .openInWindowMenu(DetailWindow.exercise, value: summary.id)
                 }
             }
             .padding()

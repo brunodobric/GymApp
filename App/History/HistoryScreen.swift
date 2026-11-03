@@ -70,6 +70,7 @@ struct HistoryScreen: View {
             Section {
                 ForEach(listed) { session in
                     NavigationLink(value: session.id) { SessionRow(session: session) }
+                        .openInWindowMenu(DetailWindow.session, value: session.id)
                 }
                 // Poruka ide u popis ispod kalendara, ne preko cijelog ekrana.
                 if showsCalendar && listed.isEmpty && !sessions.isEmpty {

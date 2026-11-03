@@ -9,6 +9,9 @@ import Units
 // Naslovi su kratki (ispod 15 znakova) i nisu naziv aplikacije, prema HIG-u.
 
 struct HomeScreen: View {
+    /// Zahtjev iz tipkovničkog prečaca: pokretanje treninga ili Postavke.
+    @Binding var request: HomeRequest?
+
     @Environment(\.modelContext) private var context
     @Query(filter: #Predicate<Session> { $0.stateRaw == "active" }, sort: \Session.startedAt, order: .reverse)
     private var activeSessions: [Session]
@@ -88,6 +91,11 @@ struct HomeScreen: View {
                 ActiveWorkoutScreen(session: session)
             }
             .task { checkRecovery() }
+            .onChange(of: request) { _, newValue in
+                guard let newValue else { return }
+                request = nil
+                handle(newValue)
+            }
             .confirmationDialog(
                 LocalizedStringKey(recovery?.isStale == true ? "Zaboravljen trening" : "Prekinut trening"),
                 isPresented: Binding(get: { recovery != nil }, set: { if !$0 { recovery = nil } }),
@@ -177,6 +185,24 @@ struct HomeScreen: View {
             }
         }
         .frame(maxWidth: .infinity)
+    }
+
+    /// ⌘N nastavlja trening u tijeku ili pokreće sljedeći iz rasporeda (prazan ako rasporeda nema),
+    /// isto kao prvi gumb na Početnoj. Kardio se ne pokreće u aplikaciji, pa ⌘N tada otvara prazan trening.
+    private func handle(_ request: HomeRequest) {
+        guard presentedSession == nil else { return }
+        switch request {
+        case .settings:
+            showsSettings = true
+        case .startWorkout:
+            if let active = activeSessions.first {
+                presentedSession = active
+            } else if let planned = upcomingWorkouts.first(where: { $0.template.kind != .cardio }) {
+                start(planned)
+            } else {
+                startWorkout()
+            }
+        }
     }
 
     /// Pri pokretanju aplikacije: ako je trening ostao otvoren, nudi nastavak, spremanje ili odbacivanje.

@@ -16,5 +16,19 @@ struct GymApp: App {
                 .environment(catalogStore)
         }
         .modelContainer(AppServices.container)
+        .commands { AppCommands() }
+
+        // Dodatni prozori na iPadu: trening iz povijesti i vježba iz kataloga.
+        WindowGroup("Trening", id: DetailWindow.session, for: UUID.self) { $sessionId in
+            SessionWindow(sessionId: sessionId)
+                .environment(catalogStore)
+        }
+        .modelContainer(AppServices.container)
+
+        WindowGroup("Vježba", id: DetailWindow.exercise, for: String.self) { $summaryId in
+            ExerciseWindow(summaryId: summaryId)
+                .environment(catalogStore)
+        }
+        .modelContainer(AppServices.container)
     }
 }
