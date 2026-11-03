@@ -1,3 +1,4 @@
+import Catalog
 import Foundation
 import SwiftData
 import Units
@@ -63,8 +64,35 @@ extension GymSchemaV1 {
         /// Dostupne ploče u kilogramima, odvojene zarezom.
         public var availablePlatesRaw: String = "1.25,2.5,5,10,15,20,25"
         public var barbellWeightKg: Double = 20
+        /// Onboarding. Prazan tekst znači da korisnik nije odgovorio.
+        public var goalRaw: String = ""
+        public var experienceRaw: String = ""
+        /// Dostupna oprema (`Equipment.rawValue`) odvojena zarezom.
+        public var equipmentRaw: String = ""
+        public var trainingDaysPerWeek: Int?
+        public var onboardingCompleted: Bool = false
+        /// Odgovor na pitanje o Apple Zdravlju u onboardingu (povezivanje je u fazi 7).
+        public var wantsHealthKit: Bool = false
+        public var notificationsEnabled: Bool = true
+        /// Tijelo koje se crta na prikazu mišića (statistika, sažetak treninga).
+        public var bodyMapFemale: Bool = false
 
         public init() {}
+
+        public var goal: TrainingGoal? {
+            get { TrainingGoal(rawValue: goalRaw) }
+            set { goalRaw = newValue?.rawValue ?? "" }
+        }
+
+        public var experience: ExperienceLevel? {
+            get { ExperienceLevel(rawValue: experienceRaw) }
+            set { experienceRaw = newValue?.rawValue ?? "" }
+        }
+
+        public var equipment: [Equipment] {
+            get { equipmentRaw.split(separator: ",").compactMap { Equipment(rawValue: String($0)) } }
+            set { equipmentRaw = newValue.map(\.rawValue).joined(separator: ",") }
+        }
 
         public var effortScale: EffortScale {
             get { EffortScale(rawValue: effortScaleRaw) ?? .rpe }

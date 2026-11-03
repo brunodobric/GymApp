@@ -55,6 +55,20 @@ public enum MeasurementSource: String, Codable, CaseIterable, Sendable {
     case healthKit
 }
 
+/// Cilj treninga iz onboardinga.
+public enum TrainingGoal: String, Codable, CaseIterable, Sendable {
+    case hypertrophy
+    case strength
+    case recomposition
+    case generalFitness
+}
+
+public enum ExperienceLevel: String, Codable, CaseIterable, Sendable {
+    case beginner
+    case intermediate
+    case advanced
+}
+
 public enum EffortScale: String, Codable, CaseIterable, Sendable {
     case rpe
     case rir

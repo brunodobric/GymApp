@@ -43,7 +43,7 @@ targets:
         buildPhase: resources
     dependencies:
       - package: GymKit
-        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats]
+        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup]
       - target: GymAppWatch
       - target: GymAppWidgets
     info:

@@ -19,6 +19,7 @@ let package = Package(
         .library(name: "Training", targets: ["Training"]),
         .library(name: "Planning", targets: ["Planning"]),
         .library(name: "Stats", targets: ["Stats"]),
+        .library(name: "Backup", targets: ["Backup"]),
     ],
     targets: [
         .target(name: "Units"),
@@ -46,6 +47,11 @@ let package = Package(
             dependencies: ["Models", "Catalog", "Training", "Units"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
+        .target(
+            name: "Backup",
+            dependencies: ["Models", "Catalog", "Units"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .testTarget(name: "UnitsTests", dependencies: ["Units"]),
         .testTarget(name: "ConnectivityTests", dependencies: ["Connectivity"]),
         .testTarget(name: "CatalogTests", dependencies: ["Catalog"]),
@@ -62,6 +68,11 @@ let package = Package(
         .testTarget(
             name: "StatsTests",
             dependencies: ["Stats", "Training", "Models", "Catalog"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .testTarget(
+            name: "BackupTests",
+            dependencies: ["Backup", "Models", "Catalog", "Units"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(

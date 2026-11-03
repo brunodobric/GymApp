@@ -180,8 +180,6 @@ struct SettingsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @State private var settings: UserSettings?
-    /// Isti ključ koriste heatmap u Statistici i sažetak treninga.
-    @AppStorage("bodyMapFemale") private var bodyMapFemale = false
 
     private var version: String {
         let info = Bundle.main.infoDictionary
@@ -197,7 +195,10 @@ struct SettingsScreen: View {
                     TrainingSettingsSection(settings: settings)
                 }
                 Section {
-                    Picker("Tijelo na prikazu mišića", selection: $bodyMapFemale) {
+                    Picker("Tijelo na prikazu mišića", selection: Binding(
+                        get: { settings?.bodyMapFemale ?? false },
+                        set: { settings?.bodyMapFemale = $0 }
+                    )) {
                         Text("Muško").tag(false)
                         Text("Žensko").tag(true)
                     }
@@ -205,6 +206,9 @@ struct SettingsScreen: View {
                     Text("Prikaz")
                 } footer: {
                     Text("Određuje koje se tijelo crta u statistici i u sažetku treninga.")
+                }
+                DataSettingsSection {
+                    settings = try? GymQueries(context: context).settings()
                 }
                 Section("O aplikaciji") {
                     LabeledContent("Verzija", value: version)
