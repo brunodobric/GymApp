@@ -111,8 +111,8 @@ public enum CSVBackup {
 
         var exercises: [Int: SessionExercise] = [:]
         for line in lines where !line.fields[6].isEmpty {
-            let f = line.fields
-            guard let exerciseOrder = Int(f[6]), let ref = ExerciseRef(key: f[7], name: f[8]) else {
+            let fields = line.fields
+            guard let exerciseOrder = Int(fields[6]), let ref = ExerciseRef(key: fields[7], name: fields[8]) else {
                 throw BackupError.invalidCSV(line: line.number)
             }
             let exercise: SessionExercise
@@ -120,22 +120,22 @@ public enum CSVBackup {
                 exercise = existing
             } else {
                 exercise = SessionExercise(orderIndex: exerciseOrder, exercise: ref)
-                exercise.inputTypeRaw = f[9]
-                exercise.supersetGroupId = UUID(uuidString: f[10])
-                exercise.restSeconds = Int(f[11])
+                exercise.inputTypeRaw = fields[9]
+                exercise.supersetGroupId = UUID(uuidString: fields[10])
+                exercise.restSeconds = Int(fields[11])
                 context.insert(exercise)
                 exercise.session = session
                 exercises[exerciseOrder] = exercise
             }
-            guard !f[12].isEmpty else { continue }
-            guard let setOrder = Int(f[12]) else { throw BackupError.invalidCSV(line: line.number) }
-            let set = try makeSet(order: setOrder, fields: f, line: line.number)
+            guard !fields[12].isEmpty else { continue }
+            guard let setOrder = Int(fields[12]) else { throw BackupError.invalidCSV(line: line.number) }
+            let set = try makeSet(order: setOrder, fields: fields, line: line.number)
             context.insert(set)
             set.exercise = exercise
         }
     }
 
-    private static func makeSet(order: Int, fields f: [String], line: Int) throws -> SetLog {
+    private static func makeSet(order: Int, fields: [String], line: Int) throws -> SetLog {
         func double(_ text: String) throws -> Double? {
             if text.isEmpty { return nil }
             guard let value = Double(text) else { throw BackupError.invalidCSV(line: line) }
@@ -147,14 +147,14 @@ public enum CSVBackup {
             return value
         }
         let set = SetLog(orderIndex: order)
-        set.kindRaw = f[13]
-        set.weightKg = try double(f[14])
-        set.reps = try integer(f[15])
-        set.extraWeightKg = try double(f[16])
-        set.durationSeconds = try integer(f[17])
-        set.distanceMeters = try double(f[18])
-        set.rpe = try double(f[19])
-        set.completedAt = CSVDate.parse(f[20])
+        set.kindRaw = fields[13]
+        set.weightKg = try double(fields[14])
+        set.reps = try integer(fields[15])
+        set.extraWeightKg = try double(fields[16])
+        set.durationSeconds = try integer(fields[17])
+        set.distanceMeters = try double(fields[18])
+        set.rpe = try double(fields[19])
+        set.completedAt = CSVDate.parse(fields[20])
         return set
     }
 

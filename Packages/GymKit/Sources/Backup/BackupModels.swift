@@ -60,46 +60,46 @@ struct SettingsDTO: Codable {
     var wantsHealthKit: Bool
     var notificationsEnabled: Bool
 
-    init(_ s: UserSettings) {
-        id = s.id
-        weightUnitRaw = s.weightUnitRaw
-        defaultRestSeconds = s.defaultRestSeconds
-        themeRaw = s.themeRaw
-        accentColorRaw = s.accentColorRaw
-        effortScaleRaw = s.effortScaleRaw
-        prEnabled = s.prEnabled
-        trackedPRKindsRaw = s.trackedPRKindsRaw
-        restEndSoundEnabled = s.restEndSoundEnabled
-        availablePlatesRaw = s.availablePlatesRaw
-        barbellWeightKg = s.barbellWeightKg
-        goalRaw = s.goalRaw
-        experienceRaw = s.experienceRaw
-        equipmentRaw = s.equipmentRaw
-        trainingDaysPerWeek = s.trainingDaysPerWeek
-        onboardingCompleted = s.onboardingCompleted
-        wantsHealthKit = s.wantsHealthKit
-        notificationsEnabled = s.notificationsEnabled
+    init(_ model: UserSettings) {
+        id = model.id
+        weightUnitRaw = model.weightUnitRaw
+        defaultRestSeconds = model.defaultRestSeconds
+        themeRaw = model.themeRaw
+        accentColorRaw = model.accentColorRaw
+        effortScaleRaw = model.effortScaleRaw
+        prEnabled = model.prEnabled
+        trackedPRKindsRaw = model.trackedPRKindsRaw
+        restEndSoundEnabled = model.restEndSoundEnabled
+        availablePlatesRaw = model.availablePlatesRaw
+        barbellWeightKg = model.barbellWeightKg
+        goalRaw = model.goalRaw
+        experienceRaw = model.experienceRaw
+        equipmentRaw = model.equipmentRaw
+        trainingDaysPerWeek = model.trainingDaysPerWeek
+        onboardingCompleted = model.onboardingCompleted
+        wantsHealthKit = model.wantsHealthKit
+        notificationsEnabled = model.notificationsEnabled
     }
 
-    func apply(to s: UserSettings) {
-        s.id = id
-        s.weightUnitRaw = weightUnitRaw
-        s.defaultRestSeconds = defaultRestSeconds
-        s.themeRaw = themeRaw
-        s.accentColorRaw = accentColorRaw
-        s.effortScaleRaw = effortScaleRaw
-        s.prEnabled = prEnabled
-        s.trackedPRKindsRaw = trackedPRKindsRaw
-        s.restEndSoundEnabled = restEndSoundEnabled
-        s.availablePlatesRaw = availablePlatesRaw
-        s.barbellWeightKg = barbellWeightKg
-        s.goalRaw = goalRaw
-        s.experienceRaw = experienceRaw
-        s.equipmentRaw = equipmentRaw
-        s.trainingDaysPerWeek = trainingDaysPerWeek
-        s.onboardingCompleted = onboardingCompleted
-        s.wantsHealthKit = wantsHealthKit
-        s.notificationsEnabled = notificationsEnabled
+    func apply(to model: UserSettings) {
+        model.id = id
+        model.weightUnitRaw = weightUnitRaw
+        model.defaultRestSeconds = defaultRestSeconds
+        model.themeRaw = themeRaw
+        model.accentColorRaw = accentColorRaw
+        model.effortScaleRaw = effortScaleRaw
+        model.prEnabled = prEnabled
+        model.trackedPRKindsRaw = trackedPRKindsRaw
+        model.restEndSoundEnabled = restEndSoundEnabled
+        model.availablePlatesRaw = availablePlatesRaw
+        model.barbellWeightKg = barbellWeightKg
+        model.goalRaw = goalRaw
+        model.experienceRaw = experienceRaw
+        model.equipmentRaw = equipmentRaw
+        model.trainingDaysPerWeek = trainingDaysPerWeek
+        model.onboardingCompleted = onboardingCompleted
+        model.wantsHealthKit = wantsHealthKit
+        model.notificationsEnabled = notificationsEnabled
     }
 }
 
@@ -115,31 +115,31 @@ struct CustomExerciseDTO: Codable {
     var isArchived: Bool
     var createdAt: Date
 
-    init(_ e: CustomExercise) {
-        id = e.id
-        name = e.name
-        details = e.details
-        categoryRaw = e.categoryRaw
-        musclesRaw = e.musclesRaw
-        equipmentRaw = e.equipmentRaw
-        inputTypeRaw = e.inputTypeRaw
-        imageData = e.imageData
-        isArchived = e.isArchived
-        createdAt = e.createdAt
+    init(_ model: CustomExercise) {
+        id = model.id
+        name = model.name
+        details = model.details
+        categoryRaw = model.categoryRaw
+        musclesRaw = model.musclesRaw
+        equipmentRaw = model.equipmentRaw
+        inputTypeRaw = model.inputTypeRaw
+        imageData = model.imageData
+        isArchived = model.isArchived
+        createdAt = model.createdAt
     }
 
     func make() -> CustomExercise {
-        let e = CustomExercise(name: name)
-        e.id = id
-        e.details = details
-        e.categoryRaw = categoryRaw
-        e.musclesRaw = musclesRaw
-        e.equipmentRaw = equipmentRaw
-        e.inputTypeRaw = inputTypeRaw
-        e.imageData = imageData
-        e.isArchived = isArchived
-        e.createdAt = createdAt
-        return e
+        let model = CustomExercise(name: name)
+        model.id = id
+        model.details = details
+        model.categoryRaw = categoryRaw
+        model.musclesRaw = musclesRaw
+        model.equipmentRaw = equipmentRaw
+        model.inputTypeRaw = inputTypeRaw
+        model.imageData = imageData
+        model.isArchived = isArchived
+        model.createdAt = createdAt
+        return model
     }
 }
 
@@ -172,18 +172,18 @@ struct TemplateDTO: Codable {
     var createdAt: Date
     var exercises: [TemplateExerciseDTO]
 
-    init(_ t: WorkoutTemplate) {
-        id = t.id
-        name = t.name
-        details = t.details
-        kindRaw = t.kindRaw
-        createdAt = t.createdAt
-        exercises = t.orderedExercises.map { e in
+    init(_ template: WorkoutTemplate) {
+        id = template.id
+        name = template.name
+        details = template.details
+        kindRaw = template.kindRaw
+        createdAt = template.createdAt
+        exercises = template.orderedExercises.map { exercise in
             TemplateExerciseDTO(
-                id: e.id, orderIndex: e.orderIndex, catalogId: e.exerciseCatalogId, customId: e.exerciseCustomId,
-                name: e.exerciseName, inputTypeRaw: e.inputTypeRaw, supersetGroupId: e.supersetGroupId,
-                restSeconds: e.restSeconds, notes: e.notes,
-                sets: e.orderedSets.map {
+                id: exercise.id, orderIndex: exercise.orderIndex, catalogId: exercise.exerciseCatalogId, customId: exercise.exerciseCustomId,
+                name: exercise.exerciseName, inputTypeRaw: exercise.inputTypeRaw, supersetGroupId: exercise.supersetGroupId,
+                restSeconds: exercise.restSeconds, notes: exercise.notes,
+                sets: exercise.orderedSets.map {
                     TemplateSetDTO(
                         id: $0.id, orderIndex: $0.orderIndex, kindRaw: $0.kindRaw,
                         targetWeightKg: $0.targetWeightKg, targetReps: $0.targetReps
@@ -194,34 +194,34 @@ struct TemplateDTO: Codable {
     }
 
     func make(in context: ModelContext) -> WorkoutTemplate {
-        let t = WorkoutTemplate(name: name)
-        t.id = id
-        t.details = details
-        t.kindRaw = kindRaw
-        t.createdAt = createdAt
-        context.insert(t)
+        let template = WorkoutTemplate(name: name)
+        template.id = id
+        template.details = details
+        template.kindRaw = kindRaw
+        template.createdAt = createdAt
+        context.insert(template)
         for item in exercises {
-            let e = TemplateExercise(orderIndex: item.orderIndex, exercise: ExerciseRef(
+            let exercise = TemplateExercise(orderIndex: item.orderIndex, exercise: ExerciseRef(
                 catalogId: item.catalogId, customExerciseId: item.customId, name: item.name
             ))
-            e.id = item.id
-            e.inputTypeRaw = item.inputTypeRaw
-            e.supersetGroupId = item.supersetGroupId
-            e.restSeconds = item.restSeconds
-            e.notes = item.notes
-            context.insert(e)
-            e.template = t
+            exercise.id = item.id
+            exercise.inputTypeRaw = item.inputTypeRaw
+            exercise.supersetGroupId = item.supersetGroupId
+            exercise.restSeconds = item.restSeconds
+            exercise.notes = item.notes
+            context.insert(exercise)
+            exercise.template = template
             for setItem in item.sets {
-                let s = TemplateSet(orderIndex: setItem.orderIndex)
-                s.id = setItem.id
-                s.kindRaw = setItem.kindRaw
-                s.targetWeightKg = setItem.targetWeightKg
-                s.targetReps = setItem.targetReps
-                context.insert(s)
-                s.exercise = e
+                let templateSet = TemplateSet(orderIndex: setItem.orderIndex)
+                templateSet.id = setItem.id
+                templateSet.kindRaw = setItem.kindRaw
+                templateSet.targetWeightKg = setItem.targetWeightKg
+                templateSet.targetReps = setItem.targetReps
+                context.insert(templateSet)
+                templateSet.exercise = exercise
             }
         }
-        return t
+        return template
     }
 }
 
@@ -247,46 +247,46 @@ struct ScheduleDTO: Codable {
     var createdAt: Date
     var items: [ScheduleItemDTO]
 
-    init(_ s: Schedule) {
-        id = s.id
-        name = s.name
-        details = s.details
-        cycleCount = s.cycleCount
-        reminderModeRaw = s.reminderModeRaw
-        weekdaysRaw = s.weekdaysRaw
-        reminderMinutes = s.reminderMinutes
-        reminderGapDays = s.reminderGapDays
-        isActive = s.isActive
-        currentCycle = s.currentCycle
-        currentPosition = s.currentPosition
-        createdAt = s.createdAt
-        items = s.orderedItems.map {
+    init(_ schedule: Schedule) {
+        id = schedule.id
+        name = schedule.name
+        details = schedule.details
+        cycleCount = schedule.cycleCount
+        reminderModeRaw = schedule.reminderModeRaw
+        weekdaysRaw = schedule.weekdaysRaw
+        reminderMinutes = schedule.reminderMinutes
+        reminderGapDays = schedule.reminderGapDays
+        isActive = schedule.isActive
+        currentCycle = schedule.currentCycle
+        currentPosition = schedule.currentPosition
+        createdAt = schedule.createdAt
+        items = schedule.orderedItems.map {
             ScheduleItemDTO(id: $0.id, orderIndex: $0.orderIndex, kindRaw: $0.kindRaw, workoutTemplateId: $0.workoutTemplateId)
         }
     }
 
     func make(in context: ModelContext) -> Schedule {
-        let s = Schedule(name: name)
-        s.id = id
-        s.details = details
-        s.cycleCount = cycleCount
-        s.reminderModeRaw = reminderModeRaw
-        s.weekdaysRaw = weekdaysRaw
-        s.reminderMinutes = reminderMinutes
-        s.reminderGapDays = reminderGapDays
-        s.isActive = isActive
-        s.currentCycle = currentCycle
-        s.currentPosition = currentPosition
-        s.createdAt = createdAt
-        context.insert(s)
+        let schedule = Schedule(name: name)
+        schedule.id = id
+        schedule.details = details
+        schedule.cycleCount = cycleCount
+        schedule.reminderModeRaw = reminderModeRaw
+        schedule.weekdaysRaw = weekdaysRaw
+        schedule.reminderMinutes = reminderMinutes
+        schedule.reminderGapDays = reminderGapDays
+        schedule.isActive = isActive
+        schedule.currentCycle = currentCycle
+        schedule.currentPosition = currentPosition
+        schedule.createdAt = createdAt
+        context.insert(schedule)
         for item in items {
-            let i = ScheduleItem(orderIndex: item.orderIndex, kind: .workout, workoutTemplateId: item.workoutTemplateId)
-            i.id = item.id
-            i.kindRaw = item.kindRaw
-            context.insert(i)
-            i.schedule = s
+            let scheduleItem = ScheduleItem(orderIndex: item.orderIndex, kind: .workout, workoutTemplateId: item.workoutTemplateId)
+            scheduleItem.id = item.id
+            scheduleItem.kindRaw = item.kindRaw
+            context.insert(scheduleItem)
+            scheduleItem.schedule = schedule
         }
-        return s
+        return schedule
     }
 }
 
@@ -302,34 +302,34 @@ struct CycleOverrideDTO: Codable {
     var replacementName: String?
     var replacementInputTypeRaw: String?
 
-    init(_ o: CycleOverride) {
-        id = o.id
-        scheduleId = o.scheduleId
-        cycleNumber = o.cycleNumber
-        scheduleItemId = o.scheduleItemId
-        kindRaw = o.kindRaw
-        targetExerciseKey = o.targetExerciseKey
-        replacementCatalogId = o.replacementCatalogId
-        replacementCustomId = o.replacementCustomId
-        replacementName = o.replacementName
-        replacementInputTypeRaw = o.replacementInputTypeRaw
+    init(_ model: CycleOverride) {
+        id = model.id
+        scheduleId = model.scheduleId
+        cycleNumber = model.cycleNumber
+        scheduleItemId = model.scheduleItemId
+        kindRaw = model.kindRaw
+        targetExerciseKey = model.targetExerciseKey
+        replacementCatalogId = model.replacementCatalogId
+        replacementCustomId = model.replacementCustomId
+        replacementName = model.replacementName
+        replacementInputTypeRaw = model.replacementInputTypeRaw
     }
 
     func make() -> CycleOverride {
-        let o = CycleOverride(
+        let model = CycleOverride(
             scheduleId: scheduleId ?? UUID(), cycleNumber: cycleNumber,
             scheduleItemId: scheduleItemId ?? UUID(), kind: .skipWorkout
         )
-        o.id = id
-        o.scheduleId = scheduleId
-        o.scheduleItemId = scheduleItemId
-        o.kindRaw = kindRaw
-        o.targetExerciseKey = targetExerciseKey
-        o.replacementCatalogId = replacementCatalogId
-        o.replacementCustomId = replacementCustomId
-        o.replacementName = replacementName
-        o.replacementInputTypeRaw = replacementInputTypeRaw
-        return o
+        model.id = id
+        model.scheduleId = scheduleId
+        model.scheduleItemId = scheduleItemId
+        model.kindRaw = kindRaw
+        model.targetExerciseKey = targetExerciseKey
+        model.replacementCatalogId = replacementCatalogId
+        model.replacementCustomId = replacementCustomId
+        model.replacementName = replacementName
+        model.replacementInputTypeRaw = replacementInputTypeRaw
+        return model
     }
 }
 
@@ -377,28 +377,28 @@ struct SessionDTO: Codable {
     var lastActivityAt: Date
     var exercises: [SessionExerciseDTO]
 
-    init(_ s: Session) {
-        id = s.id
-        templateId = s.templateId
-        scheduleId = s.scheduleId
-        name = s.name
-        kindRaw = s.kindRaw
-        startedAt = s.startedAt
-        endedAt = s.endedAt
-        controllingDeviceRaw = s.controllingDeviceRaw
-        notes = s.notes
-        activeEnergyKilocalories = s.activeEnergyKilocalories
-        healthKitWorkoutId = s.healthKitWorkoutId
-        isImportedFromWorkoutsApp = s.isImportedFromWorkoutsApp
-        distanceMeters = s.distanceMeters
-        averageHeartRate = s.averageHeartRate
-        lastActivityAt = s.lastActivityAt
-        exercises = s.orderedExercises.map { e in
+    init(_ session: Session) {
+        id = session.id
+        templateId = session.templateId
+        scheduleId = session.scheduleId
+        name = session.name
+        kindRaw = session.kindRaw
+        startedAt = session.startedAt
+        endedAt = session.endedAt
+        controllingDeviceRaw = session.controllingDeviceRaw
+        notes = session.notes
+        activeEnergyKilocalories = session.activeEnergyKilocalories
+        healthKitWorkoutId = session.healthKitWorkoutId
+        isImportedFromWorkoutsApp = session.isImportedFromWorkoutsApp
+        distanceMeters = session.distanceMeters
+        averageHeartRate = session.averageHeartRate
+        lastActivityAt = session.lastActivityAt
+        exercises = session.orderedExercises.map { exercise in
             SessionExerciseDTO(
-                id: e.id, orderIndex: e.orderIndex, catalogId: e.exerciseCatalogId, customId: e.exerciseCustomId,
-                name: e.exerciseName, supersetGroupId: e.supersetGroupId, inputTypeRaw: e.inputTypeRaw,
-                restSeconds: e.restSeconds, isRemoved: e.isRemoved,
-                sets: e.orderedSets.map {
+                id: exercise.id, orderIndex: exercise.orderIndex, catalogId: exercise.exerciseCatalogId, customId: exercise.exerciseCustomId,
+                name: exercise.exerciseName, supersetGroupId: exercise.supersetGroupId, inputTypeRaw: exercise.inputTypeRaw,
+                restSeconds: exercise.restSeconds, isRemoved: exercise.isRemoved,
+                sets: exercise.orderedSets.map {
                     SetLogDTO(
                         id: $0.id, orderIndex: $0.orderIndex, kindRaw: $0.kindRaw, weightKg: $0.weightKg,
                         reps: $0.reps, extraWeightKg: $0.extraWeightKg, durationSeconds: $0.durationSeconds,
@@ -410,49 +410,49 @@ struct SessionDTO: Codable {
     }
 
     func make(in context: ModelContext) -> Session {
-        let s = Session(name: name, startedAt: startedAt)
-        s.id = id
-        s.templateId = templateId
-        s.scheduleId = scheduleId
-        s.kindRaw = kindRaw
-        s.endedAt = endedAt
-        s.state = .finished
-        s.controllingDeviceRaw = controllingDeviceRaw
-        s.notes = notes
-        s.activeEnergyKilocalories = activeEnergyKilocalories
-        s.healthKitWorkoutId = healthKitWorkoutId
-        s.isImportedFromWorkoutsApp = isImportedFromWorkoutsApp
-        s.distanceMeters = distanceMeters
-        s.averageHeartRate = averageHeartRate
-        s.lastActivityAt = lastActivityAt
-        context.insert(s)
+        let session = Session(name: name, startedAt: startedAt)
+        session.id = id
+        session.templateId = templateId
+        session.scheduleId = scheduleId
+        session.kindRaw = kindRaw
+        session.endedAt = endedAt
+        session.state = .finished
+        session.controllingDeviceRaw = controllingDeviceRaw
+        session.notes = notes
+        session.activeEnergyKilocalories = activeEnergyKilocalories
+        session.healthKitWorkoutId = healthKitWorkoutId
+        session.isImportedFromWorkoutsApp = isImportedFromWorkoutsApp
+        session.distanceMeters = distanceMeters
+        session.averageHeartRate = averageHeartRate
+        session.lastActivityAt = lastActivityAt
+        context.insert(session)
         for item in exercises {
-            let e = SessionExercise(orderIndex: item.orderIndex, exercise: ExerciseRef(
+            let exercise = SessionExercise(orderIndex: item.orderIndex, exercise: ExerciseRef(
                 catalogId: item.catalogId, customExerciseId: item.customId, name: item.name
             ))
-            e.id = item.id
-            e.supersetGroupId = item.supersetGroupId
-            e.inputTypeRaw = item.inputTypeRaw
-            e.restSeconds = item.restSeconds
-            e.isRemoved = item.isRemoved
-            context.insert(e)
-            e.session = s
+            exercise.id = item.id
+            exercise.supersetGroupId = item.supersetGroupId
+            exercise.inputTypeRaw = item.inputTypeRaw
+            exercise.restSeconds = item.restSeconds
+            exercise.isRemoved = item.isRemoved
+            context.insert(exercise)
+            exercise.session = session
             for setItem in item.sets {
-                let l = SetLog(orderIndex: setItem.orderIndex)
-                l.id = setItem.id
-                l.kindRaw = setItem.kindRaw
-                l.weightKg = setItem.weightKg
-                l.reps = setItem.reps
-                l.extraWeightKg = setItem.extraWeightKg
-                l.durationSeconds = setItem.durationSeconds
-                l.distanceMeters = setItem.distanceMeters
-                l.rpe = setItem.rpe
-                l.completedAt = setItem.completedAt
-                context.insert(l)
-                l.exercise = e
+                let setLog = SetLog(orderIndex: setItem.orderIndex)
+                setLog.id = setItem.id
+                setLog.kindRaw = setItem.kindRaw
+                setLog.weightKg = setItem.weightKg
+                setLog.reps = setItem.reps
+                setLog.extraWeightKg = setItem.extraWeightKg
+                setLog.durationSeconds = setItem.durationSeconds
+                setLog.distanceMeters = setItem.distanceMeters
+                setLog.rpe = setItem.rpe
+                setLog.completedAt = setItem.completedAt
+                context.insert(setLog)
+                setLog.exercise = exercise
             }
         }
-        return s
+        return session
     }
 }
 
@@ -464,22 +464,22 @@ struct MeasurementDTO: Codable {
     var date: Date
     var sourceRaw: String
 
-    init(_ m: BodyMeasurement) {
-        id = m.id
-        kindRaw = m.kindRaw
-        customName = m.customName
-        value = m.value
-        date = m.date
-        sourceRaw = m.sourceRaw
+    init(_ model: BodyMeasurement) {
+        id = model.id
+        kindRaw = model.kindRaw
+        customName = model.customName
+        value = model.value
+        date = model.date
+        sourceRaw = model.sourceRaw
     }
 
     func make() -> BodyMeasurement {
-        let m = BodyMeasurement(kind: .custom, value: value, date: date)
-        m.id = id
-        m.kindRaw = kindRaw
-        m.customName = customName
-        m.sourceRaw = sourceRaw
-        return m
+        let model = BodyMeasurement(kind: .custom, value: value, date: date)
+        model.id = id
+        model.kindRaw = kindRaw
+        model.customName = customName
+        model.sourceRaw = sourceRaw
+        return model
     }
 }
 
@@ -489,17 +489,17 @@ struct DashboardCardDTO: Codable {
     var orderIndex: Int
     var settingsJSON: String
 
-    init(_ c: DashboardCard) {
-        id = c.id
-        kindRaw = c.kindRaw
-        orderIndex = c.orderIndex
-        settingsJSON = c.settingsJSON
+    init(_ model: DashboardCard) {
+        id = model.id
+        kindRaw = model.kindRaw
+        orderIndex = model.orderIndex
+        settingsJSON = model.settingsJSON
     }
 
     func make() -> DashboardCard {
-        let c = DashboardCard(kindRaw: kindRaw, orderIndex: orderIndex)
-        c.id = id
-        c.settingsJSON = settingsJSON
-        return c
+        let model = DashboardCard(kindRaw: kindRaw, orderIndex: orderIndex)
+        model.id = id
+        model.settingsJSON = settingsJSON
+        return model
     }
 }
