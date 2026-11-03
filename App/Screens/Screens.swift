@@ -13,9 +13,14 @@ struct HomeScreen: View {
     @Query(filter: #Predicate<Session> { $0.stateRaw == "active" }, sort: \Session.startedAt, order: .reverse)
     private var activeSessions: [Session]
 
+    @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }, sort: \Session.startedAt, order: .reverse)
+    private var finishedSessions: [Session]
+    @Query(sort: \DashboardCard.orderIndex) private var dashboardCards: [DashboardCard]
+    @Query private var settingsList: [UserSettings]
     @Query private var schedules: [Schedule]
     @Query private var cycleOverrides: [CycleOverride]
     @State private var showsSettings = false
+    @State private var showsCardEditor = false
     @State private var presentedSession: Session?
     @State private var errorText: String?
     @State private var checkedRecovery = false
@@ -26,43 +31,26 @@ struct HomeScreen: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                Image(systemName: "figure.strengthtraining.traditional")
-                    .font(.system(size: 56))
-                    .foregroundStyle(.tint)
-                    .accessibilityHidden(true)
-                if let active = activeSessions.first {
-                    Text("Trening je u tijeku")
-                        .font(.title2.bold())
-                    Button("Nastavi trening", systemImage: "play.fill") { presentedSession = active }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
-                } else {
-                    Text("Spremni za trening")
-                        .font(.title2.bold())
-                    ForEach(upcomingWorkouts, id: \.item.id) { planned in
-                        Button {
-                            start(planned)
-                        } label: {
-                            VStack(spacing: 2) {
-                                Label("Započni: \(planned.template.name)", systemImage: "play.fill")
-                                Text(planned.schedule.name).font(.caption)
-                            }
+            ScrollView {
+                VStack(spacing: 16) {
+                    startSection
+                    if let last = lastSession {
+                        LastWorkoutCard(session: last, unit: unit)
+                    }
+                    ForEach(visibleCards) { card in
+                        if let kind = card.kind {
+                            cardView(kind)
                         }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
                     }
-                    if upcomingWorkouts.isEmpty {
-                        Button("Započni trening", systemImage: "plus") { startWorkout() }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.large)
-                    } else {
-                        Button("Prazan trening", systemImage: "plus") { startWorkout() }
-                            .buttonStyle(.bordered)
-                    }
+                    Button("Uredi kartice", systemImage: "square.grid.2x2") { showsCardEditor = true }
+                        .buttonStyle(.bordered)
+                        .padding(.top, 4)
                 }
+                .padding()
+                .frame(maxWidth: 700)
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Početna")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -80,6 +68,9 @@ struct HomeScreen: View {
             }
             .sheet(isPresented: $showsSettings) {
                 SettingsScreen()
+            }
+            .sheet(isPresented: $showsCardEditor) {
+                DashboardEditor()
             }
             .fullScreenCover(item: $presentedSession) { session in
                 ActiveWorkoutScreen(session: session)
@@ -112,6 +103,60 @@ struct HomeScreen: View {
             }
             #endif
         }
+    }
+
+    private var unit: WeightUnit { settingsList.first?.weightUnit ?? .kilograms }
+    private var lastSession: Session? { finishedSessions.first }
+
+    private var visibleCards: [DashboardCard] {
+        _ = dashboardCards.map(\.orderIndex)
+        return (try? DashboardLayout(context: context).cards()) ?? []
+    }
+
+    @ViewBuilder
+    private func cardView(_ kind: DashboardCardKind) -> some View {
+        switch kind {
+        case .plateCalculator: PlateCalculatorCard(unit: unit)
+        case .nextWorkout: NextWorkoutCard(planned: upcomingWorkouts)
+        case .weeklyVolume: WeeklyVolumeCard(unit: unit)
+        }
+    }
+
+    /// Veliki gumb "Započni" na vrhu: nastavak aktivnog treninga ili početak novog (iz rasporeda ili praznog).
+    private var startSection: some View {
+        VStack(spacing: 12) {
+            if let active = activeSessions.first {
+                Text("Trening je u tijeku").font(.title2.bold())
+                Button("Nastavi trening", systemImage: "play.fill") { presentedSession = active }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+            } else {
+                ForEach(upcomingWorkouts, id: \.item.id) { planned in
+                    Button {
+                        start(planned)
+                    } label: {
+                        VStack(spacing: 2) {
+                            Label("Započni: \(planned.template.name)", systemImage: "play.fill")
+                            Text(planned.schedule.name).font(.caption)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                }
+                if upcomingWorkouts.isEmpty {
+                    Button { startWorkout() } label: {
+                        Label("Započni trening", systemImage: "play.fill").frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.extraLarge)
+                } else {
+                    Button("Prazan trening", systemImage: "plus") { startWorkout() }
+                        .buttonStyle(.bordered)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 
     /// Pri pokretanju aplikacije: ako je trening ostao otvoren, nudi nastavak, spremanje ili odbacivanje.

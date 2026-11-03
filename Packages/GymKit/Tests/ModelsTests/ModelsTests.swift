@@ -312,3 +312,55 @@ struct CustomExerciseTests {
         #expect(summary.ref.key == "u:\(exercise.id.uuidString)")
     }
 }
+
+@Suite("Kartice na Početnoj")
+struct DashboardLayoutTests {
+    private func kinds(_ layout: DashboardLayout) throws -> [DashboardCardKind] {
+        try layout.cards().compactMap(\.kind)
+    }
+
+    @Test("Dodavanje ide na kraj i svaka vrsta samo jednom")
+    func addsOncePerKind() throws {
+        let layout = DashboardLayout(context: try makeContext())
+        #expect(try layout.availableKinds() == DashboardCardKind.allCases)
+        try layout.add(.weeklyVolume)
+        try layout.add(.plateCalculator)
+        #expect(try layout.add(.weeklyVolume) == nil)
+        #expect(try kinds(layout) == [.weeklyVolume, .plateCalculator])
+        #expect(try layout.availableKinds() == [.nextWorkout])
+    }
+
+    @Test("Uklanjanje zatvara rupu u redoslijedu")
+    func removeRenumbers() throws {
+        let layout = DashboardLayout(context: try makeContext())
+        for kind in DashboardCardKind.allCases { try layout.add(kind) }
+        try layout.remove(try layout.cards()[1])
+        #expect(try layout.cards().map(\.orderIndex) == [0, 1])
+        #expect(try kinds(layout) == [.plateCalculator, .weeklyVolume])
+        try layout.add(.nextWorkout)
+        #expect(try kinds(layout) == [.plateCalculator, .weeklyVolume, .nextWorkout])
+    }
+
+    @Test("Premještanje slijedi pravila onMove")
+    func moves() throws {
+        let layout = DashboardLayout(context: try makeContext())
+        for kind in DashboardCardKind.allCases { try layout.add(kind) } // plate, next, weekly
+        try layout.move(fromOffsets: IndexSet(integer: 0), toOffset: 3)
+        #expect(try kinds(layout) == [.nextWorkout, .weeklyVolume, .plateCalculator])
+        try layout.move(fromOffsets: IndexSet(integer: 2), toOffset: 0)
+        #expect(try kinds(layout) == [.plateCalculator, .nextWorkout, .weeklyVolume])
+        try layout.move(fromOffsets: IndexSet(integer: 0), toOffset: 1)
+        #expect(try kinds(layout) == [.plateCalculator, .nextWorkout, .weeklyVolume])
+    }
+
+    @Test("Nepoznata vrsta se ne prikazuje, ali ostaje u bazi")
+    func unknownKindIsKept() throws {
+        let context = try makeContext()
+        context.insert(DashboardCard(kindRaw: "buducaVrsta", orderIndex: 0))
+        let layout = DashboardLayout(context: context)
+        try layout.add(.nextWorkout)
+        try layout.move(fromOffsets: IndexSet(integer: 0), toOffset: 1)
+        #expect(try kinds(layout) == [.nextWorkout])
+        #expect(try layout.allCards().count == 2)
+    }
+}
