@@ -59,6 +59,8 @@ struct SettingsDTO: Codable {
     var onboardingCompleted: Bool
     var wantsHealthKit: Bool
     var notificationsEnabled: Bool
+    /// Opcionalno da se mogu učitati kopije napravljene prije dodavanja ovog polja.
+    var bodyMapFemale: Bool?
 
     init(_ model: UserSettings) {
         id = model.id
@@ -79,6 +81,7 @@ struct SettingsDTO: Codable {
         onboardingCompleted = model.onboardingCompleted
         wantsHealthKit = model.wantsHealthKit
         notificationsEnabled = model.notificationsEnabled
+        bodyMapFemale = model.bodyMapFemale
     }
 
     func apply(to model: UserSettings) {
@@ -100,6 +103,7 @@ struct SettingsDTO: Codable {
         model.onboardingCompleted = onboardingCompleted
         model.wantsHealthKit = wantsHealthKit
         model.notificationsEnabled = notificationsEnabled
+        model.bodyMapFemale = bodyMapFemale ?? false
     }
 }
 

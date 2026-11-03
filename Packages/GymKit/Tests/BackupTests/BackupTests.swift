@@ -25,6 +25,7 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     settings.onboardingCompleted = true
     settings.wantsHealthKit = true
     settings.notificationsEnabled = false
+    settings.bodyMapFemale = true
     settings.availablePlatesKg = [1.25, 2.5, 20]
 
     let custom = CustomExercise(name: "Moja \"vježba\", s zarezom")
@@ -137,6 +138,7 @@ struct JSONBackupTests {
         #expect(session.orderedExercises.count == 3)
         #expect(session.orderedExercises[0].orderedSets.count == 2)
         #expect(try GymQueries(context: target).settings().weightUnit == .pounds)
+        #expect(try GymQueries(context: target).settings().bodyMapFemale)
     }
 
     @Test("Trening u tijeku i odbačeni se ne izvoze")

@@ -144,7 +144,6 @@ struct DataSettingsSection: View {
         do {
             try DataReset.deleteAll(in: context)
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-            UserDefaults.standard.removeObject(forKey: "bodyMapFemale")
             onReset()
             show("Podaci su obrisani.", String(localized: "Aplikacija je vraćena na početno stanje."))
         } catch {

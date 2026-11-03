@@ -74,6 +74,8 @@ extension GymSchemaV1 {
         /// Odgovor na pitanje o Apple Zdravlju u onboardingu (povezivanje je u fazi 7).
         public var wantsHealthKit: Bool = false
         public var notificationsEnabled: Bool = true
+        /// Tijelo koje se crta na prikazu mišića (statistika, sažetak treninga).
+        public var bodyMapFemale: Bool = false
 
         public init() {}
 

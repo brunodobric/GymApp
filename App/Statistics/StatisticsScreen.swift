@@ -50,7 +50,7 @@ struct StatisticsScreen: View {
                     if !sessions.isEmpty {
                         VolumeCard(period: $period, buckets: buckets, unit: unit)
                         FrequencyCard(points: frequency)
-                        HeatmapCard(days: $heatmapDays, heatmap: heatmap)
+                        HeatmapCard(days: $heatmapDays, heatmap: heatmap, female: settingsList.first?.bodyMapFemale ?? false)
                         RecordsCard(records: records, unit: unit)
                     }
                     ProgressCard()
@@ -197,7 +197,7 @@ private struct HeatmapCard: View {
     let heatmap: [String: RegionLoad]
 
     /// Spol tijela bira se samo u Postavkama.
-    @AppStorage("bodyMapFemale") private var female = false
+    let female: Bool
     @State private var selected: String?
 
     private var top: [(region: String, load: RegionLoad)] {
