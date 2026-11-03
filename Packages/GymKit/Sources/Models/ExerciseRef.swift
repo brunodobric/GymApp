@@ -19,7 +19,7 @@ public struct ExerciseRef: Hashable, Codable, Sendable {
         self.name = name
     }
 
-    init(catalogId: String?, customExerciseId: UUID?, name: String) {
+    public init(catalogId: String?, customExerciseId: UUID?, name: String) {
         self.catalogId = catalogId
         self.customExerciseId = customExerciseId
         self.name = name
