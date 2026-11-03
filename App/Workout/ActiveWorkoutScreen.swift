@@ -66,13 +66,13 @@ struct ActiveWorkoutScreen: View {
             .safeAreaInset(edge: .bottom) { bottomBars }
             .sensoryFeedback(.success, trigger: completedCount)
             .sensoryFeedback(.error, trigger: errorCount)
-            .onChange(of: session.restTimerEndsAt) { _, endsAt in
-                // Kad trening vodi sat, kraj odmora javlja sat (haptika), a iPhone ne šalje obavijest.
-                let enabled = (settings?.notificationsEnabled ?? true) && !isLedByWatch
-                RestNotifications.sync(endsAt: enabled ? endsAt : nil, soundEnabled: settings?.restEndSoundEnabled ?? true)
+            .onChange(of: session.restTimerEndsAt) {
+                // Obavijest o kraju odmora premješta se s timerom (+10 / −10, preskakanje).
+                WorkoutLiveUpdates.shared.refresh()
             }
             .onChange(of: session.lastActivityAt) {
                 if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
+                WorkoutLiveUpdates.shared.refresh()
             }
             .onChange(of: session.stateRaw) {
                 // Trening je završen ili odbačen na satu: ekran se zatvara.
@@ -152,6 +152,8 @@ struct ActiveWorkoutScreen: View {
             if !isLedByWatch, let timer = engine.restTimer(of: session), timer.isExpired(at: Date()) {
                 try? engine.cancelRest(of: session)
             }
+            // Live Activity se pokreće (ili osvježava) čim je trening na ekranu.
+            WorkoutLiveUpdates.shared.refresh()
         }
     }
 
@@ -322,7 +324,8 @@ struct ActiveWorkoutScreen: View {
             try engine.finishSession(session)
             // Sat dobiva završetak (vodi li trening sat) ili završnu snimku (vodi li ga iPhone).
             PhoneWatchSync.shared.sessionChanged(session)
-            RestNotifications.cancel()
+            // Live Activity se gasi, a obavijest o kraju odmora otkazuje.
+            WorkoutLiveUpdates.shared.refresh()
             // Raspored napreduje samo ako je ovo bio njegov sljedeći trening; podsjetnici se zakazuju iznova.
             _ = try? ScheduleEngine(context: context).sessionFinished(session)
             ReminderScheduler.refresh(context: context)
@@ -340,9 +343,9 @@ struct ActiveWorkoutScreen: View {
 
     private func discard() {
         isClosingHere = true
-        RestNotifications.cancel()
         PhoneWatchSync.shared.willDiscard(session)
         try? engine.discardSession(session)
+        WorkoutLiveUpdates.shared.refresh()
         ReminderScheduler.refresh(context: context)
         dismiss()
     }

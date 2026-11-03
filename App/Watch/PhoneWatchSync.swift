@@ -55,6 +55,12 @@ final class PhoneWatchSync {
         }
     }
 
+    /// Kao `sessionChanged`, ali bez odgode: za radnje koje sustav izvodi u pozadini (gumb u Live Activityju),
+    /// jer aplikacija može biti uspavana prije nego što odgoda istekne.
+    func sessionChangedNow(_ session: Session) {
+        flush(sessionID: session.id)
+    }
+
     /// Mora se pozvati prije brisanja treninga na iPhoneu, jer se nakon brisanja ne zna što je bilo.
     func willDiscard(_ session: Session) {
         pendingChanges[session.id]?.cancel()
@@ -86,6 +92,7 @@ final class PhoneWatchSync {
     }
 
     private func flush(sessionID: UUID) {
+        pendingChanges[sessionID]?.cancel()
         pendingChanges[sessionID] = nil
         guard let context, let session = try? SessionSnapshotStore(context: context).session(withID: sessionID) else { return }
         let snapshot = SessionSnapshot(session: session)
@@ -181,6 +188,8 @@ final class PhoneWatchSync {
         } catch {
             logger.error("Snimka sa sata: \(error.localizedDescription)")
         }
+        // Live Activity prati i trening koji vodi sat.
+        WorkoutLiveUpdates.shared.refresh()
     }
 
     /// Naredbe sa sata za trening koji vodi iPhone.
@@ -200,20 +209,19 @@ final class PhoneWatchSync {
                 sessionFinishedFromWatch(session)
             case .discarded:
                 broadcast(merged)
-                RestNotifications.cancel()
                 ReminderScheduler.refresh(context: context)
                 purgeLater()
             }
         } catch {
             logger.error("Naredbe sa sata: \(error.localizedDescription)")
         }
+        WorkoutLiveUpdates.shared.refresh()
     }
 
     /// Sat je završio trening koji je vodio: raspored napreduje. U Zdravlje ga je već spremio sat.
     private func sessionFinishedOnWatch(_ session: Session) {
         guard let context else { return }
         _ = try? ScheduleEngine(context: context).sessionFinished(session)
-        RestNotifications.cancel()
         ReminderScheduler.refresh(context: context)
         refreshContext()
     }
@@ -222,7 +230,6 @@ final class PhoneWatchSync {
     private func sessionFinishedFromWatch(_ session: Session) {
         guard let context else { return }
         _ = try? ScheduleEngine(context: context).sessionFinished(session)
-        RestNotifications.cancel()
         ReminderScheduler.refresh(context: context)
         refreshContext()
         Task { await HealthService.shared.saveWorkout(of: session, context: context) }
