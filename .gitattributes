@@ -1,0 +1,2 @@
+# Fixtureovi se čuvaju bajt po bajt (BOM i CRLF su dio formata koji se testira).
+Packages/GymKit/Tests/BackupTests/Fixtures/** -text

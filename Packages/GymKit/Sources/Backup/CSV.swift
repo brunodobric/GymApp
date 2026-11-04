@@ -12,7 +12,8 @@ enum CSV {
     }
 
     /// Čita cijeli tekst u retke polja. Prazni završni redak se ignorira.
-    static func parse(_ text: String) -> [[String]] {
+    /// `separator` je zarez za vlastiti CSV, a točka-zarez za izvoze nekih drugih aplikacija.
+    static func parse(_ text: String, separator: Character = ",") -> [[String]] {
         var rows: [[String]] = []
         var row: [String] = []
         var field = ""
@@ -48,7 +49,7 @@ enum CSV {
             case "\"":
                 inQuotes = true
                 hasContent = true
-            case ",":
+            case separator:
                 row.append(field)
                 field = ""
                 hasContent = true

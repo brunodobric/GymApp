@@ -104,6 +104,8 @@ let package = Package(
         .testTarget(
             name: "BackupTests",
             dependencies: ["Backup", "Models", "Catalog", "Units"],
+            // Izvoz druge aplikacije za testove uvoza (čita se preko #filePath, ne kao resurs).
+            exclude: ["Fixtures"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(
