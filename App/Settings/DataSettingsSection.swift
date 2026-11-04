@@ -24,19 +24,14 @@ struct BackupDocument: FileDocument {
     }
 }
 
-/// Postavke > Podaci: izvoz, uvoz i brisanje svih podataka.
-struct DataSettingsSection: View {
-    /// Poziva se nakon brisanja svih podataka, da ekran ponovno dohvati (zadane) postavke.
-    let onReset: () -> Void
-
-    @Environment(\.modelContext) private var context
-    @Environment(CatalogStore.self) private var catalogStore
-
-    private enum ExportKind {
+/// Stanje Postavke > Podaci, zajedničko retcima i prozorima koji se iz njih otvaraju.
+@MainActor
+@Observable
+final class DataSettingsModel {
+    enum ExportKind {
         case json, history, body
 
         var contentType: UTType { self == .json ? .json : .commaSeparatedText }
-        var fileExtension: String { self == .json ? "json" : "csv" }
         var baseName: String {
             switch self {
             case .json: "Apolon-sigurnosna-kopija"
@@ -46,40 +41,49 @@ struct DataSettingsSection: View {
         }
     }
 
-    @State private var document = BackupDocument()
-    @State private var exportType: UTType = .json
-    @State private var exportName = "Apolon"
-    @State private var showsExporter = false
-    @State private var showsImporter = false
-    @State private var showsDeleteStart = false
-    @State private var showsDeleteConfirm = false
-    @State private var messageTitle: LocalizedStringKey = ""
-    @State private var messageText = ""
-    @State private var showsMessage = false
-    @State private var isDeleting = false
-    @State private var foreignImport: ForeignImportRequest?
-    /// Potvrđeni uvoz: pokreće se tek kad se pregled zatvori, da poruka o rezultatu ne naleti na sheet.
-    @State private var confirmedForeignImport: ForeignWorkoutImport.Preview?
-
     /// Pregled uvoza iz druge aplikacije, za `.sheet(item:)`.
-    private struct ForeignImportRequest: Identifiable {
+    struct ForeignImportRequest: Identifiable {
         let id = UUID()
         let preview: ForeignWorkoutImport.Preview
     }
 
-    /// Briše li "Obriši sve podatke" i iCloud.
-    private var deletesCloud: Bool { AppServices.isSyncRunning }
+    var document = BackupDocument()
+    var exportType: UTType = .json
+    var exportName = "Apolon"
+    var showsExporter = false
+    var showsImporter = false
+    var showsDeleteStart = false
+    var showsDeleteConfirm = false
+    var messageTitle: LocalizedStringKey = ""
+    var messageText = ""
+    var showsMessage = false
+    var isDeleting = false
+    var foreignImport: ForeignImportRequest?
+    /// Potvrđeni uvoz: pokreće se tek kad se pregled zatvori, da poruka o rezultatu ne naleti na sheet.
+    var confirmedForeignImport: ForeignWorkoutImport.Preview?
+}
+
+/// Postavke > Podaci: izvoz, uvoz i brisanje svih podataka (samo retci).
+///
+/// Prozori (izvoz, uvoz, pregled uvoza, potvrde i poruke) nisu na ovom `Section`: modifikator na sekciji
+/// unutar `Form` primjenjuje se na svaki redak posebno, pa bi pet istih `fileImporter` i `sheet` modifikatora
+/// istovremeno pokušalo prikazati isti prozor, koji se zato pojavi i odmah nestane. Prozori su u
+/// `DataSettingsPresentations`, koji se stavlja jednom, na cijeli `Form`.
+struct DataSettingsSection: View {
+    let model: DataSettingsModel
+
+    @Environment(\.modelContext) private var context
 
     var body: some View {
         Section {
             Button("Izvezi sve podatke (JSON)", systemImage: "square.and.arrow.up") { export(.json) }
             Button("Izvezi treninge (CSV)", systemImage: "tablecells") { export(.history) }
             Button("Izvezi mjerenja tijela (CSV)", systemImage: "tablecells") { export(.body) }
-            Button("Uvezi iz datoteke", systemImage: "square.and.arrow.down") { showsImporter = true }
-            Button(isDeleting ? "Brišem…" : "Obriši sve podatke", systemImage: "trash", role: .destructive) {
-                showsDeleteStart = true
+            Button("Uvezi iz datoteke", systemImage: "square.and.arrow.down") { model.showsImporter = true }
+            Button(model.isDeleting ? "Brišem…" : "Obriši sve podatke", systemImage: "trash", role: .destructive) {
+                model.showsDeleteStart = true
             }
-            .disabled(isDeleting)
+            .disabled(model.isDeleting)
         } header: {
             Text("Podaci")
         } footer: {
@@ -88,55 +92,97 @@ struct DataSettingsSection: View {
                 s treninzima iz druge aplikacije. Postojeći zapisi se pri uvozu ne mijenjaju.
                 """)
         }
-        .fileExporter(
-            isPresented: $showsExporter, document: document, contentType: exportType, defaultFilename: exportName
-        ) { result in
-            if case .failure = result { show("Izvoz nije uspio.", String(localized: "Datoteka nije spremljena.")) }
-        }
-        .fileImporter(isPresented: $showsImporter, allowedContentTypes: [.json, .commaSeparatedText]) { result in
-            importFile(result)
-        }
-        .sheet(item: $foreignImport, onDismiss: {
-            if let preview = confirmedForeignImport {
-                confirmedForeignImport = nil
-                importForeign(preview)
-            }
-        }, content: { request in
-            ForeignImportSheet(preview: request.preview) { confirmedForeignImport = request.preview }
-        })
-        .confirmationDialog("Obriši sve podatke?", isPresented: $showsDeleteStart, titleVisibility: .visible) {
-            Button("Prvo izvezi sigurnosnu kopiju") { export(.json) }
-            Button("Nastavi s brisanjem", role: .destructive) { showsDeleteConfirm = true }
-        } message: {
-            if deletesCloud {
-                Text("""
-                    Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja \
-                    i iz tvog iClouda, pa time i s ostalih tvojih uređaja.
-                    """)
-            } else {
-                Text("Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja.")
-            }
-        }
-        .alert("Jesi li siguran?", isPresented: $showsDeleteConfirm) {
-            Button("Obriši sve", role: .destructive) { deleteAll() }
-            Button("Odustani", role: .cancel) {}
-        } message: {
-            Text("Ovo se ne može poništiti.")
-        }
-        .alert(messageTitle, isPresented: $showsMessage) {
-            Button("U redu", role: .cancel) {}
-        } message: {
-            Text(messageText)
-        }
     }
 
-    private func show(_ title: LocalizedStringKey, _ text: String) {
-        messageTitle = title
-        messageText = text
-        showsMessage = true
+    private func export(_ kind: DataSettingsModel.ExportKind) {
+        DataSettingsActions(model: model, context: context, catalogStore: nil, onReset: {}).export(kind)
+    }
+}
+
+extension View {
+    /// Prozori za Postavke > Podaci. Stavlja se jednom, na `Form` koji sadrži `DataSettingsSection`.
+    func dataSettingsPresentations(_ model: DataSettingsModel, onReset: @escaping () -> Void) -> some View {
+        modifier(DataSettingsPresentations(model: model, onReset: onReset))
+    }
+}
+
+struct DataSettingsPresentations: ViewModifier {
+    @Bindable var model: DataSettingsModel
+    /// Poziva se nakon brisanja svih podataka, da ekran ponovno dohvati (zadane) postavke.
+    let onReset: () -> Void
+
+    @Environment(\.modelContext) private var context
+    @Environment(CatalogStore.self) private var catalogStore
+
+    /// Briše li "Obriši sve podatke" i iCloud.
+    private var deletesCloud: Bool { AppServices.isSyncRunning }
+
+    private var actions: DataSettingsActions {
+        DataSettingsActions(model: model, context: context, catalogStore: catalogStore, onReset: onReset)
     }
 
-    private func export(_ kind: ExportKind) {
+    func body(content: Content) -> some View {
+        content
+            .fileExporter(
+                isPresented: $model.showsExporter, document: model.document, contentType: model.exportType,
+                defaultFilename: model.exportName
+            ) { result in
+                if case .failure = result { actions.show("Izvoz nije uspio.", String(localized: "Datoteka nije spremljena.")) }
+            }
+            .fileImporter(isPresented: $model.showsImporter, allowedContentTypes: [.json, .commaSeparatedText]) { result in
+                actions.importFile(result)
+            }
+            .sheet(item: $model.foreignImport, onDismiss: {
+                if let preview = model.confirmedForeignImport {
+                    model.confirmedForeignImport = nil
+                    actions.importForeign(preview)
+                }
+            }, content: { request in
+                ForeignImportSheet(preview: request.preview) { model.confirmedForeignImport = request.preview }
+            })
+            .confirmationDialog("Obriši sve podatke?", isPresented: $model.showsDeleteStart, titleVisibility: .visible) {
+                Button("Prvo izvezi sigurnosnu kopiju") { actions.export(.json) }
+                Button("Nastavi s brisanjem", role: .destructive) { model.showsDeleteConfirm = true }
+            } message: {
+                if deletesCloud {
+                    Text("""
+                        Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja \
+                        i iz tvog iClouda, pa time i s ostalih tvojih uređaja.
+                        """)
+                } else {
+                    Text("Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja.")
+                }
+            }
+            .alert("Jesi li siguran?", isPresented: $model.showsDeleteConfirm) {
+                Button("Obriši sve", role: .destructive) { actions.deleteAll() }
+                Button("Odustani", role: .cancel) {}
+            } message: {
+                Text("Ovo se ne može poništiti.")
+            }
+            .alert(model.messageTitle, isPresented: $model.showsMessage) {
+                Button("U redu", role: .cancel) {}
+            } message: {
+                Text(model.messageText)
+            }
+    }
+}
+
+/// Radnje za Postavke > Podaci nad zajedničkim stanjem.
+@MainActor
+private struct DataSettingsActions {
+    let model: DataSettingsModel
+    let context: ModelContext
+    /// Potreban samo za uvoz iz druge aplikacije.
+    let catalogStore: CatalogStore?
+    let onReset: () -> Void
+
+    func show(_ title: LocalizedStringKey, _ text: String) {
+        model.messageTitle = title
+        model.messageText = text
+        model.showsMessage = true
+    }
+
+    func export(_ kind: DataSettingsModel.ExportKind) {
         do {
             let data: Data
             switch kind {
@@ -144,16 +190,16 @@ struct DataSettingsSection: View {
             case .history: data = Data(try CSVBackup.exportHistory(from: context).utf8)
             case .body: data = Data(try CSVBackup.exportBody(from: context).utf8)
             }
-            document = BackupDocument(data: data)
-            exportType = kind.contentType
-            exportName = "\(kind.baseName)-\(Date.now.formatted(.iso8601.year().month().day()))"
-            showsExporter = true
+            model.document = BackupDocument(data: data)
+            model.exportType = kind.contentType
+            model.exportName = "\(kind.baseName)-\(Date.now.formatted(.iso8601.year().month().day()))"
+            model.showsExporter = true
         } catch {
             show("Izvoz nije uspio.", String(localized: "Podaci se nisu mogli pripremiti."))
         }
     }
 
-    private func importFile(_ result: Result<URL, Error>) {
+    func importFile(_ result: Result<URL, Error>) {
         guard case .success(let url) = result else { return }
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
@@ -182,15 +228,15 @@ struct DataSettingsSection: View {
 
     /// CSV s treninzima iz druge aplikacije: prvo pregled, uvoz tek nakon potvrde.
     private func previewForeign(_ text: String) throws {
-        guard let catalog = catalogStore.catalog else {
+        guard let catalogStore, let catalog = catalogStore.catalog else {
             show("Uvoz nije uspio.", String(localized: "Katalog se nije mogao učitati."))
             return
         }
         let preview = try ForeignWorkoutImport.preview(text, catalog: catalog, language: catalogStore.language, context: context)
-        foreignImport = ForeignImportRequest(preview: preview)
+        model.foreignImport = DataSettingsModel.ForeignImportRequest(preview: preview)
     }
 
-    private func importForeign(_ preview: ForeignWorkoutImport.Preview) {
+    func importForeign(_ preview: ForeignWorkoutImport.Preview) {
         do {
             let outcome = try ForeignWorkoutImport.apply(preview, into: context)
             show("Uvoz je gotov.", String(localized: "Dodano: \(outcome.added). Preskočeno (već postoje): \(outcome.skipped)."))
@@ -199,7 +245,7 @@ struct DataSettingsSection: View {
         }
     }
 
-    private func deleteAll() {
+    func deleteAll() {
         let scope = DataResetScope.resolve(isSyncRunning: AppServices.isSyncRunning, account: SyncMonitor.shared.account)
         switch scope {
         case .deviceOnly:
@@ -207,7 +253,7 @@ struct DataSettingsSection: View {
         case .cloudUnavailable:
             show("Brisanje nije uspjelo.", String(localized: "iCloud trenutno nije dostupan, pa se podaci u njemu ne mogu obrisati. Ništa nije obrisano."))
         case .deviceAndCloud:
-            isDeleting = true
+            model.isDeleting = true
             Task {
                 do {
                     // Prvo iCloud: da se ne uspije, podaci obrisani samo na uređaju vratili bi se sinkronizacijom.
@@ -219,7 +265,7 @@ struct DataSettingsSection: View {
                         String(localized: "Podaci u iCloudu nisu obrisani. Provjeri internetsku vezu i pokušaj ponovno. Ništa nije obrisano.")
                     )
                 }
-                isDeleting = false
+                model.isDeleting = false
             }
         }
     }
