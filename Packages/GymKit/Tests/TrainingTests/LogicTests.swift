@@ -345,6 +345,62 @@ struct PlateTests {
     }
 }
 
+/// Ponovljivi pseudoslučajni brojevi (LCG), da test uvijek provjerava iste podatke.
+private struct SeededGenerator: RandomNumberGenerator {
+    var state: UInt64
+    mutating func next() -> UInt64 {
+        state = state &* 6_364_136_223_846_793_005 &+ 1_442_695_040_888_963_407
+        return state
+    }
+}
+
+@Suite("Sažeta povijest rekorda")
+struct CondensedHistoryTests {
+
+    private func randomSet(_ random: inout SeededGenerator) -> SetValues {
+        SetValues(
+            kind: Int.random(in: 0..<8, using: &random) == 0 ? .warmUp : .working,
+            weightKg: Double(Int.random(in: 0...20, using: &random)) * 2.5,
+            reps: Int.random(in: 0...15, using: &random),
+            extraWeightKg: Double(Int.random(in: 0...12, using: &random)) * 2.5,
+            durationSeconds: Int.random(in: 0...600, using: &random),
+            distanceMeters: Double(Int.random(in: 0...50, using: &random)) * 100
+        )
+    }
+
+    @Test("Sa sažetom poviješću rekordi su isti kao s punom, za svaku vrstu unosa")
+    func sameRecords() {
+        var random = SeededGenerator(state: 14)
+        for type in ExerciseInputType.allCases {
+            var full: [[SetValues]] = []
+            var condensed: [[SetValues]] = []
+            for _ in 0..<120 {
+                let current = (0..<Int.random(in: 1...5, using: &random)).map { _ in randomSet(&random) }
+                let expected = PersonalRecordDetector.records(current: current, history: full, inputType: type)
+                let actual = PersonalRecordDetector.records(current: current, history: condensed, inputType: type)
+                #expect(actual == expected, "\(type)")
+                full.append(current)
+                condensed = PersonalRecordDetector.condensed(condensed + [current])
+            }
+        }
+    }
+
+    @Test("Sažeta povijest ostaje mala")
+    func staysSmall() {
+        var random = SeededGenerator(state: 7)
+        var condensed: [[SetValues]] = []
+        for _ in 0..<500 {
+            let current = (0..<4).map { _ in randomSet(&random) }
+            condensed = PersonalRecordDetector.condensed(condensed + [current])
+        }
+        // Granica po težini ima najviše 21 razinu, pa je sažetak ograničen bez obzira na broj treninga.
+        #expect(condensed.count == 1)
+        #expect(condensed[0].count < 120)
+        #expect(PersonalRecordDetector.condensed([]).isEmpty)
+        #expect(PersonalRecordDetector.condensed([[SetValues(kind: .warmUp, weightKg: 20, reps: 10)]]).isEmpty)
+    }
+}
+
 @Suite("Grupiranje ploča")
 struct PlateGroupingTests {
     @Test("Iste ploče se zbrajaju po veličini")

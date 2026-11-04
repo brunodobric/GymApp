@@ -342,12 +342,24 @@ public struct WorkoutEngine {
 
     /// Serije zadnjeg završenog izvođenja vježbe (izvor smart defaultsa).
     private func previousSets(of ref: ExerciseRef, before session: Session?) throws -> [SetValues] {
-        let history = try finishedHistory(of: ref, before: session)
-        return history.first ?? []
+        // Serije se čitaju samo dok se ne nađe zadnje izvođenje, ne za cijelu povijest
+        // (pri pokretanju treninga iz predloška ovo se zove za svaku vježbu).
+        for exercise in try finishedExercises(of: ref, before: session) {
+            let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values)
+            if !sets.isEmpty { return sets }
+        }
+        return []
     }
 
     /// Završene serije iste vježbe u ranije završenim treninzima, od najnovijeg prema starijem.
     private func finishedHistory(of ref: ExerciseRef, before session: Session?) throws -> [[SetValues]] {
+        try finishedExercises(of: ref, before: session)
+            .map { $0.orderedSets.filter(\.isCompleted).map(\.values) }
+            .filter { !$0.isEmpty }
+    }
+
+    /// Izvođenja vježbe u ranije završenim treninzima, od najnovijeg prema starijem, bez čitanja serija.
+    private func finishedExercises(of ref: ExerciseRef, before session: Session?) throws -> [SessionExercise] {
         let key = ref.key
         let descriptor = FetchDescriptor<SessionExercise>(
             predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false }
@@ -355,11 +367,10 @@ public struct WorkoutEngine {
         let currentId = session?.id
         let cutoff = session?.startedAt ?? .distantFuture
         return try context.fetch(descriptor)
-            .compactMap { exercise -> (Date, [SetValues])? in
+            .compactMap { exercise -> (Date, SessionExercise)? in
                 guard let owner = exercise.session, owner.state == .finished,
                       owner.id != currentId, owner.startedAt < cutoff else { return nil }
-                let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values)
-                return sets.isEmpty ? nil : (owner.startedAt, sets)
+                return (owner.startedAt, exercise)
             }
             .sorted { $0.0 > $1.0 }
             .map(\.1)

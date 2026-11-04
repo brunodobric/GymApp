@@ -38,6 +38,11 @@ struct StatisticsScreen: View {
         var customCount: Int
     }
 
+    private struct RecordsKey: Equatable {
+        var sessionCount: Int
+        var kinds: Set<PRKind>
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -66,6 +71,8 @@ struct StatisticsScreen: View {
             .task(id: LoadKey(
                 sessionCount: sessionCount, period: period, heatmapDays: heatmapDays, customCount: customExercises.count
             )) { load() }
+            // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
+            .task(id: RecordsKey(sessionCount: sessionCount, kinds: trackedKinds)) { loadRecords() }
         }
     }
 
@@ -81,7 +88,12 @@ struct StatisticsScreen: View {
         let now = Date()
         let start = Calendar.current.date(byAdding: .day, value: -heatmapDays, to: now) ?? now
         heatmap = (try? engine.heatmap(from: start, until: now.addingTimeInterval(1), info: info)) ?? [:]
-        records = (try? engine.personalRecords(kinds: trackedKinds)) ?? []
+    }
+
+    private func loadRecords() {
+        PerformanceSignpost.measure("StatisticsRecords") {
+            records = (try? StatisticsEngine(context: context).personalRecords(kinds: trackedKinds)) ?? []
+        }
     }
 }
 
