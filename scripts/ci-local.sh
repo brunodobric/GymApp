@@ -13,6 +13,9 @@ swiftlint lint --quiet
 step "Testovi CatalogBuildera"
 python3 -m unittest discover -s Tools/CatalogBuilder
 
+step "Testovi provjere lokalizacije"
+python3 -m unittest discover -s Tools/Localization
+
 step "Testovi paketa GymKit"
 swift test --package-path Packages/GymKit
 
@@ -40,3 +43,8 @@ xcodebuild build -project GymApp.xcodeproj -scheme GymApp -configuration Debug \
 
 echo
 echo "Sve provjere su prošle."
+
+step "Izvoz lokalizacije i provjera prijevoda"
+xcodebuild -exportLocalizations -project GymApp.xcodeproj -localizationPath build/Localizations \
+    -exportLanguage en CODE_SIGNING_ALLOWED=NO | tail -n 40
+python3 Tools/Localization/check_catalog.py
