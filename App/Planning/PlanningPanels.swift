@@ -5,7 +5,7 @@ import SwiftData
 import SwiftUI
 
 // Bočne ploče za slaganje treninga i rasporeda (faza 11). Na iPadu stoje uz uređivač kao inspector,
-// a na iPhoneu se otvaraju kao list. Stavke se mogu odabrati više odjednom ili povući u uređivač.
+// a na iPhoneu se otvaraju kao list. Stavke se mogu odabrati više odjednom, a na iPadu i povući u uređivač.
 
 /// Oznake za drag & drop: vježba nosi id sažetka ("c:…" ili "u:…"), a trening "t:<UUID>".
 enum PlanningDrag {
@@ -32,6 +32,67 @@ extension CatalogStore {
         return payloads.compactMap { payload in
             all.first { $0.id == payload }.map { ExerciseChoice(ref: $0.ref, inputType: inputType(of: $0, custom: custom)) }
         }
+    }
+}
+
+extension View {
+    /// Bočna ploča uređivača: na iPadu (regular širina) inspector uz sadržaj, a na iPhoneu obični list.
+    ///
+    /// `.inspector` se u compact širini sam pretvara u list, ali tada gumbi u alatnoj traci ploče
+    /// (Zatvori, Dodaj) ne reagiraju i ne osvježavaju se, pa se na iPhoneu ploča otvara preko `.sheet`.
+    func planningPanel<Panel: View>(
+        isPresented: Binding<Bool>,
+        minWidth: CGFloat,
+        idealWidth: CGFloat,
+        maxWidth: CGFloat,
+        @ViewBuilder panel: @escaping () -> Panel
+    ) -> some View {
+        modifier(PlanningPanelModifier(
+            isPresented: isPresented, minWidth: minWidth, idealWidth: idealWidth, maxWidth: maxWidth, panel: panel
+        ))
+    }
+
+    /// Povlačenje stavke iz ploče, samo kad ploča stoji uz uređivač (iPad). Na iPhoneu list prekriva
+    /// uređivač pa povlačenje nema kamo, a dugi pritisak na redak samo smeta dodiru za odabir.
+    @ViewBuilder
+    func panelDraggable(_ payload: String, enabled: Bool, title: String, systemImage: String) -> some View {
+        if enabled {
+            draggable(payload) {
+                Label(title, systemImage: systemImage)
+                    .padding(8)
+                    .background(.regularMaterial, in: .rect(cornerRadius: 8))
+            }
+        } else {
+            self
+        }
+    }
+}
+
+private struct PlanningPanelModifier<Panel: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    let minWidth: CGFloat
+    let idealWidth: CGFloat
+    let maxWidth: CGFloat
+    @ViewBuilder let panel: () -> Panel
+
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    private var isRegular: Bool { sizeClass == .regular }
+
+    func body(content: Content) -> some View {
+        content
+            .inspector(isPresented: Binding(
+                get: { isRegular && isPresented },
+                set: { if isRegular { isPresented = $0 } }
+            )) {
+                panel().inspectorColumnWidth(min: minWidth, ideal: idealWidth, max: maxWidth)
+            }
+            .sheet(isPresented: Binding(
+                get: { !isRegular && isPresented },
+                set: { if !isRegular { isPresented = $0 } }
+            )) {
+                panel()
+            }
     }
 }
 
@@ -85,11 +146,7 @@ struct ExerciseCatalogPanel: View {
                         }
                     }
                 }
-                .draggable(summary.id) {
-                    Label(summary.name, systemImage: "dumbbell")
-                        .padding(8)
-                        .background(.regularMaterial, in: .rect(cornerRadius: 8))
-                }
+                .panelDraggable(summary.id, enabled: sizeClass == .regular, title: summary.name, systemImage: "dumbbell")
             }
             .overlay {
                 if results.isEmpty { ContentUnavailableView.search(text: filter.query) }
@@ -150,11 +207,10 @@ struct TemplateListPanel: View {
                 SelectableRow(isSelected: selected.contains(template.id), toggle: { toggle(template) }) {
                     Label(template.name, systemImage: template.kind == .cardio ? "figure.run" : "dumbbell")
                 }
-                .draggable(PlanningDrag.template(template)) {
-                    Label(template.name, systemImage: "dumbbell")
-                        .padding(8)
-                        .background(.regularMaterial, in: .rect(cornerRadius: 8))
-                }
+                .panelDraggable(
+                    PlanningDrag.template(template), enabled: sizeClass == .regular,
+                    title: template.name, systemImage: "dumbbell"
+                )
             }
             .overlay {
                 if templates.isEmpty {

@@ -60,9 +60,8 @@ struct TemplateEditorScreen: View {
             ToolbarItem(placement: .primaryAction) { EditButton() }
         }
         .navigationDestination(for: TemplateExercise.self) { TemplateExerciseEditor(exercise: $0) }
-        .inspector(isPresented: $showsCatalog) {
+        .planningPanel(isPresented: $showsCatalog, minWidth: 300, idealWidth: 360, maxWidth: 480) {
             ExerciseCatalogPanel(isPresented: $showsCatalog) { add($0, at: nil) }
-                .inspectorColumnWidth(min: 300, ideal: 360, max: 480)
         }
         .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
             Button("U redu") {}

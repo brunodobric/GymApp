@@ -40,9 +40,8 @@ struct ScheduleEditorScreen: View {
             }
             ToolbarItem(placement: .primaryAction) { EditButton() }
         }
-        .inspector(isPresented: $showsTemplates) {
+        .planningPanel(isPresented: $showsTemplates, minWidth: 280, idealWidth: 320, maxWidth: 420) {
             TemplateListPanel(isPresented: $showsTemplates) { insert($0, at: nil) }
-                .inspectorColumnWidth(min: 280, ideal: 320, max: 420)
         }
         .onChange(of: overrides.count) { _, _ in refreshReminders() }
         .onDisappear {
