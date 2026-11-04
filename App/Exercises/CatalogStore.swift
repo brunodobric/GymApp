@@ -44,11 +44,17 @@ final class CatalogStore {
         return exercise.images.map { directory.appendingPathComponent($0) }
     }
 
-    /// Prva slika službene vježbe, za sličicu u mreži kataloga.
-    func thumbnailURL(for summary: ExerciseSummary) -> URL? {
-        guard case .catalog(let id) = summary.source,
-              let first = catalog?.exercise(withID: id)?.images.first,
-              let directory else { return nil }
-        return directory.appendingPathComponent(first)
+    /// Sličica službene vježbe u mreži kataloga: početni položaj crteža ako postoji, inače prva fotografija.
+    func thumbnail(for summary: ExerciseSummary) -> ExerciseThumbnail.Source? {
+        guard case .catalog(let id) = summary.source, let exercise = catalog?.exercise(withID: id) else { return nil }
+        switch exercise.illustration {
+        case let .drawing(start, _):
+            return .drawing(start)
+        case .photos(let images):
+            guard let first = images.first, let directory else { return nil }
+            return .file(directory.appendingPathComponent(first))
+        case .unavailable:
+            return nil
+        }
     }
 }

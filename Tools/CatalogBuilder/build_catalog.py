@@ -3,12 +3,15 @@
 
 Koraci: preuzme fiksiranu verziju baze, odabere vježbe iz selection.txt, primijeni mapping.json,
 spoji prijevode iz translations/hr.json te upiše Resources/Catalog/catalog.json i slike.
+Za vježbe iz everkinetic.json preuzme i crteže iz Everkinetica (CC BY-SA 4.0), ukloni im bijelu
+pozadinu i upiše ih u Resources/Drawings/Drawings.xcassets kao vektorske template slike.
 Samo standardna biblioteka Pythona, bez vanjskih ovisnosti.
 
 Pokretanje (iz korijena repozitorija):  python3 Tools/CatalogBuilder/build_catalog.py
 """
 import argparse
 import json
+import re
 import sys
 import urllib.parse
 import urllib.request
@@ -21,10 +24,18 @@ SOURCE_REPO = "yuhonas/free-exercise-db"
 RAW = f"https://raw.githubusercontent.com/{SOURCE_REPO}/{SOURCE_COMMIT}"
 CATALOG_VERSION = 1
 
+# Crteži vježbi: everkinetic/data, CC BY-SA 4.0. Isto kao gore, commit je fiksiran.
+DRAWINGS_COMMIT = "446bb9a3d0c3beb6b84f7c9d77dfc8af707a2ab6"
+DRAWINGS_REPO = "everkinetic/data"
+DRAWINGS_RAW = f"https://raw.githubusercontent.com/{DRAWINGS_REPO}/{DRAWINGS_COMMIT}"
+# Everkinetic naziva položaje "relaxation" (početni) i "tension" (završni).
+DRAWING_POSES = (("relaxation", "start"), ("tension", "end"))
+
 ROOT = Path(__file__).resolve().parents[2]
 TOOL = Path(__file__).resolve().parent
 OUTPUT = ROOT / "Resources" / "Catalog"
 CACHE = TOOL / ".cache"
+DRAWINGS_OUTPUT = ROOT / "Resources" / "Drawings" / "Drawings.xcassets"
 
 
 class BuildError(Exception):
@@ -116,6 +127,102 @@ def convert(raw: dict, mapping: dict, hr: dict) -> dict:
     }
 
 
+def load_drawing_map(path: Path) -> dict[str, str]:
+    """Čita everkinetic.json (naš id → Everkinetic id) i ne dopušta isti naš id dvaput."""
+
+    def no_duplicates(pairs):
+        keys = [key for key, _ in pairs]
+        duplicates = sorted({key for key in keys if keys.count(key) > 1})
+        if duplicates:
+            raise BuildError(f"Duplicirani id-evi u everkinetic.json: {duplicates}")
+        return dict(pairs)
+
+    data = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=no_duplicates)
+    return data["exercises"]
+
+
+def validate_drawing_map(drawing_map: dict[str, str], selection: list[str], everkinetic: dict) -> None:
+    """Svaki naš id mora biti u odabiru, a svaki Everkinetic id mora postojati i imati oba crteža."""
+    not_selected = sorted(i for i in drawing_map if i not in selection)
+    if not_selected:
+        raise BuildError(f"everkinetic.json ima vježbe koje nisu u selection.txt: {not_selected}")
+    for exercise_id, source_id in drawing_map.items():
+        source = everkinetic.get(source_id)
+        if source is None:
+            raise BuildError(f"{exercise_id}: Everkinetic nema vježbu '{source_id}'")
+        expected = {f"svg/{source_id}-{pose}.svg" for pose, _ in DRAWING_POSES}
+        if not expected <= set(source.get("svg", [])):
+            raise BuildError(f"{exercise_id}: Everkinetic vježba '{source_id}' nema oba crteža")
+
+
+def drawing_asset_name(source_id: str, pose: str) -> str:
+    """Naziv slike u asset catalogu, npr. "Everkinetic-0042-start"."""
+    return f"Everkinetic-{source_id}-{pose}"
+
+
+def drawing_names(source_id: str) -> list[str]:
+    """Početni pa završni položaj, redoslijedom kojim ih aplikacija izmjenjuje."""
+    return [drawing_asset_name(source_id, pose) for _, pose in DRAWING_POSES]
+
+
+WHITE = {"#fff", "#ffffff", "white"}
+
+
+def clean_svg(svg: str) -> str:
+    """Izmjena crteža: uklanja bijelu pozadinu, linije boji crnom (aplikacija ih boji bojom teme)
+    i postavlja veličinu prema viewBoxu. Everkinetic SVG ima jednu bijelu i jednu tamnu grupu."""
+
+    view_box = re.search(r'viewBox="([^"]+)"', svg)
+    if not view_box:
+        raise BuildError("SVG nema viewBox")
+    _, _, width, height = view_box.group(1).split()
+    groups = re.findall(r'<g fill="([^"]+)">(.*?)</g>', svg, flags=re.S)
+    if not groups:
+        raise BuildError("SVG nema grupe s ispunom")
+    lines = [body for fill, body in groups if fill.lower() not in WHITE]
+    if not lines:
+        raise BuildError("SVG ima samo bijele grupe")
+    return (
+        f'<svg width="{width}" height="{height}" viewBox="{view_box.group(1)}" xmlns="http://www.w3.org/2000/svg">'
+        + "".join(f'<g fill="#000">{body}</g>' for body in lines)
+        + "</svg>\n"
+    )
+
+
+def imageset_contents(filename: str) -> dict:
+    """Contents.json za vektorsku template sliku: iOS je crta kao vektor i boji bojom prednjeg plana."""
+    return {
+        "images": [{"filename": filename, "idiom": "universal"}],
+        "info": {"author": "xcode", "version": 1},
+        "properties": {"preserves-vector-representation": True, "template-rendering-intent": "template"},
+    }
+
+
+def write_drawings(drawing_map: dict[str, str], source_dir: Path, output: Path) -> None:
+    """Upisuje izmijenjene crteže u asset catalog i briše one koji više nisu mapirani."""
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "Contents.json").write_text(
+        json.dumps({"info": {"author": "xcode", "version": 1}}, indent=2) + "\n", encoding="utf-8"
+    )
+    wanted = set()
+    for source_id in sorted(set(drawing_map.values())):
+        for source_pose, pose in DRAWING_POSES:
+            name = drawing_asset_name(source_id, pose)
+            wanted.add(name)
+            folder = output / f"{name}.imageset"
+            folder.mkdir(exist_ok=True)
+            svg = (source_dir / f"{source_id}-{source_pose}.svg").read_text(encoding="utf-8")
+            (folder / f"{name}.svg").write_text(clean_svg(svg), encoding="utf-8")
+            (folder / "Contents.json").write_text(
+                json.dumps(imageset_contents(f"{name}.svg"), indent=2) + "\n", encoding="utf-8"
+            )
+    for folder in output.glob("*.imageset"):
+        if folder.stem not in wanted:
+            for file in folder.iterdir():
+                file.unlink()
+            folder.rmdir()
+
+
 def download(url: str, destination: Path) -> None:
     if destination.exists():
         return
@@ -150,6 +257,18 @@ def main() -> int:
         raise BuildError(f"Prijevodi za vježbe koje nisu odabrane: {unknown_translations}")
 
     exercises = [convert(database[i], mapping, hr) for i in selection]
+
+    drawing_map = load_drawing_map(TOOL / "everkinetic.json")
+    drawings_cache = CACHE / f"everkinetic-{DRAWINGS_COMMIT}"
+    if not args.source:
+        print("Preuzimam Everkinetic exercises.json …")
+        download(f"{DRAWINGS_RAW}/dist/exercises.json", drawings_cache / "exercises.json")
+        everkinetic = {item["id"]: item for item in json.loads((drawings_cache / "exercises.json").read_text(encoding="utf-8"))}
+        validate_drawing_map(drawing_map, selection, everkinetic)
+    for exercise in exercises:
+        source_id = drawing_map.get(exercise["id"])
+        if source_id:
+            exercise["drawings"] = drawing_names(source_id)
     for exercise in exercises:
         if not exercise["instructions"]["en"]:
             raise BuildError(f"{exercise['id']}: nema uputa, izbaciti iz selection.txt")
@@ -166,6 +285,18 @@ def main() -> int:
         with ThreadPoolExecutor(max_workers=8) as pool:
             list(pool.map(lambda job: download(*job), jobs))
 
+    # Crteži se preuzimaju i pišu samo uz pravi izvor (bez --source), da testni build ne dira asset catalog.
+    if not args.no_images and not args.source:
+        drawing_jobs = []
+        for source_id in sorted(set(drawing_map.values())):
+            for source_pose, _ in DRAWING_POSES:
+                name = f"{source_id}-{source_pose}.svg"
+                drawing_jobs.append((f"{DRAWINGS_RAW}/dist/svg/{name}", drawings_cache / "svg" / name))
+        print(f"Preuzimam {len(drawing_jobs)} crteža …")
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            list(pool.map(lambda job: download(*job), drawing_jobs))
+        write_drawings(drawing_map, drawings_cache / "svg", DRAWINGS_OUTPUT)
+
     # Mape slika vježbi koje više nisu u odabiru brišu se, da build uvijek odgovara selection.txt.
     images_root = OUTPUT / "Images"
     if images_root.exists():
@@ -178,6 +309,9 @@ def main() -> int:
     catalog = {
         "version": CATALOG_VERSION,
         "source": {"name": "free-exercise-db", "repository": SOURCE_REPO, "commit": SOURCE_COMMIT, "license": "Unlicense"},
+        "drawingsSource": {
+            "name": "Everkinetic", "repository": DRAWINGS_REPO, "commit": DRAWINGS_COMMIT, "license": "CC BY-SA 4.0",
+        },
         "exercises": exercises,
     }
     OUTPUT.mkdir(parents=True, exist_ok=True)
@@ -187,7 +321,11 @@ def main() -> int:
 
     translated = sum(1 for e in exercises if "hr" in e["name"])
     with_steps = sum(1 for e in exercises if "hr" in e["instructions"])
-    print(f"Gotovo: {len(exercises)} vježbi, {translated} s hrvatskim nazivom, {with_steps} s hrvatskim uputama.")
+    drawn = sum(1 for e in exercises if "drawings" in e)
+    print(
+        f"Gotovo: {len(exercises)} vježbi, {translated} s hrvatskim nazivom, {with_steps} s hrvatskim uputama, "
+        f"{drawn} s crtežima."
+    )
     return 0
 
 

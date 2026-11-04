@@ -18,6 +18,9 @@ public struct CatalogExercise: Codable, Hashable, Identifiable, Sendable {
     public let secondaryRegions: [String]
     /// Putanje slika unutar mape kataloga, npr. "Images/Pushups/0.jpg".
     public let images: [String]
+    /// Nazivi crteža (Everkinetic, CC BY-SA 4.0) u asset catalogu aplikacije: početni pa završni položaj.
+    /// Nema ih kod vježbi za koje crtež ne postoji, a stariji katalog nema ni polje.
+    public let drawings: [String]?
 
     /// Naziv na traženom jeziku ("hr", "en"). Ako prijevoda nema, vraća engleski.
     public func displayName(language: String) -> String {
@@ -41,18 +44,21 @@ public struct CatalogSource: Codable, Hashable, Sendable {
 public struct ExerciseCatalog: Codable, Sendable {
     public let version: Int
     public let source: CatalogSource
+    /// Izvor crteža vježbi (Everkinetic). Opcionalan, da se katalog bez crteža i dalje učitava.
+    public let drawingsSource: CatalogSource?
     public let exercises: [CatalogExercise]
 
     private let index: [String: Int]
 
     private enum CodingKeys: String, CodingKey {
-        case version, source, exercises
+        case version, source, drawingsSource, exercises
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         version = try container.decode(Int.self, forKey: .version)
         source = try container.decode(CatalogSource.self, forKey: .source)
+        drawingsSource = try container.decodeIfPresent(CatalogSource.self, forKey: .drawingsSource)
         exercises = try container.decode([CatalogExercise].self, forKey: .exercises)
         index = Dictionary(exercises.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
@@ -61,6 +67,7 @@ public struct ExerciseCatalog: Codable, Sendable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(version, forKey: .version)
         try container.encode(source, forKey: .source)
+        try container.encodeIfPresent(drawingsSource, forKey: .drawingsSource)
         try container.encode(exercises, forKey: .exercises)
     }
 

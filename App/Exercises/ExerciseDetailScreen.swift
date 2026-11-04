@@ -42,12 +42,23 @@ private struct CatalogExerciseDetail: View {
         let steps = exercise.displayInstructions(language: language)
 
         List {
-            let images = catalogStore.imageURLs(for: exercise)
-            if !images.isEmpty {
+            switch exercise.illustration {
+            case let .drawing(start, end):
                 Section {
-                    ExerciseImagePager(urls: images, accessibilityText: name)
+                    ExerciseDrawingView(start: start, end: end, accessibilityText: name)
+                        .frame(height: 260)
+                        .frame(maxWidth: .infinity)
+                        .listRowInsets(EdgeInsets())
+                } footer: {
+                    Text("Crtež: Everkinetic, CC BY-SA 4.0")
+                }
+            case .photos:
+                Section {
+                    ExerciseImagePager(urls: catalogStore.imageURLs(for: exercise), accessibilityText: name)
                         .listRowInsets(EdgeInsets())
                 }
+            case .unavailable:
+                EmptyView()
             }
 
             Section("Mišići") {
