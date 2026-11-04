@@ -131,7 +131,10 @@ struct TemplateExerciseEditor: View {
     @Bindable var exercise: TemplateExercise
 
     @Environment(\.modelContext) private var context
-    @State private var unit: WeightUnit = .kilograms
+    // Jedinica iz upita, dostupna već pri prvom prikazu: redak serije zapamti tekst težine u jedinici
+    // koju je dobio prvi put, pa bi kasnije stigla jedinica (npr. iz `.task`) krivo preračunala unos.
+    @Query private var settingsList: [UserSettings]
+    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
 
     private var engine: TemplateEngine { TemplateEngine(context: context) }
 
@@ -140,6 +143,8 @@ struct TemplateExerciseEditor: View {
             Section("Serije") {
                 ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
                     TemplateSetRow(set: set, inputType: exercise.inputType, unit: unit, position: index + 1)
+                        // Promjena jedinice gradi redak iznova, da tekst težine bude u novoj jedinici.
+                        .id(unit)
                 }
                 .onDelete { offsets in
                     let list = exercise.orderedSets
@@ -169,7 +174,6 @@ struct TemplateExerciseEditor: View {
         .navigationTitle(exercise.exerciseName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { EditButton() }
-        .task { unit = (try? GymQueries(context: context).settings())?.weightUnit ?? .kilograms }
         .onDisappear { try? context.save() }
     }
 }

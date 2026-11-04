@@ -584,3 +584,20 @@ struct BulkEditingTests {
         #expect(sequence() == ["A", "C", "A", "-", "B", "C", "B"])
     }
 }
+
+
+@Suite("Broj ciklusa")
+struct CycleCountRangeTests {
+    @Test("Raspon počinje od tekućeg ciklusa i ide do 52")
+    func usualRange() {
+        #expect(ScheduleEngine.cycleCountRange(currentCycle: 0) == 1...52)
+        #expect(ScheduleEngine.cycleCountRange(currentCycle: 1) == 1...52)
+        #expect(ScheduleEngine.cycleCountRange(currentCycle: 30) == 30...52)
+    }
+
+    @Test("Raspored nakon 52 ciklusa ima neprazan raspon")
+    func pastUsualMaximum() {
+        #expect(ScheduleEngine.cycleCountRange(currentCycle: 52) == 52...52)
+        #expect(ScheduleEngine.cycleCountRange(currentCycle: 60) == 60...60)
+    }
+}
