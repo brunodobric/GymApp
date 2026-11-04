@@ -1,0 +1,52 @@
+name: Greška
+description: Greška iz bete ili iz App Storea
+labels: [greška]
+body:
+  - type: textarea
+    id: opis
+    attributes:
+      label: Što se dogodilo
+      description: Što si očekivao, a što se dogodilo.
+    validations:
+      required: true
+  - type: textarea
+    id: koraci
+    attributes:
+      label: Koraci
+      description: Koraci do greške, jedan po retku.
+      placeholder: |
+        1. Na Početnoj dodirni Započni
+        2. ...
+  - type: input
+    id: uredaj
+    attributes:
+      label: Uređaj i sustav
+      placeholder: iPhone 15, iOS 18.1, Apple Watch Series 9, watchOS 11.1
+  - type: input
+    id: verzija
+    attributes:
+      label: Verzija aplikacije
+      description: Postavke > O aplikaciji, npr. 1.0.0 (412)
+  - type: dropdown
+    id: izvor
+    attributes:
+      label: Odakle je prijava
+      options:
+        - TestFlight povratna informacija
+        - Poruka testera
+        - Sam primijetio
+        - App Store
+  - type: dropdown
+    id: tezina
+    attributes:
+      label: Težina
+      description: Blokira izdanje = gubitak podataka, rušenje u glavnom tijeku ili odbijanje na reviewu.
+      options:
+        - Blokira izdanje
+        - Važno, ali ne blokira
+        - Sitno
+  - type: textarea
+    id: prilozi
+    attributes:
+      label: Snimke i dijagnostika
+      description: Snimka zaslona ili izvoz iz Postavke > O aplikaciji > Dijagnostika.
