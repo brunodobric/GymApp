@@ -94,8 +94,10 @@ final class PhoneWatchSync {
     private func flush(sessionID: UUID) {
         pendingChanges[sessionID]?.cancel()
         pendingChanges[sessionID] = nil
-        guard let context, let session = try? SessionSnapshotStore(context: context).session(withID: sessionID) else { return }
-        let snapshot = SessionSnapshot(session: session)
+        guard let context else { return }
+        let store = SessionSnapshotStore(context: context)
+        guard let session = try? store.session(withID: sessionID) else { return }
+        let snapshot = store.snapshot(of: session)
         switch session.controllingDevice {
         case .phone:
             broadcast(snapshot)
@@ -199,7 +201,7 @@ final class PhoneWatchSync {
         do {
             guard let session = try store.session(withID: sessionID), session.controllingDevice == .phone,
                   session.state == .active else { return }
-            let merged = SnapshotDiff.apply(commands, to: SessionSnapshot(session: session), at: max(Date(), sentAt))
+            let merged = SnapshotDiff.apply(commands, to: store.snapshot(of: session), at: max(Date(), sentAt))
             try store.apply(merged, force: true)
             switch merged.state {
             case .active:

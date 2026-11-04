@@ -162,15 +162,14 @@ public struct CardioPlanLinker {
         self.context = context
     }
 
-    /// Uvezeni trening pripada planu ako ga je sat zapisao uz taj plan (`Session.workoutPlanId`).
+    /// Uvezeni trening (lokalna baza, `HealthWorkout`) pripada planu ako ga je sat zapisao uz taj plan (`workoutPlanId`).
     /// Kad Zdravlje ne zna plan, a WorkoutKit javlja da je plan odrađen, povezuje se prvi nepovezani
     /// uvezeni kardio trening istog dana kao termin plana.
     /// Vraća broj povezanih treninga.
     @discardableResult
     public func linkImportedSessions(completedPlans: [ScheduledCardioPlan] = [], calendar: Calendar = .current) throws -> Int {
         let engine = ScheduleEngine(context: context)
-        var candidates = try context.fetch(FetchDescriptor<Session>(sortBy: [SortDescriptor(\.startedAt)]))
-            .filter { $0.isImportedFromWorkoutsApp && $0.state == .finished && $0.kind == .cardio && $0.scheduleId == nil }
+        var candidates = try HealthLocalStore(context: context).workouts().filter { $0.scheduleId == nil }
         var linked = 0
 
         var progressed = true
@@ -184,13 +183,13 @@ public struct CardioPlanLinker {
                         $0.workoutPlanId == nil && calendar.isDate($0.startedAt, inSameDayAs: done.date)
                     }
                 }
-                guard let session = match else { continue }
-                session.scheduleId = planned.schedule.id
-                session.templateId = planned.template.id
-                session.name = planned.template.name
+                guard let workout = match else { continue }
+                workout.scheduleId = planned.schedule.id
+                workout.templateId = planned.template.id
+                workout.name = planned.template.name
                 try context.save()
-                try engine.sessionFinished(session)
-                candidates.removeAll { $0.id == session.id }
+                try engine.sessionFinished(workout.makeSession())
+                candidates.removeAll { $0.id == workout.id }
                 linked += 1
                 progressed = true
                 // Raspored je napredovao: sljedeći treninzi se računaju iznova.

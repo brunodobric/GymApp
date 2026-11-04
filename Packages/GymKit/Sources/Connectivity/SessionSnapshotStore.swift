@@ -54,6 +54,15 @@ public struct SessionSnapshotStore {
         self.context = context
     }
 
+    /// Snimka treninga s kalorijama i pulsom iz lokalne baze podataka iz Zdravlja.
+    public func snapshot(of session: Session) -> SessionSnapshot {
+        var snapshot = SessionSnapshot(session: session)
+        let local = try? HealthLocalStore(context: context).values(forSession: session.id)
+        snapshot.activeEnergyKilocalories = local?.activeEnergyKilocalories ?? session.activeEnergyKilocalories
+        snapshot.averageHeartRate = local?.averageHeartRate ?? session.averageHeartRate
+        return snapshot
+    }
+
     public enum Outcome: Equatable, Sendable {
         /// Trening je upisan. `previousState` je stanje prije upisa (nil za novi trening).
         case applied(previousState: SessionState?)
@@ -120,9 +129,13 @@ public struct SessionSnapshotStore {
         session.notes = snapshot.notes
         session.restTimerStartedAt = snapshot.restTimerStartedAt
         session.restTimerEndsAt = snapshot.restTimerEndsAt
-        // Podaci iz Zdravlja se ne brišu ako ih snimka (još) nema.
-        if let energy = snapshot.activeEnergyKilocalories { session.activeEnergyKilocalories = energy }
-        if let heartRate = snapshot.averageHeartRate { session.averageHeartRate = heartRate }
+        // Kalorije i puls sa sata su podaci iz Zdravlja: idu u lokalnu bazu, ne u trening koji se sinkronizira.
+        // Ne brišu se ako ih snimka (još) nema.
+        try? HealthLocalStore(context: context).setValues(
+            forSession: session.id,
+            activeEnergyKilocalories: snapshot.activeEnergyKilocalories,
+            averageHeartRate: snapshot.averageHeartRate
+        )
         if let workoutId = snapshot.healthKitWorkoutId { session.healthKitWorkoutId = workoutId }
         if let distance = snapshot.distanceMeters { session.distanceMeters = distance }
         session.lastActivityAt = snapshot.updatedAt

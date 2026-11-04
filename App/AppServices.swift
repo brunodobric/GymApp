@@ -64,6 +64,13 @@ enum AppServices {
         NotificationRouter.shared.start()
         // WatchConnectivity sesija mora se aktivirati što ranije, da poruke sa sata
         // stignu i kad se aplikacija pokrene u pozadini.
+        // Podaci iz Zdravlja iz verzija prije faze 12 prelaze u lokalnu bazu, da ne idu u iCloud.
+        do {
+            try HealthLocalStore(context: container.mainContext).moveHealthDataOutOfUserStore()
+        } catch {
+            Logger(subsystem: "com.brunodobric.gymapp", category: "Health")
+                .error("Premještanje podataka iz Zdravlja: \(String(describing: error))")
+        }
         PhoneWatchSync.shared.start(container: container)
         SyncMonitor.shared.start()
     }

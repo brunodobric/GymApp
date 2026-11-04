@@ -45,17 +45,19 @@ struct SessionWindow: View {
     let sessionId: UUID?
 
     @Query private var sessions: [Session]
+    @Query private var healthWorkouts: [HealthWorkout]
     @Query private var settingsList: [UserSettings]
 
     init(sessionId: UUID?) {
         self.sessionId = sessionId
         let id = sessionId ?? UUID()
         _sessions = Query(filter: #Predicate<Session> { $0.id == id })
+        _healthWorkouts = Query(filter: #Predicate<HealthWorkout> { $0.id == id })
     }
 
     var body: some View {
         NavigationStack {
-            if let session = sessions.first {
+            if let session = sessions.first ?? healthWorkouts.first?.makeSession() {
                 SessionDetailScreen(session: session, unit: UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms)
             } else {
                 ContentUnavailableView("Trening nije pronađen", systemImage: "clock")

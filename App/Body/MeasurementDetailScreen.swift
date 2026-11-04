@@ -12,12 +12,14 @@ struct MeasurementDetailScreen: View {
     let unit: WeightUnit
 
     @Environment(\.modelContext) private var context
-    @Query(sort: \BodyMeasurement.date) private var all: [BodyMeasurement]
+    @Query private var manual: [BodyMeasurement]
+    @Query private var fromHealth: [HealthMeasurement]
     @State private var showsAdd = false
     @State private var errorText: String?
 
     private var list: [BodyMeasurement] {
-        all.filter { $0.kind == kind && (kind != .custom || $0.customName == customName) }
+        BodyMeasurement.merged(manual, health: fromHealth)
+            .filter { $0.kind == kind && (kind != .custom || $0.customName == customName) }
     }
 
     private var title: String {

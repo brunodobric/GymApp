@@ -24,10 +24,7 @@ public enum CSVBackup {
     // MARK: Povijest treninga
 
     public static func exportHistory(from context: ModelContext) throws -> String {
-        let finished = SessionState.finished.rawValue
-        let sessions = try context.fetch(FetchDescriptor<Session>(
-            predicate: #Predicate { $0.stateRaw == finished }, sortBy: [SortDescriptor(\.startedAt)]
-        ))
+        let sessions = try GymQueries(context: context).allFinishedSessions()
         var lines = [CSV.line(historyColumns)]
         for session in sessions.sorted(by: { ($0.startedAt, $0.id.uuidString) < ($1.startedAt, $1.id.uuidString) }) {
             let head = [
@@ -95,6 +92,8 @@ public enum CSVBackup {
             throw error
         }
         try context.save()
+        // Podaci iz Zdravlja iz datoteke idu u lokalnu bazu, ne u korisničku koja se sinkronizira.
+        try HealthLocalStore(context: context).moveHealthDataOutOfUserStore()
         return result
     }
 
@@ -161,7 +160,9 @@ public enum CSVBackup {
     // MARK: Tjelesna mjerenja
 
     public static func exportBody(from context: ModelContext) throws -> String {
-        let all = try context.fetch(FetchDescriptor<BodyMeasurement>())
+        let all = BodyMeasurement.merged(
+            try context.fetch(FetchDescriptor<BodyMeasurement>()), health: try HealthLocalStore(context: context).measurements()
+        )
         var lines = [CSV.line(bodyColumns)]
         for item in all.sorted(by: { ($0.date, $0.id.uuidString) < ($1.date, $1.id.uuidString) }) {
             lines.append(CSV.line([
@@ -194,6 +195,8 @@ public enum CSVBackup {
             result.added += 1
         }
         try context.save()
+        // Podaci iz Zdravlja iz datoteke idu u lokalnu bazu, ne u korisničku koja se sinkronizira.
+        try HealthLocalStore(context: context).moveHealthDataOutOfUserStore()
         return result
     }
 

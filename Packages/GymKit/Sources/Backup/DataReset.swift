@@ -6,20 +6,24 @@ import SwiftData
 /// Podatke u iCloudu aplikacija briše prije ovoga (vidi `DataResetScope`).
 public enum DataReset {
     public static func deleteAll(in context: ModelContext) throws {
-        // Djeca se brišu izričito, da ne ovisimo o ponašanju skupnog brisanja s relacijama.
-        try context.delete(model: SetLog.self)
-        try context.delete(model: SessionExercise.self)
-        try context.delete(model: Session.self)
-        try context.delete(model: TemplateSet.self)
-        try context.delete(model: TemplateExercise.self)
-        try context.delete(model: ScheduleItem.self)
-        try context.delete(model: WorkoutTemplate.self)
-        try context.delete(model: Schedule.self)
-        try context.delete(model: CycleOverride.self)
-        try context.delete(model: CustomExercise.self)
-        try context.delete(model: BodyMeasurement.self)
-        try context.delete(model: DashboardCard.self)
-        try context.delete(model: UserSettings.self)
+        // Djeca se brišu izričito i prva, da ne ovisimo o kaskadnom brisanju relacija.
+        try context.deleteEvery(SetLog.self)
+        try context.deleteEvery(SessionExercise.self)
+        try context.deleteEvery(Session.self)
+        try context.deleteEvery(TemplateSet.self)
+        try context.deleteEvery(TemplateExercise.self)
+        try context.deleteEvery(ScheduleItem.self)
+        try context.deleteEvery(WorkoutTemplate.self)
+        try context.deleteEvery(Schedule.self)
+        try context.deleteEvery(CycleOverride.self)
+        try context.deleteEvery(CustomExercise.self)
+        try context.deleteEvery(BodyMeasurement.self)
+        try context.deleteEvery(DashboardCard.self)
+        try context.deleteEvery(UserSettings.self)
+        // Lokalna baza podataka iz Zdravlja (u Zdravlju sve ostaje).
+        try context.deleteEvery(HealthWorkout.self)
+        try context.deleteEvery(HealthMeasurement.self)
+        try context.deleteEvery(SessionHealthData.self)
         try context.save()
     }
 }

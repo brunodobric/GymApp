@@ -11,7 +11,10 @@ import Units
 struct StatisticsScreen: View {
     @Environment(\.modelContext) private var context
     @Environment(CatalogStore.self) private var catalogStore
-    @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }) private var sessions: [Session]
+    @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }) private var ownSessions: [Session]
+    /// Kardio iz Zdravlja (lokalna baza) broji se u učestalost treninga.
+    @Query private var healthWorkouts: [HealthWorkout]
+    private var sessionCount: Int { ownSessions.count + healthWorkouts.count }
     @Query private var customExercises: [CustomExercise]
     @Query private var settingsList: [UserSettings]
 
@@ -38,7 +41,7 @@ struct StatisticsScreen: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                if sessions.isEmpty {
+                if sessionCount == 0 {
                     ContentUnavailableView(
                         "Još nema statistike", systemImage: "chart.bar",
                         description: Text("Statistika se pojavi nakon prvog završenog treninga.")
@@ -46,7 +49,7 @@ struct StatisticsScreen: View {
                     .padding(.top, 40)
                 }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)], spacing: 16) {
-                    if !sessions.isEmpty {
+                    if sessionCount > 0 {
                         VolumeCard(period: $period, buckets: buckets, unit: unit)
                         ComparisonCard(comparison: VolumeComparison(buckets: buckets), period: period, unit: unit)
                         FrequencyCard(points: frequency)
@@ -61,7 +64,7 @@ struct StatisticsScreen: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Statistika")
             .task(id: LoadKey(
-                sessionCount: sessions.count, period: period, heatmapDays: heatmapDays, customCount: customExercises.count
+                sessionCount: sessionCount, period: period, heatmapDays: heatmapDays, customCount: customExercises.count
             )) { load() }
         }
     }

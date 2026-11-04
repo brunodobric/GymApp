@@ -40,9 +40,7 @@ public struct HistoryQueries {
     }
 
     public func sessions(filter: HistoryFilter = HistoryFilter()) throws -> [Session] {
-        let finished = SessionState.finished.rawValue
-        let all = try context.fetch(FetchDescriptor<Session>(predicate: #Predicate { $0.stateRaw == finished }))
-        return filter.apply(to: all)
+        filter.apply(to: try GymQueries(context: context).allFinishedSessions())
     }
 
     /// Početak svakog dana u rasponu u kojem postoji odrađen trening (točkice u kalendaru).
@@ -59,7 +57,13 @@ public struct HistoryQueries {
     }
 
     /// Briše trening zajedno s vježbama i serijama. Raspored se ne vraća unatrag.
+    /// Trening uvezen iz Zdravlja briše se iz lokalne baze (u Zdravlju ostaje).
     public func delete(_ session: Session) throws {
+        if session.isImportedFromWorkoutsApp {
+            try HealthLocalStore(context: context).deleteImported(sessionId: session.id)
+            return
+        }
+        try HealthLocalStore(context: context).deleteValues(forSession: session.id)
         context.delete(session)
         try context.save()
     }

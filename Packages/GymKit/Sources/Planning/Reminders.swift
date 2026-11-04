@@ -105,7 +105,8 @@ public struct ReminderBuilder {
     /// i tijekom treninga snage, jer plan na satu ne smeta kao obavijest.
     public func plannedReminders(now: Date = Date(), calendar: Calendar = .current) throws -> [PlannedReminder] {
         let engine = ScheduleEngine(context: context)
-        let finished = try context.fetch(FetchDescriptor<Session>()).filter { $0.state == .finished }
+        // I kardio treninzi iz Zdravlja povezani s rasporedom (lokalna baza).
+        let finished = try GymQueries(context: context).allFinishedSessions()
         var result: [PlannedReminder] = []
 
         for schedule in try context.fetch(FetchDescriptor<Schedule>(sortBy: [SortDescriptor(\.createdAt)])) {

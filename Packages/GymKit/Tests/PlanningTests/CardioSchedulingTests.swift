@@ -47,16 +47,14 @@ private func mixedSchedule(in context: ModelContext) throws -> MixedSchedule {
 }
 
 @discardableResult
-private func importedRun(in context: ModelContext, at date: Date, planId: UUID?) throws -> Session {
-    let session = Session(name: "Trčanje", kind: .cardio, startedAt: date)
-    session.endedAt = date.addingTimeInterval(1_800)
-    session.state = .finished
-    session.isImportedFromWorkoutsApp = true
-    session.healthKitWorkoutId = UUID()
-    session.workoutPlanId = planId
-    context.insert(session)
+private func importedRun(in context: ModelContext, at date: Date, planId: UUID?) throws -> HealthWorkout {
+    let workout = HealthWorkout(
+        healthKitWorkoutId: UUID(), name: "Trčanje", startedAt: date, endedAt: date.addingTimeInterval(1_800)
+    )
+    workout.workoutPlanId = planId
+    context.insert(workout)
     try context.save()
-    return session
+    return workout
 }
 
 @Suite("Kardio plan")
