@@ -42,6 +42,7 @@ struct OnboardingScreen: View {
     }
 
     @Environment(\.modelContext) private var context
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var step = Step.goal
     @State private var answers = OnboardingAnswers()
     @State private var heightText = ""
@@ -235,7 +236,8 @@ struct OnboardingScreen: View {
 
     private func go(_ delta: Int) {
         guard let next = Step(rawValue: step.rawValue + delta) else { return }
-        withAnimation { step = next }
+        // Uz "Smanji kretanje" korak se mijenja bez animacije.
+        withAnimation(reduceMotion ? nil : .default) { step = next }
     }
 
     private func finish() {

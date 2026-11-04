@@ -101,10 +101,7 @@ private struct SetLine: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Text(number.map(String.init) ?? "Z")
-                .font(.subheadline.bold())
-                .frame(width: 28, height: 28)
-                .background(set.kind == .warmUp ? Color.orange.opacity(0.25) : Color.secondary.opacity(0.15), in: .circle)
+            SetBadge(kind: set.kind, number: number)
             Text(text)
             Spacer()
             if let rpe = set.rpe {
@@ -113,6 +110,31 @@ private struct SetLine: View {
                     .foregroundStyle(.secondary)
             }
         }
+        // VoiceOver čita cijeli redak kao rečenicu ("Serija 2, 80 kg, 8 ponavljanja") umjesto znaka ×.
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(spokenText)
+    }
+
+    private var spokenText: Text {
+        let formatter = WeightFormatter(unit: unit)
+        let reps = set.reps ?? 0
+        let values: String
+        switch inputType {
+        case .weightReps:
+            values = String(localized: "\(formatter.string(fromKilograms: set.weightKg ?? 0)), \(reps) ponavljanja")
+        case .bodyweight:
+            values = String(localized: "\(reps) ponavljanja")
+        case .weightedBodyweight:
+            values = String(localized: "dodatno \(formatter.string(fromKilograms: set.extraWeightKg ?? 0)), \(reps) ponavljanja")
+        case .assisted:
+            values = String(localized: "pomoć \(formatter.string(fromKilograms: set.extraWeightKg ?? 0)), \(reps) ponavljanja")
+        case .duration, .durationDistance:
+            values = text
+        }
+        let title = number.map { String(localized: "Serija \($0)") } ?? String(localized: "Zagrijavanje")
+        var parts = [title, values]
+        if let rpe = set.rpe { parts.append("RPE \(NumberInput.format(rpe))") }
+        return Text(verbatim: parts.joined(separator: ", "))
     }
 
     private var text: String {

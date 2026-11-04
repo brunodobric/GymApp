@@ -238,7 +238,8 @@ private struct CalendarMonthView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(day.formatted(date: .complete, time: .omitted)))
-        .accessibilityValue(hasWorkout ? Text("Ima trening") : Text(""))
+        .accessibilityValue(hasWorkout ? Text("Ima trening") : Text(verbatim: ""))
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var weekdayHeaders: [String] {

@@ -9,21 +9,23 @@ struct RestTimerBar: View {
     let onSkip: () -> Void
     let onExpire: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         VStack(spacing: 6) {
-            HStack(spacing: 12) {
-                Text(timer.endsAt, style: .timer)
-                    .font(.title2.bold().monospacedDigit())
-                    .frame(minWidth: 70, alignment: .leading)
-                Spacer()
-                Button("−10") { onAdjust(-10) }
-                    .accessibilityLabel(Text("Skrati odmor za 10 sekundi"))
-                Button("+10") { onAdjust(10) }
-                    .accessibilityLabel(Text("Produlji odmor za 10 sekundi"))
-                Button("Preskoči", systemImage: "forward.end.fill", action: onSkip)
-                    .labelStyle(.iconOnly)
+            if dynamicTypeSize.isAccessibilitySize {
+                // Kod najvećih veličina teksta gumbi idu ispod odbrojavanja.
+                countdown
+                HStack(spacing: 12) { buttons }
+                    .buttonStyle(.bordered)
+            } else {
+                HStack(spacing: 12) {
+                    countdown
+                    Spacer()
+                    buttons
+                }
+                .buttonStyle(.bordered)
             }
-            .buttonStyle(.bordered)
 
             ProgressView(timerInterval: timer.startedAt...max(timer.endsAt, timer.startedAt.addingTimeInterval(1)), countsDown: true) {
                 EmptyView()
@@ -33,6 +35,7 @@ struct RestTimerBar: View {
         }
         .padding(12)
         .background(.regularMaterial, in: .rect(cornerRadius: 16))
+        .accessibilityElement(children: .contain)
         .padding(.horizontal)
         // Pri istjeku (ili promjeni završetka zbog +10 / −10) čeka se do novog trenutka.
         .task(id: timer.endsAt) {
@@ -40,5 +43,23 @@ struct RestTimerBar: View {
             try? await Task.sleep(for: .seconds(wait))
             if !Task.isCancelled { onExpire() }
         }
+    }
+
+    private var countdown: some View {
+        Text(timer.endsAt, style: .timer)
+            .font(.title2.bold().monospacedDigit())
+            .frame(minWidth: 70, alignment: .leading)
+            .accessibilityLabel(Text("Preostali odmor"))
+            .accessibilityValue(Text(timer.endsAt, style: .timer))
+    }
+
+    @ViewBuilder
+    private var buttons: some View {
+        Button("−10") { onAdjust(-10) }
+            .accessibilityLabel(Text("Skrati odmor za 10 sekundi"))
+        Button("+10") { onAdjust(10) }
+            .accessibilityLabel(Text("Produlji odmor za 10 sekundi"))
+        Button("Preskoči", systemImage: "forward.end.fill", action: onSkip)
+            .labelStyle(.iconOnly)
     }
 }

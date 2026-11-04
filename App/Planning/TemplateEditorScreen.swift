@@ -205,10 +205,7 @@ private struct TemplateSetRow: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Text(set.kind == .warmUp ? "Z" : "\(position)")
-                .font(.subheadline.bold())
-                .frame(width: 30, height: 30)
-                .background(set.kind == .warmUp ? Color.orange.opacity(0.25) : Color.secondary.opacity(0.15), in: .circle)
+            SetBadge(kind: set.kind, number: position)
             if usesWeight {
                 field("Težina", unit.symbol, $weight)
             }
@@ -227,10 +224,7 @@ private struct TemplateSetRow: View {
     private func field(_ title: LocalizedStringKey, _ hint: String, _ text: Binding<String>) -> some View {
         TextField(hint, text: text)
             .keyboardType(.decimalPad)
-            .multilineTextAlignment(.center)
-            .frame(minWidth: 52, maxWidth: 80)
-            .padding(.vertical, 8)
-            .background(.quaternary, in: .rect(cornerRadius: 8))
+            .setFieldFrame()
             .accessibilityLabel(Text(title))
     }
 

@@ -23,6 +23,8 @@ struct SetRow: View {
     @State private var duration: String
     @State private var distance: String
     @State private var showsPlates = false
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.colorSchemeContrast) private var contrast
 
     init(
         set: SetLog, inputType: ExerciseInputType, position: Int, previousText: String?, isHighlighted: Bool,
@@ -51,25 +53,31 @@ struct SetRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 8) {
-                kindBadge
-                if let previousText {
-                    Text(previousText)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .frame(minWidth: 52, alignment: .leading)
-                        .accessibilityLabel(Text("Prošli put \(previousText)"))
+            if dynamicTypeSize.isAccessibilitySize {
+                // Kod najvećih veličina teksta polja idu u svoj redak, da se ništa ne reže.
+                HStack(spacing: 8) {
+                    kindBadge
+                    previous
+                    Spacer(minLength: 0)
+                    completeButton
                 }
-                fields
-                Spacer(minLength: 0)
-                completeButton
+                HStack(spacing: 8) { fields }
+            } else {
+                HStack(spacing: 8) {
+                    kindBadge
+                    previous
+                    fields
+                    Spacer(minLength: 0)
+                    completeButton
+                }
             }
             if set.rpe != nil || isHighlighted || !set.isCompleted {
                 effortMenu
             }
         }
         .padding(.vertical, 4)
-        .opacity(set.isCompleted ? 0.6 : 1)
+        // Završene serije su prigušene, osim kad korisnik traži jači kontrast.
+        .opacity(set.isCompleted && contrast != .increased ? 0.6 : 1)
         .sheet(isPresented: $showsPlates) {
             PlateCalculatorSheet(targetText: weightText, unit: unit)
         }
@@ -78,19 +86,26 @@ struct SetRow: View {
 
     // MARK: Dijelovi
 
+    @ViewBuilder
+    private var previous: some View {
+        if let previousText {
+            Text(previousText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(minWidth: 52, alignment: .leading)
+                .accessibilityLabel(Text("Prošli put \(previousText)"))
+        }
+    }
+
     private var kindBadge: some View {
         Menu {
             Button("Radna serija") { onChangeKind(.working) }
             Button("Zagrijavanje") { onChangeKind(.warmUp) }
             Button("Obriši seriju", role: .destructive, action: onDelete)
         } label: {
-            Text(set.kind == .warmUp ? "Z" : "\(position)")
-                .font(.subheadline.bold())
-                .frame(width: 30, height: 30)
-                .background(set.kind == .warmUp ? Color.orange.opacity(0.25) : Color.secondary.opacity(0.15), in: .circle)
+            SetBadge(kind: set.kind, number: position)
         }
         .foregroundStyle(.primary)
-        .accessibilityLabel(set.kind == .warmUp ? Text("Zagrijavanje") : Text("Serija \(position)"))
     }
 
     @ViewBuilder
@@ -122,10 +137,7 @@ struct SetRow: View {
     ) -> some View {
         TextField(hint, text: text)
             .keyboardType(keyboard)
-            .multilineTextAlignment(.center)
-            .frame(minWidth: 52, maxWidth: 80)
-            .padding(.vertical, 8)
-            .background(.quaternary, in: .rect(cornerRadius: 8))
+            .setFieldFrame()
             .accessibilityLabel(Text(title))
             .onChange(of: text.wrappedValue) { _, _ in apply() }
     }
@@ -159,7 +171,9 @@ struct SetRow: View {
                 .background(.quaternary, in: .capsule)
         }
         .foregroundStyle(.secondary)
-        .padding(.leading, 38)
+        .accessibilityLabel(Text("Napor"))
+        .accessibilityValue(set.rpe.map { Text(effortLabel($0)) } ?? Text("Bez ocjene"))
+        .padding(.leading, dynamicTypeSize.isAccessibilitySize ? 0 : 38)
     }
 
     // MARK: RPE

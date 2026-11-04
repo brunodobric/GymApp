@@ -199,6 +199,7 @@ extension WatchSetField {
 struct WatchRestView: View {
     let timer: RestTimer
     @Environment(WatchWorkoutStore.self) private var store
+    @ScaledMetric(relativeTo: .largeTitle) private var countdownSize: CGFloat = 48
 
     var body: some View {
         VStack(spacing: 6) {
@@ -206,9 +207,10 @@ struct WatchRestView: View {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
             Text(timerInterval: Date.now...max(timer.endsAt, Date.now), countsDown: true)
-                .font(.system(size: 48, weight: .semibold, design: .rounded).monospacedDigit())
+                .font(.system(size: countdownSize, weight: .semibold, design: .rounded).monospacedDigit())
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
+                .accessibilityLabel(Text("Preostali odmor"))
             if let next = store.currentSet {
                 Text(nextText(exercise: next.exercise, set: next.set))
                     .font(.footnote)
@@ -219,9 +221,11 @@ struct WatchRestView: View {
             Spacer(minLength: 0)
             HStack {
                 Button("−10 s") { store.adjustRest(by: -10) }
+                    .accessibilityLabel(Text("Skrati odmor za 10 sekundi"))
                 Button("Preskoči odmor", systemImage: "forward.end.fill") { store.skipRest() }
                     .labelStyle(.iconOnly)
                 Button("+10 s") { store.adjustRest(by: 10) }
+                    .accessibilityLabel(Text("Produlji odmor za 10 sekundi"))
             }
             .font(.footnote)
         }
