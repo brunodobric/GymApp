@@ -1,0 +1,43 @@
+Apollo is a gym workout log built so that logging never gets in the way of training: you log a set in a few taps, and what you did last time is right there in the same row.
+
+TRAINING
+• Previous results next to every set, with suggested weight and reps for the next one
+• Rest timer starts on its own after a set, with +10 and −10 seconds
+• Supersets, warm-up and working sets, RPE or RIR
+• Exercises with weight, bodyweight, added weight, assistance or duration
+• Plate calculator for your bar and the plates you have
+• An interrupted workout (a call, a dead phone) picks up where it stopped
+
+SCHEDULES
+• Ready-made programs: Full Body, Upper / Lower and Push / Pull / Legs
+• Your own schedules with cycles and rest days
+• Reminders on fixed days or flexibly, when it suits you
+• Change just the current cycle without touching the plan
+
+EXERCISE CATALOG
+• Over 180 exercises with images and instructions in English and Croatian
+• Search and filters by muscle, equipment and movement type
+• Your own exercises, with a photo
+
+PROGRESS
+• Personal records: weight, volume, reps, duration and distance
+• Estimated 1RM and a progress chart for every exercise
+• Volume per muscle, training frequency and a body heatmap
+• Body measurements with a chart for each one
+
+APPLE WATCH
+• Sets and rest from your wrist, with heart rate and calories
+• Complications for your next workout and the running rest timer
+• Live Activity on iPhone while you train with your watch
+
+IPAD
+• Sidebar, multiple columns and larger charts for reviewing progress and building schedules
+
+HEALTH AND ICLOUD
+• Workouts are saved to Health and close your Activity rings
+• Cardio, body mass and height from Health appear in your history and measurements
+• Sync between iPhone, iPad and Apple Watch through your iCloud
+• Export to CSV and JSON at any time
+
+PRIVACY
+Apollo has no account, ads, analytics or tracking. Your data stays on your devices and in your iCloud, and Health data never leaves your device.

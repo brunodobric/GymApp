@@ -1,0 +1,7 @@
+Prijevod napomene za App Review (u App Store Connect ide engleski tekst iz review_notes.txt).
+
+Apollo je dnevnik treninga za iPhone, iPad i Apple Watch. Nema računa ni prijave, pa nisu potrebni demo podaci za prijavu. Sve funkcije su dostupne odmah nakon kratkog onboardinga.
+
+Glavni tijek: završi onboarding ili dodirni "Preskoči sve", na Početnoj dodirni Započni, dodaj vježbu iz kataloga, upiši seriju i označi je kvačicom (tajmer odmora kreće sam), zatim Završi. Trening se pojavi u povijesti i statistici.
+
+Zdravlje, iCloud, sat i obavijesti: isto kao u engleskom tekstu.

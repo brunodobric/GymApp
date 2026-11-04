@@ -31,6 +31,11 @@ jobs:
       - name: Testovi provjere lokalizacije
         run: python3 -m unittest discover -s Tools/Localization
 
+      - name: App Store tekstovi
+        run: |
+          python3 -m unittest discover -s Tools/AppStore
+          python3 Tools/AppStore/check_metadata.py
+
       - name: Testovi paketa GymKit
         run: swift test --package-path Packages/GymKit
 
