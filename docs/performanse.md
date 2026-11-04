@@ -42,7 +42,7 @@ Mjeri se na najstarijem podržanom iPhoneu koji je dostupan, u Release buildu, s
 
 1. U Xcodeu: Product > Profile (⌘I), Release build na iPhoneu spojenom kabelom.
 2. **Pokretanje:** predložak App Launch. Prije mjerenja ugasiti aplikaciju i pričekati par sekundi, mjeriti tri puta i uzeti srednju vrijednost.
-3. **Operacije:** predložak Time Profiler, pa dodati instrument os_signpost (ili Points of Interest). Filtrirati subsystem `com.brunodobric.gymapp`, kategoriju `Performanse`. Svaki signpost iz tablice ima trajanje.
+3. **Operacije:** predložak Time Profiler, pa dodati instrument os_signpost (ili Points of Interest). Filtrirati po kategoriji `Performanse` (MetricKit sam određuje subsystem log handlea). Svaki signpost iz tablice ima trajanje.
 4. Ako je nešto sporije od cilja, u Time Profileru odabrati raspon tog signposta i pogledati najteže funkcije (Invert Call Tree, Hide System Libraries).
 
 Podaci za mjerenje: uvoz sigurnosne kopije s realnim podacima (Postavke > Podaci > Uvezi iz datoteke) ili vlastiti podaci nakon nekoliko tjedana bete. Na kraju mjerenja aplikacija se može vratiti brisanjem podataka.
