@@ -252,7 +252,9 @@ struct HomeScreen: View {
 
     private func start(_ planned: PlannedWorkout) {
         do {
-            presentedSession = try TemplateStarter(context: context).start(planned)
+            presentedSession = try PerformanceSignpost.measure("WorkoutStart") {
+                try TemplateStarter(context: context).start(planned)
+            }
             ReminderScheduler.refresh(context: context)
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
