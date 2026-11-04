@@ -42,7 +42,7 @@ public struct PoseLoopTiming: Hashable, Sendable {
     public var period: TimeInterval { 2 * (hold + fade) }
 
     /// Neprozirnost završnog položaja (0...1) u trenutku `elapsed` od početka animacije.
-    /// Početni položaj ima neprozirnost `1 - endOpacity`. Pretapanje je glatko (ease-in-out).
+    /// Završni položaj crta se preko potpuno vidljivog početnog. Pretapanje je glatko (ease-in-out).
     public func endOpacity(at elapsed: TimeInterval) -> Double {
         guard period > 0 else { return 0 }
         var time = elapsed.truncatingRemainder(dividingBy: period)

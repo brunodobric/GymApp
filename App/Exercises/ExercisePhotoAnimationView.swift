@@ -61,8 +61,11 @@ struct ExercisePhotoAnimationView: View {
     private func animation(_ images: (start: UIImage, end: UIImage)) -> some View {
         TimelineView(.animation(paused: !shouldRun)) { context in
             let endOpacity = timing.endOpacity(at: clock.elapsed(at: context.date))
+            // Početni položaj je uvijek potpuno vidljiv, a završni se preko njega pojavljuje i nestaje.
+            // Da su obje slike djelomično prozirne, na sredini prijelaza prosijavala bi pozadina
+            // i slika bi bljesnula svjetlije.
             ZStack {
-                photo(images.start).opacity(1 - endOpacity)
+                photo(images.start)
                 photo(images.end).opacity(endOpacity)
             }
         }
