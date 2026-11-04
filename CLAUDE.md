@@ -10,6 +10,7 @@ iOS, iPadOS i watchOS aplikacija za bilježenje treninga. Swift + SwiftUI, Swift
 * `docs/PRAVNO_I_PRIVATNOST.md`: privatnost, licence, App Store pravila
 * `docs/prototipi.md`: prototipi faze 0 i nalazi
 * `docs/sinkronizacija.md`: iCloud sinkronizacija, objava CloudKit sheme i provjera na uređajima
+* `docs/izdanje.md`: TestFlight beta, greške iz bete i slanje na App Store review
 * `docs/lokalizacija.md`: String Catalog (hr i en), pisanje teksta u kodu i provjera prijevoda na CI-ju
 
 Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi tipova, funkcija i varijabli su na engleskom.
@@ -40,6 +41,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 ```sh
 brew install xcodegen swiftlint
 xcodegen generate                              # generira GymApp.xcodeproj
+scripts/testflight.sh                          # arhiva i upload za TestFlight (na Macu)
 swift test --package-path Packages/GymKit      # testovi logike
 swiftlint lint
 ```
