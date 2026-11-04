@@ -7,7 +7,8 @@ struct GymApp: App {
     @State private var catalogStore = CatalogStore()
 
     init() {
-        AppServices.start()
+        // Otvaranje baze i pokretanje veza, dio vremena pokretanja (MetricKit ga mjeri i kao cjelinu).
+        PerformanceSignpost.measure("AppServicesStart") { AppServices.start() }
     }
 
     var body: some Scene {

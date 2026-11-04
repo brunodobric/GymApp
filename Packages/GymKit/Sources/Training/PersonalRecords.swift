@@ -87,6 +87,54 @@ public enum PersonalRecordDetector {
         return result.filter { kinds.contains($0.kind) }
     }
 
+    /// Sažima povijest na serije koje mogu odlučiti o rekordu, za bilo koju vrstu unosa: Pareto granicu
+    /// (opterećenje, ponavljanja) za težinu i dodatnu težinu u oba smjera te seriju s najvećim volumenom,
+    /// trajanjem i udaljenošću. `records(current:history:)` sa sažetom poviješću daje iste rekorde kao s punom,
+    /// pa statistika ne mora za svaki trening ponovno prolaziti cijelu raniju povijest.
+    public static func condensed(_ history: [[SetValues]]) -> [[SetValues]] {
+        let sets = history.flatMap { $0 }.filter { $0.kind == .working }
+        guard !sets.isEmpty else { return [] }
+        var keep = Set<Int>()
+        let loads: [(SetValues) -> Double] = [{ $0.weightKg ?? 0 }, { $0.extraWeightKg ?? 0 }]
+        for load in loads {
+            keep.formUnion(frontier(of: sets, load: load, heavierIsBetter: true))
+            keep.formUnion(frontier(of: sets, load: load, heavierIsBetter: false))
+        }
+        var measures: [(SetValues) -> Double] = ExerciseInputType.allCases.map { type -> (SetValues) -> Double in
+            { set in SetMetrics.volume(set, inputType: type) }
+        }
+        measures.append { Double($0.durationSeconds ?? 0) }
+        measures.append { $0.distanceMeters ?? 0 }
+        for measure in measures {
+            if let best = sets.indices.max(by: { measure(sets[$0]) < measure(sets[$1]) }) {
+                keep.insert(best)
+            }
+        }
+        return [keep.sorted().map { sets[$0] }]
+    }
+
+    /// Indeksi serija koje nijedna druga ne nadmašuje i opterećenjem i ponavljanjima.
+    private static func frontier(
+        of sets: [SetValues], load: (SetValues) -> Double, heavierIsBetter: Bool
+    ) -> [Int] {
+        let order = sets.indices.sorted { lhs, rhs in
+            let left = load(sets[lhs])
+            let right = load(sets[rhs])
+            if left != right { return heavierIsBetter ? left > right : left < right }
+            return (sets[lhs].reps ?? 0) > (sets[rhs].reps ?? 0)
+        }
+        var result: [Int] = []
+        var bestReps = Int.min
+        for index in order {
+            let reps = sets[index].reps ?? 0
+            if reps > bestReps {
+                result.append(index)
+                bestReps = reps
+            }
+        }
+        return result
+    }
+
     private static func weightRecord(_ now: [(Double, Int)], _ past: [(Double, Int)]) -> [PersonalRecord] {
         let best = now.filter { $0.1 >= 1 }.map(\.0).max() ?? 0
         let before = past.filter { $0.1 >= 1 }.map(\.0).max() ?? 0
