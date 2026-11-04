@@ -1,545 +1,1762 @@
 {
  "Barbell_Bench_Press_-_Medium_Grip": {
-  "name": "Potisak šipkom s klupe"
+  "name": "Potisak šipkom s klupe",
+  "instructions": [
+   "Lezi na ravnu klupu. Srednje širokim hvatom (hvat kod kojeg podlaktica i nadlaktica na sredini pokreta zatvaraju kut od 90 stupnjeva) skini šipku sa stalka i drži je ravno iznad sebe ispruženih ruku. To je početni položaj.",
+   "Iz početnog položaja udahni i polako spuštaj šipku dok ne dotakne sredinu prsa.",
+   "Nakon kratke pauze, uz izdah potisni šipku natrag u početni položaj. Usredotoči se na potisak mišićima prsa. Na vrhu pokreta ispruži ruke i stisni prsa, zadrži sekundu i ponovno polako spuštaj. Savjet: spuštanje bi trebalo trajati otprilike dvostruko dulje od podizanja.",
+   "Ponovi pokret zadani broj ponavljanja.",
+   "Kad završiš, vrati šipku na stalak."
+  ]
  },
  "Barbell_Incline_Bench_Press_-_Medium_Grip": {
-  "name": "Potisak šipkom s kose klupe"
+  "name": "Potisak šipkom s kose klupe",
+  "instructions": [
+   "Lezi na kosu klupu. Srednje širokim hvatom (hvat kod kojeg podlaktica i nadlaktica na sredini pokreta zatvaraju kut od 90 stupnjeva) skini šipku sa stalka i drži je ravno iznad sebe ispruženih ruku. To je početni položaj.",
+   "Uz udah polako spuštaj šipku dok je ne osjetiš na gornjem dijelu prsa.",
+   "Nakon pauze od sekunde, uz izdah potisni šipku mišićima prsa natrag u početni položaj. Na vrhu ispruži ruke, stisni prsa, zadrži sekundu i ponovno polako spuštaj. Savjet: spuštanje bi trebalo trajati barem dvostruko dulje od podizanja.",
+   "Ponovi pokret zadani broj ponavljanja.",
+   "Kad završiš, vrati šipku na stalak."
+  ]
  },
  "Decline_Barbell_Bench_Press": {
-  "name": "Potisak šipkom s negativne klupe"
+  "name": "Potisak šipkom s negativne klupe",
+  "instructions": [
+   "Učvrsti noge na kraju negativne klupe i polako legni na klupu.",
+   "Srednje širokim hvatom (hvat kod kojeg podlaktica i nadlaktica na sredini pokreta zatvaraju kut od 90 stupnjeva) skini šipku sa stalka i drži je ravno iznad sebe ispruženih ruku. Ruke trebaju biti okomite na pod. To je početni položaj. Savjet: radi zaštite rotatorne manšete najbolje je da ti partner pomogne skinuti šipku sa stalka.",
+   "Uz udah polako spuštaj šipku dok je ne osjetiš na donjem dijelu prsa.",
+   "Nakon pauze od sekunde, uz izdah potisni šipku mišićima prsa natrag u početni položaj. Na vrhu ispruži ruke i stisni prsa, zadrži sekundu i ponovno polako spuštaj. Savjet: spuštanje bi trebalo trajati barem dvostruko dulje od podizanja.",
+   "Ponovi pokret zadani broj ponavljanja.",
+   "Kad završiš, vrati šipku na stalak."
+  ]
  },
  "Dumbbell_Bench_Press": {
-  "name": "Potisak bučicama s klupe"
+  "name": "Potisak bučicama s klupe",
+  "instructions": [
+   "Lezi na ravnu klupu s bučicom u svakoj ruci, oslonjenom na bedra. Dlanovi su okrenuti jedan prema drugome.",
+   "Pomažući se bedrima, podigni bučice jednu po jednu tako da ih držiš ispred sebe u širini ramena.",
+   "Kad su u širini ramena, okreni zapešća prema naprijed tako da dlanovi gledaju od tebe. Bučice su tik uz prsa, a nadlaktica i podlaktica zatvaraju kut od 90 stupnjeva. Bučice cijelo vrijeme drži pod punom kontrolom. To je početni položaj.",
+   "Uz izdah potisni bučice prema gore mišićima prsa. Na vrhu ispruži ruke i stisni prsa, zadrži sekundu i zatim polako spuštaj. Savjet: spuštanje bi trebalo trajati otprilike dvostruko dulje od podizanja.",
+   "Ponovi pokret zadani broj ponavljanja prema svom programu."
+  ]
  },
  "Incline_Dumbbell_Press": {
-  "name": "Potisak bučicama s kose klupe"
+  "name": "Potisak bučicama s kose klupe",
+  "instructions": [
+   "Lezi na kosu klupu s bučicom u svakoj ruci, oslonjenom na bedra. Dlanovi su okrenuti jedan prema drugome.",
+   "Pomažući se bedrima, podigni bučice jednu po jednu tako da ih držiš u širini ramena.",
+   "Kad su bučice u širini ramena, okreni zapešća prema naprijed tako da dlanovi gledaju od tebe. To je početni položaj.",
+   "Bučice cijelo vrijeme drži pod punom kontrolom. Uz izdah potisni ih prema gore mišićima prsa.",
+   "Na vrhu ispruži ruke, zadrži sekundu i zatim polako spuštaj teret. Savjet: spuštanje bi trebalo trajati otprilike dvostruko dulje od podizanja.",
+   "Ponovi pokret zadani broj ponavljanja.",
+   "Kad završiš, spusti bučice na bedra, a zatim na pod. Tako ih najsigurnije odlažeš."
+  ]
  },
  "Dumbbell_Flyes": {
-  "name": "Razvlačenje bučicama na klupi"
+  "name": "Razvlačenje bučicama na klupi",
+  "instructions": [
+   "Lezi na ravnu klupu s bučicom u svakoj ruci, oslonjenom na bedra. Dlanovi su okrenuti jedan prema drugome.",
+   "Pomažući se bedrima, podigni bučice jednu po jednu tako da ih držiš ispred sebe u širini ramena, s dlanovima okrenutima jedan prema drugome. Podigni ih kao da radiš potisak, ali stani malo prije potpunog ispružanja ruku. To je početni položaj.",
+   "S laganim pregibom u laktovima (da ne opteretiš tetivu bicepsa) spuštaj ruke u stranu u širokom luku dok ne osjetiš istezanje u prsima. Tijekom ovog dijela udahni. Savjet: kut u laktovima ostaje isti cijelo vrijeme, a pokret se događa samo u ramenom zglobu.",
+   "Uz izdah i stiskanje prsa vrati ruke u početni položaj. Savjet: ruke vraćaj istim lukom kojim si ih spuštao.",
+   "Zadrži sekundu u stisnutom položaju i ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Incline_Dumbbell_Flyes": {
-  "name": "Razvlačenje bučicama na kosoj klupi"
+  "name": "Razvlačenje bučicama na kosoj klupi",
+  "instructions": [
+   "Uzmi bučicu u svaku ruku i lezi na kosu klupu nagnutu najviše 30 stupnjeva.",
+   "Ispruži ruke iznad sebe s laganim pregibom u laktovima.",
+   "Okreni zapešća tako da dlanovi gledaju prema tebi. Savjet: mali prsti trebaju biti jedan uz drugoga. To je početni položaj.",
+   "Uz udah polako spuštaj ruke u stranu, držeći ih ispruženima i okrećući zapešća dok dlanovi ne budu okrenuti jedan prema drugome. Savjet: na kraju pokreta ruke su sa strane tijela, a dlanovi gledaju u strop.",
+   "Uz izdah vrati bučice u početni položaj istim pokretom unatrag, okrećući šake dok mali prsti ponovno ne budu jedan uz drugoga. Savjet: pokret se događa samo u ramenu i zapešću, lakat se ne pomiče.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Cable_Crossover": {
-  "name": "Prekrižavanje kablova"
+  "name": "Prekrižavanje kablova",
+  "instructions": [
+   "Za početni položaj postavi kolotore visoko (iznad glave), odaberi opterećenje i uhvati ručku u svaku ruku.",
+   "Zakorači naprijed ispred zamišljene ravne linije između kolotura i pritom privuci ruke jednu prema drugoj ispred sebe. Trup je lagano nagnut naprijed iz struka. To je početni položaj.",
+   "S laganim pregibom u laktovima (da ne opteretiš tetivu bicepsa) raširi ruke u stranu u širokom luku dok ne osjetiš istezanje u prsima. Tijekom ovog dijela udahni. Savjet: ruke i trup miruju, a pokret se događa samo u ramenom zglobu.",
+   "Uz izdah vrati ruke u početni položaj, istim lukom kojim si ih raširio.",
+   "Zadrži sekundu u početnom položaju i ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Low_Cable_Crossover": {
-  "name": "Prekrižavanje kablova odozdo"
+  "name": "Prekrižavanje kablova odozdo",
+  "instructions": [
+   "Za početni položaj postavi kolotore nisko, odaberi opterećenje i uhvati ručku u svaku ruku.",
+   "Zakorači naprijed da kablovi budu napeti. Dlanovi gledaju naprijed, šake su ispod struka, a ruke ispružene. To je početni položaj.",
+   "S laganim pregibom u rukama povuci šake prema gore i prema sredini tijela. Šake se spajaju ispred prsa, s dlanovima okrenutima prema gore.",
+   "Nakon kratke pauze vrati ruke u početni položaj."
+  ]
  },
  "Cable_Chest_Press": {
-  "name": "Potisak na kablovima"
+  "name": "Potisak na kablovima",
+  "instructions": [
+   "Namjesti odgovarajuće opterećenje, sjedni i uhvati ručke. Nadlaktice su pod oko 45 stupnjeva u odnosu na tijelo, a glava i prsa uzdignuti. Laktovi su savijeni pod otprilike 90 stupnjeva. To je početni položaj.",
+   "Ispruži ruke u laktovima i potisni ručke ravno ispred sebe dok se ne spoje. Tijekom pokreta drži lopatice skupljene.",
+   "Nakon pauze u ispruženom položaju vrati se u početni položaj, držeći kablove napetima.",
+   "Pokret možeš raditi i bez naslona za leđa, pod kutom prema gore ili dolje, ili naizmjence jednom pa drugom rukom."
+  ]
  },
  "Incline_Cable_Flye": {
-  "name": "Razvlačenje na kablovima s kose klupe"
+  "name": "Razvlačenje na kablovima s kose klupe",
+  "instructions": [
+   "Za početni položaj postavi kolotore u razinu poda (najniži položaj na spravi, ispod trupa).",
+   "Između kolotura postavi kosu klupu (nagnutu na 45 stupnjeva), odaberi opterećenje na svakom i uhvati ručku u svaku ruku.",
+   "S ručkom u svakoj ruci lezi na kosu klupu i spoji šake ispruženih ruku ispred lica. To je početni položaj.",
+   "S laganim pregibom u laktovima (da ne opteretiš tetivu bicepsa) spuštaj ruke u stranu u širokom luku dok ne osjetiš istezanje u prsima. Tijekom ovog dijela udahni. Savjet: kut u laktovima ostaje isti, a pokret se događa samo u ramenom zglobu.",
+   "Uz izdah i stiskanje prsa vrati ruke u početni položaj. Zadrži stisnuti položaj sekundu. Savjet: ruke vraćaj istim lukom kojim si ih spuštao.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Butterfly": {
-  "name": "Leptir sprava"
+  "name": "Leptir sprava",
+  "instructions": [
+   "Sjedni na spravu, s leđima ravno uz naslon.",
+   "Uhvati ručke. Savjet: nadlaktice trebaju biti paralelne s podom, pa spravu namjesti prema tome. To je početni položaj.",
+   "Polako spajaj ručke i stišći prsa u sredini. Tijekom ovog dijela izdahni i zadrži stisnuti položaj sekundu.",
+   "Uz udah se polako vrati u početni položaj, dok se prsni mišići potpuno ne istegnu.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Machine_Bench_Press": {
-  "name": "Potisak prsa na spravi"
+  "name": "Potisak prsa na spravi",
+  "instructions": [
+   "Sjedni na spravu za potisak prsa i odaberi opterećenje.",
+   "Nagazi polugu na spravi: ona ti pomaže dovesti ručke naprijed da ih možeš uhvatiti i potpuno ispružiti ruke.",
+   "Uhvati ručke nathvatom (dlanovi prema dolje) i podigni laktove tako da su nadlaktice paralelne s podom, sa strane trupa. Savjet: podlaktice gledaju naprijed jer držiš ručke. Kad ručke dovedeš naprijed i ispružiš ruke, u početnom si položaju.",
+   "Uz udah vraćaj ručke prema sebi.",
+   "Uz izdah i stiskanje prsnih mišića potisni ručke od sebe. Zadrži stisnuti položaj sekundu prije povratka u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja.",
+   "Kad završiš, ponovno nagazi polugu i polako vrati ručke na mjesto."
+  ]
  },
  "Smith_Machine_Bench_Press": {
-  "name": "Potisak s klupe na Smith spravi"
+  "name": "Potisak s klupe na Smith spravi",
+  "instructions": [
+   "Postavi ravnu klupu ispod Smith sprave. Šipku namjesti na visinu do koje dosežeš kad ležiš s gotovo ispruženim rukama. Kad odabereš opterećenje, legni na klupu. Nathvatom širim od ramena otključaj šipku i drži je ravno iznad sebe ispruženih ruku. To je početni položaj.",
+   "Uz udah polako spuštaj šipku dok je ne osjetiš na sredini prsa.",
+   "Nakon pauze od sekunde, uz izdah potisni šipku mišićima prsa natrag u početni položaj. Na vrhu ispruži ruke, zadrži sekundu i ponovno polako spuštaj. Savjet: spuštanje bi trebalo trajati barem dvostruko dulje od podizanja.",
+   "Ponovi pokret zadani broj ponavljanja.",
+   "Kad završiš, zaključaj šipku natrag na stalak."
+  ]
  },
  "Pushups": {
-  "name": "Sklekovi"
+  "name": "Sklekovi",
+  "instructions": [
+   "Lezi licem prema podu i postavi dlanove nešto šire od ramena, držeći trup podignut na ispruženim rukama.",
+   "Uz udah se spuštaj dok prsima gotovo ne dotakneš pod.",
+   "Uz izdah potisni gornji dio tijela natrag u početni položaj i stisni prsa.",
+   "Nakon kratke pauze u gornjem položaju ponovno se spuštaj, onoliko ponavljanja koliko treba."
+  ]
  },
  "Incline_Push-Up": {
-  "name": "Sklekovi s povišenim rukama"
+  "name": "Sklekovi s povišenim rukama",
+  "instructions": [
+   "Stani licem prema klupi ili stabilnoj povišenoj površini. Postavi dlanove na rub, malo šire od ramena.",
+   "Odmakni stopala od klupe tako da su ruke i tijelo ravni. Ruke su okomite na tijelo. Držeći tijelo ravnim, savijanjem ruku spusti prsa do ruba klupe.",
+   "Potisni tijelo gore dok se ruke ne ispruže. Ponovi."
+  ]
  },
  "Decline_Push-Up": {
-  "name": "Sklekovi s povišenim nogama"
+  "name": "Sklekovi s povišenim nogama",
+  "instructions": [
+   "Lezi licem prema podu i postavi dlanove nešto šire od ramena, držeći trup podignut na ispruženim rukama. Stopala podigni na kutiju ili klupu. To je početni položaj.",
+   "Uz udah se spuštaj dok prsima gotovo ne dotakneš pod.",
+   "Uz izdah potisni gornji dio tijela natrag u početni položaj i stisni prsa.",
+   "Nakon kratke pauze u gornjem položaju ponovno se spuštaj, onoliko ponavljanja koliko treba."
+  ]
  },
  "Dips_-_Chest_Version": {
-  "name": "Propadanja na razboju (prsa)"
+  "name": "Propadanja na razboju (prsa)",
+  "instructions": [
+   "Za ovu vježbu trebaš paralelni razboj. Za početni položaj podigni se iznad pritki na ispruženim rukama.",
+   "Uz udah se polako spuštaj s trupom nagnutim naprijed za otprilike 30 stupnjeva i laktovima malo raširenima, dok ne osjetiš lagano istezanje u prsima.",
+   "Kad osjetiš istezanje, uz izdah se mišićima prsa podigni natrag u početni položaj. Savjet: na vrhu pokreta stisni prsa na sekundu.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Bent-Arm_Dumbbell_Pullover": {
-  "name": "Pullover bučicom sa savijenim rukama"
+  "name": "Pullover bučicom sa savijenim rukama",
+  "instructions": [
+   "Postavi bučicu uspravno na ravnu klupu.",
+   "Pazeći da bučica sigurno stoji na rubu klupe, lezi poprijeko na klupu (trup i klupa čine križ) tako da na njoj leže samo ramena. Kukovi su ispod razine klupe, koljena savijena, a stopala čvrsto na podu. Glava je također izvan klupe.",
+   "Uhvati bučicu objema rukama i drži je iznad prsa sa savijenim rukama. Oba dlana pritišću donju stranu jednog kraja bučice. To je početni položaj. Oprez: uvijek provjeri je li bučica čvrsta. Bučica s labavim pločama može se raspasti i pasti ti na lice.",
+   "Držeći kut u laktovima istim, uz udah polako spuštaj teret u luku iza glave dok ne osjetiš istezanje u prsima.",
+   "Tada uz izdah vrati bučicu u početni položaj istim lukom kojim si je spuštao.",
+   "Zadrži teret u početnom položaju sekundu i ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Pullups": {
-  "name": "Zgibovi"
+  "name": "Zgibovi",
+  "instructions": [
+   "Uhvati šipku za zgibove s dlanovima okrenutima naprijed, zadanim hvatom. O hvatovima: kod širokog hvata šake su šire od ramena, kod srednjeg u širini ramena, a kod uskog uže od ramena.",
+   "Dok visiš na ispruženim rukama, nagni trup unatrag za otprilike 30 stupnjeva, blago izvij donji dio leđa i isturi prsa. To je početni položaj.",
+   "Povuci trup gore dok šipka ne dotakne gornji dio prsa, spuštajući ramena i nadlaktice dolje i unatrag. Tijekom ovog dijela izdahni. Savjet: u gornjem položaju stisni leđne mišiće. Gornji dio trupa miruje, pomiču se samo ruke. Podlaktice samo drže šipku.",
+   "Nakon sekunde u gornjem položaju udahni i polako se spuštaj u početni položaj, dok se ruke potpuno ne ispruže, a široki leđni mišići istegnu.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Chin-Up": {
-  "name": "Zgibovi podhvatom"
+  "name": "Zgibovi podhvatom",
+  "instructions": [
+   "Uhvati šipku za zgibove s dlanovima okrenutima prema sebi, hvatom užim od ramena.",
+   "Dok visiš na ispruženim rukama, drži trup što uspravnije, blago izvij donji dio leđa i isturi prsa. To je početni položaj. Savjet: uspravan trup više opterećuje biceps, a manje leđa.",
+   "Uz izdah povuci trup gore dok glava ne dođe otprilike u visinu šipke. Pokret izvodi bicepsima, s laktovima uz tijelo. Savjet: gornji dio trupa miruje, pomiču se samo ruke. Podlaktice samo drže šipku.",
+   "Nakon sekunde stiskanja bicepsa u gornjem položaju polako se spuštaj u početni položaj, dok se ruke potpuno ne ispruže. Tijekom ovog dijela udahni.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Weighted_Pull_Ups": {
-  "name": "Zgibovi s dodatnim teretom"
+  "name": "Zgibovi s dodatnim teretom",
+  "instructions": [
+   "Pričvrsti teret na pojas za propadanja i stegni ga oko struka. Uhvati šipku za zgibove s dlanovima okrenutima naprijed. Kod srednjeg hvata šake su u širini ramena. Visiš na ispruženim rukama.",
+   "Nagni trup unatrag za otprilike 30 stupnjeva, blago izvij donji dio leđa i isturi prsa. To je početni položaj.",
+   "Uz izdah povuci trup gore dok glava ne bude iznad šaka. U gornjem položaju skupi lopatice unatrag i prema dolje.",
+   "Nakon kratke pauze u gornjem položaju udahni i polako se spuštaj u početni položaj, s ispruženim rukama i istegnutim širokim leđnim mišićima."
+  ]
  },
  "Band_Assisted_Pull-Up": {
-  "name": "Zgibovi uz pomoć trake"
+  "name": "Zgibovi uz pomoć trake",
+  "instructions": [
+   "Omotaj traku oko sredine šipke za zgibove. Različitim trakama dobivaš različitu razinu pomoći.",
+   "Povuci kraj trake prema dolje i u petlju stavi savijeno koljeno, pazeći da ne isklizne. Uhvati šipku srednjim do širokim hvatom. To je početni položaj.",
+   "Povuci se gore stezanjem širokih leđnih mišića i savijanjem laktova. Laktove vuci prema bokovima. Vuci prema naprijed i pokušaj prebaciti bradu preko šipke. Izbjegavaj njihanje i trzanje.",
+   "Nakon kratke pauze vrati se u početni položaj."
+  ]
  },
  "Wide-Grip_Lat_Pulldown": {
-  "name": "Povlačenje na lat spravi širokim hvatom"
+  "name": "Povlačenje na lat spravi širokim hvatom",
+  "instructions": [
+   "Sjedni na lat spravu sa širokom šipkom na gornjem koloturu. Namjesti jastučić za koljena prema svojoj visini. On sprječava da te opterećenje podigne sa sjedala.",
+   "Uhvati šipku s dlanovima okrenutima naprijed, zadanim hvatom. O hvatovima: kod širokog hvata šake su šire od ramena, kod srednjeg u širini ramena, a kod uskog uže od ramena.",
+   "S ispruženim rukama nagni trup unatrag za otprilike 30 stupnjeva, blago izvij donji dio leđa i isturi prsa. To je početni položaj.",
+   "Uz izdah povuci šipku dolje dok ne dotakne gornji dio prsa, spuštajući ramena i nadlaktice dolje i unatrag. Savjet: u donjem položaju stisni leđne mišiće. Gornji dio trupa miruje, pomiču se samo ruke. Podlaktice samo drže šipku, pa ne vuci njima.",
+   "Nakon sekunde u stisnutom položaju sa skupljenim lopaticama polako vrati šipku gore u početni položaj, dok se ruke potpuno ne ispruže, a široki leđni mišići istegnu. Tijekom ovog dijela udahni.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Close-Grip_Front_Lat_Pulldown": {
-  "name": "Povlačenje na lat spravi uskim hvatom"
+  "name": "Povlačenje na lat spravi uskim hvatom",
+  "instructions": [
+   "Sjedni na lat spravu sa šipkom na gornjem koloturu. Namjesti jastučić za koljena prema svojoj visini. On sprječava da te opterećenje podigne sa sjedala.",
+   "Uhvati šipku s dlanovima okrenutima naprijed, hvatom užim od ramena.",
+   "S ispruženim rukama nagni trup unatrag za otprilike 30 stupnjeva, blago izvij donji dio leđa i isturi prsa. To je početni položaj.",
+   "Uz izdah povuci šipku dolje dok ne dotakne gornji dio prsa, spuštajući ramena i nadlaktice dolje i unatrag. Savjet: u donjem položaju stisni leđne mišiće. Gornji dio trupa miruje, pomiču se samo ruke. Podlaktice samo drže šipku, pa ne vuci njima.",
+   "Nakon sekunde u stisnutom položaju sa skupljenim lopaticama polako vrati šipku gore u početni položaj, dok se ruke potpuno ne ispruže, a široki leđni mišići istegnu. Tijekom ovog dijela udahni.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "V-Bar_Pulldown": {
-  "name": "Povlačenje na lat spravi V-ručkom"
+  "name": "Povlačenje na lat spravi V-ručkom",
+  "instructions": [
+   "Sjedni na lat spravu s V-ručkom na gornjem koloturu.",
+   "Namjesti jastučić za koljena prema svojoj visini. On sprječava da te opterećenje podigne sa sjedala.",
+   "Uhvati V-ručku s dlanovima okrenutima jedan prema drugome (neutralni hvat). Isturi prsa i lagano se nagni unatrag (otprilike 30 stupnjeva) da bolje aktiviraš široke leđne mišiće. To je početni položaj.",
+   "Širokim leđnim mišićima povuci ručku dolje i skupi lopatice. Vuci dok prsima gotovo ne dotakneš ručku. Tijekom ovog dijela izdahni. Savjet: trup miruje cijelo vrijeme.",
+   "Nakon sekunde u stisnutom položaju uz udah polako vrati ručku u početni položaj.",
+   "Ponovi zadani broj ponavljanja."
+  ]
  },
  "Underhand_Cable_Pulldowns": {
-  "name": "Povlačenje na lat spravi podhvatom"
+  "name": "Povlačenje na lat spravi podhvatom",
+  "instructions": [
+   "Sjedni na lat spravu sa širokom šipkom na gornjem koloturu. Namjesti jastučić za koljena prema svojoj visini. On sprječava da te opterećenje podigne sa sjedala.",
+   "Uhvati šipku s dlanovima okrenutima prema sebi (podhvat). Šake su bliže od širine ramena.",
+   "S ispruženim rukama nagni trup unatrag za otprilike 30 stupnjeva, blago izvij donji dio leđa i isturi prsa. To je početni položaj.",
+   "Uz izdah povuci šipku dolje dok ne dotakne gornji dio prsa, spuštajući ramena i nadlaktice dolje i unatrag. Savjet: u donjem položaju stisni leđne mišiće i drži laktove uz tijelo. Gornji dio trupa miruje, pomiču se samo ruke. Podlaktice samo drže šipku.",
+   "Nakon sekunde u stisnutom položaju uz udah polako vrati šipku u početni položaj, dok se ruke potpuno ne ispruže, a široki leđni mišići istegnu.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "One_Arm_Lat_Pulldown": {
-  "name": "Jednoručno povlačenje na lat spravi"
+  "name": "Jednoručno povlačenje na lat spravi",
+  "instructions": [
+   "Odaberi odgovarajuće opterećenje i namjesti jastučić za koljena da te drži na sjedalu. Uhvati ručku nathvatom. To je početni položaj.",
+   "Povuci ručku dolje, savijajući lakat i privlačeći ga uz bok.",
+   "Zastani u donjem položaju, a zatim polako vrati ručku u početni položaj.",
+   "Između ponavljanja ne vraćaj teret do kraja, kako bi mišići ostali pod opterećenjem."
+  ]
  },
  "Straight-Arm_Pulldown": {
-  "name": "Povlačenje ravnim rukama"
+  "name": "Povlačenje ravnim rukama",
+  "instructions": [
+   "Uhvati široku šipku na gornjem koloturu lat sprave nathvatom (dlanovi prema dolje) širim od ramena. Odmakni se oko pola metra unatrag.",
+   "Nagni trup naprijed iz struka za otprilike 30 stupnjeva, s rukama ispruženima ispred sebe i laganim pregibom u laktovima. Ako ruke nisu potpuno ispružene, odmakni se još malo. Kad su ruke ispružene, a trup lagano nagnut, stegni široke leđne mišiće i možeš početi.",
+   "Držeći ruke ravnima, stezanjem širokih leđnih mišića povuci šipku dolje dok šake ne dođu uz bedra. Tijekom ovog dijela izdahni.",
+   "Držeći ruke ravnima, uz udah se vrati u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Rope_Straight-Arm_Pulldown": {
-  "name": "Povlačenje ravnim rukama s užetom"
+  "name": "Povlačenje ravnim rukama s užetom",
+  "instructions": [
+   "Zakači uže na gornji kolotur i odaberi opterećenje. Stani pola metra do metar od kolotura, sa stopalima u iskoraku, i uhvati uže objema rukama. Nagni se naprijed iz kukova ravnih leđa, s rukama ispruženima gore ispred sebe. To je početni položaj.",
+   "Držeći ruke ravnima, pokretom u ramenu povuci uže dolje do bedara.",
+   "Zastani u donjem položaju i stisni široke leđne mišiće.",
+   "Vrati se u početni položaj, ali ne dopusti da teret potpuno legne na stup utega."
+  ]
  },
  "Bent_Over_Barbell_Row": {
-  "name": "Veslanje šipkom u pretklonu"
+  "name": "Veslanje šipkom u pretklonu",
+  "instructions": [
+   "Drži šipku nathvatom (dlanovi prema dolje), lagano savij koljena i nagni trup naprijed iz struka, ravnih leđa, dok ne bude gotovo paralelan s podom. Savjet: glavu drži podignutom. Šipka visi ravno ispred tebe, a ruke su okomite na pod i trup. To je početni položaj.",
+   "Držeći trup mirnim, uz izdah povuci šipku prema sebi. Laktove drži uz tijelo, a podlakticama samo drži teret. U gornjem položaju stisni leđne mišiće i kratko zadrži.",
+   "Zatim uz udah polako spusti šipku u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Reverse_Grip_Bent-Over_Rows": {
-  "name": "Veslanje šipkom podhvatom"
+  "name": "Veslanje šipkom podhvatom",
+  "instructions": [
+   "Stani uspravno i drži šipku podhvatom (dlanovi prema gore).",
+   "Lagano savij koljena i nagni trup naprijed iz struka, ravnih leđa, dok ne bude gotovo paralelan s podom. Savjet: glavu drži podignutom. Šipka visi ravno ispred tebe, a ruke su okomite na pod i trup. To je početni položaj.",
+   "Držeći trup mirnim, uz izdah podigni šipku. Laktove drži uz tijelo, a podlakticama samo drži teret. U gornjem položaju stisni leđne mišiće i zadrži sekundu.",
+   "Uz udah polako spusti teret u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Bent_Over_Two-Dumbbell_Row": {
-  "name": "Veslanje s dvije bučice u pretklonu"
+  "name": "Veslanje s dvije bučice u pretklonu",
+  "instructions": [
+   "S bučicom u svakoj ruci (dlanovi prema trupu) lagano savij koljena i nagni trup naprijed iz struka. Leđa drži ravnima dok trup ne bude gotovo paralelan s podom. Savjet: glavu drži podignutom. Bučice vise ravno ispred tebe, a ruke su okomite na pod i trup. To je početni položaj.",
+   "Držeći trup mirnim, uz izdah podigni bučice uz bokove. Laktove drži uz tijelo, a podlakticama samo drži teret. U gornjem položaju stisni leđne mišiće i zadrži sekundu.",
+   "Uz udah polako spusti teret u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "One-Arm_Dumbbell_Row": {
-  "name": "Jednoručno veslanje bučicom"
+  "name": "Jednoručno veslanje bučicom",
+  "instructions": [
+   "Uzmi ravnu klupu i postavi bučicu sa svake strane.",
+   "Desnu nogu stavi na kraj klupe, nagni trup naprijed iz struka dok gornji dio tijela ne bude paralelan s podom i desnom rukom se osloni na drugi kraj klupe.",
+   "Lijevom rukom podigni bučicu s poda i drži je ravnih donjih leđa. Dlan je okrenut prema trupu. To je početni položaj.",
+   "Povuci bučicu ravno gore uz bok prsa, s nadlakticom uz tijelo i mirnim trupom. Tijekom ovog dijela izdahni. Savjet: u gornjem položaju stisni leđne mišiće. Silu stvaraju leđa, a ne ruke. Gornji dio trupa miruje, pomiče se samo ruka. Podlaktica samo drži bučicu, pa ne vuci njome.",
+   "Spusti bučicu ravno dolje u početni položaj. Tijekom ovog dijela udahni.",
+   "Ponovi pokret zadani broj ponavljanja.",
+   "Zamijeni strane i ponovi drugom rukom."
+  ]
  },
  "Dumbbell_Incline_Row": {
-  "name": "Veslanje bučicama na kosoj klupi"
+  "name": "Veslanje bučicama na kosoj klupi",
+  "instructions": [
+   "Lezi prsima na kosu klupu.",
+   "Uzmi bučicu u svaku ruku neutralnim hvatom, s ispruženim rukama. To je početni položaj.",
+   "Skupi lopatice i savij laktove te povuci bučice uz bokove.",
+   "Zastani u gornjem položaju, a zatim se vrati u početni položaj."
+  ]
  },
  "Seated_Cable_Rows": {
-  "name": "Veslanje na kablu sjedeći"
+  "name": "Veslanje na kablu sjedeći",
+  "instructions": [
+   "Za ovu vježbu trebaš spravu za veslanje s donjim koloturom i V-ručkom. Napomena: V-ručka omogućuje neutralni hvat, s dlanovima okrenutima jedan prema drugome. Sjedni na spravu i stopala postavi na prednju platformu, s koljenima lagano savijenima, a ne ukočenima.",
+   "Nagni se naprijed, zadržavajući prirodan položaj leđa, i uhvati V-ručku.",
+   "S ispruženim rukama povuci se unatrag dok trup ne bude pod kutom od 90 stupnjeva u odnosu na noge. Leđa su blago izvijena, a prsa isturena. Trebaš osjetiti istezanje u širokim leđnim mišićima. To je početni položaj.",
+   "Držeći trup mirnim, povuci ručku prema trupu s rukama uz tijelo, dok ne dotakne trbuh. Tijekom ovog dijela izdahni i snažno stisni leđne mišiće. Zadrži sekundu, a zatim se uz udah polako vrati u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Seated_One-arm_Cable_Pulley_Rows": {
-  "name": "Jednoručno veslanje na kablu sjedeći"
+  "name": "Jednoručno veslanje na kablu sjedeći",
+  "instructions": [
+   "Sjedni na spravu i stopala postavi na prednju platformu, s koljenima lagano savijenima, a ne ukočenima.",
+   "Nagni se naprijed, zadržavajući prirodan položaj leđa, i lijevom rukom uhvati jednoručnu ručku nathvatom.",
+   "S ispruženom rukom povuci se unatrag dok trup ne bude pod kutom od 90 stupnjeva u odnosu na noge. Leđa su blago izvijena, a prsa isturena. Trebaš osjetiti istezanje u širokom leđnom mišiću. Desnu ruku možeš držati uz struk. To je početni položaj.",
+   "Držeći trup mirnim, povuci ručku prema trupu s rukom uz tijelo i pritom okreći zapešće, tako da je šaka uz trbuh u neutralnom položaju (dlan prema trupu). Tijekom ovog dijela izdahni i snažno stisni leđne mišiće.",
+   "Zadrži sekundu, a zatim se uz udah polako vrati u početni položaj. Savjet: pri povratku ponovno okreni zapešće tako da dlan gleda prema dolje.",
+   "Ponovi preporučeni broj ponavljanja, a zatim isto napravi desnom rukom."
+  ]
  },
  "T-Bar_Row_with_Handle": {
-  "name": "Veslanje T-šipkom"
+  "name": "Veslanje T-šipkom",
+  "instructions": [
+   "Jedan kraj šipke postavi u landmine držač ili u kut da se ne pomiče. Na drugi kraj stavi odgovarajući teret.",
+   "Stani iznad šipke i postavi ručku za veslanje oko šipke, tik uz obruč. Pomoću kukova i nogu ustani.",
+   "Raširi stopala, kukove pomakni unatrag, a prsa drži podignutima. Ruke su ispružene. To je početni položaj.",
+   "Povuci teret do gornjeg dijela trbuha skupljanjem lopatica i savijanjem laktova. Ne trzaj i ne varaj pokretom.",
+   "Nakon kratke pauze vrati se u početni položaj."
+  ]
  },
  "Lying_T-Bar_Row": {
-  "name": "Veslanje T-šipkom ležeći"
+  "name": "Veslanje T-šipkom ležeći",
+  "instructions": [
+   "Na spravu za veslanje T-šipkom stavi željeni teret i namjesti visinu tako da je gornji dio prsa na vrhu jastuka. Savjet: na nekim spravama samo staneš na stepenicu na kojoj je gornji dio prsa u visini vrha jastuka.",
+   "Lezi licem na jastuk i uhvati ručke. Možeš koristiti nathvat, podhvat ili neutralni hvat, ovisno o tome koji dio leđa želiš naglasiti.",
+   "Podigni šipku s držača i ispruži ruke ispred sebe. To je početni položaj.",
+   "Uz izdah polako povuci teret gore i na vrhu stisni leđa. Savjet: nadlaktice drži što bliže trupu da bolje aktiviraš leđne mišiće. Tijelo ne odvajaj od jastuka i ne podiži teret bicepsima.",
+   "Nakon sekunde u gornjem položaju uz udah se polako vrati u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Leverage_High_Row": {
-  "name": "Visoko veslanje na spravi"
+  "name": "Visoko veslanje na spravi",
+  "instructions": [
+   "Stavi odgovarajući teret i namjesti visinu sjedala tako da tek dosegneš ručke iznad sebe. Namjesti jastučić za koljena da te drži na sjedalu. Uhvati ručke nathvatom. To je početni položaj.",
+   "Povuci ručke prema trupu, skupljajući lopatice i savijajući laktove.",
+   "Zastani u donjem položaju, a zatim polako vrati ručke u početni položaj.",
+   "Između ponavljanja ne vraćaj teret do graničnika, kako bi mišići ostali pod opterećenjem."
+  ]
  },
  "Inverted_Row": {
-  "name": "Obrnuto veslanje"
+  "name": "Obrnuto veslanje",
+  "instructions": [
+   "Postavi šipku u stalak otprilike u visinu struka. Možeš koristiti i Smith spravu.",
+   "Uhvati šipku hvatom širim od ramena i objesi se ispod nje. Tijelo je ravno, pete na podu, a ruke potpuno ispružene. To je početni položaj.",
+   "Savij laktove i povuci prsa prema šipki. Tijekom pokreta skupi lopatice.",
+   "Zastani u gornjem položaju i vrati se u početni položaj.",
+   "Ponovi željeni broj ponavljanja."
+  ]
  },
  "Barbell_Deadlift": {
-  "name": "Mrtvo dizanje"
+  "name": "Mrtvo dizanje",
+  "instructions": [
+   "Stani ispred opterećene šipke.",
+   "Držeći leđa što ravnijima, savij koljena, nagni se naprijed i uhvati šipku nathvatom u širini ramena. To je početni položaj. Savjet: ako ti je teško držati šipku ovim hvatom, koristi mješoviti hvat ili trake za zapešća.",
+   "Uz izdah počni dizanje odgurivanjem nogama i istovremeno uspravljaj trup. U uspravnom položaju isturi prsa i skupi lopatice unatrag, kao vojnik u stavu mirno.",
+   "Vrati se u početni položaj savijanjem koljena i istovremenim naginjanjem trupa naprijed iz struka, ravnih leđa. Kad ploče dotaknu pod, opet si u početnom položaju i spreman za sljedeće ponavljanje.",
+   "Napravi broj ponavljanja zadan u programu."
+  ]
  },
  "Rack_Pulls": {
-  "name": "Mrtvo dizanje iz stalka"
+  "name": "Mrtvo dizanje iz stalka",
+  "instructions": [
+   "Postavi šipku na sigurnosne poluge u stalku. Poluge namjesti na željenu visinu: malo ispod koljena, malo iznad ili na sredinu bedara. Postavi se uz šipku kao za mrtvo dizanje: stopala ispod kukova, hvat u širini ramena, leđa izvijena i kukovi unatrag da aktiviraš stražnju ložu. Budući da je teret obično velik, možeš koristiti mješoviti hvat, hook hvat ili trake.",
+   "Gledajući naprijed, ispruži kukove i koljena te povuci teret gore i unatrag do potpunog uspravljanja. Na kraju pokreta povuci ramena unatrag.",
+   "Vrati teret na poluge i ponovi."
+  ]
  },
  "Hyperextensions_Back_Extensions": {
-  "name": "Hiperekstenzije"
+  "name": "Hiperekstenzije",
+  "instructions": [
+   "Lezi licem prema dolje na klupu za hiperekstenzije i čvrsto zakvači gležnjeve ispod jastučića.",
+   "Ako možeš, namjesti gornji jastuk tako da gornji dio bedara leži na njemu, a da se možeš slobodno saviti u struku.",
+   "Tijelo je ravno, a ruke prekrižene na prsima ili iza glave. To je početni položaj. Savjet: za dodatno opterećenje možeš ispod prekriženih ruku držati ploču.",
+   "Uz udah se polako savijaj naprijed iz struka koliko možeš, ravnih leđa. Spuštaj se dok ne osjetiš istezanje u stražnjoj loži i dok bi daljnji pokret zaokružio leđa. Savjet: leđa nikad ne zaokružuj. Netko može ići dublje od drugih, bitno je ići onoliko koliko tijelo dopušta bez zaokruživanja leđa.",
+   "Uz izdah polako podigni trup natrag u početni položaj. Savjet: ne izvijaj leđa preko ravne linije i ne zamahuj trupom, kako bi zaštitio leđa od ozljede.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Barbell_Shrug": {
-  "name": "Slijeganje ramenima sa šipkom"
+  "name": "Slijeganje ramenima sa šipkom",
+  "instructions": [
+   "Stani uspravno, stopala u širini ramena, i drži šipku objema rukama ispred sebe nathvatom (dlanovi prema bedrima). Savjet: šake su malo šire od ramena. Za bolji hvat možeš koristiti trake za zapešća. To je početni položaj.",
+   "Uz izdah podigni ramena što više možeš i zadrži sekundu. Savjet: ne podiži šipku bicepsima.",
+   "Uz udah se polako vrati u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Dumbbell_Shrug": {
-  "name": "Slijeganje ramenima s bučicama"
+  "name": "Slijeganje ramenima s bučicama",
+  "instructions": [
+   "Stani uspravno s bučicom u svakoj ruci (dlanovi prema trupu), s rukama ispruženima uz tijelo.",
+   "Uz izdah podigni bučice podižući ramena što više možeš. Zadrži sekundu na vrhu. Savjet: ruke su cijelo vrijeme ispružene i ne pomažeš si bicepsima. Pomiču se samo ramena, gore i dolje.",
+   "Spusti bučice u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Leverage_Shrug": {
-  "name": "Slijeganje ramenima na spravi"
+  "name": "Slijeganje ramenima na spravi",
+  "instructions": [
+   "Stavi odgovarajući teret. Stani točno između ručki.",
+   "Uhvati gornje ručke ugodnim hvatom, a zatim uz udah spusti kukove. Gledaj naprijed i drži prsa podignutima.",
+   "Odgurni se petama od poda i ispruži kukove i koljena dok ne ustaneš. Ruke su cijelo vrijeme ravne, a na kraju su ramena unatrag. To je početni položaj.",
+   "Podigni teret slijeganjem ramena prema ušima, ravno gore i dolje.",
+   "Zastani u gornjem položaju, a zatim vrati teret u početni položaj."
+  ]
  },
  "Barbell_Shoulder_Press": {
-  "name": "Potisak šipkom iznad glave"
+  "name": "Potisak šipkom iznad glave",
+  "instructions": [
+   "Sjedni na klupu s naslonom u stalku za čučanj. Šipku postavi malo iznad visine glave. Uhvati je nathvatom (dlanovi prema naprijed).",
+   "Kad uhvatiš šipku odgovarajućom širinom hvata, podigni je iznad glave ispruženih ruku. To je početni položaj.",
+   "Uz udah polako spuštaj šipku do visine ramena, malo ispred glave.",
+   "Uz izdah potisni šipku natrag u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Standing_Military_Press": {
-  "name": "Vojnički potisak stojeći"
+  "name": "Vojnički potisak stojeći",
+  "instructions": [
+   "Postavi šipku na stalak za čučanj otprilike u visinu prsa. Kad odabereš teret, uhvati šipku nathvatom (dlanovi prema naprijed), šire od ramena.",
+   "Lagano savij koljena i postavi šipku na ključne kosti. Podigni šipku tako da ostane naslonjena na prsa, zakorači unatrag i postavi stopala u širinu ramena.",
+   "Potisni šipku iznad glave dok se ruke ne ispruže. To je početni položaj.",
+   "Uz udah polako spuštaj šipku do ključnih kostiju.",
+   "Uz izdah potisni šipku natrag u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Seated_Barbell_Military_Press": {
-  "name": "Vojnički potisak sjedeći"
+  "name": "Vojnički potisak sjedeći",
+  "instructions": [
+   "Sjedni na klupu za vojnički potisak sa šipkom iza glave. Neka ti partner doda šipku (tako je bolje za rotatornu manšetu) ili je pažljivo uhvati sam nathvatom (dlanovi prema naprijed). Savjet: hvat je širi od ramena, tako da podlaktica i nadlaktica u donjem položaju zatvaraju kut od 90 stupnjeva.",
+   "Kad uhvatiš šipku odgovarajućom širinom hvata, podigni je iznad glave ispruženih ruku. To je početni položaj.",
+   "Uz udah polako spuštaj šipku do ključnih kostiju.",
+   "Uz izdah potisni šipku natrag u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Dumbbell_Shoulder_Press": {
-  "name": "Potisak bučicama za ramena"
+  "name": "Potisak bučicama za ramena",
+  "instructions": [
+   "S bučicom u svakoj ruci sjedni na klupu za vojnički potisak ili klupu s naslonom. Bučice postavi uspravno na bedra.",
+   "Podigni bučice jednu po jednu do visine ramena, pomažući se bedrima.",
+   "Okreni zapešća tako da dlanovi gledaju naprijed. To je početni položaj.",
+   "Uz izdah potisni bučice gore dok se na vrhu ne dotaknu.",
+   "Nakon kratke pauze na vrhu uz udah polako spusti bučice u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Seated_Dumbbell_Press": {
-  "name": "Potisak bučicama za ramena sjedeći"
+  "name": "Potisak bučicama za ramena sjedeći",
+  "instructions": [
+   "Uzmi dvije bučice i sjedni na klupu za vojnički potisak ili klupu s naslonom. Bučice postavi uspravno na bedra.",
+   "Podigni bučice jednu po jednu do visine ramena sa svake strane, pomažući se bedrima.",
+   "Okreni zapešća tako da dlanovi gledaju naprijed. To je početni položaj.",
+   "Uz izdah potisni bučice gore dok se na vrhu ne dotaknu.",
+   "Nakon pauze od sekunde uz udah se polako vrati u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Standing_Dumbbell_Press": {
-  "name": "Potisak bučicama za ramena stojeći"
+  "name": "Potisak bučicama za ramena stojeći",
+  "instructions": [
+   "Stani sa stopalima u širini ramena i uzmi bučicu u svaku ruku. Podigni bučice do visine glave, s laktovima u stranu i savijenima pod otprilike 90 stupnjeva. To je početni položaj.",
+   "Strogom tehnikom, bez pomaganja nogama i bez zabacivanja unatrag, ispruži laktove i potisni bučice zajedno ravno iznad glave.",
+   "Zastani i polako vrati teret u početni položaj."
+  ]
  },
  "Arnold_Dumbbell_Press": {
-  "name": "Arnoldov potisak"
+  "name": "Arnoldov potisak",
+  "instructions": [
+   "Sjedni na klupu s naslonom i drži dvije bučice ispred sebe otprilike u visini gornjeg dijela prsa, s dlanovima okrenutima prema tijelu i savijenim laktovima. Savjet: ruke su uz trup. Početni položaj izgleda kao vrh pregiba bučicama.",
+   "Podiži bučice i pritom okreći dlanove dok ne budu okrenuti naprijed.",
+   "Nastavi podizati dok se ruke ne ispruže iznad tebe. Tijekom ovog dijela izdahni.",
+   "Nakon sekunde na vrhu spuštaj bučice u početni položaj okrećući dlanove prema sebi. Savjet: lijevu ruku okrećeš suprotno od kazaljke na satu, a desnu u smjeru kazaljke. Tijekom ovog dijela udahni.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Machine_Shoulder_Military_Press": {
-  "name": "Potisak za ramena na spravi"
+  "name": "Potisak za ramena na spravi",
+  "instructions": [
+   "Sjedni na spravu za potisak za ramena i odaberi opterećenje.",
+   "Uhvati ručke sa strane, s laktovima savijenima i u liniji s trupom. To je početni položaj.",
+   "Uz izdah potisni ručke gore dok se ruke potpuno ne ispruže. Na vrhu zadrži sekundu.",
+   "Uz udah polako spusti ručke u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Smith_Machine_Overhead_Shoulder_Press": {
-  "name": "Potisak za ramena na Smith spravi"
+  "name": "Potisak za ramena na Smith spravi",
+  "instructions": [
+   "Ispod Smith sprave postavi ravnu klupu (ili, bolje, klupu s naslonom). Šipku namjesti na visinu do koje dosežeš sjedeći s gotovo ispruženim rukama.",
+   "Sjedni malo iza šipke, tako da je zamišljena ravna linija od vrha nosa do šipke. Stopala su mirna. Uhvati šipku s dlanovima prema naprijed, otključaj je i podigni dok se ruke potpuno ne ispruže. To je početni položaj.",
+   "Uz udah polako spuštaj šipku do visine brade.",
+   "Uz izdah ramenima potisni šipku natrag u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Side_Lateral_Raise": {
-  "name": "Bočno podizanje bučica"
+  "name": "Bočno podizanje bučica",
+  "instructions": [
+   "Uzmi dvije bučice i stani uspravnog trupa, s bučicama uz tijelo na ispruženim rukama i dlanovima okrenutima prema tebi. To je početni položaj.",
+   "Držeći trup mirnim (bez zamaha), podigni bučice u stranu s laganim pregibom u laktovima i šakama malo nagnutima naprijed, kao da ulijevaš vodu u čašu. Podiži dok ruke ne budu paralelne s podom. Tijekom ovog dijela izdahni i zastani sekundu na vrhu.",
+   "Uz udah polako spusti bučice u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Cable_Seated_Lateral_Raise": {
-  "name": "Bočno podizanje na kablu sjedeći"
+  "name": "Bočno podizanje na kablu sjedeći",
+  "instructions": [
+   "Stani između dva nasuprotna donja kolotura i iza sebe postavi ravnu klupu okomito na sebe (uži kraj klupe je iza tebe). Odaberi opterećenje na svakom koloturu.",
+   "Sjedni na rub klupe, sa stopalima ispred koljena.",
+   "Nagni se naprijed ravnih leđa i osloni trup na bedra.",
+   "Neka ti netko doda jednoručne ručke s kolotura. Lijevu ručku uhvati desnom rukom, a desnu lijevom. Kablovi prolaze ispod koljena, ruke su ispružene s dlanovima jedan prema drugome i laganim pregibom u laktovima. To je početni položaj.",
+   "Bez promjene kuta u laktovima podigni nadlaktice u stranu dok ne budu paralelne s podom, u visini ramena. Tijekom ovog dijela izdahni i zadrži sekundu.",
+   "Uz udah polako spusti ruke u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja. Savjet: nadlaktice drži okomito na trup, a kut u laktovima stalnim (10 do 30 stupnjeva) tijekom cijele vježbe."
+  ]
  },
  "Front_Dumbbell_Raise": {
-  "name": "Prednje podizanje bučica"
+  "name": "Prednje podizanje bučica",
+  "instructions": [
+   "Uzmi dvije bučice i stani uspravnog trupa, s bučicama ispred bedara na ispruženim rukama i dlanovima okrenutima prema bedrima. To je početni položaj.",
+   "Držeći trup mirnim (bez zamaha), podigni lijevu bučicu naprijed s laganim pregibom u laktu i dlanom okrenutim prema dolje. Podiži dok ruka ne bude malo iznad paralele s podom. Tijekom ovog dijela izdahni i zastani sekundu na vrhu, a zatim udahni.",
+   "Polako spusti bučicu u početni položaj i istovremeno podigni desnu.",
+   "Nastavi naizmjence dok ne napraviš preporučeni broj ponavljanja svakom rukom."
+  ]
  },
  "Reverse_Flyes": {
-  "name": "Obrnuto razvlačenje bučicama"
+  "name": "Obrnuto razvlačenje bučicama",
+  "instructions": [
+   "Lezi prsima i trbuhom na kosu klupu. U svakoj ruci drži bučicu, s dlanovima okrenutima jedan prema drugome (neutralni hvat).",
+   "Ispruži ruke ispred sebe tako da su okomite na klupu. Noge miruju, a oslanjaš se na prednji dio stopala. To je početni položaj.",
+   "Zadržavajući lagani pregib u laktovima, uz izdah podiži bučice u luku u stranu. Savjet: skupi lopatice za najbolji učinak.",
+   "Podiži ruke dok ne budu paralelne s podom.",
+   "Osjeti kontrakciju i uz udah polako spusti bučice u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Reverse_Machine_Flyes": {
-  "name": "Obrnuti leptir"
+  "name": "Obrnuti leptir",
+  "instructions": [
+   "Namjesti ručke skroz unatrag. Odaberi odgovarajuće opterećenje i namjesti visinu sjedala tako da su ručke u visini ramena. Uhvati ručke s dlanovima okrenutima prema unutra. To je početni položaj.",
+   "Polukružnim pokretom povuci ruke u stranu i unatrag, stežući stražnje dijelove ramena.",
+   "Ruke su cijelo vrijeme lagano savijene, a pokret se događa samo u ramenom zglobu.",
+   "Zastani u stražnjem položaju i polako vrati teret u početni položaj."
+  ]
  },
  "Cable_Rear_Delt_Fly": {
-  "name": "Stražnja ramena na kablovima"
+  "name": "Stražnja ramena na kablovima",
+  "instructions": [
+   "Namjesti kolotore na odgovarajuću visinu, iznad glave, i odaberi opterećenje.",
+   "Lijevi kolotur uhvati desnom rukom, a desni lijevom, tako da su kablovi prekriženi ispred tebe. To je početni položaj.",
+   "Povuci ruke unatrag i u stranu, držeći ih ravnima tijekom cijelog pokreta.",
+   "Zastani na kraju pokreta, a zatim vrati ručke u početni položaj."
+  ]
  },
  "Face_Pull": {
-  "name": "Face pull"
+  "name": "Face pull",
+  "instructions": [
+   "Okrenut prema gornjem koloturu s užetom ili dvjema ručkama, povuci teret ravno prema licu i pritom razdvoji šake. Nadlaktice drži paralelno s podom."
+  ]
  },
  "Upright_Barbell_Row": {
-  "name": "Veslanje šipkom uz tijelo"
+  "name": "Veslanje šipkom uz tijelo",
+  "instructions": [
+   "Uhvati šipku nathvatom malo užim od širine ramena. Šipka je naslonjena na bedra, ruke su ispružene s laganim pregibom u laktovima, a leđa ravna. To je početni položaj.",
+   "Uz izdah bočnim dijelovima ramena podigni šipku, podižući laktove gore i u stranu. Šipku drži blizu tijela. Podiži dok gotovo ne dotakne bradu. Savjet: pokret vode laktovi, koji su uvijek viši od podlaktica. Trup miruje, a na vrhu zastani sekundu.",
+   "Uz udah polako spusti šipku u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Band_Pull_Apart": {
-  "name": "Razvlačenje trake"
+  "name": "Razvlačenje trake",
+  "instructions": [
+   "Ispruži ruke ravno ispred sebe i drži traku objema rukama.",
+   "Pokretom obrnutog razvlačenja raširi šake u stranu.",
+   "Laktovi su ispruženi tijekom cijelog pokreta, a traku dovodiš do prsa. Ramena drži unatrag.",
+   "Zastani na kraju pokreta i kontrolirano se vrati u početni položaj."
+  ]
  },
  "Clean_and_Press": {
-  "name": "Zaleti i potisni"
+  "name": "Nabačaj i potisak",
+  "instructions": [
+   "Stani sa stopalima u širini ramena, koljena unutar ruku. Ravnih leđa savij koljena i kukove tako da uhvatiš šipku ispruženim rukama, nathvatom malo širim od ramena. Laktovi gledaju u stranu. Šipka je blizu potkoljenica, a ramena iznad ili malo ispred šipke. Leđa su ravna. To je početni položaj.",
+   "Počni dizati šipku ispružanjem koljena. Kukove pomakni naprijed i podiži ramena istom brzinom, zadržavajući isti kut leđa. Šipku diži ravno gore, blizu tijela.",
+   "Kad šipka prođe koljena, eksplozivno ispruži gležnjeve, koljena i kukove, kao u skoku. Pritom rukama vodi šipku, slegni ramenima i iskoristi zamah da je povučeš što više. Šipka putuje blizu tijela, a laktovi su u stranu.",
+   "Na najvišoj točki stopala se odvajaju od poda i počinješ se povlačiti ispod šipke. Izvedba se može malo razlikovati ovisno o težini. Ispod šipke se spuštaš u čučanj.",
+   "Kad šipka dosegne najvišu točku, zarotiraj laktove oko i ispod šipke. Prihvati šipku na prednju stranu ramena, s uspravnim trupom, savijajući kukove i koljena da amortiziraš težinu.",
+   "Ustani do kraja, držeći šipku na ramenima.",
+   "Bez pomicanja stopala, uz izdah potisni šipku iznad glave. Kontrolirano spusti šipku."
+  ]
  },
  "Barbell_Curl": {
-  "name": "Pregib šipkom"
+  "name": "Pregib šipkom",
+  "instructions": [
+   "Stani uspravno i drži šipku hvatom u širini ramena. Dlanovi gledaju naprijed, a laktovi su uz trup. To je početni položaj.",
+   "Držeći nadlaktice mirnima, uz izdah savij ruke i podigni šipku stežući bicepse. Savjet: pomiču se samo podlaktice.",
+   "Nastavi dok bicepsi nisu potpuno stegnuti, a šipka u visini ramena. Zadrži sekundu i snažno stisni bicepse.",
+   "Uz udah polako vrati šipku u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "EZ-Bar_Curl": {
-  "name": "Pregib EZ šipkom"
+  "name": "Pregib EZ šipkom",
+  "instructions": [
+   "Stani uspravno i drži EZ šipku za šire vanjske dijelove. Dlanovi gledaju naprijed i zbog oblika šipke su malo okrenuti prema unutra. Laktovi su uz trup. To je početni položaj.",
+   "Držeći nadlaktice mirnima, uz izdah savij ruke i podigni šipku stežući bicepse. Pomiču se samo podlaktice.",
+   "Podiži dok bicepsi nisu potpuno stegnuti, a šipka u visini ramena. Kratko zadrži i stisni bicepse.",
+   "Zatim uz udah polako spusti šipku u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Dumbbell_Bicep_Curl": {
-  "name": "Pregib bučicama"
+  "name": "Pregib bučicama",
+  "instructions": [
+   "Stani uspravno s bučicom u svakoj ruci na ispruženim rukama. Laktove drži uz trup i okreni dlanove prema naprijed. To je početni položaj.",
+   "Držeći nadlaktice mirnima, uz izdah savij ruke stežući bicepse. Podiži dok bicepsi nisu potpuno stegnuti, a bučice u visini ramena. Kratko zadrži i stisni bicepse.",
+   "Zatim uz udah polako spuštaj bučice u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Dumbbell_Alternate_Bicep_Curl": {
-  "name": "Naizmjenični pregib bučicama"
+  "name": "Naizmjenični pregib bučicama",
+  "instructions": [
+   "Stani uspravno s bučicom u svakoj ruci na ispruženim rukama. Laktovi su uz trup, a dlanovi okrenuti prema bedrima.",
+   "Držeći nadlakticu mirnom, savij desnu ruku i pritom okreći dlan dok ne gleda naprijed. Uz izdah nastavi stezati biceps dok nije potpuno stegnut, a bučica u visini ramena. Zadrži sekundu i stisni biceps. Savjet: pomiče se samo podlaktica.",
+   "Uz udah polako vrati bučicu u početni položaj. Savjet: pri spuštanju okreni dlan natrag prema bedru.",
+   "Ponovi pokret lijevom rukom. To je jedno ponavljanje.",
+   "Nastavi naizmjence preporučeni broj ponavljanja."
+  ]
  },
  "Hammer_Curls": {
-  "name": "Čekić pregibi"
+  "name": "Čekić pregibi",
+  "instructions": [
+   "Stani uspravno s bučicom u svakoj ruci na ispruženim rukama. Laktovi su uz trup.",
+   "Dlanovi su okrenuti prema trupu. To je početni položaj.",
+   "Držeći nadlakticu mirnom, uz izdah savij ruku i podigni bučicu stežući biceps. Podiži dok biceps nije potpuno stegnut, a bučica u visini ramena. Kratko zadrži i stisni biceps. Savjet: lakat miruje, pomiče se samo podlaktica.",
+   "Nakon kratke pauze uz udah polako spuštaj bučice u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Incline_Dumbbell_Curl": {
-  "name": "Pregib bučicama na kosoj klupi"
+  "name": "Pregib bučicama na kosoj klupi",
+  "instructions": [
+   "Sjedni na kosu klupu s bučicom u svakoj ruci na ispruženim rukama. Laktove drži uz trup i okreni dlanove prema naprijed. To je početni položaj.",
+   "Držeći nadlaktice mirnima, uz izdah savij ruke stežući bicepse. Pomiču se samo podlaktice. Nastavi dok bicepsi nisu potpuno stegnuti, a bučice u visini ramena. Zadrži sekundu.",
+   "Uz udah polako vrati bučice u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Concentration_Curls": {
-  "name": "Koncentracijski pregib"
+  "name": "Koncentracijski pregib",
+  "instructions": [
+   "Sjedni na ravnu klupu s bučicom ispred sebe između nogu. Noge su raširene, koljena savijena, a stopala na podu.",
+   "Desnom rukom podigni bučicu. Stražnju stranu desne nadlaktice nasloni na unutarnju stranu desnog bedra. Okreni dlan tako da gleda naprijed, od bedra. Savjet: ruka je ispružena, a bučica iznad poda. To je početni položaj.",
+   "Držeći nadlakticu mirnom, uz izdah savij ruku stežući biceps. Pomiče se samo podlaktica. Nastavi dok biceps nije potpuno stegnut, a bučica u visini ramena. Savjet: na vrhu pokreta mali prst neka bude viši od palca, to osigurava dobru kontrakciju. Zadrži sekundu i stisni biceps.",
+   "Uz udah polako vrati bučicu u početni položaj. Oprez: izbjegavaj zamahivanje.",
+   "Ponovi preporučeni broj ponavljanja, a zatim isto napravi lijevom rukom."
+  ]
  },
  "Preacher_Curl": {
-  "name": "Pregib na Scott klupi"
+  "name": "Pregib na Scott klupi",
+  "instructions": [
+   "Za ovu vježbu trebaš Scott klupu i EZ šipku. Uhvati EZ šipku za uži unutarnji dio (najbolje da ti je netko doda ili je uzmi s prednjeg držača na klupi). Dlanovi gledaju naprijed i zbog oblika šipke su malo okrenuti prema unutra.",
+   "S nadlakticama i prsima naslonjenima na jastuk klupe drži šipku u visini ramena. To je početni položaj.",
+   "Uz udah polako spuštaj šipku dok se ruke ne ispruže, a bicepsi potpuno istegnu.",
+   "Uz izdah bicepsima podigni šipku dok bicepsi nisu potpuno stegnuti, a šipka u visini ramena. Snažno stisni bicepse i zadrži sekundu.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Machine_Preacher_Curls": {
-  "name": "Pregib na Scott spravi"
+  "name": "Pregib na Scott spravi",
+  "instructions": [
+   "Sjedni na Scott spravu i odaberi opterećenje.",
+   "Stražnju stranu nadlaktica (tricepse) nasloni na jastuk i uhvati ručke podhvatom (dlanovi prema gore). Savjet: laktove drži prema unutra dok su ruke na jastuku. To je početni položaj.",
+   "Uz izdah podigni ručke stežući bicepse. Na vrhu zadrži sekundu. Savjet: pomiču se samo podlaktice, a nadlaktice su cijelo vrijeme mirne na jastuku.",
+   "Uz udah polako spusti ručke u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Machine_Bicep_Curl": {
-  "name": "Pregib na spravi"
+  "name": "Pregib na spravi",
+  "instructions": [
+   "Namjesti sjedalo na odgovarajuću visinu i odaberi opterećenje. Nasloni nadlaktice na jastuk i uhvati ručke. To je početni položaj.",
+   "Savij laktove i privuci podlaktice prema nadlakticama.",
+   "Zastani na vrhu pokreta, a zatim polako vrati teret u početni položaj.",
+   "Do kraja serije ne vraćaj teret do graničnika, kako bi mišići ostali pod opterećenjem."
+  ]
  },
  "Standing_Biceps_Cable_Curl": {
-  "name": "Pregib na kablu stojeći"
+  "name": "Pregib na kablu stojeći",
+  "instructions": [
+   "Stani uspravno i drži šipku zakačenu na donji kolotur. Uhvati je u širini ramena, s laktovima uz trup i dlanovima okrenutima prema gore (podhvat). To je početni položaj.",
+   "Držeći nadlaktice mirnima, uz izdah savij ruke stežući bicepse. Pomiču se samo podlaktice. Nastavi dok bicepsi nisu potpuno stegnuti, a šipka u visini ramena. Zadrži sekundu i stisni mišić.",
+   "Uz udah polako vrati šipku u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Cable_Hammer_Curls_-_Rope_Attachment": {
-  "name": "Čekić pregibi na kablu s užetom"
+  "name": "Čekić pregibi na kablu s užetom",
+  "instructions": [
+   "Zakači uže na donji kolotur i stani licem prema spravi, tridesetak centimetara od nje.",
+   "Uhvati uže neutralnim hvatom (dlanovi prema unutra) i stani uspravno, s prirodnim položajem leđa i mirnim trupom.",
+   "Laktove postavi uz bokove i drži ih tamo tijekom cijelog pokreta. Savjet: pomiču se samo podlaktice, ne nadlaktice. To je početni položaj.",
+   "Uz izdah bicepsima savij ruke dok bicepsi ne dotaknu podlaktice. Savjet: laktovi ostaju uz tijelo, a nadlaktice mirne.",
+   "Nakon sekunde stiskanja bicepsa polako vrati teret u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Reverse_Barbell_Curl": {
-  "name": "Obrnuti pregib šipkom"
+  "name": "Obrnuti pregib šipkom",
+  "instructions": [
+   "Stani uspravno i drži šipku u širini ramena, s laktovima uz trup i dlanovima okrenutima prema dolje (nathvat). To je početni položaj.",
+   "Držeći nadlaktice mirnima, uz izdah savij ruke stežući bicepse. Pomiču se samo podlaktice. Nastavi dok bicepsi nisu potpuno stegnuti, a šipka u visini ramena. Zadrži sekundu i stisni mišić.",
+   "Uz udah polako vrati šipku u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Zottman_Curl": {
-  "name": "Zottman pregib"
+  "name": "Zottman pregib",
+  "instructions": [
+   "Stani uspravno s bučicom u svakoj ruci na ispruženim rukama. Laktovi su uz trup.",
+   "Dlanovi su okrenuti jedan prema drugome. To je početni položaj.",
+   "Držeći nadlakticu mirnom, uz izdah savij ruke stežući bicepse. Pomiču se samo podlaktice. Pritom okreni zapešća tako da dlanovi gledaju gore (podhvat). Nastavi dok bicepsi nisu potpuno stegnuti, a bučice u visini ramena.",
+   "Zadrži sekundu i stisni bicepse.",
+   "U gornjem položaju okreni zapešća tako da dlanovi gledaju dolje (nathvat), s palcem višim od malog prsta.",
+   "Polako spuštaj bučice nathvatom.",
+   "Kad se bučice približe bedrima, okreni zapešća natrag u neutralni hvat (dlanovi prema tijelu).",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Triceps_Pushdown": {
-  "name": "Potisak za triceps na kablu"
+  "name": "Potisak za triceps na kablu",
+  "instructions": [
+   "Zakači ravnu ili zakrivljenu šipku na gornji kolotur i uhvati je nathvatom (dlanovi prema dolje) u širini ramena.",
+   "Stani uspravno, s ravnim trupom tek malo nagnutim naprijed. Nadlaktice su uz tijelo i okomite na pod. Podlaktice drže šipku i usmjerene su gore prema koloturu. To je početni položaj.",
+   "Tricepsima potisni šipku dolje dok ne dotakne prednju stranu bedara, a ruke se potpuno ispruže okomito na pod. Nadlaktice su cijelo vrijeme mirne uz trup, a pomiču se samo podlaktice. Tijekom ovog dijela izdahni.",
+   "Nakon sekunde u donjem položaju polako vrati šipku gore u početni položaj. Tijekom ovog dijela udahni.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Triceps_Pushdown_-_Rope_Attachment": {
-  "name": "Potisak za triceps s užetom"
+  "name": "Potisak za triceps s užetom",
+  "instructions": [
+   "Zakači uže na gornji kolotur i uhvati ga neutralnim hvatom (dlanovi jedan prema drugome).",
+   "Stani uspravno, s ravnim trupom tek malo nagnutim naprijed. Nadlaktice su uz tijelo i okomite na pod. Podlaktice drže uže i usmjerene su gore prema koloturu. To je početni položaj.",
+   "Tricepsima potisni uže dolje i razvuci krajeve užeta prema bokovima bedara. Na kraju pokreta ruke su potpuno ispružene i okomite na pod. Nadlaktice su cijelo vrijeme mirne uz trup, a pomiču se samo podlaktice. Tijekom ovog dijela izdahni.",
+   "Nakon sekunde u donjem položaju polako vrati uže gore u početni položaj. Tijekom ovog dijela udahni.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Triceps_Pushdown_-_V-Bar_Attachment": {
-  "name": "Potisak za triceps V-ručkom"
+  "name": "Potisak za triceps V-ručkom",
+  "instructions": [
+   "Zakači V-ručku na gornji kolotur i uhvati je nathvatom u širini ramena.",
+   "Stani uspravno, s ravnim trupom tek malo nagnutim naprijed. Nadlaktice su uz tijelo i okomite na pod. Podlaktice drže ručku i usmjerene su gore prema koloturu. Palčevi su viši od malih prstiju. To je početni položaj.",
+   "Tricepsima potisni ručku dolje dok ne dotakne prednju stranu bedara, a ruke se potpuno ispruže okomito na pod. Nadlaktice su cijelo vrijeme mirne uz trup, a pomiču se samo podlaktice. Tijekom ovog dijela izdahni.",
+   "Nakon sekunde u donjem položaju polako vrati ručku gore u početni položaj. Tijekom ovog dijela udahni.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Cable_Rope_Overhead_Triceps_Extension": {
-  "name": "Ekstenzija tricepsa iznad glave s užetom"
+  "name": "Ekstenzija tricepsa iznad glave s užetom",
+  "instructions": [
+   "Zakači uže na donji kolotur.",
+   "Uhvati uže objema rukama i ispruži ruke tako da su šake točno iznad glave, u neutralnom hvatu (dlanovi jedan prema drugome). Laktovi su uz glavu, ruke okomite na pod, a zglobovi prstiju usmjereni prema stropu. To je početni položaj.",
+   "Držeći nadlaktice mirnima, uz udah polako spuštaj uže iza glave i zastani kad su tricepsi potpuno istegnuti.",
+   "Uz izdah stezanjem tricepsa vrati se u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "EZ-Bar_Skullcrusher": {
-  "name": "Skull crusher EZ šipkom"
+  "name": "Skull crusher EZ šipkom",
+  "instructions": [
+   "Uskim hvatom podigni EZ šipku i lezi na klupu, s laktovima prema unutra. Ruke su okomite na pod. To je početni položaj.",
+   "Držeći nadlaktice mirnima, spuštaj šipku savijanjem laktova. Tijekom ovog dijela udahni. Zastani kad je šipka točno iznad čela.",
+   "Uz izdah ispruži laktove i podigni šipku u početni položaj.",
+   "Ponovi."
+  ]
  },
  "Lying_Dumbbell_Tricep_Extension": {
-  "name": "Ekstenzija tricepsa bučicom ležeći"
+  "name": "Ekstenzija tricepsa bučicom ležeći",
+  "instructions": [
+   "Lezi na ravnu klupu i drži dvije bučice ispred sebe. Ruke su potpuno ispružene, okomito na trup i pod. Dlanovi gledaju prema unutra, a laktovi su skupljeni. To je početni položaj.",
+   "Uz udah, držeći nadlaktice mirnima i laktove skupljenima, polako spuštaj bučice dok ne budu blizu ušiju.",
+   "Tada uz izdah tricepsima podigni bučice u početni položaj, držeći laktove skupljenima i nadlaktice mirnima.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Standing_Dumbbell_Triceps_Extension": {
-  "name": "Ekstenzija tricepsa bučicom stojeći"
+  "name": "Ekstenzija tricepsa bučicom stojeći",
+  "instructions": [
+   "Stani uspravno i drži bučicu objema rukama. Stopala su otprilike u širini ramena. Polako podigni bučicu iznad glave dok se ruke potpuno ne ispruže.",
+   "Bučica leži na dlanovima, a palčevi je obuhvaćaju. Dlanovi gledaju prema stropu. To je početni položaj.",
+   "S nadlakticama uz glavu, laktovima skupljenima i okomitima na pod, spuštaj bučicu polukružnim pokretom iza glave dok podlaktice ne dotaknu bicepse. Savjet: nadlaktice miruju, pomiču se samo podlaktice. Tijekom ovog dijela udahni.",
+   "Tricepsima podigni bučicu natrag u početni položaj. Tijekom ovog dijela izdahni.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Seated_Triceps_Press": {
-  "name": "Ekstenzija tricepsa bučicom sjedeći"
+  "name": "Ekstenzija tricepsa bučicom sjedeći",
+  "instructions": [
+   "Sjedni na klupu s naslonom, uhvati bučicu objema rukama i drži je iznad glave ispruženih ruku. Savjet: bolje je da ti je netko doda, osobito ako je teška. Bučica leži na dlanovima, a palčevi je obuhvaćaju. Dlanovi gledaju prema unutra. To je početni položaj.",
+   "S nadlakticama uz glavu (laktovi skupljeni) i okomitima na pod, spuštaj bučicu polukružnim pokretom iza glave dok podlaktice ne dotaknu bicepse. Savjet: nadlaktice miruju, pomiču se samo podlaktice. Tijekom ovog dijela udahni.",
+   "Tricepsima podigni bučicu natrag u početni položaj. Tijekom ovog dijela izdahni.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Standing_Overhead_Barbell_Triceps_Extension": {
-  "name": "Ekstenzija tricepsa šipkom iznad glave"
+  "name": "Ekstenzija tricepsa šipkom iznad glave",
+  "instructions": [
+   "Stani uspravno i drži šipku ili EZ šipku nathvatom (dlanovi prema naprijed), sa šakama užima od ramena. Stopala su otprilike u širini ramena.",
+   "Podigni šipku iznad glave dok se ruke potpuno ne ispruže. Laktove drži skupljenima. To je početni položaj.",
+   "S nadlakticama uz glavu, laktovima skupljenima i okomitima na pod, spuštaj šipku polukružnim pokretom iza glave dok podlaktice ne dotaknu bicepse. Savjet: nadlaktice miruju, pomiču se samo podlaktice. Tijekom ovog dijela udahni.",
+   "Tricepsima podigni šipku natrag u početni položaj. Tijekom ovog dijela izdahni.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Tricep_Dumbbell_Kickback": {
-  "name": "Zamah bučicom za triceps"
+  "name": "Zamah bučicom za triceps",
+  "instructions": [
+   "Uzmi bučicu u svaku ruku, s dlanovima okrenutima prema trupu. Ravnih leđa i lagano savijenih koljena nagni se naprijed iz struka, dok trup ne bude gotovo paralelan s podom. Glavu drži podignutom. Nadlaktice su uz trup i paralelne s podom, a podlaktice usmjerene prema podu. Nadlaktica i podlaktica zatvaraju kut od 90 stupnjeva. To je početni položaj.",
+   "Držeći nadlaktice mirnima, uz izdah tricepsima podigni bučice dok se ruke potpuno ne ispruže. Pomiče se samo podlaktica.",
+   "Nakon kratke pauze na vrhu uz udah polako spusti bučice u početni položaj.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Close-Grip_Barbell_Bench_Press": {
-  "name": "Potisak šipkom uskim hvatom"
+  "name": "Potisak šipkom uskim hvatom",
+  "instructions": [
+   "Lezi na ravnu klupu. Uskim hvatom (otprilike u širini ramena) skini šipku sa stalka i drži je ravno iznad sebe ispruženih ruku. To je početni položaj.",
+   "Uz udah polako spuštaj šipku dok je ne osjetiš na sredini prsa. Savjet: za razliku od običnog potiska s klupe, laktove cijelo vrijeme drži uz trup, kako bi triceps radio što više.",
+   "Nakon pauze od sekunde, uz izdah tricepsima potisni šipku natrag u početni položaj. Na vrhu ispruži ruke, zadrži sekundu i ponovno polako spuštaj. Savjet: spuštanje bi trebalo trajati barem dvostruko dulje od podizanja.",
+   "Ponovi pokret zadani broj ponavljanja.",
+   "Kad završiš, vrati šipku na stalak."
+  ]
  },
  "Dips_-_Triceps_Version": {
-  "name": "Propadanja na razboju (triceps)"
+  "name": "Propadanja na razboju (triceps)",
+  "instructions": [
+   "Za početni položaj podigni se iznad pritki razboja na gotovo ispruženim rukama.",
+   "Uz udah se polako spuštaj. Trup ostaje uspravan, a laktovi uz tijelo, kako bi naglasak bio na tricepsu. Spuštaj se dok nadlaktica i podlaktica ne zatvore kut od 90 stupnjeva.",
+   "Zatim uz izdah tricepsima potisni tijelo natrag u početni položaj.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Parallel_Bar_Dip": {
-  "name": "Propadanja na razboju"
+  "name": "Propadanja na razboju",
+  "instructions": [
+   "Stani između pritki razboja. Stavi ruku na svaku pritku i malim skokom se podigni u početni položaj, s ispruženim rukama.",
+   "Savij laktove i spuštaj tijelo dok ruke ne prijeđu kut od 90 stupnjeva. Ne njiši se i drži dobro držanje cijelim putem dolje.",
+   "Ispruži laktove i potisni se natrag u početni položaj.",
+   "Ponovi željeni broj ponavljanja."
+  ]
  },
  "Bench_Dips": {
-  "name": "Propadanja na klupi"
+  "name": "Propadanja na klupi",
+  "instructions": [
+   "Za ovu vježbu postavi klupu iza leđa, okomito na tijelo. Okrenut od klupe, uhvati se za njezin rub ispruženim rukama u širini ramena. Noge su ispružene naprijed, a tijelo je savijeno u kukovima, s nogama okomitima na trup. To je početni položaj.",
+   "Uz udah polako spuštaj tijelo savijanjem laktova dok nadlaktica i podlaktica ne zatvore kut malo manji od 90 stupnjeva. Savjet: laktove drži što bliže tijelu tijekom cijelog pokreta. Podlaktice uvijek gledaju prema dolje.",
+   "Tricepsima podigni trup natrag u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Dip_Machine": {
-  "name": "Propadanja na spravi"
+  "name": "Propadanja na spravi",
+  "instructions": [
+   "Sjedni stabilno na spravu za propadanja, odaberi opterećenje i čvrsto uhvati ručke.",
+   "Laktove drži uz bokove, kako bi naglasak bio na tricepsu. Laktovi su savijeni pod kutom od 90 stupnjeva.",
+   "Uz izdah stegni tricepse i ispruži ruke prema dolje. Savjet: u donjem položaju zadrži mali pregib u rukama, kako bi triceps ostao pod opterećenjem.",
+   "Uz udah polako pusti ruke gore u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Machine_Triceps_Extension": {
-  "name": "Ekstenzija tricepsa na spravi"
+  "name": "Ekstenzija tricepsa na spravi",
+  "instructions": [
+   "Namjesti sjedalo na odgovarajuću visinu i odaberi opterećenje. Nasloni nadlaktice na jastuk i uhvati ručke. To je početni položaj.",
+   "Ispruži laktove, odmičući podlaktice od nadlaktica.",
+   "Zastani na kraju pokreta, a zatim polako vrati teret u početni položaj.",
+   "Do kraja serije ne vraćaj teret do graničnika, kako bi mišići ostali pod opterećenjem."
+  ]
  },
  "Palms-Up_Barbell_Wrist_Curl_Over_A_Bench": {
-  "name": "Pregib zapešća šipkom podhvatom"
+  "name": "Pregib zapešća šipkom podhvatom",
+  "instructions": [
+   "Postavi šipku s jedne strane ravne klupe.",
+   "Klekni na oba koljena, licem prema klupi.",
+   "Uhvati šipku podhvatom (dlanovi prema gore) i nasloni podlaktice na klupu. Zapešća vise preko ruba.",
+   "Uz izdah savij zapešća prema gore.",
+   "Uz udah polako spusti zapešća u početni položaj.",
+   "Podlaktice miruju, a pomiču se samo zapešća.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Palms-Down_Wrist_Curl_Over_A_Bench": {
-  "name": "Pregib zapešća šipkom nadhvatom"
+  "name": "Pregib zapešća šipkom nadhvatom",
+  "instructions": [
+   "Postavi šipku s jedne strane ravne klupe.",
+   "Klekni na oba koljena, licem prema klupi.",
+   "Uhvati šipku nathvatom (dlanovi prema dolje) i nasloni podlaktice na klupu. Zapešća vise preko ruba.",
+   "Uz izdah savij zapešća prema gore.",
+   "Uz udah polako spusti zapešća u početni položaj.",
+   "Podlaktice miruju, a pomiču se samo zapešća.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Seated_Dumbbell_Palms-Up_Wrist_Curl": {
-  "name": "Pregib zapešća bučicom sjedeći"
+  "name": "Pregib zapešća bučicom sjedeći",
+  "instructions": [
+   "Postavi dvije bučice na pod ispred ravne klupe.",
+   "Sjedni na rub klupe, s nogama otprilike u širini ramena i stopalima na podu.",
+   "Uzmi bučice i nasloni podlaktice na bedra, s dlanovima okrenutima prema gore. Zapešća vise preko koljena.",
+   "Uz izdah savij zapešća prema gore.",
+   "Uz udah polako spusti zapešća u početni položaj. Savjet: podlaktice miruju, a pomiču se samo zapešća.",
+   "Ponovi preporučeni broj ponavljanja.",
+   "Kad završiš, jednostavno spusti bučice na pod."
+  ]
  },
  "Wrist_Roller": {
-  "name": "Kolut za podlaktice"
+  "name": "Kolut za podlaktice",
+  "instructions": [
+   "Stani uspravno i uhvati kolut za podlaktice nathvatom (dlanovi prema dolje). Stopala su u širini ramena.",
+   "Polako podigni ruke dok ne budu potpuno ispružene ispred tebe i paralelne s podom. Napomena: uže na početku ne smije biti namotano na kolut. Cijelo tijelo miruje osim podlaktica. To je početni položaj.",
+   "Okrećući jedno po jedno zapešće prema gore, namotaj uže na kolut i podigni teret do šipke.",
+   "Kad teret dođe do šipke, polako ga spuštaj okrećući zapešća prema dolje dok ne dođe u početni položaj.",
+   "Ponovi broj ponavljanja zadan u programu."
+  ]
  },
  "Barbell_Squat": {
-  "name": "Čučanj sa šipkom"
+  "name": "Čučanj sa šipkom",
+  "instructions": [
+   "Ovu vježbu radi sigurnosti najbolje je izvoditi u stalku za čučanj. Postavi šipku na stalak malo ispod visine ramena. Kad je visina namještena i šipka opterećena, stani ispod nje i nasloni je na stražnju stranu ramena (malo ispod vrata).",
+   "Uhvati šipku objema rukama sa strane i skini je sa stalka odgurivanjem nogama i istovremenim uspravljanjem trupa.",
+   "Odmakni se od stalka i postavi stopala u širinu ramena, s prstima malo okrenutima prema van. Glava je cijelo vrijeme podignuta, a leđa ravna. To je početni položaj. (Napomena: ovdje se opisuje srednji stav, koji razvija cijelu nogu. Možeš koristiti i uži ili širi stav.)",
+   "Polako spuštaj šipku savijanjem koljena i kukova, uspravnog držanja i podignute glave. Spuštaj se dok kut između natkoljenice i potkoljenice ne bude malo manji od 90 stupnjeva. Tijekom ovog dijela udahni. Savjet: koljena prate smjer prstiju na stopalima i ne bježe prema unutra.",
+   "Uz izdah se podigni, odgurujući se petama od poda i ispružajući noge, natrag u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Front_Squat_Clean_Grip": {
-  "name": "Prednji čučanj"
+  "name": "Prednji čučanj",
+  "instructions": [
+   "Postavi šipku na stalak malo ispod visine ramena. Šipku nasloni na prednji dio ramena, uz ključne kosti, tako da lagano dodiruje vrat. Šake su u clean hvatu: šipku držiš samo prstima, da ostane na mjestu.",
+   "Skini šipku sa stalka odgurivanjem nogama i istovremenim uspravljanjem trupa. Odmakni se od stalka i postavi stopala u širinu ramena, s prstima malo okrenutima prema van. Glava i laktovi su cijelo vrijeme podignuti. To je početni položaj.",
+   "Savij koljena i sjedni između nogu. Spuštaj se dok stražnja loža ne legne na listove. Koljena drži u liniji sa stopalima, svjesno ih gurajući prema van.",
+   "Uz izdah se podigni, odgurujući se od poda uglavnom petama ili sredinom stopala i ispružajući noge, natrag u početni položaj."
+  ]
  },
  "Box_Squat": {
-  "name": "Čučanj na klupu"
+  "name": "Čučanj na klupu",
+  "instructions": [
+   "Čučanj na klupu (kutiju) omogućuje čučanj do željene dubine i razvija eksplozivnu snagu. Postavi se u stalak za čučanj s kutijom odgovarajuće visine iza sebe. Obično se bira visina na kojoj su natkoljenice paralelne s podom, ali možeš ići i više ili niže.",
+   "Stani ispod šipke i nasloni je na stražnju stranu ramena. Skupi lopatice i okreni laktove naprijed, kao da želiš saviti šipku preko ramena. Skini šipku sa stalka, čvrsto izvij donji dio leđa i zakorači unatrag. Šire stopala više opterećuju leđa, gluteuse, aduktore i stražnju ložu, a uža više prednju ložu. Gledaj naprijed.",
+   "Sa stegnutim leđima, ramenima i trupom, gurni koljena i stražnjicu prema van i počni se spuštati. Sjedaj kukovima unatrag dok ne sjedneš na kutiju. Potkoljenice bi idealno bile okomite na pod. Zastani na kutiji i opusti pregibače kuka. Nikad se ne odbijaj od kutije.",
+   "Držeći težinu na petama i gurajući stopala i koljena prema van, odgurni se s kutije prema gore, vodeći pokret glavom. Nastavi gore, stegnut od glave do pete."
+  ]
  },
  "Bodyweight_Squat": {
-  "name": "Čučanj s vlastitom težinom"
+  "name": "Čučanj s vlastitom težinom",
+  "instructions": [
+   "Stani sa stopalima u širini ramena. Ruke možeš staviti iza glave. To je početni položaj.",
+   "Savij koljena i kukove i sjedaj kukovima unatrag.",
+   "Spusti se do pune dubine ako možeš i brzo se vrati u početni položaj. Tijekom čučnja drži glavu i prsa podignutima, a koljena guraj prema van."
+  ]
  },
  "Goblet_Squat": {
-  "name": "Goblet čučanj"
+  "name": "Goblet čučanj",
+  "instructions": [
+   "Stani i drži lagani kettlebell za ručku uz prsa. To je početni položaj.",
+   "Čučni između nogu dok stražnja loža ne legne na listove. Prsa i glava su podignuti, a leđa ravna.",
+   "U donjem položaju zastani i laktovima gurni koljena prema van. Vrati se u početni položaj i ponovi 10 do 20 puta."
+  ]
  },
  "Smith_Machine_Squat": {
-  "name": "Čučanj na Smith spravi"
+  "name": "Čučanj na Smith spravi",
+  "instructions": [
+   "Postavi šipku Smith sprave na visinu koja ti odgovara. Kad je visina namještena i šipka opterećena, stani ispod nje i nasloni je na stražnju stranu ramena (malo ispod vrata).",
+   "Uhvati šipku objema rukama sa strane (dlanovi prema naprijed), otključaj je i podigni odgurivanjem nogama i istovremenim uspravljanjem trupa.",
+   "Postavi stopala u širinu ramena, s prstima malo okrenutima prema van. Glava je cijelo vrijeme podignuta, a leđa ravna. To je početni položaj. (Napomena: ovdje se opisuje srednji stav, koji razvija cijelu nogu. Možeš koristiti i uži ili širi stav.)",
+   "Polako spuštaj šipku savijanjem koljena, uspravnog držanja i podignute glave. Spuštaj se dok kut između natkoljenice i potkoljenice ne bude malo manji od 90 stupnjeva. Tijekom ovog dijela udahni. Savjet: koljena prate smjer prstiju na stopalima i ne bježe prema unutra.",
+   "Uz izdah se podigni, odgurujući se petama od poda i ispružajući noge, natrag u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Hack_Squat": {
-  "name": "Hack čučanj"
+  "name": "Hack čučanj",
+  "instructions": [
+   "Nasloni leđa na naslon sprave i postavi ramena ispod jastučića za ramena.",
+   "Postavi stopala na platformu u širinu ramena, s prstima malo okrenutima prema van. Savjet: glava je cijelo vrijeme podignuta, a leđa na naslonu.",
+   "Uhvati bočne ručke i otpusti sigurnosne poluge (na većini sprava tako da ručke okreneš iz položaja prema naprijed u dijagonalni).",
+   "Ispruži noge, ali ne zaključavaj koljena. To je početni položaj. (Napomena: ovdje se opisuje srednji stav, koji razvija cijelu nogu. Možeš koristiti i uži ili širi stav.)",
+   "Polako se spuštaj savijanjem koljena, uspravnog držanja i podignute glave (leđa stalno na naslonu). Spuštaj se dok kut između natkoljenice i potkoljenice ne bude malo manji od 90 stupnjeva. Tijekom ovog dijela udahni. Savjet: koljena prate smjer prstiju na stopalima i ne bježe prema unutra.",
+   "Uz izdah se podigni, odgurujući platformu uglavnom petama i ispružajući noge, natrag u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Leg_Press": {
-  "name": "Potisak nogama"
+  "name": "Potisak nogama",
+  "instructions": [
+   "Sjedni na spravu za potisak nogama i postavi stopala na platformu ispred sebe u širinu ramena. (Napomena: ovdje se opisuje srednji stav, koji razvija cijelu nogu. Možeš koristiti i uži ili širi stav.)",
+   "Otpusti sigurnosne poluge koje drže platformu i potisni je do kraja, dok se noge ne ispruže. Savjet: ne zaključavaj koljena. Trup i noge zatvaraju kut od 90 stupnjeva. To je početni položaj.",
+   "Uz udah polako spuštaj platformu dok natkoljenica i potkoljenica ne zatvore kut od 90 stupnjeva.",
+   "Uz izdah se, gurajući uglavnom petama i koristeći prednju ložu, vrati u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja, a kad završiš, dobro zaključaj sigurnosne poluge. Opterećena platforma ne smije pasti na tebe."
+  ]
  },
  "Leg_Extensions": {
-  "name": "Ekstenzija nogu"
+  "name": "Ekstenzija nogu",
+  "instructions": [
+   "Za ovu vježbu trebaš spravu za ekstenziju nogu. Odaberi opterećenje i sjedni na spravu, s nogama ispod jastučića (stopala gledaju naprijed) i rukama na bočnim ručkama. To je početni položaj. Savjet: jastučić namjesti tako da leži na donjem dijelu potkoljenice, tik iznad stopala. Natkoljenica i potkoljenica trebaju zatvarati kut od 90 stupnjeva. Ako je kut manji, koljena su ispred prstiju i nepotrebno se opterećuju. Ako je sprava takva, potraži drugu ili se pri spuštanju ne spuštaj ispod 90 stupnjeva.",
+   "Uz izdah prednjom ložom ispruži noge do kraja. Ostatak tijela miruje na sjedalu. Zastani sekundu u gornjem položaju.",
+   "Uz udah polako spusti teret u početni položaj, ne ispod kuta od 90 stupnjeva.",
+   "Ponovi preporučeni broj puta."
+  ]
  },
  "Barbell_Lunge": {
-  "name": "Iskorak sa šipkom"
+  "name": "Iskorak sa šipkom",
+  "instructions": [
+   "Ovu vježbu radi sigurnosti najbolje je izvoditi u stalku za čučanj. Postavi šipku na stalak malo ispod visine ramena. Kad je visina namještena i šipka opterećena, stani ispod nje i nasloni je na stražnju stranu ramena (malo ispod vrata).",
+   "Uhvati šipku objema rukama sa strane i skini je sa stalka odgurivanjem nogama i istovremenim uspravljanjem trupa.",
+   "Odmakni se od stalka, zakorači naprijed desnom nogom i spusti se kroz kukove, uspravnog trupa i u ravnoteži. Tijekom spuštanja udahni. Napomena: koljeno pri spuštanju ne smije otići ispred prstiju, jer to nepotrebno opterećuje zglob koljena.",
+   "Uz izdah se odgurni uglavnom petom i vrati u početni položaj.",
+   "Ponovi pokret preporučeni broj ponavljanja, a zatim isto napravi lijevom nogom."
+  ]
  },
  "Barbell_Walking_Lunge": {
-  "name": "Hodajući iskoraci sa šipkom"
+  "name": "Hodajući iskoraci sa šipkom",
+  "instructions": [
+   "Stani sa stopalima u širini ramena i šipkom na gornjem dijelu leđa.",
+   "Zakorači naprijed jednom nogom i savij koljena da spustiš kukove. Spuštaj se dok stražnje koljeno gotovo ne dotakne pod. Držanje je uspravno, a prednje koljeno ostaje iznad prednjeg stopala.",
+   "Odgurni se petom prednje noge i ispruži oba koljena da se podigneš.",
+   "Zakorači naprijed stražnjom nogom i ponovi iskorak drugom nogom."
+  ]
  },
  "Dumbbell_Lunges": {
-  "name": "Iskoraci s bučicama"
+  "name": "Iskoraci s bučicama",
+  "instructions": [
+   "Stani uspravno s bučicom u svakoj ruci uz tijelo. To je početni položaj.",
+   "Zakorači desnom nogom naprijed oko 60 centimetara, dok lijeva noga ostaje iza, i spusti tijelo, uspravnog trupa i u ravnoteži. Tijekom spuštanja udahni. Napomena: koljeno pri spuštanju ne smije otići ispred prstiju, jer to nepotrebno opterećuje zglob koljena. Prednja potkoljenica je okomita na pod.",
+   "Uz izdah se odgurni uglavnom petom i vrati u početni položaj.",
+   "Ponovi pokret preporučeni broj ponavljanja, a zatim isto napravi lijevom nogom."
+  ]
  },
  "Dumbbell_Rear_Lunge": {
-  "name": "Stražnji iskorak s bučicama"
+  "name": "Stražnji iskorak s bučicama",
+  "instructions": [
+   "Stani uspravno s bučicom u svakoj ruci uz tijelo. To je početni položaj.",
+   "Zakorači desnom nogom unatrag oko 60 centimetara od lijevog stopala i spusti tijelo, uspravnog trupa i u ravnoteži. Tijekom spuštanja udahni. Savjet: prednje koljeno ne smije otići ispred prstiju, a prednja potkoljenica je okomita na pod. Trup je uspravan, pa su gipki pregibači kuka važni. Dugi iskorak više naglašava veliki gluteus, a kratki prednju ložu.",
+   "Uz izdah se odgurni i vrati u početni položaj. Savjet: odgurivanje prednjim dijelom stopala više naglašava prednju ložu, a petama gluteuse.",
+   "Ponovi drugom nogom."
+  ]
  },
  "Bodyweight_Walking_Lunge": {
-  "name": "Hodajući iskoraci"
+  "name": "Hodajući iskoraci",
+  "instructions": [
+   "Stani sa stopalima u širini ramena i rukama na bokovima.",
+   "Zakorači naprijed jednom nogom i savij koljena da spustiš kukove. Spuštaj se dok stražnje koljeno gotovo ne dotakne pod. Držanje je uspravno, a prednje koljeno ostaje iznad prednjeg stopala.",
+   "Odgurni se petom prednje noge i ispruži oba koljena da se podigneš.",
+   "Zakorači naprijed stražnjom nogom i ponovi iskorak drugom nogom."
+  ]
  },
  "Split_Squat_with_Dumbbells": {
-  "name": "Bugarski čučanj s bučicama"
+  "name": "Bugarski čučanj s bučicama",
+  "instructions": [
+   "Stani u iskorak, sa stražnjim stopalom na povišenju i prednjim stopalom naprijed.",
+   "Drži bučicu u svakoj ruci, s rukama opuštenima uz tijelo. To je početni položaj.",
+   "Spuštaj se savijanjem koljena i kuka. Drži dobro držanje tijekom cijelog pokreta, a prednje koljeno u liniji sa stopalom.",
+   "U donjem položaju odgurni se petom, ispruži koljeno i kuk i vrati se u početni položaj."
+  ]
  },
  "Dumbbell_Step_Ups": {
-  "name": "Penjanje na klupu s bučicama"
+  "name": "Penjanje na klupu s bučicama",
+  "instructions": [
+   "Stani uspravno s bučicom u svakoj ruci (dlanovi prema nogama).",
+   "Desno stopalo stavi na povišenje. Popni se ispružanjem kuka i koljena desne noge, odgurujući se uglavnom petom, i stavi i lijevo stopalo na povišenje. Tijekom penjanja izdahni.",
+   "Uz udah spusti lijevu nogu savijanjem kuka i koljena desne noge. Vrati se u početni položaj tako da desno stopalo spustiš pokraj lijevog.",
+   "Ponovi desnom nogom preporučeni broj ponavljanja, a zatim isto napravi lijevom."
+  ]
  },
  "Trap_Bar_Deadlift": {
-  "name": "Mrtvo dizanje s trap šipkom"
+  "name": "Mrtvo dizanje s trap šipkom",
+  "instructions": [
+   "Opterećenu trap šipku (zovu je i hex šipka) postavi na pod. Stani u sredinu šipke i uhvati obje ručke.",
+   "Spusti kukove, gledaj naprijed i drži prsa podignutima.",
+   "Odgurni se petama i ispruži kukove i koljena. Leđa nikad ne zaokružuj.",
+   "Na kraju pokreta kontrolirano spusti teret natrag na pod."
+  ]
  },
  "Romanian_Deadlift": {
-  "name": "Rumunjsko mrtvo dizanje"
+  "name": "Rumunjsko mrtvo dizanje",
+  "instructions": [
+   "Postavi šipku na pod ispred sebe i uhvati je nathvatom (dlanovi prema dolje) malo širim od ramena. Savjet: ovisno o težini, možda će ti trebati trake za zapešća, a povišenje pod stopalima omogućuje veći opseg pokreta.",
+   "Lagano savij koljena, potkoljenice drži okomito, kukove unatrag, a leđa ravna. To je početni položaj.",
+   "Leđa i ruke su cijelo vrijeme potpuno ravni. Uz izdah kukovima podigni šipku. Savjet: pokret nije brz, nego ujednačen i pod kontrolom.",
+   "Kad se potpuno uspraviš, spuštaj šipku gurajući kukove unatrag, s koljenima samo lagano savijenima, za razliku od čučnja. Savjet: na početku pokreta duboko udahni i drži prsa podignutima. Zadrži dah tijekom spuštanja i izdahni na kraju pokreta.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Stiff-Legged_Barbell_Deadlift": {
-  "name": "Mrtvo dizanje s ravnim nogama"
+  "name": "Mrtvo dizanje s ravnim nogama",
+  "instructions": [
+   "Uhvati šipku nathvatom (dlanovi prema dolje). Uz veće težine možda će ti trebati trake za zapešća.",
+   "Stani uspravno, sa stopalima u širini ramena ili uže. Koljena su lagano savijena. To je početni položaj.",
+   "Držeći koljena mirnima, spuštaj šipku do iznad stopala savijanjem u kukovima, ravnih leđa. Spuštaj se kao da nešto podižeš s poda, dok ne osjetiš istezanje u stražnjoj loži. Tijekom ovog dijela udahni.",
+   "Ispruži kukove i uspravi trup natrag u početni položaj. Tijekom ovog dijela izdahni.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Stiff-Legged_Dumbbell_Deadlift": {
-  "name": "Mrtvo dizanje s ravnim nogama s bučicama"
+  "name": "Mrtvo dizanje s ravnim nogama s bučicama",
+  "instructions": [
+   "Uzmi dvije bučice i drži ih uz tijelo na ispruženim rukama.",
+   "Stani uspravno, sa stopalima u širini ramena ili uže. Koljena su lagano savijena. To je početni položaj.",
+   "Držeći koljena mirnima, spuštaj bučice do iznad stopala savijanjem u kukovima, ravnih leđa. Spuštaj se kao da nešto podižeš s poda, dok ne osjetiš istezanje u stražnjoj loži. Tijekom ovog dijela udahni.",
+   "Ispruži kukove i uspravi trup natrag u početni položaj. Tijekom ovog dijela izdahni.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Sumo_Deadlift": {
-  "name": "Sumo mrtvo dizanje"
+  "name": "Sumo mrtvo dizanje",
+  "instructions": [
+   "Opterećena šipka je na podu. Priđi joj tako da prelazi preko sredine stopala. Stopala su vrlo široko, blizu obruča. Savij se u kukovima i uhvati šipku. Ruke su točno ispod ramena, unutar nogu. Možeš koristiti nathvat, mješoviti ili hook hvat. Opusti ramena, čime ruke postaju dulje.",
+   "Udahni, spusti kukove, gledaj naprijed i drži prsa podignutima. Odgurni se od poda, razmičući stopala, s težinom na stražnjoj polovici stopala. Ispruži kukove i koljena.",
+   "Kad šipka prođe koljena, nagni se unatrag i gurni kukove prema šipki, skupljajući lopatice.",
+   "Spusti teret na pod savijanjem u kukovima, kontrolirano."
+  ]
  },
  "Good_Morning": {
-  "name": "Good morning"
+  "name": "Good morning",
+  "instructions": [
+   "Šipka je na stalku u visini ramena. Nasloni je na stražnju stranu ramena kao za čučanj, ne na vrh ramena. Leđa su stegnuta, lopatice skupljene, a koljena lagano savijena. Zakorači unatrag od stalka.",
+   "Savij se u kukovima, gurajući ih unatrag, dok trup ne bude gotovo paralelan s podom. Leđa su izvijena, a vrat u ravnini s kralježnicom.",
+   "Vrati se ispružanjem kukova, gluteusima i stražnjom ložom, do početnog položaja."
+  ]
  },
  "Lying_Leg_Curls": {
-  "name": "Pregib nogu ležeći"
+  "name": "Pregib nogu ležeći",
+  "instructions": [
+   "Namjesti polugu sprave prema svojoj visini i lezi licem prema dolje na spravu za pregib nogu, s jastučićem poluge na stražnjoj strani nogu (nekoliko centimetara ispod listova). Savjet: ako možeš, odaberi spravu s nagnutim ležajem, jer kut bolje aktivira stražnju ložu.",
+   "Trup je ravno na klupi, noge potpuno ispružene, a rukama drži bočne ručke. Prsti na stopalima gledaju ravno. To je početni položaj.",
+   "Uz izdah savij noge što više možeš, bez odvajanja natkoljenica od jastuka. U gornjem položaju zadrži sekundu.",
+   "Uz udah vrati noge u početni položaj. Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Seated_Leg_Curl": {
-  "name": "Pregib nogu sjedeći"
+  "name": "Pregib nogu sjedeći",
+  "instructions": [
+   "Namjesti polugu sprave prema svojoj visini i sjedni na spravu, s leđima na naslonu.",
+   "Stražnju stranu potkoljenica stavi na jastučić poluge (nekoliko centimetara ispod listova) i spusti jastučić za bedra tik iznad koljena. Uhvati bočne ručke, prsti na stopalima gledaju ravno, a noge su potpuno ispružene ispred tebe. To je početni položaj.",
+   "Uz izdah savijanjem koljena povuci polugu što više prema stražnjoj strani bedara. Trup cijelo vrijeme miruje. Zadrži sekundu u stisnutom položaju.",
+   "Uz udah se polako vrati u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Standing_Leg_Curl": {
-  "name": "Pregib nogu stojeći"
+  "name": "Pregib nogu stojeći",
+  "instructions": [
+   "Namjesti polugu sprave prema svojoj visini i nasloni se s trupom nagnutim naprijed za 30 do 45 stupnjeva (kut bolje aktivira stražnju ložu). Jastučić poluge je na stražnjoj strani desne noge (nekoliko centimetara ispod lista), a prednja strana desne noge na jastuku sprave.",
+   "S trupom nagnutim naprijed, noga je potpuno ispružena, a rukama drži bočne ručke. Prsti na stopalu gledaju ravno. To je početni položaj.",
+   "Uz izdah savij desnu nogu što više možeš, bez odvajanja natkoljenice od jastuka. U gornjem položaju zadrži sekundu.",
+   "Uz udah vrati nogu u početni položaj. Ponovi preporučeni broj ponavljanja.",
+   "Ponovi vježbu lijevom nogom."
+  ]
  },
  "Glute_Ham_Raise": {
-  "name": "Glute-ham raise"
+  "name": "Glute-ham raise",
+  "instructions": [
+   "Namjesti spravu prema svom tijelu. Lezi licem prema dolje i stopala postavi na ploču između valjaka. Koljena su tik iza jastuka.",
+   "Kreni iz donjeg položaja. Leđa su izvijena, a pokret počinješ savijanjem koljena, gurajući prste u ploču. Gornji dio tijela drži ravnim i nastavi dok ne budeš uspravan.",
+   "Kontrolirano se spusti u početni položaj."
+  ]
  },
  "Ball_Leg_Curl": {
-  "name": "Pregib nogu na lopti"
+  "name": "Pregib nogu na lopti",
+  "instructions": [
+   "Lezi na leđa na pod, sa stopalima na lopti.",
+   "Namjesti loptu tako da su gležnjevi na njoj kad su noge ispružene. To je početni položaj.",
+   "Podigni kukove od poda, s težinom na lopaticama i stopalima.",
+   "Savij koljena i privuci loptu što bliže sebi, stežući stražnju ložu.",
+   "Nakon kratke pauze vrati se u početni položaj."
+  ]
  },
  "Reverse_Hyperextension": {
-  "name": "Obrnuta hiperekstenzija"
+  "name": "Obrnuta hiperekstenzija",
+  "instructions": [
+   "Stavi odgovarajući teret i postavi stopala između jastučića. Lezi na gornji jastuk tako da kukovi vise preko ruba i drži se za ručke.",
+   "Savij kukove i povuci noge naprijed.",
+   "Ispruži kukove i zamahni nogama unatrag. Važno je ne prepružiti kuk, pa stani malo prije kraja opsega pokreta.",
+   "Ponovno savij kukove i povuci noge naprijed koliko možeš.",
+   "Ponovi željeni broj ponavljanja."
+  ]
  },
  "Kettlebell_One-Legged_Deadlift": {
-  "name": "Mrtvo dizanje na jednoj nozi s kettlebellom"
+  "name": "Mrtvo dizanje na jednoj nozi s kettlebellom",
+  "instructions": [
+   "Drži kettlebell za ručku u jednoj ruci. Stani na nogu s iste strane na kojoj držiš kettlebell.",
+   "S lagano savijenim koljenom napravi mrtvo dizanje ravnih nogu savijanjem u kuku, a slobodnu nogu ispruži iza sebe radi ravnoteže.",
+   "Spuštaj kettlebell dok trup ne bude paralelan s podom, a zatim se vrati u uspravan položaj."
+  ]
  },
  "Barbell_Hip_Thrust": {
-  "name": "Hip thrust sa šipkom"
+  "name": "Hip thrust sa šipkom",
+  "instructions": [
+   "Sjedni na pod s klupom odmah iza sebe i opterećenom šipkom preko nogu. Deblja šipka ili jastučić na šipki znatno smanjuju nelagodu.",
+   "Prevaljaj šipku tako da bude točno iznad kukova i nasloni se leđima na klupu, tako da su lopatice blizu njezina ruba.",
+   "Odgurni se stopalima i podigni kukove okomito prema gore kroz šipku. Težinu nose lopatice i stopala. Ispruži kukove što više možeš, a zatim se vrati u početni položaj."
+  ]
  },
  "Barbell_Glute_Bridge": {
-  "name": "Glute most sa šipkom"
+  "name": "Glute most sa šipkom",
+  "instructions": [
+   "Sjedni na pod s opterećenom šipkom preko nogu. Deblja šipka ili jastučić na šipki znatno smanjuju nelagodu. Prevaljaj šipku tako da bude točno iznad kukova i lezi ravno na pod.",
+   "Odgurni se petama i podigni kukove okomito prema gore kroz šipku. Težinu nose gornji dio leđa i pete.",
+   "Ispruži kukove što više možeš, a zatim se vrati u početni položaj."
+  ]
  },
  "Single_Leg_Glute_Bridge": {
-  "name": "Glute most na jednoj nozi"
+  "name": "Glute most na jednoj nozi",
+  "instructions": [
+   "Lezi na pod, sa stopalima na podu i savijenim koljenima.",
+   "Podigni jednu nogu i privuci koljeno prema prsima. To je početni položaj.",
+   "Odgurni se petom druge noge, ispruži kuk prema gore i podigni gluteuse od poda.",
+   "Ispruži kuk što više možeš, zastani i vrati se u početni položaj."
+  ]
  },
  "Glute_Kickback": {
-  "name": "Zamah nogom unatrag"
+  "name": "Zamah nogom unatrag",
+  "instructions": [
+   "Klekni na pod ili prostirku i nagni se naprijed, s rukama ispruženima ispred sebe (okomito na trup) u širini ramena, kao za sklek na koljenima. Gledaj naprijed. Koljena su savijena pod 90 stupnjeva. To je početni položaj.",
+   "Uz izdah podigni desnu nogu dok natkoljenica ne bude u liniji s leđima, zadržavajući koljeno savijeno pod 90 stupnjeva. Steži gluteuse tijekom cijelog pokreta i zadrži sekundu na vrhu. Savjet: na kraju pokreta natkoljenica je paralelna s podom, a potkoljenica okomita na njega.",
+   "Uz udah se vrati u početni položaj i ponovi lijevom nogom.",
+   "Nastavi naizmjence dok ne napraviš sva preporučena ponavljanja."
+  ]
  },
  "One-Legged_Cable_Kickback": {
-  "name": "Zamah nogom unatrag na kablu"
+  "name": "Zamah nogom unatrag na kablu",
+  "instructions": [
+   "Zakači manžetu za gležanj na donji kolotur i pričvrsti je oko gležnja.",
+   "Stani licem prema stupu utega, na oko 60 centimetara, i drži se za okvir sprave.",
+   "S lagano savijenim koljenima i kukovima i stegnutim trbuhom, uz izdah gluteusima polako zamahni radnom nogom unatrag u polukružnom luku, koliko ugodno ide. Savjet: na vrhu stisni gluteuse na sekundu.",
+   "Polako vrati nogu naprijed, odupirući se povlačenju kabla, do početnog položaja.",
+   "Ponovi preporučeni broj ponavljanja.",
+   "Zamijeni nogu i ponovi s druge strane."
+  ]
  },
  "Pull_Through": {
-  "name": "Pull through na kablu"
+  "name": "Pull through na kablu",
+  "instructions": [
+   "Stani nekoliko koraka ispred donjeg kolotura s užetom ili ručkom. Okreni se leđima spravi, s kablom između nogu i stopalima široko razmaknutima.",
+   "Savij se u kukovima i posegni rukama što dalje kroz noge. Koljena su lagano savijena. Ravnih ruku ispruži kukove i uspravi se. Ne vuci ramenima: cijeli pokret dolazi iz kukova."
+  ]
  },
  "Thigh_Abductor": {
-  "name": "Abduktor sprava"
+  "name": "Abduktor sprava",
+  "instructions": [
+   "Sjedni na spravu za abdukciju i odaberi opterećenje koje ti odgovara. Kad su noge pravilno postavljene, uhvati ručke sa strane. Cijeli gornji dio tijela (od struka naviše) miruje. To je početni položaj.",
+   "Uz izdah polako razmiči noge, gurajući jastučiće prema van.",
+   "Osjeti kontrakciju sekundu, a zatim uz udah vrati noge u početni položaj. Napomena: gornji dio tijela drži mirnim, da izbjegneš ozljede.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Thigh_Adductor": {
-  "name": "Adduktor sprava"
+  "name": "Adduktor sprava",
+  "instructions": [
+   "Sjedni na spravu za addukciju i odaberi opterećenje koje ti odgovara. Kad su noge pravilno postavljene na jastučiće, uhvati ručke sa strane. Cijeli gornji dio tijela (od struka naviše) miruje. To je početni položaj.",
+   "Uz izdah polako primiči noge jednu prema drugoj.",
+   "Osjeti kontrakciju sekundu, a zatim uz udah vrati noge u početni položaj. Napomena: gornji dio tijela drži mirnim i izbjegavaj brze trzaje, da izbjegneš ozljede.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Cable_Hip_Adduction": {
-  "name": "Addukcija kuka na kablu"
+  "name": "Addukcija kuka na kablu",
+  "instructions": [
+   "Stani pokraj donjeg kolotura, licem naprijed, s jednom nogom bliže koloturu, a drugom dalje.",
+   "Zakači manžetu na kabel i oko gležnja noge koja je bliže koloturu.",
+   "Odmakni se od sprave u širok stav i uhvati se za okvir sprave.",
+   "Stani na nogu bez manžete (dalju nogu) i pusti da kabel povuče nogu s manžetom prema koloturu. To je početni položaj.",
+   "Unutarnjom stranom bedra povuci nogu s manžetom ispred stajne noge. Tijekom ovog dijela izdahni.",
+   "Uz udah se polako vrati u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja, a zatim isto napravi drugom nogom."
+  ]
  },
  "Monster_Walk": {
-  "name": "Monster walk"
+  "name": "Monster walk",
+  "instructions": [
+   "Stavi jednu traku oko oba gležnja, a drugu oko oba koljena. Trake trebaju biti napete kad su stopala u širini ramena.",
+   "Hodaj naprijed kratkim koracima, naizmjence lijevom i desnom nogom.",
+   "Nakon nekoliko koraka hodaj unatrag do mjesta s kojeg si krenuo."
+  ]
  },
  "Standing_Calf_Raises": {
-  "name": "Podizanje na prste stojeći"
+  "name": "Podizanje na prste stojeći",
+  "instructions": [
+   "Namjesti polugu sprave za listove prema svojoj visini.",
+   "Postavi ramena ispod jastučića, a prste na stopalima okreni naprijed (ili prema van ili unutra). Prednji dio stopala je na podlošku, a pete vise preko ruba. Ispruži kukove i koljena da podigneš polugu i uspravi se. Koljena su lagano savijena, nikad zaključana. To je početni položaj.",
+   "Uz izdah podigni pete što više možeš, ispružajući gležnjeve i stežući listove. Koljena cijelo vrijeme miruju. Zadrži sekundu u gornjem položaju prije spuštanja.",
+   "Uz udah polako spuštaj pete savijanjem gležnjeva dok se listovi ne istegnu.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Seated_Calf_Raise": {
-  "name": "Podizanje na prste sjedeći"
+  "name": "Podizanje na prste sjedeći",
+  "instructions": [
+   "Sjedni na spravu i postavi prednji dio stopala na donji dio platforme, s petama preko ruba. Prste na stopalima okreni naprijed, unutra ili van.",
+   "Donji dio bedara postavi ispod jastučića poluge, namještenog prema visini bedara. Ruke stavi na jastučić da ne klizi naprijed.",
+   "Podigni pete da malo podigneš polugu i otpusti sigurnosnu polugu. To je početni položaj.",
+   "Uz udah polako spuštaj pete savijanjem gležnjeva dok se listovi potpuno ne istegnu.",
+   "Uz izdah podigni pete što više možeš, stežući listove. Zadrži sekundu u gornjem položaju.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Standing_Barbell_Calf_Raise": {
-  "name": "Podizanje na prste sa šipkom"
+  "name": "Podizanje na prste sa šipkom",
+  "instructions": [
+   "Ovu vježbu radi sigurnosti najbolje je izvoditi u stalku za čučanj. Postavi šipku na stalak na visinu koja ti odgovara. Kad je šipka opterećena, stani ispod nje i nasloni je na stražnju stranu ramena (malo ispod vrata).",
+   "Uhvati šipku objema rukama sa strane i skini je sa stalka odgurivanjem nogama i istovremenim uspravljanjem trupa.",
+   "Odmakni se od stalka i postavi stopala u širinu ramena, s prstima malo okrenutima prema van. Glavu drži podignutom (pogled prema dolje remeti ravnotežu), a leđa ravnima. Koljena su lagano savijena, nikad zaključana. To je početni položaj. Savjet: za veći opseg pokreta možeš stati prednjim dijelom stopala na stabilan podložak, ali to traži više ravnoteže.",
+   "Uz izdah podigni pete što više možeš, ispružajući gležnjeve i stežući listove. Koljena cijelo vrijeme miruju. Zadrži sekundu u gornjem položaju prije spuštanja.",
+   "Uz udah polako spuštaj pete savijanjem gležnjeva dok se listovi ne istegnu.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Standing_Dumbbell_Calf_Raise": {
-  "name": "Podizanje na prste s bučicama"
+  "name": "Podizanje na prste s bučicama",
+  "instructions": [
+   "Stani uspravno s bučicom u svakoj ruci uz tijelo. Prednji dio stopala postavi na stabilan podložak visok 5 do 8 centimetara, a pete neka vise i dodiruju pod. To je početni položaj.",
+   "S prstima okrenutima ravno (za cijeli list), prema unutra (za vanjski dio) ili prema van (za unutarnji dio), uz izdah podigni pete stežući listove. Zadrži sekundu u gornjem položaju.",
+   "Uz udah se polako vrati u početni položaj spuštanjem peta.",
+   "Ponovi preporučeni broj puta."
+  ]
  },
  "Calf_Press_On_The_Leg_Press_Machine": {
-  "name": "Listovi na spravi za potisak nogu"
+  "name": "Listovi na spravi za potisak nogu",
+  "instructions": [
+   "Sjedni na spravu za potisak nogama i postavi stopala na platformu ispred sebe u širinu ramena.",
+   "Otpusti sigurnosne poluge i potisni platformu do kraja, dok se noge ne ispruže, ali ne zaključavaj koljena. (Napomena: na nekim spravama sigurnosne poluge mogu ostati uključene, i tada je to bolji način.) Trup i noge zatvaraju kut od 90 stupnjeva. Pažljivo postavi prste i prednji dio stopala na donji dio platforme, s petama preko ruba. Prsti gledaju naprijed, van ili unutra. To je početni položaj.",
+   "Uz izdah potisni platformu podizanjem peta, ispružajući gležnjeve što više možeš i stežući listove. Koljena cijelo vrijeme miruju. Zadrži sekundu u gornjem položaju prije spuštanja.",
+   "Uz udah polako spuštaj pete savijanjem gležnjeva dok se listovi ne istegnu.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Smith_Machine_Calf_Raise": {
-  "name": "Podizanje na prste na Smith spravi"
+  "name": "Podizanje na prste na Smith spravi",
+  "instructions": [
+   "Ispod šipke Smith sprave postavi podložak ili ploču. Šipku namjesti na visinu koja ti odgovara. Kad je šipka opterećena, stani prednjim dijelom stopala na podložak i nasloni šipku na stražnju stranu ramena.",
+   "Uhvati šipku objema rukama, s dlanovima prema naprijed, i okreni je da je otključaš. To je početni položaj.",
+   "Podigni pete što više možeš, odgurujući se prednjim dijelom stopala, i na vrhu stisni listove. Koljena ostaju ispružena. Zadrži sekundu u gornjem položaju prije spuštanja.",
+   "Uz udah se polako vrati u početni položaj spuštanjem peta.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Donkey_Calf_Raises": {
-  "name": "Donkey podizanje na prste"
+  "name": "Donkey podizanje na prste",
+  "instructions": [
+   "Za ovu vježbu trebaš spravu za donkey podizanje na prste. Postavi donji dio leđa i kukove ispod jastučića poluge, tako da jastučić dodiruje područje trtične kosti.",
+   "Uhvati bočne ručke i postavi prednji dio stopala na podložak, s petama preko ruba. Prste okreni naprijed, unutra ili van, ovisno o dijelu lista koji želiš naglasiti, i ispruži koljena bez zaključavanja. To je početni položaj.",
+   "Uz izdah podigni pete što više možeš, ispružajući gležnjeve i stežući listove. Koljena cijelo vrijeme miruju. Zadrži sekundu u gornjem položaju prije spuštanja.",
+   "Uz udah polako spuštaj pete savijanjem gležnjeva dok se listovi ne istegnu.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Crunches": {
-  "name": "Trbušnjaci"
+  "name": "Trbušnjaci",
+  "instructions": [
+   "Lezi na leđa, sa stopalima na podu ili na klupi i koljenima savijenima pod 90 stupnjeva. Ako su stopala na klupi, razmakni ih 8 do 10 centimetara i okreni prste prema unutra da se dodiruju.",
+   "Lagano stavi šake sa strane glave, s laktovima prema unutra. Savjet: ne isprepliću prste iza glave.",
+   "Pritišćući donji dio leđa u pod, da bolje izoliraš trbušne mišiće, počni odizati ramena od poda.",
+   "Uz izdah nastavi pritiskati donja leđa u pod i stezati trbušne mišiće. Ramena se odižu samo desetak centimetara, a donji dio leđa ostaje na podu. Na vrhu snažno stisni trbušne mišiće i zadrži sekundu. Savjet: pokret je spor i kontroliran, bez zamaha.",
+   "Nakon sekunde uz udah se polako spusti u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Cable_Crunch": {
-  "name": "Trbušnjaci na kablu"
+  "name": "Trbušnjaci na kablu",
+  "instructions": [
+   "Klekni ispod gornjeg kolotura s užetom.",
+   "Uhvati uže i spusti ga dok šake ne budu uz lice.",
+   "Lagano savij kukove i pusti da teret lagano izvije donji dio leđa. To je početni položaj.",
+   "S kukovima mirnima, savij trup stežući trbušne mišiće, tako da laktovi idu prema sredini bedara. Tijekom ovog dijela izdahni i zadrži sekundu.",
+   "Uz udah se polako vrati u početni položaj. Savjet: trbušni mišići su cijelo vrijeme pod opterećenjem. Ne biraj toliku težinu da glavni posao preuzmu donja leđa.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Ab_Crunch_Machine": {
-  "name": "Trbušnjaci na spravi"
+  "name": "Trbušnjaci na spravi",
+  "instructions": [
+   "Odaberi lagano opterećenje i sjedni na spravu za trbušnjake, sa stopalima ispod jastučića i rukama na gornjim ručkama. Ruke su savijene pod 90 stupnjeva, a tricepsi naslonjeni na jastučiće. To je početni položaj.",
+   "Istovremeno podigni noge i savij gornji dio trupa. Tijekom ovog dijela izdahni. Savjet: pokret je spor i kontroliran. Teret pomiči trbušnim mišićima, a noge i stopala neka budu opušteni.",
+   "Nakon sekunde uz udah se polako vrati u početni položaj.",
+   "Ponovi pokret zadani broj ponavljanja."
+  ]
  },
  "Decline_Crunch": {
-  "name": "Trbušnjaci na negativnoj klupi"
+  "name": "Trbušnjaci na negativnoj klupi",
+  "instructions": [
+   "Učvrsti noge na kraju negativne klupe i lezi.",
+   "Lagano stavi šake sa strane glave, s laktovima prema unutra. Savjet: ne isprepliću prste iza glave.",
+   "Pritišćući donji dio leđa u klupu, da bolje izoliraš trbušne mišiće, počni odizati ramena od klupe.",
+   "Uz izdah nastavi pritiskati donja leđa u klupu i stezati trbušne mišiće. Ramena se odižu samo desetak centimetara, a donji dio leđa ostaje na klupi. Na vrhu snažno stisni trbušne mišiće i zadrži sekundu. Savjet: pokret je spor i kontroliran, bez zamaha.",
+   "Nakon sekunde uz udah se polako spusti u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Reverse_Crunch": {
-  "name": "Obrnuti trbušnjaci"
+  "name": "Obrnuti trbušnjaci",
+  "instructions": [
+   "Lezi na pod s potpuno ispruženim nogama i rukama uz trup, dlanovima na podu. Ruke miruju tijekom cijele vježbe.",
+   "Podigni noge tako da su natkoljenice okomite na pod, a stopala spojena i paralelna s podom. To je početni položaj.",
+   "Privuci noge prema trupu, zarotiraj zdjelicu unatrag i odigni kukove od poda. Na kraju pokreta koljena dodiruju prsa. Tijekom ovog dijela izdahni.",
+   "Zadrži sekundu i uz udah vrati noge u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Sit-Up": {
-  "name": "Pregib trupa"
+  "name": "Pregib trupa",
+  "instructions": [
+   "Lezi na pod, sa stopalima zakvačenima ispod nečeg stabilnog ili neka ih partner drži. Koljena su savijena.",
+   "Stavi šake iza glave. To je početni položaj.",
+   "Podigni gornji dio tijela tako da s bedrima čini zamišljeno slovo V. Tijekom ovog dijela izdahni.",
+   "Zadrži sekundu, a zatim uz udah spusti gornji dio tijela u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Jackknife_Sit-Up": {
-  "name": "Jackknife pregib"
+  "name": "Jackknife pregib",
+  "instructions": [
+   "Lezi na leđa na pod ili prostirku, s rukama ispruženima iza glave i ispruženim nogama. To je početni položaj.",
+   "Uz izdah se savij u struku i istovremeno podigni noge i ruke da se susretnu, kao nož koji se sklapa. Savjet: noge su ispružene i podignute pod kutom od 35 do 45 stupnjeva od poda, a ruke ispružene i paralelne s nogama. Gornji dio trupa je odignut od poda.",
+   "Uz udah spusti ruke i noge u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Russian_Twist": {
-  "name": "Ruski twist"
+  "name": "Ruski twist",
+  "instructions": [
+   "Sjedni na pod, sa stopalima zakvačenima ispod nečeg stabilnog ili neka ih partner drži. Koljena su savijena.",
+   "Nagni gornji dio tijela unatrag tako da s bedrima čini zamišljeno slovo V. Ruke su potpuno ispružene ispred tebe, okomito na trup, sa spojenim šakama. To je početni položaj.",
+   "Uz izdah zarotiraj trup udesno dok ruke ne budu paralelne s podom.",
+   "Zadrži sekundu i uz udah se vrati u početni položaj. Zatim isto napravi na drugu stranu.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Plank": {
-  "name": "Plank"
+  "name": "Plank",
+  "instructions": [
+   "Postavi se licem prema podu, oslonjen na prste stopala i podlaktice. Ruke su savijene, a laktovi točno ispod ramena.",
+   "Tijelo je cijelo vrijeme ravno. Zadrži položaj što dulje možeš. Za težu varijantu podigni jednu ruku ili nogu."
+  ]
  },
  "Dead_Bug": {
-  "name": "Dead bug"
+  "name": "Dead bug",
+  "instructions": [
+   "Lezi na leđa s rukama ispruženima prema stropu.",
+   "Podigni stopala tako da su kukovi i koljena savijeni pod 90 stupnjeva.",
+   "Snažno izdahni da spustiš rebra i priljubiš leđa uz pod, zarotiraj zdjelicu prema gore i stisni gluteuse. Zadrži taj položaj tijekom cijelog pokreta. To je početni položaj.",
+   "Ispruži jednu nogu, ispružajući koljeno i kuk, tako da noga bude tik iznad poda.",
+   "Tijekom pokreta zadrži položaj donjih leđa i zdjelice, jer će se leđa htjeti izviti.",
+   "Ostani stegnut i vrati nogu u početni položaj.",
+   "Ponovi drugom stranom i nastavi naizmjence do kraja serije."
+  ]
  },
  "Flat_Bench_Lying_Leg_Raise": {
-  "name": "Podizanje nogu ležeći na klupi"
+  "name": "Podizanje nogu ležeći na klupi",
+  "instructions": [
+   "Lezi leđima na ravnu klupu, s nogama ispruženima preko kraja klupe.",
+   "Šake stavi ispod gluteusa s dlanovima prema dolje ili se drži za klupu sa strane. To je početni položaj.",
+   "Držeći noge ispruženima, s koljenima tek malo savijenima, podigni ih dok ne zatvore kut od 90 stupnjeva s podom. Tijekom ovog dijela izdahni i zadrži sekundu na vrhu.",
+   "Uz udah polako spusti noge u početni položaj."
+  ]
  },
  "Ab_Roller": {
-  "name": "Kotačić za trbuh"
+  "name": "Kotačić za trbuh",
+  "instructions": [
+   "Drži kotačić objema rukama i klekni na pod.",
+   "Postavi kotačić na pod ispred sebe, tako da si oslonjen na ruke i koljena (kao za sklek na koljenima). To je početni položaj.",
+   "Polako kotrljaj kotačić ravno naprijed, ispružajući tijelo. Savjet: idi što dalje možeš a da tijelom ne dotakneš pod. Tijekom ovog dijela udahni.",
+   "Nakon pauze u ispruženom položaju uz izdah se povuci natrag u početni položaj. Savjet: idi polako, a trbuh neka bude cijelo vrijeme stegnut."
+  ]
  },
  "Barbell_Ab_Rollout": {
-  "name": "Kotrljanje sa šipkom za trbuh"
+  "name": "Kotrljanje sa šipkom za trbuh",
+  "instructions": [
+   "Postavi se kao za sklek, ali umjesto na pod oslanjaš se rukama na olimpijsku šipku s 2 do 5 kg sa svake strane. To je početni položaj.",
+   "S blago izvijenim leđima podigni kukove i uz izdah kotrljaj šipku prema stopalima. Savjet: gluteusi se podižu, trbuh je stegnut, a držanje leđa isto cijelo vrijeme. Ruke su okomite na pod tijekom cijelog pokreta, inače više rade ramena i leđa nego trbuh.",
+   "Nakon sekunde u gornjem položaju uz udah polako kotrljaj šipku natrag u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Pallof_Press": {
-  "name": "Pallof potisak"
+  "name": "Pallof potisak",
+  "instructions": [
+   "Zakači ručku na kolotur i, ako možeš, postavi ga u visinu ramena. Ako ne, dovoljan je i donji kolotur.",
+   "Okrenut bokom prema spravi, uhvati ručku objema rukama i odmakni se. Trebaš biti otprilike na duljinu ruke od kolotura, s kablom pod napetošću.",
+   "Sa stopalima u širini kukova i lagano savijenim koljenima drži ručku uz sredinu prsa. To je početni položaj.",
+   "Potisni ručku od prsa dok se obje ruke potpuno ne ispruže. Trup je stegnut.",
+   "Zadrži nekoliko sekundi, a zatim se vrati u početni položaj.",
+   "Na kraju serije ponovi okrenut na drugu stranu."
+  ]
  },
  "Standing_Cable_Wood_Chop": {
-  "name": "Drvosječa na kablu"
+  "name": "Drvosječa na kablu",
+  "instructions": [
+   "Zakači ručku na kolotur i postavi ga u najviši položaj.",
+   "Okrenut bokom prema spravi, uhvati ručku jednom rukom i odmakni se. Trebaš biti otprilike na duljinu ruke od kolotura, s kablom pod napetošću. Ispružena ruka je u liniji s kablom.",
+   "Sa stopalima u širini ramena posegni gore drugom rukom i uhvati ručku objema rukama. Ruke su i dalje potpuno ispružene.",
+   "Jednim pokretom povuci ručku dolje i dijagonalno preko tijela do prednjeg koljena, rotirajući trup.",
+   "Leđa i ruke su ravni, a trup stegnut, dok se okrećeš na stražnjem stopalu i savijaš koljena za puni opseg pokreta.",
+   "Zadrži stav i ravne ruke. Polako i kontrolirano se vrati u početni položaj.",
+   "Ponavljaj do otkaza.",
+   "Zatim se okreni i ponovi isto na drugu stranu."
+  ]
  },
  "Dumbbell_Side_Bend": {
-  "name": "Bočni pregib s bučicom"
+  "name": "Bočni pregib s bučicom",
+  "instructions": [
+   "Stani uspravno s bučicom u lijevoj ruci (dlan prema trupu), a desnu ruku stavi na struk. Stopala su u širini ramena. To je početni položaj.",
+   "Ravnih leđa i podignute glave nagni se samo u struku udesno, koliko možeš. Tijekom naginjanja udahni. Zadrži sekundu i uz izdah se vrati u početni položaj. Savjet: ostatak tijela miruje.",
+   "Ponovi pokret naginjući se ulijevo. Zadrži sekundu i vrati se u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja, a zatim zamijeni ruke."
+  ]
  },
  "Mountain_Climbers": {
-  "name": "Penjač"
+  "name": "Penjač",
+  "instructions": [
+   "Postavi se kao za sklek, oslonjen na šake i prste stopala. Savij koljeno i kuk i privuci jednu nogu dok koljeno ne bude otprilike ispod kuka. To je početni položaj.",
+   "Eksplozivno zamijeni položaj nogu: savijenu nogu ispruži i osloni na prste, a drugu privuci savijenog koljena i kuka. Ponavljaj naizmjence 20 do 30 sekundi."
+  ]
  },
  "Air_Bike": {
-  "name": "Zračni bicikl"
+  "name": "Zračni bicikl",
+  "instructions": [
+   "Lezi na pod s donjim dijelom leđa priljubljenim uz pod. Šake stavi sa strane glave, pazeći da ne vučeš vrat. Odigni ramena kao za trbušnjak.",
+   "Podigni koljena tako da su natkoljenice okomite na pod, a potkoljenice paralelne s njim. To je početni položaj.",
+   "Polako napravi pokret kao da voziš bicikl: desnu nogu ispruži naprijed, a lijevo koljeno privuci. Uz izdah se savij u stranu i približi desni lakat lijevom koljenu.",
+   "Uz udah se vrati u početni položaj.",
+   "Uz izdah se savij na drugu stranu, mijenjajući noge, i približi lijevi lakat desnom koljenu.",
+   "Nastavi naizmjence dok ne napraviš sva preporučena ponavljanja na svaku stranu."
+  ]
  },
  "Bent-Knee_Hip_Raise": {
-  "name": "Podizanje kukova sa savijenim koljenima"
+  "name": "Podizanje kukova sa savijenim koljenima",
+  "instructions": [
+   "Lezi na pod s rukama uz tijelo.",
+   "Savij koljena pod kutom od otprilike 75 stupnjeva i odigni stopala oko 5 centimetara od poda.",
+   "Donjim dijelom trbuha privuci koljena prema sebi, zadržavajući isti kut u koljenima. Nastavi dok ne odigneš kukove od poda, rotirajući zdjelicu unatrag. Tijekom ovog dijela izdahni. Savjet: na kraju pokreta koljena su iznad prsa.",
+   "Na vrhu stisni trbuh na sekundu, a zatim se uz udah polako vrati u početni položaj. Savjet: pokret je cijelo vrijeme kontroliran.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Knee_Hip_Raise_On_Parallel_Bars": {
-  "name": "Podizanje koljena na razboju"
+  "name": "Podizanje koljena na razboju",
+  "instructions": [
+   "Postavi se na stalak za podizanje nogu tako da su podlaktice na jastučićima uz trup, a šake drže ručke. Ruke su savijene pod 90 stupnjeva.",
+   "Trup je uspravan, donji dio leđa naslonjen na naslon, a noge ispružene prema podu. To je početni položaj.",
+   "Uz izdah podigni noge, savijajući koljena prema prsima, dok natkoljenice ne budu otprilike paralelne s podom. Zadrži sekundu. Savjet: bez zamaha i njihanja.",
+   "Uz udah se polako vrati u početni položaj.",
+   "Ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Power_Clean": {
-  "name": "Power clean"
+  "name": "Power clean",
+  "instructions": [
+   "Stani sa stopalima malo šire od ramena i prstima malo okrenutima prema van.",
+   "Čučni i uhvati šipku zatvorenim nathvatom. Šake su malo šire od ramena, izvan koljena, a laktovi potpuno ispruženi.",
+   "Šipka je oko 2 centimetra ispred potkoljenica, iznad prednjeg dijela stopala.",
+   "Leđa su ravna ili blago izvijena, prsa isturena, a lopatice skupljene.",
+   "Glava je u neutralnom položaju (u liniji s kralježnicom), a pogled ravno naprijed. U ovoj fazi udahni.",
+   "Uz izdah snažno ispruži kukove i koljena i podigni šipku s poda. Savjet: gornji dio trupa zadržava isti kut. Ne savijaj se još u struku i ne dopusti da se kukovi podignu prije ramena.",
+   "Laktovi su potpuno ispruženi, glava neutralna, a ramena iznad šipke.",
+   "Dok se šipka podiže, drži je što bliže potkoljenicama.",
+   "Kad šipka prođe koljena, gurni kukove naprijed i lagano savij koljena da ih ne zaključaš. Savjet: bedra su sada uz šipku.",
+   "Leđa su ravna ili blago izvijena, laktovi ispruženi, a glava neutralna. Savjet: zadrži dah do sljedeće faze.",
+   "Udahni, a zatim snažno i brzo ispruži kukove i koljena i propni se na prste.",
+   "Šipku drži što bliže tijelu. Savjet: leđa su ravna, laktovi okrenuti u stranu, glava neutralna. Ramena drži iznad šipke, a ruke ravne što dulje.",
+   "Kad su zglobovi nogu potpuno ispruženi, brzo slegni ramenima prema gore, a laktove još ne savijaj. Tijekom ovog dijela izdahni.",
+   "Kad su ramena na najvišoj točki, savij laktove i počni se povlačiti ispod šipke.",
+   "Nastavi vući rukama što više i što dulje. Savjet: zbog eksplozivnosti ove faze trup je uspravan ili izvijen, glava malo zabačena, a stopala se mogu odvojiti od poda.",
+   "Kad su noge potpuno ispružene, a šipka gotovo na najvišoj točki, povuci se ispod šipke i zarotiraj ruke oko i ispod nje.",
+   "Istovremeno savij kukove i koljena u četvrtinu čučnja.",
+   "Kad su ruke ispod šipke, udahni i podigni laktove tako da su nadlaktice paralelne s podom. Prihvati šipku na prednju stranu ključnih kostiju i ramena.",
+   "Prihvati šipku uspravnim i stegnutim trupom, neutralnom glavom i stopalima cijelom površinom na podu. Tijekom ovog dijela izdahni.",
+   "Uspravi se ispružanjem kukova i koljena.",
+   "Spusti šipku postupno popuštajući napetost u rukama, kontrolirano do bedara. Tijekom ovog dijela udahni.",
+   "Istovremeno savij kukove i koljena da ublažiš udar šipke o bedra.",
+   "Čučni s ispruženim laktovima dok šipka ne dotakne pod.",
+   "Kreni ponovno od prve faze i ponovi preporučeni broj ponavljanja."
+  ]
  },
  "Clean": {
-  "name": "Clean"
+  "name": "Clean",
+  "instructions": [
+   "Šipka je na podu blizu potkoljenica. Uhvati je nathvatom (ili hook hvatom) tik izvan nogu. Spusti kukove s težinom na petama, ravnih leđa, pogleda naprijed i podignutih prsa, s ramenima malo ispred šipke. To je početni položaj.",
+   "Prvo povlačenje: odgurni se petama i ispruži koljena. Kut leđa ostaje isti, a ruke ravne. Kontrolirano podiži šipku do iznad koljena.",
+   "Drugo povlačenje glavni je izvor ubrzanja. Kad šipka dođe do sredine bedara, počni ispružati kukove. Pokretom kao u skoku ubrzaj šipku ispružanjem kukova, koljena i gležnjeva. Rukama ne trebaš aktivno vući: na kraju drugog povlačenja tijelo je potpuno ispruženo, malo nagnuto unatrag, a ruke su i dalje ispružene.",
+   "Na potpunom ispruženju prijeđi u treće povlačenje: snažno slegni ramenima i savij ruke, s laktovima gore i van. Na vrhu se snažno povuci dolje, rotirajući laktove ispod šipke. Prihvati šipku u prednji čučanj, čija dubina ovisi o visini šipke na kraju trećeg povlačenja. Šipka leži na ramenima, lagano dodiruje vrat, a šake su opuštene. Nastavi do dna čučnja, jer to pomaže pri ustajanju.",
+   "Odmah se uspravi odgurivanjem petama, s uspravnim trupom i podignutim laktovima, dok ne ustaneš."
+  ]
  },
  "Hang_Clean": {
-  "name": "Hang clean"
+  "name": "Hang clean",
+  "instructions": [
+   "Uhvati šipku u širini ramena, nathvatom ili hook hvatom. Šipka visi na sredini bedara. Leđa su ravna i malo nagnuta naprijed.",
+   "Snažno ispruži kukove, koljena i gležnjeve i potjeraj šipku prema gore. Pritom slegni ramenima prema ušima.",
+   "Prihvati šipku na prednju stranu ramena u čučnju i odmah se uspravi odgurivanjem petama, s uspravnim trupom i podignutim laktovima, dok ne ustaneš."
+  ]
  },
  "Snatch": {
-  "name": "Snatch"
+  "name": "Snatch",
+  "instructions": [
+   "Stani sa stopalima u širini ramena. Šipka je iznad mjesta gdje prsti prelaze u stopalo.",
+   "Savij koljena i ravnih leđa uhvati šipku nathvatom širim od ramena. Spusti kukove kao da sjedaš na stolac. To je početni položaj.",
+   "Počni gurati pod stopalima i istovremeno podiži šipku, držeći je blizu nogu.",
+   "Kad šipka dođe do sredine bedara, snažno se odgurni nogama i eksplozivno ispruži cijelo tijelo.",
+   "Dok šipka ide gore, slegni ramenima unatrag i podiži laktove u stranu, držeći ih iznad šipke što dulje.",
+   "Kad šipka dosegne dovoljnu visinu da je možeš kontrolirati, vrlo brzim i snažnim pokretom spusti se ispod nje u čučanj, zaključaj ruke i drži šipku iznad glave.",
+   "Završi dizanje ustajanjem iz čučnja. Na kraju su stopala u liniji, a ruke potpuno ispružene sa šipkom iznad glave."
+  ]
  },
  "Running_Treadmill": {
-  "name": "Trčanje na traci"
+  "name": "Trčanje na traci",
+  "instructions": [
+   "Stani na traku i odaberi željenu opciju u izborniku. Većina traka ima ručni način, a možeš odabrati i program. Obično možeš upisati dob i težinu za procjenu potrošenih kalorija. Nagibom mijenjaš intenzitet treninga.",
+   "Traka je praktična, dobra za srce i obično manje opterećuje zglobove od trčanja vani. Osoba od 70 kg potroši više od 450 kcal trčeći 30 minuta brzinom od 13 km/h. Trči pravilnog držanja i drži se za ručke samo kad treba, primjerice pri silasku ili mjerenju pulsa."
+  ]
  },
  "Jogging_Treadmill": {
-  "name": "Lagano trčanje na traci"
+  "name": "Lagano trčanje na traci",
+  "instructions": [
+   "Stani na traku i odaberi željenu opciju u izborniku. Većina traka ima ručni način, a možeš odabrati i program. Obično možeš upisati dob i težinu za procjenu potrošenih kalorija. Nagibom mijenjaš intenzitet treninga.",
+   "Traka je praktična, dobra za srce i obično manje opterećuje zglobove od trčanja vani. Osoba od 70 kg potroši gotovo 250 kcal u 30 minuta laganog trčanja, a više od 450 kcal bržim trčanjem. Trči pravilnog držanja i drži se za ručke samo kad treba, primjerice pri silasku ili mjerenju pulsa."
+  ]
  },
  "Walking_Treadmill": {
-  "name": "Hodanje na traci"
+  "name": "Hodanje na traci",
+  "instructions": [
+   "Stani na traku i odaberi željenu opciju u izborniku. Većina traka ima ručni način, a možeš odabrati i program. Obično možeš upisati dob i težinu za procjenu potrošenih kalorija. Nagibom mijenjaš intenzitet treninga.",
+   "Traka je praktična, dobra za srce i obično manje opterećuje zglobove od hodanja vani. Hodaj umjerenim do brzim tempom, ne šetnjom. Hodanje troši manje kalorija od nekih drugih aktivnosti, ali je i dalje vrlo korisno. Osoba od 70 kg potroši oko 175 kcal hodajući 30 minuta brzinom od 6,5 km/h, a oko 450 kcal trčeći dvostruko brže. Hodaj pravilnog držanja i drži se za ručke samo kad treba, primjerice pri silasku ili mjerenju pulsa."
+  ]
  },
  "Bicycling": {
-  "name": "Vožnja biciklom"
+  "name": "Vožnja biciklom",
+  "instructions": [
+   "Sjedni na bicikl i namjesti sjedalo prema svojoj visini."
+  ]
  },
  "Bicycling_Stationary": {
-  "name": "Sobni bicikl"
+  "name": "Sobni bicikl",
+  "instructions": [
+   "Sjedni na bicikl i namjesti sjedalo prema svojoj visini.",
+   "Odaberi željenu opciju u izborniku. Možda ćeš morati početi okretati pedale da se uključi. Možeš koristiti ručni način ili odabrati program. Obično možeš upisati dob i težinu za procjenu potrošenih kalorija. Otpor možeš mijenjati tijekom treninga. Ručke mogu mjeriti puls, da ostaneš u odgovarajućem intenzitetu."
+  ]
  },
  "Recumbent_Bike": {
-  "name": "Ležeći sobni bicikl"
+  "name": "Ležeći sobni bicikl",
+  "instructions": [
+   "Sjedni na bicikl i namjesti sjedalo prema svojoj visini.",
+   "Odaberi željenu opciju u izborniku. Možda ćeš morati početi okretati pedale da se uključi. Možeš koristiti ručni način ili odabrati program. Obično možeš upisati dob i težinu za procjenu potrošenih kalorija. Otpor možeš mijenjati tijekom treninga. Ručke mogu mjeriti puls, da ostaneš u odgovarajućem intenzitetu.",
+   "Ležeći bicikl je praktičan, dobar za srce i manje opterećuje zglobove od drugih aktivnosti. Osoba od 70 kg potroši oko 230 kcal u 30 minuta vožnje umjerenim tempom, a 450 kcal ili više trčanjem."
+  ]
  },
  "Elliptical_Trainer": {
-  "name": "Eliptični trenažer"
+  "name": "Eliptični trenažer",
+  "instructions": [
+   "Stani na eliptični trenažer i odaberi željenu opciju u izborniku. Većina ih ima ručni način, a možeš odabrati i program. Obično možeš upisati dob i težinu za procjenu potrošenih kalorija. Nagibom mijenjaš intenzitet treninga.",
+   "Ručke mogu mjeriti puls, da ostaneš u odgovarajućem intenzitetu."
+  ]
  },
  "Rowing_Stationary": {
-  "name": "Veslački trenažer"
+  "name": "Veslački trenažer",
+  "instructions": [
+   "Sjedni na veslački trenažer. Pete neka udobno leže na dnu papučica, a remenje bude zategnuto. Ako trenažer to nudi, odaberi program. Sjedni uspravno i nagni se naprijed iz kukova.",
+   "Zaveslaj ima tri faze. U prvoj se pomičeš naprijed: koljena su savijena uz prsa, a gornji dio tijela malo nagnut naprijed, uz dobro držanje. Zatim se odgurni od papučica i ispruži noge, povlačeći ručku do gornjeg dijela trbuha i skupljajući ramena unatrag. Da ne opteretiš leđa, radi uglavnom mišićima nogu i kukova.",
+   "U fazi povratka ispruži ruke, savij koljena i ponovno pomakni tijelo naprijed, u prvu fazu."
+  ]
  },
  "Stairmaster": {
-  "name": "Stepenice (Stairmaster)"
+  "name": "Stepenice (Stairmaster)",
+  "instructions": [
+   "Stani na Stairmaster i odaberi željenu opciju u izborniku. Možeš odabrati ručni način ili program. Obično možeš upisati dob i težinu za procjenu potrošenih kalorija.",
+   "Ujednačenim ritmom gaži papučice gore-dolje, ali ih ne guraj skroz do poda. Preporučuje se držati se za ručke da ne padneš. Ručke mogu mjeriti puls, da ostaneš u odgovarajućem intenzitetu.",
+   "Stairmaster je praktičan, dobar za srce i obično manje opterećuje zglobove od trčanja vani. Obično je znatno zahtjevniji od druge kardio opreme. Osoba od 70 kg obično potroši više od 300 kcal u 30 minuta, a hodanjem oko 175 kcal."
+  ]
  },
  "Rope_Jumping": {
-  "name": "Preskakanje užeta"
+  "name": "Preskakanje užeta",
+  "instructions": [
+   "Drži po jedan kraj užeta u svakoj ruci, s užetom na podu iza sebe. Podigni ruke i zavrti uže preko glave prema naprijed. Kad dođe do poda, preskoči ga. Nađi tempo koji možeš održati. Brzinu i tehniku možeš mijenjati radi raznolikosti.",
+   "Preskakanje užeta je zabavno, izaziva koordinaciju i troši puno energije. Osoba od 70 kg potroši oko 350 kcal u 30 minuta, a trčanjem više od 450 kcal."
+  ]
  },
  "Trail_Running_Walking": {
-  "name": "Trčanje ili hodanje u prirodi"
+  "name": "Trčanje ili hodanje u prirodi",
+  "instructions": [
+   "Trčanje ili planinarenje po stazama gotovo odmah ubrza puls. Nosi dobru obuću. Dok se uzbrdo penješ snagom listova i gluteusa, nizbrdo glavni udar preuzimaju koljena, zglobovi i gležnjevi. Nizbrdo hodaj manjim koracima, sa savijenim koljenima da ublažiš udar, i uspori da ne padneš.",
+   "Osoba od 70 kg može potrošiti više od 200 kcal u 30 minuta hodanja uzbrdo, a oko 175 kcal po ravnom. Trčanjem po stazi u 30 minuta može potrošiti i znatno više od 500 kcal."
+  ]
  }
 }
