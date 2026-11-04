@@ -99,7 +99,7 @@ struct ExercisesScreen: View {
     private func thumbnail(for summary: ExerciseSummary) -> ExerciseThumbnail.Source? {
         switch summary.source {
         case .catalog:
-            return catalogStore.thumbnailURL(for: summary).map { .file($0) }
+            return catalogStore.thumbnail(for: summary)
         case .custom(let id):
             guard let data = customExercises.first(where: { $0.id == id })?.imageData else { return nil }
             return .data(key: id.uuidString, data)

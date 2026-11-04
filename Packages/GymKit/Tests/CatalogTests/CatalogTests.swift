@@ -178,6 +178,32 @@ struct CatalogDataTests {
         }
     }
 
+    @Test("Mapirane vježbe imaju oba crteža u asset catalogu, a ostale zadržavaju fotografije")
+    func drawingsOnDisk() throws {
+        let (catalog, directory) = try Self.loadBundledCatalog()
+        let assets = directory.deletingLastPathComponent().appendingPathComponent("Drawings/Drawings.xcassets")
+        #expect(catalog.drawingsSource?.name == "Everkinetic")
+        #expect(catalog.drawingsSource?.license == "CC BY-SA 4.0")
+        let drawn = catalog.exercises.filter { $0.drawings != nil }
+        #expect(drawn.count >= 80, "premalo vježbi s crtežima: \(drawn.count)")
+        for exercise in drawn {
+            guard case let .drawing(start, end) = exercise.illustration else {
+                Issue.record("\(exercise.id): crtež nema oba položaja")
+                continue
+            }
+            for name in [start, end] {
+                let svg = assets.appendingPathComponent("\(name).imageset/\(name).svg")
+                #expect(FileManager.default.fileExists(atPath: svg.path), "\(exercise.id): nema crteža \(name)")
+            }
+        }
+        // Vježbe bez crteža i dalje imaju fotografije.
+        for exercise in catalog.exercises where exercise.drawings == nil {
+            #expect(exercise.illustration == .photos(exercise.images), "\(exercise.id): nema ni crteža ni slika")
+        }
+        let squat = try #require(catalog.exercise(withID: "Barbell_Squat"))
+        #expect(squat.illustration == .drawing(start: "Everkinetic-0122-start", end: "Everkinetic-0122-end"))
+    }
+
     @Test("Prikaz vraća engleski kad prijevoda nema")
     func languageFallback() throws {
         let (catalog, _) = try Self.loadBundledCatalog()
