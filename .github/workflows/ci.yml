@@ -95,4 +95,4 @@ jobs:
         run: git diff --stat -- Resources/Localization App WatchApp
 
       - name: Provjera prijevoda
-        run: python3 Tools/Localization/check_catalog.py --json
+        run: python3 Tools/Localization/check_catalog.py

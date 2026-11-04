@@ -78,7 +78,7 @@ struct DataSettingsSection: View {
         .fileExporter(
             isPresented: $showsExporter, document: document, contentType: exportType, defaultFilename: exportName
         ) { result in
-            if case .failure = result { show("Izvoz nije uspio.", "Datoteka nije spremljena.") }
+            if case .failure = result { show("Izvoz nije uspio.", String(localized: "Datoteka nije spremljena.")) }
         }
         .fileImporter(isPresented: $showsImporter, allowedContentTypes: [.json, .commaSeparatedText]) { result in
             importFile(result)

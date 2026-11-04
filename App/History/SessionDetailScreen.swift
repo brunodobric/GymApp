@@ -30,7 +30,7 @@ struct SessionDetailScreen: View {
                     LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
                 }
                 if let heartRate = health.averageHeartRate(of: session) {
-                    LabeledContent("Prosječni puls", value: "\(Int(heartRate)) otk/min")
+                    LabeledContent("Prosječni puls", value: String(localized: "\(Int(heartRate)) otk/min"))
                 }
                 // Kalorije samo iz Zdravlja; bez njih se redak ne prikazuje (ni nula ni procjena).
                 if let energy = health.activeEnergy(of: session) {

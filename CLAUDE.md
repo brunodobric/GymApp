@@ -10,6 +10,7 @@ iOS, iPadOS i watchOS aplikacija za bilježenje treninga. Swift + SwiftUI, Swift
 * `docs/PRAVNO_I_PRIVATNOST.md`: privatnost, licence, App Store pravila
 * `docs/prototipi.md`: prototipi faze 0 i nalazi
 * `docs/sinkronizacija.md`: iCloud sinkronizacija, objava CloudKit sheme i provjera na uređajima
+* `docs/lokalizacija.md`: String Catalog (hr i en), pisanje teksta u kodu i provjera prijevoda na CI-ju
 
 Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi tipova, funkcija i varijabli su na engleskom.
 
@@ -27,6 +28,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 ## Pravila
 
 * **Logika ide u `GymKit`**, ne u viewove. Svaka nova logika dobiva testove.
+* **Tekst za korisnika ide kroz String Catalog** (`docs/lokalizacija.md`): svaki novi tekst dobiva engleski prijevod u `Resources/Localization/Localizable.xcstrings`, inače CI pada.
 * **Težina se uvijek sprema u kg** (`Units`). Pretvorba u lbs samo za prikaz i unos.
 * **SwiftData modeli koji se sinkroniziraju poštuju pravila CloudKita:** svako svojstvo opcionalno ili sa zadanom vrijednošću, bez `@Attribute(.unique)`, opcionalne relacije, redoslijed u `orderIndex`. Shema se nakon izdanja samo proširuje.
 * **Bez SDK-ova trećih strana** i bez vanjskih resursa (fontovi, CDN, analitika). Svaka nova ovisnost ide u `docs/PRAVNO_I_PRIVATNOST.md` s licencom.

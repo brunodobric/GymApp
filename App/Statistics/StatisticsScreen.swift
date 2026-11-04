@@ -325,7 +325,7 @@ private struct HeatmapCard: View {
     private var caption: String {
         if let selected {
             let sessions = heatmap[selected]?.sessions ?? 0
-            return "\(BodyRegion.title(selected)): \(sessions) treninga"
+            return String(localized: "\(BodyRegion.title(selected)): \(sessions) treninga")
         }
         if top.isEmpty { return String(localized: "U ovom razdoblju još nema treninga.") }
         return String(localized: "Najopterećenije") + ": " + top.map { BodyRegion.title($0.region) }.joined(separator: ", ")
