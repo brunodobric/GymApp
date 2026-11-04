@@ -10,6 +10,8 @@ import SwiftUI
 struct ScheduleEditorScreen: View {
     @Bindable var schedule: Schedule
     @State private var showsTemplates = false
+    /// Trening stvoren iz rasporeda, otvara se u uređivaču da mu se dodaju vježbe.
+    @State private var createdTemplate: WorkoutTemplate?
 
     @Environment(\.modelContext) private var context
     @Query(sort: \WorkoutTemplate.name) private var templates: [WorkoutTemplate]
@@ -43,6 +45,7 @@ struct ScheduleEditorScreen: View {
         .planningPanel(isPresented: $showsTemplates, minWidth: 280, idealWidth: 320, maxWidth: 420) {
             TemplateListPanel(isPresented: $showsTemplates) { insert($0, at: nil) }
         }
+        .navigationDestination(item: $createdTemplate) { TemplateEditorScreen(template: $0) }
         .onChange(of: overrides.count) { _, _ in refreshReminders() }
         .onDisappear {
             try? context.save()
@@ -110,22 +113,34 @@ struct ScheduleEditorScreen: View {
             .dropDestination(for: String.self) { payloads, index in
                 insert(droppedTemplates(payloads), at: index)
             }
-            Menu("Dodaj trening", systemImage: "plus") {
-                ForEach(templates) { template in
-                    Button(template.name) { try? engine.addWorkout(template, to: schedule) }
+            // Bez ijednog treninga gumb odmah stvara novi, jer onemogućen izbornik u listi izgleda
+            // kao da radi, a dodir ništa ne napravi.
+            if templates.isEmpty {
+                Button("Novi trening", systemImage: "plus") { addNewWorkout() }
+            } else {
+                Menu("Dodaj trening", systemImage: "plus") {
+                    ForEach(templates) { template in
+                        Button(template.name) { try? engine.addWorkout(template, to: schedule) }
+                    }
+                    Divider()
+                    Button("Novi trening", systemImage: "dumbbell") { addNewWorkout() }
                 }
+                Button("Odaberi više treninga", systemImage: "checklist") { showsTemplates = true }
+                    // Puštena na gumb (i u praznom nizu) stavka ide na kraj.
+                    .dropDestination(for: String.self) { payloads, _ in
+                        let dropped = droppedTemplates(payloads)
+                        insert(dropped, at: nil)
+                        return !dropped.isEmpty
+                    }
             }
-            .disabled(templates.isEmpty)
-            Button("Odaberi više treninga", systemImage: "checklist") { showsTemplates = true }
-                .disabled(templates.isEmpty)
-                // Puštena na gumb (i u praznom nizu) stavka ide na kraj.
-                .dropDestination(for: String.self) { payloads, _ in
-                    let dropped = droppedTemplates(payloads)
-                    insert(dropped, at: nil)
-                    return !dropped.isEmpty
-                }
             Button("Dodaj dan odmora", systemImage: "moon.zzz") { _ = try? engine.addRestDay(to: schedule) }
         }
+    }
+
+    private func addNewWorkout() {
+        guard let template = try? engine.addNewWorkout(named: String(localized: "Novi trening"), to: schedule) else { return }
+        refreshReminders()
+        createdTemplate = template
     }
 
     private func droppedTemplates(_ payloads: [String]) -> [WorkoutTemplate] {

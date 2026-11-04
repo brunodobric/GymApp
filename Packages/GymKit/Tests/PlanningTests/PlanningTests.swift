@@ -164,6 +164,23 @@ struct TemplateStarterTests {
 @Suite("Napredovanje rasporeda")
 struct ScheduleProgressTests {
 
+    @Test("Novi trening iz rasporeda nastaje prazan i ide na kraj niza")
+    func addNewWorkout() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let schedule = try engine.createSchedule(name: "Novi")
+        try engine.addRestDay(to: schedule)
+
+        let created = try engine.addNewWorkout(named: "Novi trening", to: schedule)
+
+        #expect(created.name == "Novi trening" && created.kind == .strength)
+        #expect((created.exercises ?? []).isEmpty)
+        #expect(try context.fetch(FetchDescriptor<WorkoutTemplate>()).count == 1)
+        let items = schedule.orderedItems
+        #expect(items.map(\.kind) == [.restDay, .workout])
+        #expect(items.last?.workoutTemplateId == created.id)
+    }
+
     @Test("Rest dani se prelaze, a ciklus završava nakon zadnjeg treninga")
     func cycles() throws {
         let context = try makeContext()

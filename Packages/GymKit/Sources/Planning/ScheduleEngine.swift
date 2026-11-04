@@ -56,6 +56,15 @@ public struct ScheduleEngine {
         try append(kind: .workout, templateId: template.id, to: schedule)
     }
 
+    /// Novi prazni trening (predložak) koji odmah ide na kraj niza. Za raspored koji se slaže prije
+    /// nego što postoji ijedan trening: vježbe se dodaju u uređivaču novog treninga.
+    @discardableResult
+    public func addNewWorkout(named name: String, to schedule: Schedule) throws -> WorkoutTemplate {
+        let template = try TemplateEngine(context: context).createTemplate(name: name)
+        try addWorkout(template, to: schedule)
+        return template
+    }
+
     /// Umeće više treninga odjednom (odabir više treninga ili drag & drop na iPadu), redom kojim su zadani.
     /// Bez `index` idu na kraj niza. Pozicija rasporeda prati stavku na kojoj je stao, kao kod premještanja.
     @discardableResult
