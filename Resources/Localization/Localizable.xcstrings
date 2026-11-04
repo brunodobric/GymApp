@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "hr",
   "strings" : {
+    "" : {
+      "shouldTranslate" : false
+    },
     "%@ dosad: %@, %@ manje nego %@." : {
       "localizations" : {
         "en" : {
