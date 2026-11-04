@@ -38,8 +38,10 @@ extension CatalogStore {
 extension View {
     /// Bočna ploča uređivača: na iPadu (regular širina) inspector uz sadržaj, a na iPhoneu obični list.
     ///
-    /// `.inspector` se u compact širini sam pretvara u list, ali tada gumbi u alatnoj traci ploče
-    /// (Zatvori, Dodaj) ne reagiraju i ne osvježavaju se, pa se na iPhoneu ploča otvara preko `.sheet`.
+    /// U compact širini se `.inspector` uopće ne primjenjuje. Inače njegov sadržaj ostaje ugrađen u uređivač
+    /// i kad je ploča zatvorena: alatna traka i pretraga ploče spoje se s navigacijskom trakom uređivača, pa
+    /// se ondje vide drugi gumbi Zatvori i Dodaj koji ne rade (Zatvori ne zatvara ništa, a Dodaj se nikad
+    /// ne omogući jer ta kopija ploče ima svoj odabir).
     func planningPanel<Panel: View>(
         isPresented: Binding<Bool>,
         minWidth: CGFloat,
@@ -77,22 +79,15 @@ private struct PlanningPanelModifier<Panel: View>: ViewModifier {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
 
-    private var isRegular: Bool { sizeClass == .regular }
-
+    @ViewBuilder
     func body(content: Content) -> some View {
-        content
-            .inspector(isPresented: Binding(
-                get: { isRegular && isPresented },
-                set: { if isRegular { isPresented = $0 } }
-            )) {
+        if sizeClass == .regular {
+            content.inspector(isPresented: $isPresented) {
                 panel().inspectorColumnWidth(min: minWidth, ideal: idealWidth, max: maxWidth)
             }
-            .sheet(isPresented: Binding(
-                get: { !isRegular && isPresented },
-                set: { if !isRegular { isPresented = $0 } }
-            )) {
-                panel()
-            }
+        } else {
+            content.sheet(isPresented: $isPresented) { panel() }
+        }
     }
 }
 
@@ -148,6 +143,7 @@ struct ExerciseCatalogPanel: View {
                 }
                 .panelDraggable(summary.id, enabled: sizeClass == .regular, title: summary.name, systemImage: "dumbbell")
             }
+            .accessibilityIdentifier("planningPanel.list")
             .overlay {
                 if results.isEmpty { ContentUnavailableView.search(text: filter.query) }
             }
@@ -157,10 +153,12 @@ struct ExerciseCatalogPanel: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Zatvori") { isPresented = false }
+                        .accessibilityIdentifier("planningPanel.close")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(selected.isEmpty ? "Dodaj" : "Dodaj (\(selected.count))") { add() }
                         .disabled(selected.isEmpty)
+                        .accessibilityIdentifier("planningPanel.add")
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -212,6 +210,7 @@ struct TemplateListPanel: View {
                     title: template.name, systemImage: "dumbbell"
                 )
             }
+            .accessibilityIdentifier("planningPanel.list")
             .overlay {
                 if templates.isEmpty {
                     ContentUnavailableView(
@@ -225,10 +224,12 @@ struct TemplateListPanel: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Zatvori") { isPresented = false }
+                        .accessibilityIdentifier("planningPanel.close")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(selected.isEmpty ? "Dodaj" : "Dodaj (\(selected.count))") { add() }
                         .disabled(selected.isEmpty)
+                        .accessibilityIdentifier("planningPanel.add")
                 }
             }
         }
