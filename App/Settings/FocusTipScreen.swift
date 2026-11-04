@@ -6,12 +6,12 @@ struct FocusTipScreen: View {
     var body: some View {
         List {
             Section {
-                Text("Apollo ne može utišati obavijesti drugih aplikacija. To radi Focus način u iOS-u, a može se uključivati sam kad počneš trening.")
+                Text("Apolon ne može utišati obavijesti drugih aplikacija. To radi Focus način u iOS-u, a može se uključivati sam kad počneš trening.")
             }
 
             Section {
                 step(1, "Otvori Postavke > Fokus i dodaj Fokus Fitness (ili vlastiti).")
-                step(2, "U Dopuštenim obavijestima dodaj Apollo, da obavijest o kraju odmora i dalje stiže.")
+                step(2, "U Dopuštenim obavijestima dodaj Apolon, da obavijest o kraju odmora i dalje stiže.")
                 step(3, "Pod Automatski uključi odaberi Kad počne trening. Fokus se tada uključuje kad trening pokreneš na Apple Watchu.")
             } header: {
                 Text("Postavljanje")
@@ -19,12 +19,12 @@ struct FocusTipScreen: View {
 
             Section {
                 step(1, "Otvori Prečace > Automatizacija i dodaj novu.")
-                step(2, "Odaberi Aplikacija, zatim Apollo i Otvorena.")
+                step(2, "Odaberi Aplikacija, zatim Apolon i Otvorena.")
                 step(3, "Kao radnju dodaj Postavi Fokus i odaberi Fitness.")
             } header: {
                 Text("Trening samo na iPhoneu")
             } footer: {
-                Text("Fokus se uključuje kad otvoriš Apollo. Isključuje se ručno ili drugom automatizacijom kad aplikaciju zatvoriš.")
+                Text("Fokus se uključuje kad otvoriš Apolon. Isključuje se ručno ili drugom automatizacijom kad aplikaciju zatvoriš.")
             }
         }
         .navigationTitle("Fokus")

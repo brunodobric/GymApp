@@ -1,4 +1,4 @@
-Apollo is a gym workout log built so that logging never gets in the way of training: you log a set in a few taps, and what you did last time is right there in the same row.
+Apolon is a gym workout log built so that logging never gets in the way of training: you log a set in a few taps, and what you did last time is right there in the same row.
 
 TRAINING
 • Previous results next to every set, with suggested weight and reps for the next one
@@ -40,4 +40,4 @@ HEALTH AND ICLOUD
 • Export to CSV and JSON at any time
 
 PRIVACY
-Apollo has no account, ads, analytics or tracking. Your data stays on your devices and in your iCloud, and Health data never leaves your device.
+Apolon has no account, ads, analytics or tracking. Your data stays on your devices and in your iCloud, and Health data never leaves your device.

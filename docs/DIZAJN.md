@@ -28,7 +28,7 @@ Pravila iz Apple Human Interface Guidelines (skill *apple-hig-dizajn*) primijenj
 
 ## Toolbar
 
-* Naslovi su kratki (do 15 znakova) i nikad nisu "Apollo".
+* Naslovi su kratki (do 15 znakova) i nikad nisu "Apolon".
 * Standardni Back i Close gumbi, bez teksta "Natrag".
 * Najviše jedna istaknuta akcija (npr. **Završi**, **Gotovo**) i to na trailing strani.
 * Akcije su sistemski simboli bez rubova i bez obojenih pozadina toolbara. Kad projekt prijeđe na iOS 26 SDK, barovi koriste Liquid Glass i scroll edge effect, bez vlastitih pozadina.

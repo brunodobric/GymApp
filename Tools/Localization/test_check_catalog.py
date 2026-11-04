@@ -53,7 +53,7 @@ class CheckTests(unittest.TestCase):
     def test_zastarjeli_i_neprevodivi(self):
         missing, errors, stale = check(catalog({
             "Staro": {"extractionState": "stale"},
-            "Apollo": {"shouldTranslate": False},
+            "Apolon": {"shouldTranslate": False},
         }))
         self.assertEqual((missing, errors, stale), ([], [], ["Staro"]))
 

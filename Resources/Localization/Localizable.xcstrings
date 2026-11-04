@@ -848,22 +848,22 @@
         }
       }
     },
-    "Apollo" : {
+    "Apolon" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo"
+            "value" : "Apolon"
           }
         }
       }
     },
-    "Apollo ne može utišati obavijesti drugih aplikacija. To radi Focus način u iOS-u, a može se uključivati sam kad počneš trening." : {
+    "Apolon ne može utišati obavijesti drugih aplikacija. To radi Focus način u iOS-u, a može se uključivati sam kad počneš trening." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo can't silence notifications from other apps. iOS Focus does that, and it can turn on by itself when you start a workout."
+            "value" : "Apolon can't silence notifications from other apps. iOS Focus does that, and it can turn on by itself when you start a workout."
           }
         }
       }
@@ -1628,12 +1628,12 @@
         }
       }
     },
-    "Fokus se uključuje kad otvoriš Apollo. Isključuje se ručno ili drugom automatizacijom kad aplikaciju zatvoriš." : {
+    "Fokus se uključuje kad otvoriš Apolon. Isključuje se ručno ili drugom automatizacijom kad aplikaciju zatvoriš." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Focus turns on when you open Apollo. Turn it off manually or with another automation when you close the app."
+            "value" : "Focus turns on when you open Apolon. Turn it off manually or with another automation when you close the app."
           }
         }
       }
@@ -3338,12 +3338,12 @@
         }
       }
     },
-    "Odaberi Aplikacija, zatim Apollo i Otvorena." : {
+    "Odaberi Aplikacija, zatim Apolon i Otvorena." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose App, then Apollo and Is Opened."
+            "value" : "Choose App, then Apolon and Is Opened."
           }
         }
       }
@@ -5828,22 +5828,22 @@
         }
       }
     },
-    "Trening se pokreće na satu u aplikaciji Workout. Kad ga završiš, Apollo ga uvozi iz Zdravlja i raspored ide dalje." : {
+    "Trening se pokreće na satu u aplikaciji Workout. Kad ga završiš, Apolon ga uvozi iz Zdravlja i raspored ide dalje." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The workout starts on the watch in the Workout app. When you finish it, Apollo imports it from Health and the schedule moves on."
+            "value" : "The workout starts on the watch in the Workout app. When you finish it, Apolon imports it from Health and the schedule moves on."
           }
         }
       }
     },
-    "Trening se pokreće na satu u aplikaciji Workout. U rasporedu ga Apollo zakazuje na sat za termin podsjetnika." : {
+    "Trening se pokreće na satu u aplikaciji Workout. U rasporedu ga Apolon zakazuje na sat za termin podsjetnika." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The workout starts on the watch in the Workout app. In a schedule, Apollo schedules it on the watch at the reminder time."
+            "value" : "The workout starts on the watch in the Workout app. In a schedule, Apolon schedules it on the watch at the reminder time."
           }
         }
       }
@@ -5918,12 +5918,12 @@
         }
       }
     },
-    "Treninzi s iPhonea spremaju se u Zdravlje, a kardio treninzi, težina i visina uvoze se iz njega. Dozvole mijenjaš u Zdravlju: Profil > Aplikacije > Apollo." : {
+    "Treninzi s iPhonea spremaju se u Zdravlje, a kardio treninzi, težina i visina uvoze se iz njega. Dozvole mijenjaš u Zdravlju: Profil > Aplikacije > Apolon." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Workouts from iPhone are saved to Health, and cardio workouts, weight and height are imported from it. Change permissions in Health: Profile > Apps > Apollo."
+            "value" : "Workouts from iPhone are saved to Health, and cardio workouts, weight and height are imported from it. Change permissions in Health: Profile > Apps > Apolon."
           }
         }
       }
@@ -5998,12 +5998,12 @@
         }
       }
     },
-    "U Dopuštenim obavijestima dodaj Apollo, da obavijest o kraju odmora i dalje stiže." : {
+    "U Dopuštenim obavijestima dodaj Apolon, da obavijest o kraju odmora i dalje stiže." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add Apollo under Allowed Notifications so the end-of-rest notification still comes through."
+            "value" : "Add Apolon under Allowed Notifications so the end-of-rest notification still comes through."
           }
         }
       }
@@ -6893,7 +6893,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scheduling failed. Check that the watch is paired and that Apollo is allowed to schedule workouts."
+            "value" : "Scheduling failed. Check that the watch is paired and that Apolon is allowed to schedule workouts."
           }
         }
       }
