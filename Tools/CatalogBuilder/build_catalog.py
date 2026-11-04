@@ -186,7 +186,8 @@ def main() -> int:
     )
 
     translated = sum(1 for e in exercises if "hr" in e["name"])
-    print(f"Gotovo: {len(exercises)} vježbi, {translated} s hrvatskim nazivom.")
+    with_steps = sum(1 for e in exercises if "hr" in e["instructions"])
+    print(f"Gotovo: {len(exercises)} vježbi, {translated} s hrvatskim nazivom, {with_steps} s hrvatskim uputama.")
     return 0
 
 
