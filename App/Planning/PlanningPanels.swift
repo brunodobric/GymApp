@@ -148,6 +148,7 @@ struct ExerciseCatalogPanel: View {
                 }
                 .panelDraggable(summary.id, enabled: sizeClass == .regular, title: summary.name, systemImage: "dumbbell")
             }
+            .accessibilityIdentifier("planningPanel.list")
             .overlay {
                 if results.isEmpty { ContentUnavailableView.search(text: filter.query) }
             }
@@ -157,10 +158,12 @@ struct ExerciseCatalogPanel: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Zatvori") { isPresented = false }
+                        .accessibilityIdentifier("planningPanel.close")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(selected.isEmpty ? "Dodaj" : "Dodaj (\(selected.count))") { add() }
                         .disabled(selected.isEmpty)
+                        .accessibilityIdentifier("planningPanel.add")
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -212,6 +215,7 @@ struct TemplateListPanel: View {
                     title: template.name, systemImage: "dumbbell"
                 )
             }
+            .accessibilityIdentifier("planningPanel.list")
             .overlay {
                 if templates.isEmpty {
                     ContentUnavailableView(
@@ -225,10 +229,12 @@ struct TemplateListPanel: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Zatvori") { isPresented = false }
+                        .accessibilityIdentifier("planningPanel.close")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(selected.isEmpty ? "Dodaj" : "Dodaj (\(selected.count))") { add() }
                         .disabled(selected.isEmpty)
+                        .accessibilityIdentifier("planningPanel.add")
                 }
             }
         }

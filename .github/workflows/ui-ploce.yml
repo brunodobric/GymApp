@@ -1,0 +1,54 @@
+name: UI test ploča (privremeno)
+
+# Privremeni workflow za reprodukciju buga s gumbima Zatvori i Dodaj u pločama Katalog i Treninzi.
+on:
+  push:
+    branches: [claude/project-thread-4t7pyk]
+  workflow_dispatch:
+
+jobs:
+  ui-ploce:
+    runs-on: macos-15
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Odabir najnovijeg Xcodea
+        run: |
+          ls -d /Applications/Xcode*.app
+          latest=$(ls -d /Applications/Xcode_*.app | sort -V | tail -n 1)
+          sudo xcode-select -s "$latest"
+          xcodebuild -version
+          xcrun simctl list runtimes
+
+      - name: Alati
+        run: brew install xcodegen
+
+      - name: Generiranje projekta
+        run: xcodegen generate
+
+      - name: UI test ploča
+        run: |
+          set -o pipefail
+          device=$(xcrun simctl list devices available | grep -E '^\s+iPhone 1[6-9]( Pro)? \(' | tail -n 1 | sed -E 's/^ +(.*) \([0-9A-F-]+\).*/\1/')
+          echo "Uređaj: $device"
+          xcodebuild test \
+            -project GymApp.xcodeproj -scheme GymApp \
+            -destination "platform=iOS Simulator,name=$device,OS=latest" \
+            -only-testing:GymAppUITests/PlanningPanelTests \
+            -resultBundlePath build/ploce.xcresult \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | grep -vE '^(CompileSwift|SwiftCompile|Ld |CodeSign|ProcessInfoPlistFile|CpResource|    cd |    export |    /Applications)' | tail -n 400
+
+      - name: SwiftUI zapisi iz simulatora
+        if: always()
+        run: |
+          xcrun simctl spawn booted log show --last 20m --style compact \
+            --predicate 'process == "GymApp" AND (subsystem == "com.apple.SwiftUI" OR messageType == fault OR messageType == error)' \
+            | tail -n 200 || true
+
+      - name: Rezultat
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ploce-xcresult
+          path: build/ploce.xcresult
