@@ -235,7 +235,7 @@ private struct CardioWatchSection: View {
         } header: {
             Text("Apple Watch")
         } footer: {
-            Text("Trening se pokreće na satu u aplikaciji Workout. Kad ga završiš, Apollo ga uvozi iz Zdravlja i raspored ide dalje.")
+            Text("Trening se pokreće na satu u aplikaciji Workout. Kad ga završiš, Apolon ga uvozi iz Zdravlja i raspored ide dalje.")
         }
         .task { CardioWorkoutScheduler.shared.refresh(context: context) }
     }

@@ -13,13 +13,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo reads cardio workouts (with calories, distance and heart rate), body mass and height to show them in your history and body tracking."
+            "value" : "Apolon reads cardio workouts (with calories, distance and heart rate), body mass and height to show them in your history and body tracking."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
+            "value" : "Apolon čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
           }
         }
       }
@@ -30,13 +30,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo saves your workouts to Health so they count toward your Activity rings."
+            "value" : "Apolon saves your workouts to Health so they count toward your Activity rings."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
+            "value" : "Apolon sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
           }
         }
       }

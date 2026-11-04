@@ -23,10 +23,10 @@ fi
 # Broj builda raste sa svakim commitom, pa je svaki upload jedinstven i vidi se iz kojeg je commita.
 BUILD=$(git rev-list --count HEAD)
 VERSION=$(sed -n 's/^ *MARKETING_VERSION: *"\(.*\)"/\1/p' project.yml)
-ARCHIVE="build/Apollo-$VERSION-$BUILD.xcarchive"
+ARCHIVE="build/Apolon-$VERSION-$BUILD.xcarchive"
 OPTIONS="build/ExportOptions.plist"
 
-printf '==> Apollo %s (%s), commit %s\n' "$VERSION" "$BUILD" "$(git rev-parse --short HEAD)"
+printf '==> Apolon %s (%s), commit %s\n' "$VERSION" "$BUILD" "$(git rev-parse --short HEAD)"
 xcodegen generate
 mkdir -p build
 cp Config/ExportOptions.plist "$OPTIONS"

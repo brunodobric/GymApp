@@ -1,4 +1,4 @@
-Apollo je dnevnik treninga za teretanu. Napravljen je da bilježenje ne smeta treningu: seriju upišeš u nekoliko dodira, a ono što si radio prošli put vidiš u istom retku.
+Apolon je dnevnik treninga za teretanu. Napravljen je da bilježenje ne smeta treningu: seriju upišeš u nekoliko dodira, a ono što si radio prošli put vidiš u istom retku.
 
 TRENING
 • Prethodni rezultati uz svaku seriju i prijedlog težine i ponavljanja za sljedeću
@@ -40,4 +40,4 @@ ZDRAVLJE I ICLOUD
 • Izvoz u CSV i JSON u bilo kojem trenutku
 
 PRIVATNOST
-Apollo nema račun, oglase, analitiku ni praćenje. Podaci su na tvojim uređajima i u tvom iCloudu, a podaci iz Zdravlja ne napuštaju uređaj.
+Apolon nema račun, oglase, analitiku ni praćenje. Podaci su na tvojim uređajima i u tvom iCloudu, a podaci iz Zdravlja ne napuštaju uređaj.

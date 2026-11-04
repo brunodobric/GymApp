@@ -91,7 +91,7 @@ final class DiagnosticsStore: @unchecked Sendable {
     /// Privremena datoteka za dijeljenje (ShareLink).
     func exportFile() -> URL? {
         let log = load()
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("Apollo-dijagnostika.json")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("Apolon-dijagnostika.json")
         do {
             try log.exportData().write(to: url, options: .atomic)
             return url

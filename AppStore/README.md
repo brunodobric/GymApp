@@ -1,6 +1,6 @@
 # App Store materijali
 
-Sve što se upisuje u App Store Connect za Apollo, na hrvatskom (`hr`, primarni jezik) i engleskom (`en-US`). Tekst se mijenja ovdje, a u App Store Connect se kopira. CI (`Tools/AppStore/check_metadata.py`) provjerava Appleova ograničenja duljine i da oba jezika imaju sve datoteke.
+Sve što se upisuje u App Store Connect za Apolon, na hrvatskom (`hr`, primarni jezik) i engleskom (`en-US`). Tekst se mijenja ovdje, a u App Store Connect se kopira. CI (`Tools/AppStore/check_metadata.py`) provjerava Appleova ograničenja duljine i da oba jezika imaju sve datoteke.
 
 ## Datoteke
 
@@ -22,7 +22,7 @@ Ključne riječi ne ponavljaju riječi iz naziva i podnaslova, jer ih App Store 
 ## Ostala polja
 
 * **Bundle ID:** `com.brunodobric.gymapp` (sat: `com.brunodobric.gymapp.watchkitapp`).
-* **SKU:** `apollo-ios`.
+* **SKU:** `apolon-ios`.
 * **Primarna kategorija:** Health & Fitness. Sekundarna: Sports.
 * **Cijena:** besplatno. **Dostupnost:** sve zemlje.
 * **Copyright:** `2026 Bruno Dobrić`.
@@ -33,7 +33,7 @@ Ključne riječi ne ponavljaju riječi iz naziva i podnaslova, jer ih App Store 
 
 ## Dobna oznaka (Age Rating)
 
-Upitnik u App Store Connectu, odgovori za Apollo:
+Upitnik u App Store Connectu, odgovori za Apolon:
 
 | Pitanje | Odgovor |
 |---|---|
@@ -54,7 +54,7 @@ Očekivana oznaka: **4+**.
 
 ## Naziv
 
-Ime "Apollo" samo po sebi vjerojatno je zauzeto u App Storeu, zato je naziv "Apollo: dnevnik treninga" i "Apollo: Workout Log". Ako ni to nije slobodno pri stvaranju aplikacije u App Store Connectu, rezerva je "Apollo Gym: dnevnik treninga" / "Apollo Gym: Workout Log". Ime ispod ikone na uređaju (`CFBundleDisplayName`) ostaje "Apollo".
+Ime "Apolon" samo po sebi moglo bi biti zauzeto u App Storeu, zato je naziv "Apolon: dnevnik treninga" i "Apolon: Workout Log". Ako ni to nije slobodno pri stvaranju aplikacije u App Store Connectu, rezerva je "Apolon Gym: dnevnik treninga" / "Apolon Gym: Workout Log". Ime ispod ikone na uređaju (`CFBundleDisplayName`) ostaje "Apolon".
 
 ## Snimke zaslona
 
@@ -78,6 +78,6 @@ U App Store Connect se učitavaju redom 02, 01, 04, 07, 03, 05 (prva snimka je o
 **Apple Watch** se snima ručno, jer sat prikazuje trening koji vodi iPhone:
 
 1. U Xcodeu pokrenuti shemu GymApp na paru simulatora iPhone 16 Pro Max + Apple Watch Series 10 (46 mm), s argumentom `-ScreenshotMode` (Edit Scheme > Run > Arguments) i jezikom sheme (Options > App Language).
-2. Na iPhoneu dodirnuti Započni, pa na satu otvoriti Apollo.
+2. Na iPhoneu dodirnuti Započni, pa na satu otvoriti Apolon.
 3. Snimiti zaslon sata: `xcrun simctl io booted screenshot AppStore/screenshots/<jezik>/watch/01-trening.png` (s `--device` ako je pokrenuto više simulatora) ili ⌘S u Simulatoru.
 4. Ponoviti za odmor (označiti seriju) i za komplikaciju na brojčaniku.

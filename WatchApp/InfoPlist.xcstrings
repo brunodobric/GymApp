@@ -13,13 +13,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo reads your heart rate and active energy during workouts."
+            "value" : "Apolon reads your heart rate and active energy during workouts."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo čita puls i potrošnju energije tijekom treninga."
+            "value" : "Apolon čita puls i potrošnju energije tijekom treninga."
           }
         }
       }
@@ -30,13 +30,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo saves your workouts to Health."
+            "value" : "Apolon saves your workouts to Health."
           }
         },
         "hr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apollo sprema tvoje treninge u Zdravlje."
+            "value" : "Apolon sprema tvoje treninge u Zdravlje."
           }
         }
       }

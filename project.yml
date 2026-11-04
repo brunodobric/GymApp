@@ -57,7 +57,7 @@ targets:
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: Apollo
+        CFBundleDisplayName: Apolon
         CFBundleDevelopmentRegion: hr
         CFBundleLocalizations: [hr, en]
         UILaunchScreen: {}
@@ -75,8 +75,8 @@ targets:
         NSSupportsLiveActivities: true
         # Samo Appleova enkripcija (HTTPS, iCloud): izuzeto od izvoznih pravila.
         ITSAppUsesNonExemptEncryption: false
-        NSHealthShareUsageDescription: "Apollo čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
-        NSHealthUpdateUsageDescription: "Apollo sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
+        NSHealthShareUsageDescription: "Apolon čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
+        NSHealthUpdateUsageDescription: "Apolon sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
     configFiles:
       Debug: Config/App.xcconfig
       Release: Config/App.xcconfig
@@ -120,7 +120,7 @@ targets:
     info:
       path: WatchApp/Info.plist
       properties:
-        CFBundleDisplayName: Apollo
+        CFBundleDisplayName: Apolon
         CFBundleDevelopmentRegion: hr
         CFBundleLocalizations: [hr, en]
         WKApplication: true
@@ -128,8 +128,8 @@ targets:
         WKCompanionAppBundleIdentifier: com.brunodobric.gymapp
         # HKWorkoutSession: aplikacija radi i sa spuštenim zapešćem dok traje trening.
         WKBackgroundModes: [workout-processing]
-        NSHealthShareUsageDescription: "Apollo čita puls i potrošnju energije tijekom treninga."
-        NSHealthUpdateUsageDescription: "Apollo sprema tvoje treninge u Zdravlje."
+        NSHealthShareUsageDescription: "Apolon čita puls i potrošnju energije tijekom treninga."
+        NSHealthUpdateUsageDescription: "Apolon sprema tvoje treninge u Zdravlje."
     configFiles:
       Debug: Config/Watch.xcconfig
       Release: Config/Watch.xcconfig
@@ -151,7 +151,7 @@ targets:
     info:
       path: Widgets/Info.plist
       properties:
-        CFBundleDisplayName: Apollo
+        CFBundleDisplayName: Apolon
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     configFiles:
@@ -174,7 +174,7 @@ targets:
     info:
       path: WatchWidgets/Info.plist
       properties:
-        CFBundleDisplayName: Apollo
+        CFBundleDisplayName: Apolon
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     configFiles:

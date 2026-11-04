@@ -205,7 +205,7 @@ struct HealthSettingsSection: View {
             Text("Zdravlje")
         } footer: {
             if isAvailable {
-                Text("Treninzi s iPhonea spremaju se u Zdravlje, a kardio treninzi, težina i visina uvoze se iz njega. Dozvole mijenjaš u Zdravlju: Profil > Aplikacije > Apollo.")
+                Text("Treninzi s iPhonea spremaju se u Zdravlje, a kardio treninzi, težina i visina uvoze se iz njega. Dozvole mijenjaš u Zdravlju: Profil > Aplikacije > Apolon.")
             } else {
                 Text("Zdravlje nije dostupno na ovom uređaju.")
             }

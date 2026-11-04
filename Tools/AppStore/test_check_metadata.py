@@ -7,7 +7,7 @@ from pathlib import Path
 import check_metadata as checker
 
 VALID = {
-    "name.txt": "Apollo: dnevnik treninga",
+    "name.txt": "Apolon: dnevnik treninga",
     "subtitle.txt": "Serije, odmor i napredak",
     "promotional_text.txt": "Kratko.",
     "description.txt": "Opis.",

@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 
 /// Uređivač kardio treninga: vrsta, zagrijavanje, blokovi intervala i hlađenje.
-/// Kardio trening se pokreće na satu u aplikaciji Workout, a kad je u rasporedu, Apollo ga tamo zakazuje.
+/// Kardio trening se pokreće na satu u aplikaciji Workout, a kad je u rasporedu, Apolon ga tamo zakazuje.
 struct CardioTemplateEditor: View {
     @Bindable var template: WorkoutTemplate
 
@@ -56,7 +56,7 @@ struct CardioTemplateEditor: View {
             OptionalGoalSection(title: "Hlađenje", goal: $plan.cooldown)
             Section {
                 Label {
-                    Text("Trening se pokreće na satu u aplikaciji Workout. U rasporedu ga Apollo zakazuje na sat za termin podsjetnika.")
+                    Text("Trening se pokreće na satu u aplikaciji Workout. U rasporedu ga Apolon zakazuje na sat za termin podsjetnika.")
                 } icon: {
                     Image(systemName: "applewatch")
                 }

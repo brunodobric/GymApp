@@ -29,7 +29,7 @@ Odgovori za App Privacy u App Store Connectu (vrijede dok aplikacija nema server
 * **Data Collection:** "No, we do not collect data from this app." Rezultat je oznaka **Data Not Collected**. Obrazloženje: podaci su na uređaju i u korisnikovoj privatnoj CloudKit bazi, kojoj razvojni tim nema pristup; Apple to ne smatra prikupljanjem. HealthKit podaci ne napuštaju uređaj. MetricKit izvještaji ostaju na uređaju, a izvoz pokreće korisnik.
 * **Tracking:** ne.
 * **Export Compliance:** aplikacija koristi samo Appleovu enkripciju (HTTPS i iCloud), pa je izuzeta. `ITSAppUsesNonExemptEncryption = NO` je u Info.plist aplikacije i sata, pa App Store Connect ne pita kod svakog builda.
-* **Napomena za App Review (HealthKit):** "Apollo saves strength workouts to Health so they count toward Activity rings, and reads cardio workouts, body mass and height to show them in the workout history and body tracking. Health data is stored only on device, is never synced to iCloud, and is never shared. The app works fully without Health access; permission is requested only when the user chooses to connect Health during onboarding or in Settings."
+* **Napomena za App Review (HealthKit):** "Apolon saves strength workouts to Health so they count toward Activity rings, and reads cardio workouts, body mass and height to show them in the workout history and body tracking. Health data is stored only on device, is never synced to iCloud, and is never shared. The app works fully without Health access; permission is requested only when the user chooses to connect Health during onboarding or in Settings."
 * **Dobna oznaka:** 4+, odgovori na upitnik su u `AppStore/README.md`.
 * **Support URL:** https://brunodobric.github.io/GymApp/podrska/ (engleska verzija: `/support/`).
 

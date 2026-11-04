@@ -8,7 +8,7 @@ Redoslijed: priprema u App Store Connectu, interni TestFlight, javni TestFlight 
 - [ ] CloudKit shema objavljena u Production (`docs/sinkronizacija.md`, "Objava sheme u produkciju"). Bez toga sinkronizacija u TestFlight buildu ne radi.
 - [ ] GitHub Pages: Settings > Pages > Source: **GitHub Actions**, pa provjeriti da se otvaraju https://brunodobric.github.io/GymApp/privacy/ i `/podrska/`.
 - [ ] Kontakt u pravilima privatnosti i na stranici podrške radi za posjetitelje (javni repozitorij ili e-mail adresa).
-- [ ] App Store Connect > Apps > **+** > New App: platforme iOS (watchOS ide uz iOS aplikaciju), naziv iz `AppStore/metadata/hr/name.txt`, primarni jezik hrvatski, Bundle ID `com.brunodobric.gymapp`, SKU `apollo-ios`.
+- [ ] App Store Connect > Apps > **+** > New App: platforme iOS (watchOS ide uz iOS aplikaciju), naziv iz `AppStore/metadata/hr/name.txt`, primarni jezik hrvatski, Bundle ID `com.brunodobric.gymapp`, SKU `apolon-ios`.
 - [ ] App Information i Pricing prema `AppStore/README.md` (kategorija, cijena, dobna oznaka, App Privacy).
 
 ## 2. Build za TestFlight
@@ -31,15 +31,15 @@ Nakon obrade (10 do 30 minuta) build je u App Store Connect > TestFlight. Export
 
 1. TestFlight > External Testing > **+**: grupa "Teretana". Dodati build.
 2. **Test Information** (obavezno za vanjske testere): opis bete, e-mail za povratne informacije, Privacy Policy URL, i "What to Test" (ispod). Prvi build za vanjske testere ide na Beta App Review (obično dan-dva); sljedeći buildovi iste verzije uglavnom prolaze odmah.
-3. **Public Link** uključiti, s ograničenjem na 10 do 20 testera. Link poslati ljudima iz teretane uz kratku poruku: instaliraju TestFlight, otvore link, a grešku prijave tako da naprave snimku zaslona i dodirnu Share Beta Feedback (ili u TestFlightu: Apollo > Send Beta Feedback).
+3. **Public Link** uključiti, s ograničenjem na 10 do 20 testera. Link poslati ljudima iz teretane uz kratku poruku: instaliraju TestFlight, otvore link, a grešku prijave tako da naprave snimku zaslona i dodirnu Share Beta Feedback (ili u TestFlightu: Apolon > Send Beta Feedback).
 
 **What to Test (hr):**
 
-> Hvala što testiraš Apollo! Bilježi svoje stvarne treninge barem dva tjedna. Najviše nas zanima: je li unos serija brz tijekom treninga, slažu li se prethodni rezultati i prijedlozi težine, radi li tajmer odmora i obavijest kad je mobitel zaključan, te ako imaš Apple Watch, trening sa sata. Grešku prijavi snimkom zaslona i opisom koraka. Ako aplikacija padne, TestFlight će ponuditi da pošalješ izvještaj.
+> Hvala što testiraš Apolon! Bilježi svoje stvarne treninge barem dva tjedna. Najviše nas zanima: je li unos serija brz tijekom treninga, slažu li se prethodni rezultati i prijedlozi težine, radi li tajmer odmora i obavijest kad je mobitel zaključan, te ako imaš Apple Watch, trening sa sata. Grešku prijavi snimkom zaslona i opisom koraka. Ako aplikacija padne, TestFlight će ponuditi da pošalješ izvještaj.
 
 **What to Test (en):**
 
-> Thanks for testing Apollo! Please log your real workouts for at least two weeks. We are most interested in whether logging sets is quick during a workout, whether previous results and suggested weights look right, whether the rest timer and its notification work with a locked phone, and, if you have an Apple Watch, training from the watch. Report a bug with a screenshot and the steps. If the app crashes, TestFlight will offer to send a report.
+> Thanks for testing Apolon! Please log your real workouts for at least two weeks. We are most interested in whether logging sets is quick during a workout, whether previous results and suggested weights look right, whether the rest timer and its notification work with a locked phone, and, if you have an Apple Watch, training from the watch. Report a bug with a screenshot and the steps. If the app crashes, TestFlight will offer to send a report.
 
 ## 5. Greške iz bete
 
