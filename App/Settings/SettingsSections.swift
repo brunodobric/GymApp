@@ -79,7 +79,7 @@ struct AppearanceSettingsSection: View {
     @Bindable var settings: UserSettings
 
     var body: some View {
-        Section("Prikaz") {
+        Section {
             Picker("Tema", selection: $settings.theme) {
                 ForEach(AppTheme.allCases, id: \.self) { Text($0.title).tag($0) }
             }
@@ -139,8 +139,6 @@ struct PlatesSettingsSection: View {
             ForEach(Self.options, id: \.self) { plate in
                 Toggle("\(NumberInput.format(plate)) kg", isOn: binding(for: plate))
             }
-        } header: {
-            Text("Ploče i šipka")
         } footer: {
             Text("Kalkulator ploča koristi ove ploče kad su jedinice kilogrami. Za funte koristi uobičajene ploče.")
         }
@@ -201,8 +199,6 @@ struct HealthSettingsSection: View {
                         await HealthService.shared.importNewData(context: context)
                     }
                 }
-        } header: {
-            Text("Zdravlje")
         } footer: {
             if isAvailable {
                 Text("Treninzi s iPhonea spremaju se u Zdravlje, a kardio treninzi, težina i visina uvoze se iz njega. Dozvole mijenjaš u Zdravlju: Profil > Aplikacije > Apolon.")

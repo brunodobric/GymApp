@@ -25,8 +25,6 @@ struct SyncSettingsSection: View {
                     .foregroundStyle(status.needsAttention ? Color.orange : Color.secondary)
             }
             .accessibilityElement(children: .combine)
-        } header: {
-            Text("iCloud")
         } footer: {
             Text(status.footer)
         }

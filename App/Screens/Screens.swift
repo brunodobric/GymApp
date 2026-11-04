@@ -280,88 +280,12 @@ private struct RecoveryPrompt: Identifiable {
     var id: UUID { session.id }
 }
 
-struct SettingsScreen: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var context
-    // Postavke iz upita, a ne zapamćeni objekt: nakon sinkronizacije duplikat postavki može biti obrisan.
-    @Query private var settingsList: [UserSettings]
-    private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
-    @State private var dataSettings = DataSettingsModel()
-
-    private var systemScheme: ColorScheme? {
-        guard settings != nil else { return nil }
-        return UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
-    }
-
-    private var version: String {
-        let info = Bundle.main.infoDictionary
-        let short = info?["CFBundleShortVersionString"] as? String ?? "?"
-        let build = info?["CFBundleVersion"] as? String ?? "?"
-        return "\(short) (\(build))"
-    }
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                if let settings {
-                    AppearanceSettingsSection(settings: settings)
-                    TrainingSettingsSection(settings: settings)
-                    PlatesSettingsSection(settings: settings)
-                    NotificationSettingsSection(settings: settings)
-                    HealthSettingsSection(settings: settings)
-                }
-                SyncSettingsSection()
-                DataSettingsSection(model: dataSettings)
-                Section("O aplikaciji") {
-                    LabeledContent("Verzija", value: version)
-                    // Atribucija kataloga (specifikacija, odjeljak 10), iako je javno vlasništvo.
-                    Link(destination: URL(string: "https://github.com/yuhonas/free-exercise-db")!) {
-                        LabeledContent("Katalog vježbi", value: "free-exercise-db")
-                    }
-                    // Atribucija crteža tijela (MIT licenca zahtijeva copyright napomenu i tekst licence).
-                    NavigationLink {
-                        MuscleMapLicenseScreen()
-                    } label: {
-                        LabeledContent("Crteži tijela", value: "MuscleMap")
-                    }
-                    // Atribucija crteža vježbi (CC BY-SA 4.0 traži autora, licencu, izvor i napomenu o izmjenama).
-                    NavigationLink {
-                        ExerciseDrawingsLicenseScreen()
-                    } label: {
-                        LabeledContent("Crteži vježbi", value: "Everkinetic")
-                    }
-                    Link("Pravila privatnosti", destination: PrivacyPolicy.url)
-                    NavigationLink("Dijagnostika") { DiagnosticsScreen() }
-                }
-            }
-            // Prozori sekcije Podaci idu na cijeli Form, ne na sekciju (vidi `DataSettingsSection`).
-            .dataSettingsPresentations(dataSettings) {
-                // Nakon brisanja svih podataka Početna prikazuje onboarding, pa se list zatvara.
-                let fresh = try? GymQueries(context: context).settings()
-                if fresh?.onboardingCompleted == false { dismiss() }
-            }
-            .navigationTitle("Postavke")
-            // Otvoreni list ne preuzima promjenu teme i boje iz korijena dok je prikazan, pa ih primjenjuje sam.
-            // Za "Sustav" nil ne poništava već prisilno postavljenu shemu na prikazanom listu, pa se šalje
-            // sistemska shema izričito.
-            .preferredColorScheme(settings?.theme.colorScheme ?? systemScheme)
-            .tint(settings?.accent.color ?? AccentChoice.blue.color)
-            .task { _ = try? GymQueries(context: context).settings() }
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Gotovo") { dismiss() }
-                }
-            }
-        }
-    }
-}
-
-/// Postavke treninga: jedinice, zadana pauza, RPE ili RIR i zvuk kraja odmora.
-private struct TrainingSettingsSection: View {
+/// Postavke treninga: jedinice, zadana pauza, RPE ili RIR, zvuk kraja odmora i rekordi.
+struct TrainingSettingsSection: View {
     @Bindable var settings: UserSettings
 
     var body: some View {
-        Section("Trening") {
+        Section {
             Picker("Jedinice", selection: $settings.weightUnit) {
                 Text("Kilogrami").tag(WeightUnit.kilograms)
                 Text("Funte").tag(WeightUnit.pounds)
@@ -376,6 +300,8 @@ private struct TrainingSettingsSection: View {
                 Text("RIR").tag(EffortScale.rir)
             }
             Toggle("Zvuk kraja odmora", isOn: $settings.restEndSoundEnabled)
+        }
+        Section("Rekordi") {
             Toggle("Rekordi (PR)", isOn: $settings.prEnabled)
             if settings.prEnabled {
                 ForEach(PRSettingOption.allCases) { option in
