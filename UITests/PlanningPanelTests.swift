@@ -35,6 +35,8 @@ final class PlanningPanelTests: XCTestCase {
     private func selectAndAdd(in app: XCUIApplication, openButton: String) {
         let open = app.buttons[openButton].firstMatch
         XCTAssertTrue(open.waitForExistence(timeout: 10), "Nema gumba \(openButton)")
+        // Zatvorena ploča ne smije ostaviti svoje gumbe u navigacijskoj traci uređivača.
+        XCTAssertFalse(app.buttons["planningPanel.close"].exists, "Gumbi ploče vide se i kad je ploča zatvorena")
         open.tap()
 
         let add = app.buttons["planningPanel.add"]
@@ -58,6 +60,7 @@ final class PlanningPanelTests: XCTestCase {
 
         add.tap()
         XCTAssertTrue(waitUntil { !add.exists }, "Ploča se nije zatvorila nakon Dodaj")
+        XCTAssertFalse(app.buttons["planningPanel.close"].exists, "Gumbi ploče ostali su nakon zatvaranja")
     }
 
     @MainActor
