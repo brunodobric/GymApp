@@ -166,7 +166,7 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 * **Podaci:**
   * Export u CSV / JSON.
   * Import iz CSV-a (vlastiti backup — format koji app i exportira).
-  * Import iz datoteka drugih aplikacija — kasnije.
+  * Import treninga iz CSV izvoza drugih aplikacija (vidi odjeljak 5).
 * **O aplikaciji:** verzija, atribucija free-exercise-db, atribucija crteža vježbi (Everkinetic, CC BY-SA 4.0) s poveznicom na izmijenjene crteže, pravila privatnosti.
 
 ### Opis tabova
@@ -266,6 +266,11 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 * **Export / Import:**
   * Export u CSV i JSON.
   * Import iz CSV-a (vlastiti backup — format koji app i exportira).
+  * **Import treninga iz druge aplikacije:** CSV s točkom-zarezom u kojem svaki trening počinje zaglavljem `"Naziv · Day N · Week N · Plan";"2026-11-02 4:27 pm";"53 min"`, a ispod su vježbe (`"1. Naziv · Oprema · 10 reps"`) s tablicama serija (`#;KG;REPS` ili `#;MINS`). Aplikacija sama prepozna format pri "Uvezi iz datoteke".
+    * Prije uvoza prikazuje se pregled: broj novih i već uvezenih treninga, razdoblje, broj serija i kamo ide koja vježba (katalog, postojeća ili nova vlastita vježba).
+    * Vježbe se povezuju s katalogom prema nazivu i opremi (`ForeignExerciseMatcher` u GymKitu). Vježba bez pravog para u katalogu postaje vlastita vježba; ako vlastita vježba istog naziva već postoji, koristi se ona.
+    * Vrijednost s `+` ("+12.5") je vlastita težina + teret, a `-` prazna serija koja se ne uvozi. Datum je lokalno vrijeme uređaja.
+    * Svaki trening dobiva stabilan UUID iz zaglavlja i datuma, pa ponovni uvoz iste ili novije datoteke dodaje samo nove treninge.
 * **Opcionalni CloudKit sync:**  
   Sinkronizira se sve korisničko (treninzi, rasporedi, custom vježbe, mjerenja, postavke). Službeni katalog vježbi **ne** sinkronizira se (vidi odjeljak 1).  
   Automatski ako je uključen, ili ručno.  
@@ -519,7 +524,7 @@ Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening**
 ### Kasnije (post-MVP)
 * Napredna analitika i grafovi.
 * Warm-up calculator.
-* Import iz datoteka drugih aplikacija.
+* Import iz datoteka drugih aplikacija (osim CSV formata iz odjeljka 5, koji je napravljen).
 * Hibridni WOD / CrossFit formati u potpunosti.
 * Program generator / AI preporuke.
 * Dijeljenje rasporeda.

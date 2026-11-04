@@ -30,6 +30,7 @@ struct DataSettingsSection: View {
     let onReset: () -> Void
 
     @Environment(\.modelContext) private var context
+    @Environment(CatalogStore.self) private var catalogStore
 
     private enum ExportKind {
         case json, history, body
@@ -56,6 +57,15 @@ struct DataSettingsSection: View {
     @State private var messageText = ""
     @State private var showsMessage = false
     @State private var isDeleting = false
+    @State private var foreignImport: ForeignImportRequest?
+    /// Potvrđeni uvoz: pokreće se tek kad se pregled zatvori, da poruka o rezultatu ne naleti na sheet.
+    @State private var confirmedForeignImport: ForeignWorkoutImport.Preview?
+
+    /// Pregled uvoza iz druge aplikacije, za `.sheet(item:)`.
+    private struct ForeignImportRequest: Identifiable {
+        let id = UUID()
+        let preview: ForeignWorkoutImport.Preview
+    }
 
     /// Briše li "Obriši sve podatke" i iCloud.
     private var deletesCloud: Bool { AppServices.isSyncRunning }
@@ -73,7 +83,10 @@ struct DataSettingsSection: View {
         } header: {
             Text("Podaci")
         } footer: {
-            Text("JSON je puna sigurnosna kopija. CSV datoteke možeš uvesti natrag u aplikaciju. Postojeći zapisi se pri uvozu ne mijenjaju.")
+            Text("""
+                JSON je puna sigurnosna kopija. CSV datoteke možeš uvesti natrag u aplikaciju, a uvesti možeš i CSV \
+                s treninzima iz druge aplikacije. Postojeći zapisi se pri uvozu ne mijenjaju.
+                """)
         }
         .fileExporter(
             isPresented: $showsExporter, document: document, contentType: exportType, defaultFilename: exportName
@@ -83,6 +96,14 @@ struct DataSettingsSection: View {
         .fileImporter(isPresented: $showsImporter, allowedContentTypes: [.json, .commaSeparatedText]) { result in
             importFile(result)
         }
+        .sheet(item: $foreignImport, onDismiss: {
+            if let preview = confirmedForeignImport {
+                confirmedForeignImport = nil
+                importForeign(preview)
+            }
+        }, content: { request in
+            ForeignImportSheet(preview: request.preview) { confirmedForeignImport = request.preview }
+        })
         .confirmationDialog("Obriši sve podatke?", isPresented: $showsDeleteStart, titleVisibility: .visible) {
             Button("Prvo izvezi sigurnosnu kopiju") { export(.json) }
             Button("Nastavi s brisanjem", role: .destructive) { showsDeleteConfirm = true }
@@ -142,7 +163,12 @@ struct DataSettingsSection: View {
             if url.pathExtension.lowercased() == "json" {
                 outcome = try JSONBackup.importBackup(data, into: context)
             } else {
-                outcome = try CSVBackup.importAny(String(decoding: data, as: UTF8.self), into: context)
+                let text = String(decoding: data, as: UTF8.self)
+                if ForeignWorkoutsCSV.matches(text) {
+                    try previewForeign(text)
+                    return
+                }
+                outcome = try CSVBackup.importAny(text, into: context)
             }
             show("Uvoz je gotov.", String(localized: "Dodano: \(outcome.added). Preskočeno (već postoje): \(outcome.skipped)."))
         } catch BackupError.newerVersion {
@@ -151,6 +177,25 @@ struct DataSettingsSection: View {
             show("Uvoz nije uspio.", String(localized: "CSV nije ispravan (redak \(line)). Ništa nije uvezeno."))
         } catch {
             show("Uvoz nije uspio.", String(localized: "Ovo nije sigurnosna kopija ove aplikacije."))
+        }
+    }
+
+    /// CSV s treninzima iz druge aplikacije: prvo pregled, uvoz tek nakon potvrde.
+    private func previewForeign(_ text: String) throws {
+        guard let catalog = catalogStore.catalog else {
+            show("Uvoz nije uspio.", String(localized: "Katalog se nije mogao učitati."))
+            return
+        }
+        let preview = try ForeignWorkoutImport.preview(text, catalog: catalog, language: catalogStore.language, context: context)
+        foreignImport = ForeignImportRequest(preview: preview)
+    }
+
+    private func importForeign(_ preview: ForeignWorkoutImport.Preview) {
+        do {
+            let outcome = try ForeignWorkoutImport.apply(preview, into: context)
+            show("Uvoz je gotov.", String(localized: "Dodano: \(outcome.added). Preskočeno (već postoje): \(outcome.skipped)."))
+        } catch {
+            show("Uvoz nije uspio.", String(localized: "Treninzi se nisu mogli spremiti. Ništa nije uvezeno."))
         }
     }
 

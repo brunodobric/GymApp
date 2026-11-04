@@ -2148,12 +2148,12 @@
         }
       }
     },
-    "JSON je puna sigurnosna kopija. CSV datoteke možeš uvesti natrag u aplikaciju. Postojeći zapisi se pri uvozu ne mijenjaju." : {
+    "JSON je puna sigurnosna kopija. CSV datoteke možeš uvesti natrag u aplikaciju, a uvesti možeš i CSV s treninzima iz druge aplikacije. Postojeći zapisi se pri uvozu ne mijenjaju." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "JSON is a full backup. You can import CSV files back into the app. Existing records aren't changed on import."
+            "value" : "JSON is a full backup. You can import CSV files back into the app, and you can also import a CSV of workouts from another app. Existing records aren't changed on import."
           }
         }
       }
@@ -3238,6 +3238,16 @@
         }
       }
     },
+    "Nova vlastita vježba" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New custom exercise"
+          }
+        }
+      }
+    },
     "Novi kardio trening" : {
       "localizations" : {
         "en" : {
@@ -3264,6 +3274,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "New workout"
+          }
+        }
+      }
+    },
+    "Novi treninzi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New workouts"
           }
         }
       }
@@ -5518,6 +5538,16 @@
         }
       }
     },
+    "Svi treninzi iz ove datoteke već su uvezeni." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All workouts in this file have already been imported."
+          }
+        }
+      }
+    },
     "Svijetla" : {
       "localizations" : {
         "en" : {
@@ -6008,6 +6038,16 @@
         }
       }
     },
+    "Treninzi se nisu mogli spremiti. Ništa nije uvezeno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workouts couldn't be saved. Nothing was imported."
+          }
+        }
+      }
+    },
     "Treninzi se slažu u kartici Rasporedi." : {
       "localizations" : {
         "en" : {
@@ -6378,6 +6418,16 @@
         }
       }
     },
+    "Uvezi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import"
+          }
+        }
+      }
+    },
     "Uvezi iz datoteke" : {
       "localizations" : {
         "en" : {
@@ -6404,6 +6454,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import failed."
+          }
+        }
+      }
+    },
+    "Uvoz treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import workouts"
           }
         }
       }
@@ -6454,6 +6514,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rowing"
+          }
+        }
+      }
+    },
+    "Već uvezeni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Already imported"
           }
         }
       }
@@ -6584,6 +6654,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exercises"
+          }
+        }
+      }
+    },
+    "Vježbe kojih nema u katalogu dodaju se kao tvoje vlastite vježbe. Prazne serije se ne uvoze." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercises that aren't in the catalog are added as your custom exercises. Empty sets aren't imported."
           }
         }
       }
