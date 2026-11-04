@@ -49,6 +49,22 @@ Pravila iz Apple Human Interface Guidelines (skill *apple-hig-dizajn*) primijenj
 * Dark Mode je zadani izgled, ali i svijetli mora biti ispravan.
 * Hrvatski tekstovi su dulji od engleskih: svaki ekran se provjerava na hrvatskom.
 
+## Pristupačnost
+
+* **Dynamic Type:** veličine elemenata uz tekst (oznaka serije, polja za unos, odbrojavanje na satu) idu kroz `@ScaledMetric`, ne fiksne brojeve. Retci s više polja (redak serije, traka odmora) kod veličina pristupačnosti (`dynamicTypeSize.isAccessibilitySize`) prelaze u dva retka.
+* **VoiceOver:** svaki gumb sa samo simbolom ima tekst (`Button("Preskoči", systemImage:)` s `.labelStyle(.iconOnly)` ili `accessibilityLabel`). Znakovi koji se ne čitaju dobro (×, Z, +10) dobivaju izgovorljiv opis: "Serija 2, 80 kg, 8 ponavljanja", "Zagrijavanje", "Produlji odmor za 10 sekundi". Odabrano stanje ide kroz `.isSelected`, a ukrasne slike su `accessibilityHidden`.
+* **Grafovi** imaju `accessibilityLabel` koji kaže što prikazuju, a heatmap tijela ima tekstualni sažetak.
+* **Kontrast:** boje su sistemske (prilagođavaju se za "Povećaj kontrast"). Prigušivanje prozirnošću (završene serije) isključuje se kad je `colorSchemeContrast == .increased`. Stanje se nikad ne prikazuje samo bojom: završena serija ima i kvačicu, dan s treningom i točku i opis za VoiceOver.
+* **Smanji kretanje:** animacije prijelaza poštuju `accessibilityReduceMotion`.
+
+### Ručna provjera prije izdanja
+
+1. Postavke > Pristupačnost > Prikaz i veličina teksta > Veći tekst: najveća veličina. Proći Početnu, aktivni trening (redak serije, traka odmora), povijest, statistiku i postavke na iPhoneu SE. Ništa se ne reže i sve je dostupno scrollanjem.
+2. VoiceOver: odraditi cijeli trening (Započni, unos serije, kvačica, odmor, Završi) bez gledanja u ekran.
+3. Povećaj kontrast i Smanji prozirnost: završene serije i oznake ostaju čitljive.
+4. Xcode Accessibility Inspector > Audit na glavnim ekranima.
+5. Isto na satu: najveći tekst i VoiceOver na ekranu treninga i odmora.
+
 ## Apple Watch
 
 * Nema tab bara. Ekran aktivnog treninga ima najviše tri gumba sa simbolima ili dva s tekstom u retku.
