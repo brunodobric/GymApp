@@ -286,6 +286,7 @@ struct SettingsScreen: View {
     // Postavke iz upita, a ne zapamćeni objekt: nakon sinkronizacije duplikat postavki može biti obrisan.
     @Query private var settingsList: [UserSettings]
     private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
+    @State private var dataSettings = DataSettingsModel()
 
     private var systemScheme: ColorScheme? {
         guard settings != nil else { return nil }
@@ -310,11 +311,7 @@ struct SettingsScreen: View {
                     HealthSettingsSection(settings: settings)
                 }
                 SyncSettingsSection()
-                DataSettingsSection {
-                    // Nakon brisanja svih podataka Početna prikazuje onboarding, pa se list zatvara.
-                    let fresh = try? GymQueries(context: context).settings()
-                    if fresh?.onboardingCompleted == false { dismiss() }
-                }
+                DataSettingsSection(model: dataSettings)
                 Section("O aplikaciji") {
                     LabeledContent("Verzija", value: version)
                     // Atribucija kataloga (specifikacija, odjeljak 10), iako je javno vlasništvo.
@@ -336,6 +333,12 @@ struct SettingsScreen: View {
                     Link("Pravila privatnosti", destination: PrivacyPolicy.url)
                     NavigationLink("Dijagnostika") { DiagnosticsScreen() }
                 }
+            }
+            // Prozori sekcije Podaci idu na cijeli Form, ne na sekciju (vidi `DataSettingsSection`).
+            .dataSettingsPresentations(dataSettings) {
+                // Nakon brisanja svih podataka Početna prikazuje onboarding, pa se list zatvara.
+                let fresh = try? GymQueries(context: context).settings()
+                if fresh?.onboardingCompleted == false { dismiss() }
             }
             .navigationTitle("Postavke")
             // Otvoreni list ne preuzima promjenu teme i boje iz korijena dok je prikazan, pa ih primjenjuje sam.
