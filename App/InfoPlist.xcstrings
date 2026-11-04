@@ -1,0 +1,46 @@
+{
+  "sourceLanguage" : "hr",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "shouldTranslate" : false
+    },
+    "CFBundleName" : {
+      "shouldTranslate" : false
+    },
+    "NSHealthShareUsageDescription" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apollo reads cardio workouts (with calories, distance and heart rate), body mass and height to show them in your history and body tracking."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apollo čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
+          }
+        }
+      }
+    },
+    "NSHealthUpdateUsageDescription" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apollo saves your workouts to Health so they count toward your Activity rings."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apollo sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

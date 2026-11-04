@@ -1,0 +1,7016 @@
+{
+  "sourceLanguage" : "hr",
+  "strings" : {
+    "" : {
+      "shouldTranslate" : false
+    },
+    "%@ dosad: %@, %@ manje nego %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ so far: %2$@, %3$@ less than %4$@."
+          }
+        }
+      }
+    },
+    "%@ dosad: %@, %@ više nego %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ so far: %2$@, %3$@ more than %4$@."
+          }
+        }
+      }
+    },
+    "%@ dosad: %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ so far: %2$@."
+          }
+        }
+      }
+    },
+    "%@ kg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ kg"
+          }
+        }
+      }
+    },
+    "%@ km" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ km"
+          }
+        }
+      }
+    },
+    "%@ · %@" : {
+      "shouldTranslate" : false
+    },
+    "%@ → %@" : {
+      "shouldTranslate" : false
+    },
+    "%@, ciklus %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, cycle %2$lld"
+          }
+        }
+      }
+    },
+    "%@: %lld treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %#@workouts@"
+          },
+          "substitutions" : {
+            "workouts" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg workout"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg workouts"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %#@workouts@"
+          },
+          "substitutions" : {
+            "workouts" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg treninga"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg trening"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg treninga"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "shouldTranslate" : false
+    },
+    "%lld dana nakon zadnjeg treninga" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld day after the last workout"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld days after the last workout"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dana nakon zadnjeg treninga"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dan nakon zadnjeg treninga"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dana nakon zadnjeg treninga"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld m" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld m"
+          }
+        }
+      }
+    },
+    "%lld od %lld serija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %#@sets@"
+          },
+          "substitutions" : {
+            "sets" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg set"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg sets"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld otk/min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld bpm"
+          }
+        }
+      }
+    },
+    "%lld pon." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rep"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld reps"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld s" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld s"
+          }
+        }
+      }
+    },
+    "%lld serije" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld set"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sets"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld serije"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld serija"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld serija"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld serije × %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@sets@ × %2$lld"
+          },
+          "substitutions" : {
+            "sets" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg set"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg sets"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@sets@ × %2$lld"
+          },
+          "substitutions" : {
+            "sets" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg serije"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg serija"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg serija"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld treninga, ciklus %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@workouts@, cycle %2$lld"
+          },
+          "substitutions" : {
+            "workouts" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg workout"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg workouts"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@workouts@, ciklus %2$lld"
+          },
+          "substitutions" : {
+            "workouts" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg treninga"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg trening"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg treninga"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld treninga, ciklus %lld od %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@workouts@, cycle %2$lld of %3$lld"
+          },
+          "substitutions" : {
+            "workouts" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg workout"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg workouts"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@workouts@, ciklus %2$lld od %3$lld"
+          },
+          "substitutions" : {
+            "workouts" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg treninga"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg trening"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg treninga"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld vježbi" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld exercise"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld exercises"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld vježbe"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld vježba"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld vježbi"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld završenih serija" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld completed set"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld completed sets"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld završene serije"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld završena serija"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld završenih serija"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld ×" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ×"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ×"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld. %2$@"
+          }
+        }
+      }
+    },
+    "%lld/%lld" : {
+      "shouldTranslate" : false
+    },
+    "+10" : {
+      "shouldTranslate" : false
+    },
+    "+10 s" : {
+      "shouldTranslate" : false
+    },
+    "1RM" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1RM"
+          }
+        }
+      }
+    },
+    "1RM ≈ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1RM ≈ %@"
+          }
+        }
+      }
+    },
+    "30 dana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 days"
+          }
+        }
+      }
+    },
+    "90 dana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "90 days"
+          }
+        }
+      }
+    },
+    "Ako je vježba već korištena u treningu, samo će se arhivirati i povijest ostaje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If the exercise has been used in a workout, it will only be archived and your history stays."
+          }
+        }
+      }
+    },
+    "Aktivan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        }
+      }
+    },
+    "Aktivne kalorije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active calories"
+          }
+        }
+      }
+    },
+    "Aktivnost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activity"
+          }
+        }
+      }
+    },
+    "Aplikacija je vraćena na početno stanje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app has been reset."
+          }
+        }
+      }
+    },
+    "Apollo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apollo"
+          }
+        }
+      }
+    },
+    "Apollo ne može utišati obavijesti drugih aplikacija. To radi Focus način u iOS-u, a može se uključivati sam kad počneš trening." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apollo can't silence notifications from other apps. iOS Focus does that, and it can turn on by itself when you start a workout."
+          }
+        }
+      }
+    },
+    "Apple Watch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Watch"
+          }
+        }
+      }
+    },
+    "Apple Zdravlje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Health"
+          }
+        }
+      }
+    },
+    "Arhivirana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archived"
+          }
+        }
+      }
+    },
+    "Arhivirana je i skrivena iz odabira." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It's archived and hidden from selection."
+          }
+        }
+      }
+    },
+    "Bez cilja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No goal"
+          }
+        }
+      }
+    },
+    "Bez ciljeva" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No targets"
+          }
+        }
+      }
+    },
+    "Bez ocjene" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No rating"
+          }
+        }
+      }
+    },
+    "Bez usporedbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No comparison"
+          }
+        }
+      }
+    },
+    "Biceps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biceps"
+          }
+        }
+      }
+    },
+    "Bicikl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cycling"
+          }
+        }
+      }
+    },
+    "Bilješka" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        }
+      }
+    },
+    "Bilješka uz vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise note"
+          }
+        }
+      }
+    },
+    "Bilješke" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
+          }
+        }
+      }
+    },
+    "Blok" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block"
+          }
+        }
+      }
+    },
+    "Blok je rad i oporavak, ponovljeni zadani broj puta. Obično trčanje je jedan blok bez oporavka." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A block is work and recovery, repeated a set number of times. A regular run is one block with no recovery."
+          }
+        }
+      }
+    },
+    "Blokovi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocks"
+          }
+        }
+      }
+    },
+    "Boja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
+          }
+        }
+      }
+    },
+    "Brisanje nije uspjelo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleting failed."
+          }
+        }
+      }
+    },
+    "Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja i iz tvog iClouda, pa time i s ostalih tvojih uređaja." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deletes all workouts, templates, schedules, custom exercises, measurements and settings from this device and from your iCloud, and therefore from your other devices too."
+          }
+        }
+      }
+    },
+    "Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deletes all workouts, templates, schedules, custom exercises, measurements and settings from this device."
+          }
+        }
+      }
+    },
+    "Brišem…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleting…"
+          }
+        }
+      }
+    },
+    "Broj ciklusa: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cycles: %lld"
+          }
+        }
+      }
+    },
+    "Brzycki umjesto Epley" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brzycki instead of Epley"
+          }
+        }
+      }
+    },
+    "Bučice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dumbbells"
+          }
+        }
+      }
+    },
+    "CSV nije ispravan (redak %lld). Ništa nije uvezeno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The CSV isn't valid (line %lld). Nothing was imported."
+          }
+        }
+      }
+    },
+    "Ciklus %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cycle %lld"
+          }
+        }
+      }
+    },
+    "Ciklus završava kad su odrađeni ili preskočeni svi treninzi u nizu. Propušteni dan ništa ne pomiče." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A cycle ends when every workout in the sequence is done or skipped. A missed day doesn't shift anything."
+          }
+        }
+      }
+    },
+    "Cilj" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal"
+          }
+        }
+      }
+    },
+    "Cilj je manji od same šipke." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The target is less than the bar alone."
+          }
+        }
+      }
+    },
+    "Ciljna težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target weight"
+          }
+        }
+      }
+    },
+    "CloudKit shema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CloudKit schema"
+          }
+        }
+      }
+    },
+    "Core trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Core training"
+          }
+        }
+      }
+    },
+    "Crteži tijela" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body drawings"
+          }
+        }
+      }
+    },
+    "Crteži tijela u heatmapu preuzeti su iz projekta MuscleMap (MIT licenca)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The body drawings in the heatmap come from the MuscleMap project (MIT license)."
+          }
+        }
+      }
+    },
+    "Crvena" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red"
+          }
+        }
+      }
+    },
+    "Da, poveži" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes, connect"
+          }
+        }
+      }
+    },
+    "Dalje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "Dan odmora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest day"
+          }
+        }
+      }
+    },
+    "Danas nema novih rekorda." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No new records today."
+          }
+        }
+      }
+    },
+    "Datoteka je iz novije verzije aplikacije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The file is from a newer version of the app."
+          }
+        }
+      }
+    },
+    "Datoteka nije spremljena." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The file wasn't saved."
+          }
+        }
+      }
+    },
+    "Datum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "Detalji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details"
+          }
+        }
+      }
+    },
+    "Detalji odabranog treninga prikazuju se ovdje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details of the selected workout appear here."
+          }
+        }
+      }
+    },
+    "Dobro došao" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome"
+          }
+        }
+      }
+    },
+    "Dodaj" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        }
+      }
+    },
+    "Dodaj (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add (%lld)"
+          }
+        }
+      }
+    },
+    "Dodaj barem jedan trening u niz." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add at least one workout to the sequence."
+          }
+        }
+      }
+    },
+    "Dodaj blok" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add block"
+          }
+        }
+      }
+    },
+    "Dodaj dan odmora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add rest day"
+          }
+        }
+      }
+    },
+    "Dodaj program" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add program"
+          }
+        }
+      }
+    },
+    "Dodaj radnu seriju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add working set"
+          }
+        }
+      }
+    },
+    "Dodaj seriju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add set"
+          }
+        }
+      }
+    },
+    "Dodaj trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add workout"
+          }
+        }
+      }
+    },
+    "Dodaj vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add exercises"
+          }
+        }
+      }
+    },
+    "Dodaj vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add exercise"
+          }
+        }
+      }
+    },
+    "Dodaj zagrijavanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add warm-up"
+          }
+        }
+      }
+    },
+    "Dodano: %lld. Preskočeno (već postoje): %lld." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added: %1$lld. Skipped (already exist): %2$lld."
+          }
+        }
+      }
+    },
+    "Dodatna težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added weight"
+          }
+        }
+      }
+    },
+    "Donja leđa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lower back"
+          }
+        }
+      }
+    },
+    "Dostupna oprema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available equipment"
+          }
+        }
+      }
+    },
+    "Dozvola" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permission"
+          }
+        }
+      }
+    },
+    "EZ šipka" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EZ bar"
+          }
+        }
+      }
+    },
+    "Eliptični trenažer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elliptical"
+          }
+        }
+      }
+    },
+    "Fiksni dani" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fixed days"
+          }
+        }
+      }
+    },
+    "Filter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter"
+          }
+        }
+      }
+    },
+    "Filteri" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filters"
+          }
+        }
+      }
+    },
+    "Fleksibilno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flexible"
+          }
+        }
+      }
+    },
+    "Fokus" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus"
+          }
+        }
+      }
+    },
+    "Fokus se uključuje kad otvoriš Apollo. Isključuje se ručno ili drugom automatizacijom kad aplikaciju zatvoriš." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus turns on when you open Apollo. Turn it off manually or with another automation when you close the app."
+          }
+        }
+      }
+    },
+    "Fokus tijekom treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus during workouts"
+          }
+        }
+      }
+    },
+    "Funte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pounds"
+          }
+        }
+      }
+    },
+    "Funte (lbs)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pounds (lb)"
+          }
+        }
+      }
+    },
+    "Gluteusi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glutes"
+          }
+        }
+      }
+    },
+    "Godina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Year"
+          }
+        }
+      }
+    },
+    "Gornja leđa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upper back"
+          }
+        }
+      }
+    },
+    "Gotovi programi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready-made programs"
+          }
+        }
+      }
+    },
+    "Gotovo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "Gotovo s redoslijedom" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done reordering"
+          }
+        }
+      }
+    },
+    "Graf broja treninga po tjednima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of workouts per week"
+          }
+        }
+      }
+    },
+    "Graf mjere %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of %@"
+          }
+        }
+      }
+    },
+    "Graf napretka vježbe %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progress chart for %@"
+          }
+        }
+      }
+    },
+    "Graf napretka vježbi %@ i %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progress chart for %1$@ and %2$@"
+          }
+        }
+      }
+    },
+    "Graf usporedbe volumena po mišićima s prethodnim razdobljem" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart comparing volume per muscle with the previous period"
+          }
+        }
+      }
+    },
+    "Graf volumena po mišićnim skupinama" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of volume by muscle group"
+          }
+        }
+      }
+    },
+    "Greška" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
+          }
+        }
+      }
+    },
+    "HIIT" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HIIT"
+          }
+        }
+      }
+    },
+    "Hipertrofija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hypertrophy"
+          }
+        }
+      }
+    },
+    "Hlađenje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cooldown"
+          }
+        }
+      }
+    },
+    "Hodanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking"
+          }
+        }
+      }
+    },
+    "Idi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go"
+          }
+        }
+      }
+    },
+    "Ima trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has a workout"
+          }
+        }
+      }
+    },
+    "Intervali 6 × 400 m" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervals 6 × 400 m"
+          }
+        }
+      }
+    },
+    "Intervali 8 × 1 min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervals 8 × 1 min"
+          }
+        }
+      }
+    },
+    "Isključuje se nakon ponovnog pokretanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns off after relaunch"
+          }
+        }
+      }
+    },
+    "Iskustvo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experience"
+          }
+        }
+      }
+    },
+    "Iz Apple Zdravlja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From Apple Health"
+          }
+        }
+      }
+    },
+    "Izbaci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        }
+      }
+    },
+    "Izbaci iz superseta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from superset"
+          }
+        }
+      }
+    },
+    "Izbaci vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove exercise"
+          }
+        }
+      }
+    },
+    "Izbačeno: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed: %@"
+          }
+        }
+      }
+    },
+    "Izdvoji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Separate"
+          }
+        }
+      }
+    },
+    "Izmjene samo za ovaj ciklus" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changes for this cycle only"
+          }
+        }
+      }
+    },
+    "Izolacijska" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isolation"
+          }
+        }
+      }
+    },
+    "Izvezi mjerenja tijela (CSV)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export body measurements (CSV)"
+          }
+        }
+      }
+    },
+    "Izvezi sve podatke (JSON)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export all data (JSON)"
+          }
+        }
+      }
+    },
+    "Izvezi treninge (CSV)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export workouts (CSV)"
+          }
+        }
+      }
+    },
+    "Izvor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source"
+          }
+        }
+      }
+    },
+    "Izvoz nije uspio." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export failed."
+          }
+        }
+      }
+    },
+    "JSON je puna sigurnosna kopija. CSV datoteke možeš uvesti natrag u aplikaciju. Postojeći zapisi se pri uvozu ne mijenjaju." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON is a full backup. You can import CSV files back into the app. Existing records aren't changed on import."
+          }
+        }
+      }
+    },
+    "Jedinice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Units"
+          }
+        }
+      }
+    },
+    "Jesi li siguran?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure?"
+          }
+        }
+      }
+    },
+    "Još nema rasporeda. Dodaj gotov program ili složi vlastiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No schedules yet. Add a ready-made program or build your own."
+          }
+        }
+      }
+    },
+    "Još nema statistike" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No statistics yet"
+          }
+        }
+      }
+    },
+    "Još nema treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts yet"
+          }
+        }
+      }
+    },
+    "Još nema treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts yet."
+          }
+        }
+      }
+    },
+    "Još nema unosa." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No entries yet."
+          }
+        }
+      }
+    },
+    "Kablovi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cables"
+          }
+        }
+      }
+    },
+    "Kako je prošlo?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How did it go?"
+          }
+        }
+      }
+    },
+    "Kalendar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar"
+          }
+        }
+      }
+    },
+    "Kalkulator ploča" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plate calculator"
+          }
+        }
+      }
+    },
+    "Kalkulator ploča koristi ove ploče kad su jedinice kilogrami. Za funte koristi uobičajene ploče." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The plate calculator uses these plates when units are kilograms. For pounds it uses standard plates."
+          }
+        }
+      }
+    },
+    "Kalorije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calories"
+          }
+        }
+      }
+    },
+    "Kao radnju dodaj Postavi Fokus i odaberi Fitness." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As the action, add Set Focus and choose Fitness."
+          }
+        }
+      }
+    },
+    "Kardio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cardio"
+          }
+        }
+      }
+    },
+    "Kardio trening se za termin podsjetnika zakazuje i na sat, u aplikaciju Workout." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cardio workouts are also scheduled on your watch, in the Workout app, at the reminder time."
+          }
+        }
+      }
+    },
+    "Kartice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cards"
+          }
+        }
+      }
+    },
+    "Katalog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalog"
+          }
+        }
+      }
+    },
+    "Katalog nije dostupan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalog unavailable"
+          }
+        }
+      }
+    },
+    "Katalog nije pronađen u aplikaciji." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The catalog wasn't found in the app."
+          }
+        }
+      }
+    },
+    "Katalog se nije mogao učitati." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The catalog couldn't be loaded."
+          }
+        }
+      }
+    },
+    "Katalog vježbi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise catalog"
+          }
+        }
+      }
+    },
+    "Kategorija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category"
+          }
+        }
+      }
+    },
+    "Kettlebell" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kettlebell"
+          }
+        }
+      }
+    },
+    "Kilogrami" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilograms"
+          }
+        }
+      }
+    },
+    "Kilogrami (kg)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilograms (kg)"
+          }
+        }
+      }
+    },
+    "Koje ploče staviti na svaku stranu šipke." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Which plates to load on each side of the bar."
+          }
+        }
+      }
+    },
+    "Koliko dana tjedno treniraš?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How many days a week do you train?"
+          }
+        }
+      }
+    },
+    "Koliko dugo treniraš?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How long have you been training?"
+          }
+        }
+      }
+    },
+    "Kontejner" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Container"
+          }
+        }
+      }
+    },
+    "Korak %lld od %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Lagano trčanje 30 min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy run 30 min"
+          }
+        }
+      }
+    },
+    "Leđa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
+    "Listovi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calves"
+          }
+        }
+      }
+    },
+    "Ljubičasta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purple"
+          }
+        }
+      }
+    },
+    "Manje masti, više mišića" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less fat, more muscle"
+          }
+        }
+      }
+    },
+    "Minute: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minutes: %lld"
+          }
+        }
+      }
+    },
+    "Mišić" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muscle"
+          }
+        }
+      }
+    },
+    "Mišići" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muscles"
+          }
+        }
+      }
+    },
+    "Mišići u ovom treningu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muscles in this workout"
+          }
+        }
+      }
+    },
+    "Mjeseci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Months"
+          }
+        }
+      }
+    },
+    "Mjesto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location"
+          }
+        }
+      }
+    },
+    "MuscleMap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MuscleMap"
+          }
+        }
+      }
+    },
+    "Muško" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Male"
+          }
+        }
+      }
+    },
+    "Na Početnoj" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On Home"
+          }
+        }
+      }
+    },
+    "Na satu: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On watch: %@"
+          }
+        }
+      }
+    },
+    "Na svaku stranu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On each side"
+          }
+        }
+      }
+    },
+    "Najdulje trajanje %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longest duration %@"
+          }
+        }
+      }
+    },
+    "Najduže trajanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longest duration"
+          }
+        }
+      }
+    },
+    "Najmanja pomoć" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Least assistance"
+          }
+        }
+      }
+    },
+    "Najmanja pomoć %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Least assistance %@"
+          }
+        }
+      }
+    },
+    "Najnoviji prvi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Newest first"
+          }
+        }
+      }
+    },
+    "Najopterećenije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most loaded"
+          }
+        }
+      }
+    },
+    "Najstariji prvi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oldest first"
+          }
+        }
+      }
+    },
+    "Najveća težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heaviest weight"
+          }
+        }
+      }
+    },
+    "Najveća težina %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heaviest weight %@"
+          }
+        }
+      }
+    },
+    "Najveća udaljenost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longest distance"
+          }
+        }
+      }
+    },
+    "Najveća udaljenost %@ km" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longest distance %@ km"
+          }
+        }
+      }
+    },
+    "Najveći volumen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highest volume"
+          }
+        }
+      }
+    },
+    "Najveći volumen serije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highest set volume"
+          }
+        }
+      }
+    },
+    "Najveći volumen serije %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highest set volume %@"
+          }
+        }
+      }
+    },
+    "Najviše planova" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum plans"
+          }
+        }
+      }
+    },
+    "Najviše ponavljanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most reps"
+          }
+        }
+      }
+    },
+    "Najviše ponavljanja %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most reps %lld"
+          }
+        }
+      }
+    },
+    "Nakon dodavanja prve vrijednosti mjera se pojavljuje na popisu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The measurement appears in the list after you add its first value."
+          }
+        }
+      }
+    },
+    "Nakon zakazivanja otvori aplikaciju Workout na satu i provjeri pojavljuje li se plan i može li se pokrenuti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After scheduling, open the Workout app on the watch and check that the plan appears and can be started."
+          }
+        }
+      }
+    },
+    "Napor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort"
+          }
+        }
+      }
+    },
+    "Napravi trening ili raspored u aplikaciji na iPhoneu i otvori je jednom dok je sat u blizini." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a workout or schedule in the iPhone app and open it once while the watch is nearby."
+          }
+        }
+      }
+    },
+    "Napredak vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise progress"
+          }
+        }
+      }
+    },
+    "Napredni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced"
+          }
+        }
+      }
+    },
+    "Napredno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced"
+          }
+        }
+      }
+    },
+    "Narančasta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orange"
+          }
+        }
+      }
+    },
+    "Nastavi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
+      }
+    },
+    "Nastavi s brisanjem" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue deleting"
+          }
+        }
+      }
+    },
+    "Nastavi trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume workout"
+          }
+        }
+      }
+    },
+    "Natrag" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
+    "Naziv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        }
+      }
+    },
+    "Naziv (npr. podlaktica)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name (e.g. forearm)"
+          }
+        }
+      }
+    },
+    "Naziv rasporeda" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule name"
+          }
+        }
+      }
+    },
+    "Naziv treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout name"
+          }
+        }
+      }
+    },
+    "Način" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mode"
+          }
+        }
+      }
+    },
+    "Ne sada" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not now"
+          }
+        }
+      }
+    },
+    "Neaktivan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inactive"
+          }
+        }
+      }
+    },
+    "Nema aktivnog rasporeda. Raspored složiš u tabu Rasporedi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No active schedule. You can build one in the Schedules tab."
+          }
+        }
+      }
+    },
+    "Nema druge vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No other exercise"
+          }
+        }
+      }
+    },
+    "Nema kartica. Dodaj ih ispod." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No cards. Add some below."
+          }
+        }
+      }
+    },
+    "Nema podataka za ovo razdoblje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data for this period."
+          }
+        }
+      }
+    },
+    "Nema podataka." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data."
+          }
+        }
+      }
+    },
+    "Nema rekorda za ovaj filter." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No records for this filter."
+          }
+        }
+      }
+    },
+    "Nema sljedećeg treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No next workout"
+          }
+        }
+      }
+    },
+    "Nema treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts"
+          }
+        }
+      }
+    },
+    "Nema unosa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No entries"
+          }
+        }
+      }
+    },
+    "Nema vježbi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No exercises"
+          }
+        }
+      }
+    },
+    "Nema vježbi za prikaz." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No exercises to show."
+          }
+        }
+      }
+    },
+    "Nema zakazanog treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No scheduled workout"
+          }
+        }
+      }
+    },
+    "Nema završenih serija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No completed sets"
+          }
+        }
+      }
+    },
+    "Neobavezno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional"
+          }
+        }
+      }
+    },
+    "Neobavezno. Služi za praćenje mjera tijela; možeš ih unijeti i kasnije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional. Used for body tracking; you can enter them later."
+          }
+        }
+      }
+    },
+    "Nije odabrano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not selected"
+          }
+        }
+      }
+    },
+    "Nijedan trening ne odgovara filteru." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts match the filter."
+          }
+        }
+      }
+    },
+    "Nijedna vježba ne odgovara odabranim filterima." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No exercises match the selected filters."
+          }
+        }
+      }
+    },
+    "Niz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sequence"
+          }
+        }
+      }
+    },
+    "Noga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leg"
+          }
+        }
+      }
+    },
+    "Noge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legs"
+          }
+        }
+      }
+    },
+    "Nova mjera" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New measurement"
+          }
+        }
+      }
+    },
+    "Nova vježba" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New exercise"
+          }
+        }
+      }
+    },
+    "Novi kardio trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New cardio workout"
+          }
+        }
+      }
+    },
+    "Novi raspored" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New schedule"
+          }
+        }
+      }
+    },
+    "Novi trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New workout"
+          }
+        }
+      }
+    },
+    "Novi unos" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New entry"
+          }
+        }
+      }
+    },
+    "Nutarnja strana bedra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inner thigh"
+          }
+        }
+      }
+    },
+    "Nutarnje bedro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inner thigh"
+          }
+        }
+      }
+    },
+    "O aplikaciji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        }
+      }
+    },
+    "Obavijesti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
+    "Obrisan trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted workout"
+          }
+        }
+      }
+    },
+    "Obrisati trening?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete workout?"
+          }
+        }
+      }
+    },
+    "Obriši" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "Obriši seriju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete set"
+          }
+        }
+      }
+    },
+    "Obriši sve" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete all"
+          }
+        }
+      }
+    },
+    "Obriši sve podatke" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete all data"
+          }
+        }
+      }
+    },
+    "Obriši sve podatke?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete all data?"
+          }
+        }
+      }
+    },
+    "Obriši trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete workout"
+          }
+        }
+      }
+    },
+    "Odaberi Aplikacija, zatim Apollo i Otvorena." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose App, then Apollo and Is Opened."
+          }
+        }
+      }
+    },
+    "Odaberi raspored ili trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a schedule or workout"
+          }
+        }
+      }
+    },
+    "Odaberi sliku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose photo"
+          }
+        }
+      }
+    },
+    "Odaberi trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose workout"
+          }
+        }
+      }
+    },
+    "Odaberi više treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select multiple workouts"
+          }
+        }
+      }
+    },
+    "Odaberi vježbe ili ih povuci u popis." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select exercises or drag them into the list."
+          }
+        }
+      }
+    },
+    "Odaberi vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose exercise"
+          }
+        }
+      }
+    },
+    "Odbaci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard"
+          }
+        }
+      }
+    },
+    "Odbaci trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard workout"
+          }
+        }
+      }
+    },
+    "Odbaciti trening?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard workout?"
+          }
+        }
+      }
+    },
+    "Odgovori se nisu mogli spremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your answers couldn't be saved."
+          }
+        }
+      }
+    },
+    "Odmor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest"
+          }
+        }
+      }
+    },
+    "Odmor gotov" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest over"
+          }
+        }
+      }
+    },
+    "Odmor je gotov" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest is over"
+          }
+        }
+      }
+    },
+    "Odrađeno na satu. Trening se upisuje u povijest kad stigne iz Zdravlja." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done on the watch. The workout is added to your history when it arrives from Health."
+          }
+        }
+      }
+    },
+    "Odustani" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "Ograničenja na uređaju ne dopuštaju iCloud." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restrictions on this device don't allow iCloud."
+          }
+        }
+      }
+    },
+    "Okreni Digital Crown za promjenu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn the Digital Crown to adjust"
+          }
+        }
+      }
+    },
+    "Opis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description"
+          }
+        }
+      }
+    },
+    "Opis (neobavezno)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description (optional)"
+          }
+        }
+      }
+    },
+    "Oporavak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recovery"
+          }
+        }
+      }
+    },
+    "Oprema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Equipment"
+          }
+        }
+      }
+    },
+    "Oprema i dani" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Equipment and days"
+          }
+        }
+      }
+    },
+    "Opterećenje po dijelovima tijela" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Load by body part"
+          }
+        }
+      }
+    },
+    "Opća kondicija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General fitness"
+          }
+        }
+      }
+    },
+    "Oslobodi prostor u iCloudu da se promjene nastave slati." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Free up iCloud storage so changes can keep uploading."
+          }
+        }
+      }
+    },
+    "Osobni rekordi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal records"
+          }
+        }
+      }
+    },
+    "Ostalo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        }
+      }
+    },
+    "Otvori Postavke > Fokus i dodaj Fokus Fitness (ili vlastiti)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings > Focus and add the Fitness Focus (or your own)."
+          }
+        }
+      }
+    },
+    "Otvori Prečace > Automatizacija i dodaj novu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Shortcuts > Automation and add a new one."
+          }
+        }
+      }
+    },
+    "Otvori kalkulator" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open calculator"
+          }
+        }
+      }
+    },
+    "Otvori u novom prozoru" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in new window"
+          }
+        }
+      }
+    },
+    "Otvori vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open exercise"
+          }
+        }
+      }
+    },
+    "Ova verzija aplikacije potpisana je bez iCloud dozvole, pa se podaci spremaju samo na ovom uređaju." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This version of the app is signed without the iCloud entitlement, so data is stored only on this device."
+          }
+        }
+      }
+    },
+    "Ovaj mjesec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This month"
+          }
+        }
+      }
+    },
+    "Ovaj tjedan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This week"
+          }
+        }
+      }
+    },
+    "Ovdje će biti svi odrađeni treninzi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All your completed workouts will appear here."
+          }
+        }
+      }
+    },
+    "Ovo nije sigurnosna kopija ove aplikacije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This isn't a backup from this app."
+          }
+        }
+      }
+    },
+    "Ovo se ne može poništiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This can't be undone."
+          }
+        }
+      }
+    },
+    "Označava sljedeću seriju aktivnog treninga završenom." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marks the next set of the active workout as completed."
+          }
+        }
+      }
+    },
+    "Označi seriju završenom" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark set as completed"
+          }
+        }
+      }
+    },
+    "Očisti filter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear filter"
+          }
+        }
+      }
+    },
+    "Pauza" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest"
+          }
+        }
+      }
+    },
+    "Plan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan"
+          }
+        }
+      }
+    },
+    "Plan još nije na satu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The plan isn't on the watch yet."
+          }
+        }
+      }
+    },
+    "Plan nije potpun. Uredi trening i dodaj barem jedan blok." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The plan is incomplete. Edit the workout and add at least one block."
+          }
+        }
+      }
+    },
+    "Planinarenje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiking"
+          }
+        }
+      }
+    },
+    "Plava" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue"
+          }
+        }
+      }
+    },
+    "Ples" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dance"
+          }
+        }
+      }
+    },
+    "Plivanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swimming"
+          }
+        }
+      }
+    },
+    "Ploče" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plates"
+          }
+        }
+      }
+    },
+    "Ploče i šipka" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plates and bar"
+          }
+        }
+      }
+    },
+    "Pod Automatski uključi odaberi Kad počne trening. Fokus se tada uključuje kad trening pokreneš na Apple Watchu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Under Turn On Automatically, choose When Workout Starts. Focus then turns on when you start a workout on Apple Watch."
+          }
+        }
+      }
+    },
+    "Podaci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data"
+          }
+        }
+      }
+    },
+    "Podaci se nisu mogli pripremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The data couldn't be prepared."
+          }
+        }
+      }
+    },
+    "Podaci se spremaju samo na ovom uređaju. Katalog vježbi je dio aplikacije i ne sinkronizira se." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data is stored only on this device. The exercise catalog is part of the app and isn't synced."
+          }
+        }
+      }
+    },
+    "Podaci su obrisani." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data deleted."
+          }
+        }
+      }
+    },
+    "Podaci u iCloudu nisu obrisani. Provjeri internetsku vezu i pokušaj ponovno. Ništa nije obrisano." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The data in iCloud wasn't deleted. Check your internet connection and try again. Nothing was deleted."
+          }
+        }
+      }
+    },
+    "Podlaktice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forearms"
+          }
+        }
+      }
+    },
+    "Podržano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supported"
+          }
+        }
+      }
+    },
+    "Podsjetnici" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminders"
+          }
+        }
+      }
+    },
+    "Podsjetnici rasporeda i obavijest o kraju odmora kad je iPhone zaključan. Dopuštenje se traži kad prvi put zatrebaju." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule reminders and the end-of-rest notification when iPhone is locked. Permission is requested the first time they're needed."
+          }
+        }
+      }
+    },
+    "Podsjetnik se ne šalje ako je taj dan već odrađen trening iz rasporeda, niti tijekom aktivnog treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No reminder is sent if a workout from the schedule was already done that day, or during an active workout."
+          }
+        }
+      }
+    },
+    "Pokreni ispočetka" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start over"
+          }
+        }
+      }
+    },
+    "Pokreni na satu u aplikaciji Workout, pod nazivom „%@”." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start it on the watch in the Workout app, named “%@”."
+          }
+        }
+      }
+    },
+    "Pokreće se iz Xcodea (Debug build ide u Development okruženje), nakon svake promjene sheme. Zatim u CloudKit konzoli: Deploy Schema Changes u produkciju." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run from Xcode (a Debug build goes to the Development environment) after every schema change. Then in the CloudKit console: Deploy Schema Changes to production."
+          }
+        }
+      }
+    },
+    "Pokušaj ponovno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again."
+          }
+        }
+      }
+    },
+    "Pokušaj zatvoriti i ponovno otvoriti aplikaciju." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try closing and reopening the app."
+          }
+        }
+      }
+    },
+    "Pomoć" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assistance"
+          }
+        }
+      }
+    },
+    "Ponavljanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reps"
+          }
+        }
+      }
+    },
+    "Ponavljanja: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reps: %lld"
+          }
+        }
+      }
+    },
+    "Poništi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo"
+          }
+        }
+      }
+    },
+    "Poništi filtere" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset filters"
+          }
+        }
+      }
+    },
+    "Poništi završetak serije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark set as not completed"
+          }
+        }
+      }
+    },
+    "Popis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List"
+          }
+        }
+      }
+    },
+    "Postavke" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "Postavljanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setup"
+          }
+        }
+      }
+    },
+    "Postižemo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achieved"
+          }
+        }
+      }
+    },
+    "Potpomognuta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assisted"
+          }
+        }
+      }
+    },
+    "Potvrdi seriju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm set"
+          }
+        }
+      }
+    },
+    "Povezati s Apple Zdravljem?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect to Apple Health?"
+          }
+        }
+      }
+    },
+    "Povijest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
+          }
+        }
+      }
+    },
+    "Početna" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
+          }
+        }
+      }
+    },
+    "Početnik" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beginner"
+          }
+        }
+      }
+    },
+    "Pravila privatnosti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy policy"
+          }
+        }
+      }
+    },
+    "Prazan trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty workout"
+          }
+        }
+      }
+    },
+    "Praćenje tijela" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body tracking"
+          }
+        }
+      }
+    },
+    "Predložak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Template"
+          }
+        }
+      }
+    },
+    "Prednja loža" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quadriceps"
+          }
+        }
+      }
+    },
+    "Prekinut trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interrupted workout"
+          }
+        }
+      }
+    },
+    "Preostali odmor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest remaining"
+          }
+        }
+      }
+    },
+    "Preskakanje užeta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jump rope"
+          }
+        }
+      }
+    },
+    "Preskočeni trening se ne računa u ovom ciklusu. Poništiti ga možeš u uređivaču rasporeda dok je ciklus u tijeku." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A skipped workout doesn't count in this cycle. You can undo it in the schedule editor while the cycle is in progress."
+          }
+        }
+      }
+    },
+    "Preskoči" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip"
+          }
+        }
+      }
+    },
+    "Preskoči odmor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip rest"
+          }
+        }
+      }
+    },
+    "Preskoči ovaj trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip this workout"
+          }
+        }
+      }
+    },
+    "Preskoči sve" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip all"
+          }
+        }
+      }
+    },
+    "Prethodna vježba" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous exercise"
+          }
+        }
+      }
+    },
+    "Prethodni mjesec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous month"
+          }
+        }
+      }
+    },
+    "Pretraži vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search exercises"
+          }
+        }
+      }
+    },
+    "Prijavi se ponovno u aplikaciji Postavke." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in again in the Settings app."
+          }
+        }
+      }
+    },
+    "Prijavi se u aplikaciji Postavke (tvoje ime na vrhu)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in in the Settings app (your name at the top)."
+          }
+        }
+      }
+    },
+    "Prikaz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display"
+          }
+        }
+      }
+    },
+    "Prikaz tijela s opterećenjem. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body view with load. %@"
+          }
+        }
+      }
+    },
+    "Prikaz tijela. Rađeno: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body view. Worked: %@"
+          }
+        }
+      }
+    },
+    "Prikaži arhivirane" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show archived"
+          }
+        }
+      }
+    },
+    "Primarni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primary"
+          }
+        }
+      }
+    },
+    "Produlji odmor za 10 sekundi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extend rest by 10 seconds"
+          }
+        }
+      }
+    },
+    "Program je dodan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Program added"
+          }
+        }
+      }
+    },
+    "Program se nije mogao dodati." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The program couldn't be added."
+          }
+        }
+      }
+    },
+    "Programi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programs"
+          }
+        }
+      }
+    },
+    "Promijeni redoslijed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reorder"
+          }
+        }
+      }
+    },
+    "Promjena se nije mogla spremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The change couldn't be saved."
+          }
+        }
+      }
+    },
+    "Promjena vrijedi kad zatvoriš aplikaciju (povuci je prema gore u prikazu otvorenih aplikacija) i ponovno je otvoriš." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The change takes effect after you close the app (swipe it up in the app switcher) and open it again."
+          }
+        }
+      }
+    },
+    "Prosjek zadnjih 12 tjedana: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average of the last 12 weeks: %@"
+          }
+        }
+      }
+    },
+    "Prosječni puls" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average heart rate"
+          }
+        }
+      }
+    },
+    "Prototipi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prototypes"
+          }
+        }
+      }
+    },
+    "Provjeravam iCloud…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking iCloud…"
+          }
+        }
+      }
+    },
+    "Prošli mjesec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last month"
+          }
+        }
+      }
+    },
+    "Prošli put %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last time %@"
+          }
+        }
+      }
+    },
+    "Prošli tjedan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last week"
+          }
+        }
+      }
+    },
+    "Prošli tjedan: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last week: %@"
+          }
+        }
+      }
+    },
+    "Prsa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chest"
+          }
+        }
+      }
+    },
+    "Prvo dodaj vježbu s kojom ćeš je spojiti u superset." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First add an exercise to pair it with in a superset."
+          }
+        }
+      }
+    },
+    "Prvo izvezi sigurnosnu kopiju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export a backup first"
+          }
+        }
+      }
+    },
+    "RIR" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RIR"
+          }
+        }
+      }
+    },
+    "RPE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RPE"
+          }
+        }
+      }
+    },
+    "RPE %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RPE %@"
+          }
+        }
+      }
+    },
+    "Rad" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Work"
+          }
+        }
+      }
+    },
+    "Radna serija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Working set"
+          }
+        }
+      }
+    },
+    "Ramena" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shoulders"
+          }
+        }
+      }
+    },
+    "Raspored" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule"
+          }
+        }
+      }
+    },
+    "Raspored %@ nalazi se u kartici Rasporedi, a ciljeve u treningu možeš prilagoditi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The %@ schedule is in the Schedules tab, and you can adjust the targets in each workout."
+          }
+        }
+      }
+    },
+    "Raspored i trening ostaju nepromijenjeni za sljedeće cikluse." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The schedule and workout stay unchanged for the next cycles."
+          }
+        }
+      }
+    },
+    "Raspored nije aktivan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The schedule isn't active."
+          }
+        }
+      }
+    },
+    "Raspored se nije mogao stvoriti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The schedule couldn't be created."
+          }
+        }
+      }
+    },
+    "Rasporedi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedules"
+          }
+        }
+      }
+    },
+    "Razdoblje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Period"
+          }
+        }
+      }
+    },
+    "Razina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level"
+          }
+        }
+      }
+    },
+    "Redoslijed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Order"
+          }
+        }
+      }
+    },
+    "Rekompozicija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recomposition"
+          }
+        }
+      }
+    },
+    "Rekordi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records"
+          }
+        }
+      }
+    },
+    "Rekordi (PR)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records (PR)"
+          }
+        }
+      }
+    },
+    "Rekordi se pojave kad nadmašiš ranije treninge." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records appear when you beat earlier workouts."
+          }
+        }
+      }
+    },
+    "Roza" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pink"
+          }
+        }
+      }
+    },
+    "Ruka" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arm"
+          }
+        }
+      }
+    },
+    "Ruke" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arms"
+          }
+        }
+      }
+    },
+    "Samo šipka." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bar only."
+          }
+        }
+      }
+    },
+    "Sažetak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summary"
+          }
+        }
+      }
+    },
+    "Sekundarni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Secondary"
+          }
+        }
+      }
+    },
+    "Sekunde: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seconds: %lld"
+          }
+        }
+      }
+    },
+    "Serija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set"
+          }
+        }
+      }
+    },
+    "Serija %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set %lld"
+          }
+        }
+      }
+    },
+    "Serija %lld od %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Serija se nije mogla spremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The set couldn't be saved."
+          }
+        }
+      }
+    },
+    "Serije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets"
+          }
+        }
+      }
+    },
+    "Serije koje nisu označene završenima neće se spremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets that aren't marked as completed won't be saved."
+          }
+        }
+      }
+    },
+    "Serije: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets: %lld"
+          }
+        }
+      }
+    },
+    "Sinkronizacija isključena" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync off"
+          }
+        }
+      }
+    },
+    "Sinkronizacija nije dostupna" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync unavailable"
+          }
+        }
+      }
+    },
+    "Sinkronizacija nije pokrenuta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync not started"
+          }
+        }
+      }
+    },
+    "Sinkronizacija nije uspjela" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync failed"
+          }
+        }
+      }
+    },
+    "Sinkronizacija preko iClouda" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud sync"
+          }
+        }
+      }
+    },
+    "Sinkronizacija u ovom pokretanju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync in this session"
+          }
+        }
+      }
+    },
+    "Sinkroniziram…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Syncing…"
+          }
+        }
+      }
+    },
+    "Sinkronizirano preko iClouda" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synced with iCloud"
+          }
+        }
+      }
+    },
+    "Skijaško trčanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cross-country skiing"
+          }
+        }
+      }
+    },
+    "Skrati odmor za 10 sekundi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shorten rest by 10 seconds"
+          }
+        }
+      }
+    },
+    "Slika" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo"
+          }
+        }
+      }
+    },
+    "Slika se nije mogla učitati." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The photo couldn't be loaded."
+          }
+        }
+      }
+    },
+    "Sljedeća vježba" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next exercise"
+          }
+        }
+      }
+    },
+    "Sljedeće" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "Sljedeće: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next: %@"
+          }
+        }
+      }
+    },
+    "Sljedeće: %@, serija %lld od %lld." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next: %1$@, set %2$lld of %3$lld."
+          }
+        }
+      }
+    },
+    "Sljedeći" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "Sljedeći mjesec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next month"
+          }
+        }
+      }
+    },
+    "Sljedeći trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next workout"
+          }
+        }
+      }
+    },
+    "Sljedeći trening i odmor između serija." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next workout and rest between sets."
+          }
+        }
+      }
+    },
+    "Složena" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compound"
+          }
+        }
+      }
+    },
+    "Službene" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Official"
+          }
+        }
+      }
+    },
+    "Smanji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimize"
+          }
+        }
+      }
+    },
+    "Snaga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strength"
+          }
+        }
+      }
+    },
+    "Sprava" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Machine"
+          }
+        }
+      }
+    },
+    "Spremi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "Spremljeno u Zdravlje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved to Health."
+          }
+        }
+      }
+    },
+    "Sredina leđa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Middle back"
+          }
+        }
+      }
+    },
+    "Srednja razina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intermediate"
+          }
+        }
+      }
+    },
+    "Srednji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intermediate"
+          }
+        }
+      }
+    },
+    "Stanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        }
+      }
+    },
+    "Statistika" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistics"
+          }
+        }
+      }
+    },
+    "Statistika se pojavi nakon prvog završenog treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistics appear after your first completed workout."
+          }
+        }
+      }
+    },
+    "Stepenice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stairs"
+          }
+        }
+      }
+    },
+    "Stražnja loža" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hamstrings"
+          }
+        }
+      }
+    },
+    "Struk" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waist"
+          }
+        }
+      }
+    },
+    "Stvori shemu u Developmentu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create schema in Development"
+          }
+        }
+      }
+    },
+    "Superset" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Superset"
+          }
+        }
+      }
+    },
+    "Superset s" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Superset with"
+          }
+        }
+      }
+    },
+    "Sustav" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System"
+          }
+        }
+      }
+    },
+    "Sve" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
+    "Sve serije su gotove" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All sets done"
+          }
+        }
+      }
+    },
+    "Sve serije su završene" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All sets are completed"
+          }
+        }
+      }
+    },
+    "Svi rekordi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All records"
+          }
+        }
+      }
+    },
+    "Svijetla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
+          }
+        }
+      }
+    },
+    "Tamna" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark"
+          }
+        }
+      }
+    },
+    "Tamnija boja znači veće opterećenje. Dodirni dio tijela za broj treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A darker color means a higher load. Tap a body part to see the number of workouts."
+          }
+        }
+      }
+    },
+    "Tamnije: glavni mišići. Svjetlije: pomoćni mišići." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Darker: primary muscles. Lighter: secondary muscles."
+          }
+        }
+      }
+    },
+    "Tema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Theme"
+          }
+        }
+      }
+    },
+    "Težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight"
+          }
+        }
+      }
+    },
+    "Težina se interno uvijek sprema u kilogramima, pa jedinicu možeš kasnije promijeniti u Postavkama." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight is always stored in kilograms internally, so you can change the unit later in Settings."
+          }
+        }
+      }
+    },
+    "Težina × ponavljanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight × reps"
+          }
+        }
+      }
+    },
+    "Težina, opsezi i vlastite mjere s grafovima." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight, circumferences and custom measurements with charts."
+          }
+        }
+      }
+    },
+    "Težina, procjena 1RM i volumen kroz vrijeme za jednu vježbu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight, estimated 1RM and volume over time for one exercise."
+          }
+        }
+      }
+    },
+    "Tijelo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body"
+          }
+        }
+      }
+    },
+    "Tijelo na prikazu mišića" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body in muscle view"
+          }
+        }
+      }
+    },
+    "Tirkizna" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teal"
+          }
+        }
+      }
+    },
+    "Tjedan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week"
+          }
+        }
+      }
+    },
+    "Tjedni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weeks"
+          }
+        }
+      }
+    },
+    "Tjedni volumen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly volume"
+          }
+        }
+      }
+    },
+    "Točna težina nije moguća s dostupnim pločama." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The exact weight isn't possible with the available plates."
+          }
+        }
+      }
+    },
+    "Trajanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration"
+          }
+        }
+      }
+    },
+    "Trajanje + udaljenost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration + distance"
+          }
+        }
+      }
+    },
+    "Trajanje treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout duration"
+          }
+        }
+      }
+    },
+    "Traje dok ga ne ugasim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs until I turn it off"
+          }
+        }
+      }
+    },
+    "Trake" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bands"
+          }
+        }
+      }
+    },
+    "Trapez" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traps"
+          }
+        }
+      }
+    },
+    "Trbuh" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Core"
+          }
+        }
+      }
+    },
+    "Trbušni mišići" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abdominals"
+          }
+        }
+      }
+    },
+    "Trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout"
+          }
+        }
+      }
+    },
+    "Trening bez ijedne završene serije ne može se spremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A workout without any completed sets can't be saved."
+          }
+        }
+      }
+    },
+    "Trening i njegove serije bit će trajno obrisani, a rekordi i statistika preračunat će se bez njega." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout and its sets will be permanently deleted, and records and statistics will be recalculated without it."
+          }
+        }
+      }
+    },
+    "Trening i sve serije bit će obrisani." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout and all its sets will be deleted."
+          }
+        }
+      }
+    },
+    "Trening i sve unesene serije bit će obrisani." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout and all entered sets will be deleted."
+          }
+        }
+      }
+    },
+    "Trening je ostao otvoren. Možeš ga nastaviti, završiti ili odbaciti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A workout was left open. You can resume, finish or discard it."
+          }
+        }
+      }
+    },
+    "Trening je otvoren dulje od 6 sati bez aktivnosti. Završi ga na zadnjoj završenoj seriji ili ga odbaci." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout has been open for more than 6 hours without activity. Finish it at the last completed set or discard it."
+          }
+        }
+      }
+    },
+    "Trening je u tijeku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout in progress"
+          }
+        }
+      }
+    },
+    "Trening nije pronađen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout not found"
+          }
+        }
+      }
+    },
+    "Trening samo na iPhoneu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout on iPhone only"
+          }
+        }
+      }
+    },
+    "Trening se nije mogao obrisati." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout couldn't be deleted."
+          }
+        }
+      }
+    },
+    "Trening se nije mogao pokrenuti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout couldn't be started."
+          }
+        }
+      }
+    },
+    "Trening se nije mogao spremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout couldn't be saved."
+          }
+        }
+      }
+    },
+    "Trening se nije mogao stvoriti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout couldn't be created."
+          }
+        }
+      }
+    },
+    "Trening se pokreće na satu u aplikaciji Workout. Kad ga završiš, Apollo ga uvozi iz Zdravlja i raspored ide dalje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout starts on the watch in the Workout app. When you finish it, Apollo imports it from Health and the schedule moves on."
+          }
+        }
+      }
+    },
+    "Trening se pokreće na satu u aplikaciji Workout. U rasporedu ga Apollo zakazuje na sat za termin podsjetnika." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout starts on the watch in the Workout app. In a schedule, Apollo schedules it on the watch at the reminder time."
+          }
+        }
+      }
+    },
+    "Trening snage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strength training"
+          }
+        }
+      }
+    },
+    "Trening u tijeku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout in progress"
+          }
+        }
+      }
+    },
+    "Trening vodi Apple Watch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Watch is leading the workout"
+          }
+        }
+      }
+    },
+    "Trening vodi iPhone" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone is leading the workout"
+          }
+        }
+      }
+    },
+    "Treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts"
+          }
+        }
+      }
+    },
+    "Treninga tjedno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts per week"
+          }
+        }
+      }
+    },
+    "Treninzi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts"
+          }
+        }
+      }
+    },
+    "Treninzi s iPhonea spremaju se u Zdravlje, a kardio treninzi, težina i visina uvoze se iz njega. Dozvole mijenjaš u Zdravlju: Profil > Aplikacije > Apollo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts from iPhone are saved to Health, and cardio workouts, weight and height are imported from it. Change permissions in Health: Profile > Apps > Apollo."
+          }
+        }
+      }
+    },
+    "Treninzi se slažu u kartici Rasporedi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts are built in the Schedules tab."
+          }
+        }
+      }
+    },
+    "Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove, a kardio treninzi, težina i visina dolaze iz njega. Aplikacija radi i bez toga, a odluku mijenjaš u Postavkama." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts are saved to Health and count toward your Activity rings, and cardio workouts, weight and height come from it. The app works without it too, and you can change this in Settings."
+          }
+        }
+      }
+    },
+    "Treninzi, predlošci, rasporedi, vlastite vježbe, mjerenja i postavke sinkroniziraju se preko tvog iClouda između tvojih uređaja. Katalog vježbi je dio aplikacije i ne sinkronizira se." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts, templates, schedules, custom exercises, measurements and settings sync between your devices through your iCloud. The exercise catalog is part of the app and isn't synced."
+          }
+        }
+      }
+    },
+    "Triceps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Triceps"
+          }
+        }
+      }
+    },
+    "Trčanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Running"
+          }
+        }
+      }
+    },
+    "Trčanje 5 km" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run 5 km"
+          }
+        }
+      }
+    },
+    "U Dopuštenim obavijestima dodaj Apollo, da obavijest o kraju odmora i dalje stiže." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Apollo under Allowed Notifications so the end-of-rest notification still comes through."
+          }
+        }
+      }
+    },
+    "U kojoj jedinici bilježiš težinu?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Which unit do you log weight in?"
+          }
+        }
+      }
+    },
+    "U ovom mjesecu nema odrađenih treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts this month."
+          }
+        }
+      }
+    },
+    "U ovom razdoblju još nema treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts in this period yet."
+          }
+        }
+      }
+    },
+    "U redu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "Udaljenost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        }
+      }
+    },
+    "Uključuje se nakon ponovnog pokretanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns on after relaunch"
+          }
+        }
+      }
+    },
+    "Ukloni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        }
+      }
+    },
+    "Ukloni sliku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove photo"
+          }
+        }
+      }
+    },
+    "Ukloni sve zakazano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove all scheduled"
+          }
+        }
+      }
+    },
+    "Ukloniti vježbu?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove exercise?"
+          }
+        }
+      }
+    },
+    "Uklonjene vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed exercises"
+          }
+        }
+      }
+    },
+    "Uklonjene vježbe (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed exercises (%lld)"
+          }
+        }
+      }
+    },
+    "Unos" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Input"
+          }
+        }
+      }
+    },
+    "Unutra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indoor"
+          }
+        }
+      }
+    },
+    "Upiši broj." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a number."
+          }
+        }
+      }
+    },
+    "Upiši sve vrijednosti serije prije označavanja." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter all values for the set before marking it."
+          }
+        }
+      }
+    },
+    "Upiši sve vrijednosti serije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter all values for the set."
+          }
+        }
+      }
+    },
+    "Upute" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instructions"
+          }
+        }
+      }
+    },
+    "Upute za ovu vježbu su zasad samo na engleskom." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instructions for this exercise are only in English for now."
+          }
+        }
+      }
+    },
+    "Uredi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
+        }
+      }
+    },
+    "Uredi kartice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit cards"
+          }
+        }
+      }
+    },
+    "Uredi vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit exercise"
+          }
+        }
+      }
+    },
+    "Uređivač odabrane stavke prikazuje se ovdje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The editor for the selected item appears here."
+          }
+        }
+      }
+    },
+    "Usporedba s prethodnim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compared with previous"
+          }
+        }
+      }
+    },
+    "Usporedba se pojavi kad u ovom ili prethodnom razdoblju postoji trening." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The comparison appears when there's a workout in this or the previous period."
+          }
+        }
+      }
+    },
+    "Usporedba: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comparison: %@"
+          }
+        }
+      }
+    },
+    "Usporedi s drugom vježbom" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare with another exercise"
+          }
+        }
+      }
+    },
+    "Uvezeno iz Zdravlja." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported from Health."
+          }
+        }
+      }
+    },
+    "Uvezi iz datoteke" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import from file"
+          }
+        }
+      }
+    },
+    "Uvoz je gotov." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import complete."
+          }
+        }
+      }
+    },
+    "Uvoz nije uspio." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import failed."
+          }
+        }
+      }
+    },
+    "Vani" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outdoor"
+          }
+        }
+      }
+    },
+    "Vanjska strana bedra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outer thigh"
+          }
+        }
+      }
+    },
+    "Vanjsko bedro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outer thigh"
+          }
+        }
+      }
+    },
+    "Verzija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        }
+      }
+    },
+    "Veslanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rowing"
+          }
+        }
+      }
+    },
+    "Veća maksimalna težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Higher max weight"
+          }
+        }
+      }
+    },
+    "Veći mišići" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bigger muscles"
+          }
+        }
+      }
+    },
+    "Visina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Height"
+          }
+        }
+      }
+    },
+    "Visina i težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Height and weight"
+          }
+        }
+      }
+    },
+    "Više" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        }
+      }
+    },
+    "Vježba" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise"
+          }
+        }
+      }
+    },
+    "Vježba je gotova" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise done"
+          }
+        }
+      }
+    },
+    "Vježba nije pronađena" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise not found"
+          }
+        }
+      }
+    },
+    "Vježba se nije mogla dodati." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The exercise couldn't be added."
+          }
+        }
+      }
+    },
+    "Vježba se nije mogla spremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The exercise couldn't be saved."
+          }
+        }
+      }
+    },
+    "Vježba se nije mogla ukloniti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The exercise couldn't be removed."
+          }
+        }
+      }
+    },
+    "Vježba uklonjena" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise removed"
+          }
+        }
+      }
+    },
+    "Vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercises"
+          }
+        }
+      }
+    },
+    "Vježbe: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercises: %lld"
+          }
+        }
+      }
+    },
+    "Vlastita" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom"
+          }
+        }
+      }
+    },
+    "Vlastita mjera" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom measurement"
+          }
+        }
+      }
+    },
+    "Vlastita pauza" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom rest"
+          }
+        }
+      }
+    },
+    "Vlastita težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bodyweight"
+          }
+        }
+      }
+    },
+    "Vlastita težina + teret" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bodyweight + load"
+          }
+        }
+      }
+    },
+    "Vlastite" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom"
+          }
+        }
+      }
+    },
+    "Vlastite mjere" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom measurements"
+          }
+        }
+      }
+    },
+    "Volumen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume"
+          }
+        }
+      }
+    },
+    "Volumen (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume (%@)"
+          }
+        }
+      }
+    },
+    "Volumen po mišićima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume by muscle"
+          }
+        }
+      }
+    },
+    "Vožnja bicikla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cycling"
+          }
+        }
+      }
+    },
+    "Vrat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neck"
+          }
+        }
+      }
+    },
+    "Vrati" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        }
+      }
+    },
+    "Vrati vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore exercise"
+          }
+        }
+      }
+    },
+    "Vrijednost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Value"
+          }
+        }
+      }
+    },
+    "Vrijednost mora biti veća od nule." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The value must be greater than zero."
+          }
+        }
+      }
+    },
+    "Vrijeme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time"
+          }
+        }
+      }
+    },
+    "Vrijeme za sljedeću seriju." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time for your next set."
+          }
+        }
+      }
+    },
+    "Vrijeme za trening." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time to work out."
+          }
+        }
+      }
+    },
+    "Vrijeme za trening: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time to work out: %@"
+          }
+        }
+      }
+    },
+    "Vrijeme za trening: %@. Pokreni ga na satu u aplikaciji Workout." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time to work out: %@. Start it on your watch in the Workout app."
+          }
+        }
+      }
+    },
+    "Vrsta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "Vrsta unosa određuje polja u retku serije i način računanja volumena." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The input type determines the fields in a set row and how volume is calculated."
+          }
+        }
+      }
+    },
+    "WorkoutKit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WorkoutKit"
+          }
+        }
+      }
+    },
+    "WorkoutKit zakazivanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WorkoutKit scheduling"
+          }
+        }
+      }
+    },
+    "Z" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W"
+          }
+        }
+      }
+    },
+    "Za graf trebaju barem dva treninga s ovom vježbom." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The chart needs at least two workouts with this exercise."
+          }
+        }
+      }
+    },
+    "Za odabrani dan nema odrađenih treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts on the selected day."
+          }
+        }
+      }
+    },
+    "Za ovaj trening treba Apple Watch uparen s ovim iPhoneom." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This workout needs an Apple Watch paired with this iPhone."
+          }
+        }
+      }
+    },
+    "Zaboravljen trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forgotten workout"
+          }
+        }
+      }
+    },
+    "Zadana pauza" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default rest"
+          }
+        }
+      }
+    },
+    "Zadnja sinkronizacija: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last sync: %@"
+          }
+        }
+      }
+    },
+    "Zadnji trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last workout"
+          }
+        }
+      }
+    },
+    "Zagrijavanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warm-up"
+          }
+        }
+      }
+    },
+    "Zakazano (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scheduled (%lld)"
+          }
+        }
+      }
+    },
+    "Zakazano na satu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scheduled on watch"
+          }
+        }
+      }
+    },
+    "Zakazivanje nije uspjelo. Provjeri je li sat uparen i je li Apollu dopušteno zakazivanje treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scheduling failed. Check that the watch is paired and that Apollo is allowed to schedule workouts."
+          }
+        }
+      }
+    },
+    "Zakaži na satu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule on watch"
+          }
+        }
+      }
+    },
+    "Zakaži trčanje za 24 h" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule a run in 24 h"
+          }
+        }
+      }
+    },
+    "Zakaži trčanje za 5 min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule a run in 5 min"
+          }
+        }
+      }
+    },
+    "Zamijeni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace"
+          }
+        }
+      }
+    },
+    "Zamijeni sliku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace photo"
+          }
+        }
+      }
+    },
+    "Zamijeni vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace exercise"
+          }
+        }
+      }
+    },
+    "Zamijenjeno u ovom ciklusu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replaced in this cycle"
+          }
+        }
+      }
+    },
+    "Zapis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log"
+          }
+        }
+      }
+    },
+    "Započni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
+    "Započni trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start workout"
+          }
+        }
+      }
+    },
+    "Započni: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start: %@"
+          }
+        }
+      }
+    },
+    "Zatraži dozvolu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request permission"
+          }
+        }
+      }
+    },
+    "Zatvori" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        }
+      }
+    },
+    "Zatvori vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close exercise"
+          }
+        }
+      }
+    },
+    "Završene serije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed sets"
+          }
+        }
+      }
+    },
+    "Završi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish"
+          }
+        }
+      }
+    },
+    "Završi i spremi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish and save"
+          }
+        }
+      }
+    },
+    "Završi seriju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete set"
+          }
+        }
+      }
+    },
+    "Završi trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish workout"
+          }
+        }
+      }
+    },
+    "Završi trening u aplikaciji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish workout in the app"
+          }
+        }
+      }
+    },
+    "Završiti trening?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish workout?"
+          }
+        }
+      }
+    },
+    "Zdravlje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health"
+          }
+        }
+      }
+    },
+    "Zdravlje i forma" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health and fitness"
+          }
+        }
+      }
+    },
+    "Zdravlje nije dostupno na ovom uređaju." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health isn't available on this device."
+          }
+        }
+      }
+    },
+    "Zelena" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Green"
+          }
+        }
+      }
+    },
+    "Zvuk kraja odmora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End-of-rest sound"
+          }
+        }
+      }
+    },
+    "bez cilja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no goal"
+          }
+        }
+      }
+    },
+    "cm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cm"
+          }
+        }
+      }
+    },
+    "github.com/Jsplice/MuscleMap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "github.com/Jsplice/MuscleMap"
+          }
+        }
+      }
+    },
+    "iCloud" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud"
+          }
+        }
+      }
+    },
+    "iCloud je ograničen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud is restricted"
+          }
+        }
+      }
+    },
+    "iCloud je pun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud is full"
+          }
+        }
+      }
+    },
+    "iCloud nije prijavljen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not signed in to iCloud"
+          }
+        }
+      }
+    },
+    "iCloud traži ponovnu prijavu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud needs you to sign in again"
+          }
+        }
+      }
+    },
+    "iCloud trenutno nije dostupan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud is currently unavailable"
+          }
+        }
+      }
+    },
+    "iCloud trenutno nije dostupan, pa se podaci u njemu ne mogu obrisati. Ništa nije obrisano." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud is currently unavailable, so the data in it can't be deleted. Nothing was deleted."
+          }
+        }
+      }
+    },
+    "km" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "km"
+          }
+        }
+      }
+    },
+    "min:s" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "min:s"
+          }
+        }
+      }
+    },
+    "oporavak %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "recovery %@"
+          }
+        }
+      }
+    },
+    "otk/min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bpm"
+          }
+        }
+      }
+    },
+    "pon." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "reps"
+          }
+        }
+      }
+    },
+    "zagrijavanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "warm-up"
+          }
+        }
+      }
+    },
+    "·" : {
+      "shouldTranslate" : false
+    },
+    "×" : {
+      "shouldTranslate" : false
+    },
+    "Čeka internetsku vezu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for internet connection"
+          }
+        }
+      }
+    },
+    "Šipka" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barbell"
+          }
+        }
+      }
+    },
+    "Široki leđni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lats"
+          }
+        }
+      }
+    },
+    "Što je tvoj cilj?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What's your goal?"
+          }
+        }
+      }
+    },
+    "Žensko" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Female"
+          }
+        }
+      }
+    },
+    "–" : {
+      "shouldTranslate" : false
+    },
+    "−10" : {
+      "shouldTranslate" : false
+    },
+    "−10 s" : {
+      "shouldTranslate" : false
+    }
+  },
+  "version" : "1.0"
+}

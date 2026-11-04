@@ -28,6 +28,9 @@ jobs:
       - name: Testovi CatalogBuildera
         run: python3 -m unittest discover -s Tools/CatalogBuilder
 
+      - name: Testovi provjere lokalizacije
+        run: python3 -m unittest discover -s Tools/Localization
+
       - name: Testovi paketa GymKit
         run: swift test --package-path Packages/GymKit
 
@@ -65,3 +68,31 @@ jobs:
             GYMAPP_ENTITLEMENTS_SUFFIX=-PersonalTeam \
             GYMAPP_EXTRA_CONDITIONS=PERSONAL_TEAM \
             CODE_SIGNING_ALLOWED=NO | tail -n 60
+
+  # Izvlači tekstove iz koda u String Catalog i provjerava da svaki ima engleski prijevod.
+  localization:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Alati
+        run: brew install xcodegen
+
+      - name: Generiranje projekta
+        run: xcodegen generate
+
+      - name: Izvoz lokalizacije (ažurira String Catalog iz koda)
+        run: |
+          set -o pipefail
+          xcodebuild -exportLocalizations \
+            -project GymApp.xcodeproj \
+            -localizationPath build/Localizations \
+            -exportLanguage en \
+            CODE_SIGNING_ALLOWED=NO | tail -n 40
+
+      - name: Promjene u katalogu nakon izvoza
+        run: git diff --stat -- Resources/Localization App WatchApp
+
+      - name: Provjera prijevoda
+        run: python3 Tools/Localization/check_catalog.py

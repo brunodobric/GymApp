@@ -10,14 +10,14 @@ final class CatalogStore {
     private(set) var summaries: [ExerciseSummary] = []
     private(set) var errorText: String?
 
-    /// Jezik za nazive vježbi: "hr" ili "en" (za sve ostale engleski, dok nema prijevoda).
+    /// Jezik za nazive i upute vježbi: "hr" ili "en". Prati jezik sučelja aplikacije
+    /// (ne regiju uređaja), da katalog i ostatak aplikacije uvijek budu na istom jeziku.
     let language: String
 
     private let directory: URL?
 
-    init(bundle: Bundle = .main, locale: Locale = .current) {
-        let code = locale.language.languageCode?.identifier ?? "en"
-        language = code == "hr" ? "hr" : "en"
+    init(bundle: Bundle = .main) {
+        language = bundle.preferredLocalizations.first == "hr" ? "hr" : "en"
         directory = bundle.resourceURL?.appendingPathComponent("Catalog")
         load()
     }

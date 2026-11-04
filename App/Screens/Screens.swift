@@ -98,7 +98,7 @@ struct HomeScreen: View {
                 handle(newValue)
             }
             .confirmationDialog(
-                LocalizedStringKey(recovery?.isStale == true ? "Zaboravljen trening" : "Prekinut trening"),
+                recovery?.isStale == true ? Text("Zaboravljen trening") : Text("Prekinut trening"),
                 isPresented: Binding(get: { recovery != nil }, set: { if !$0 { recovery = nil } }),
                 titleVisibility: .visible,
                 presenting: recovery
