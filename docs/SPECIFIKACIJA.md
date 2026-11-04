@@ -150,6 +150,8 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 - **iPad:** Sidebar (NavigationSplitView) s istim sekcijama.
 
 ### Postavke (pristup s Dashboarda)
+Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju stranicu: **Prikaz, Trening, Ploče i šipka** · **Obavijesti, Zdravlje, iCloud** · **Podaci** · **O aplikaciji**. Na iPadu je isti list s istim stranicama.
+
 * **Tema:** Svijetlo / Tamno / Automatski (prema sustavu).
 * **Accent boja:** Korisnik može birati accent boju aplikacije.
 * **Jedinice:** kg / lbs.

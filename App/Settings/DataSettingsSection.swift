@@ -84,8 +84,6 @@ struct DataSettingsSection: View {
                 model.showsDeleteStart = true
             }
             .disabled(model.isDeleting)
-        } header: {
-            Text("Podaci")
         } footer: {
             Text("""
                 JSON je puna sigurnosna kopija. CSV datoteke možeš uvesti natrag u aplikaciju, a uvesti možeš i CSV \
@@ -100,7 +98,7 @@ struct DataSettingsSection: View {
 }
 
 extension View {
-    /// Prozori za Postavke > Podaci. Stavlja se jednom, na `Form` koji sadrži `DataSettingsSection`.
+    /// Prozori za Postavke > Podaci. Stavlja se jednom, na `Form` koji sadrži `DataSettingsSection` (vidi `DataSettingsScreen`).
     func dataSettingsPresentations(_ model: DataSettingsModel, onReset: @escaping () -> Void) -> some View {
         modifier(DataSettingsPresentations(model: model, onReset: onReset))
     }
