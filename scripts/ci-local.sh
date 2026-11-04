@@ -31,8 +31,8 @@ fi
 step "Generiranje projekta"
 xcodegen generate
 
-step "Build iOS (simulator)"
-xcodebuild build -project GymApp.xcodeproj -scheme GymApp -configuration Debug \
+step "Build iOS i UI testova (simulator)"
+xcodebuild build-for-testing -project GymApp.xcodeproj -scheme GymApp -configuration Debug \
     -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO | tail -n 60
 
 step "Build watchOS (simulator)"

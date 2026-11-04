@@ -16,8 +16,8 @@ struct ProgramsScreen: View {
         NavigationStack {
             List(ProgramLibrary.all) { program in
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(program.name).font(.headline)
-                    Text(program.summary)
+                    Text(program.title).font(.headline)
+                    Text(program.details)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     Button("Dodaj program", systemImage: "plus.circle") { install(program) }
@@ -47,7 +47,9 @@ struct ProgramsScreen: View {
 
     private func install(_ program: Program) {
         do {
-            let schedule = try ProgramInstaller(context: context).install(program) { id in
+            let schedule = try ProgramInstaller(context: context).install(
+                program, name: program.title, workoutName: \.title
+            ) { id in
                 catalogStore.catalog?.exercise(withID: id)?.displayName(language: catalogStore.language) ?? id
             }
             ReminderScheduler.refresh(context: context)

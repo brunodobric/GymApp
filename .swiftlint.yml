@@ -3,6 +3,7 @@ included:
   - WatchApp
   - Widgets
   - Shared
+  - UITests
   - Packages/GymKit/Sources
   - Packages/GymKit/Tests
 excluded:

@@ -22,6 +22,7 @@ let package = Package(
         .library(name: "Backup", targets: ["Backup"]),
         .library(name: "HealthSync", targets: ["HealthSync"]),
         .library(name: "Diagnostics", targets: ["Diagnostics"]),
+        .library(name: "Demo", targets: ["Demo"]),
     ],
     targets: [
         .target(name: "Units"),
@@ -66,6 +67,17 @@ let package = Package(
         ),
         // MetricKit izvještaji spremljeni na uređaju (rušenja, zastoji, performanse).
         .target(name: "Diagnostics"),
+        // Demo podaci za snimke zaslona (samo Debug).
+        .target(
+            name: "Demo",
+            dependencies: ["Models", "Catalog", "Training", "Planning"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .testTarget(
+            name: "DemoTests",
+            dependencies: ["Demo", "Models", "Planning", "Stats", "Training", "Catalog"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .testTarget(name: "UnitsTests", dependencies: ["Units"]),
         .testTarget(name: "DiagnosticsTests", dependencies: ["Diagnostics"]),
         .testTarget(
