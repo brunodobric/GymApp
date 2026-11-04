@@ -1218,26 +1218,6 @@
         }
       }
     },
-    "Crtež: Everkinetic, CC BY-SA 4.0" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drawing: Everkinetic, CC BY-SA 4.0"
-          }
-        }
-      }
-    },
-    "Crteži su izmijenjeni: uklonjena je bijela pozadina, a linije se boje prema temi aplikacije. Izmijenjeni crteži javno su dostupni pod istom licencom." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The drawings have been modified: the white background was removed and the lines are colored to match the app theme. The modified drawings are publicly available under the same license."
-          }
-        }
-      }
-    },
     "Crteži tijela" : {
       "localizations" : {
         "en" : {
@@ -1254,26 +1234,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The body drawings in the heatmap come from the MuscleMap project (MIT license)."
-          }
-        }
-      }
-    },
-    "Crteži vježbi" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exercise drawings"
-          }
-        }
-      }
-    },
-    "Crteži vježbi preuzeti su iz projekta Everkinetic (© Greg Priday i suradnici) i koriste se pod licencom Creative Commons Imenovanje-Dijeli pod istim uvjetima 4.0 (CC BY-SA 4.0)." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exercise drawings are taken from the Everkinetic project (© Greg Priday and contributors) and used under the Creative Commons Attribution-ShareAlike 4.0 license (CC BY-SA 4.0)."
           }
         }
       }
@@ -1614,16 +1574,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Elliptical"
-          }
-        }
-      }
-    },
-    "Everkinetic" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Everkinetic"
           }
         }
       }
@@ -2044,16 +1994,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Separate"
-          }
-        }
-      }
-    },
-    "Izmijenjeni crteži" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Modified drawings"
           }
         }
       }
@@ -2494,16 +2434,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Back"
-          }
-        }
-      }
-    },
-    "Licenca" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "License"
           }
         }
       }
@@ -3858,6 +3788,16 @@
         }
       }
     },
+    "Pauziraj animaciju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause animation"
+          }
+        }
+      }
+    },
     "Plan" : {
       "localizations" : {
         "en" : {
@@ -4054,6 +3994,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No reminder is sent if a workout from the schedule was already done that day, or during an active workout."
+          }
+        }
+      }
+    },
+    "Pokreni animaciju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play animation"
           }
         }
       }

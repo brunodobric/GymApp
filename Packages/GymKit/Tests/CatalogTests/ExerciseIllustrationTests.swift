@@ -2,68 +2,64 @@ import Foundation
 import Testing
 @testable import Catalog
 
-/// Mali katalog u JSON-u: jedna vježba, s crtežima ili bez njih.
-private func catalogJSON(drawings: String?, images: String = #"["Images/X/0.jpg", "Images/X/1.jpg"]"#, drawingsSource: Bool = false) -> Data {
-    let drawingsField = drawings.map { #", "drawings": \#($0)"# } ?? ""
-    let sourceField = drawingsSource
-        ? #""drawingsSource": {"name": "Everkinetic", "repository": "everkinetic/data", "commit": "abc", "license": "CC BY-SA 4.0"},"#
-        : ""
-    return Data("""
+/// Mali katalog u JSON-u: jedna vježba sa zadanim slikama.
+private func catalogJSON(images: String = #"["Images/X/0.jpg", "Images/X/1.jpg"]"#, extraFields: String = "") -> Data {
+    Data("""
         {
           "version": 1,
           "source": {"name": "free-exercise-db", "repository": "yuhonas/free-exercise-db", "commit": "abc", "license": "Unlicense"},
-          \(sourceField)
           "exercises": [{
             "id": "X", "name": {"en": "X"}, "instructions": {"en": ["Korak."]}, "category": "legs",
             "primaryMuscles": ["quadriceps"], "secondaryMuscles": [], "equipment": "barbell", "level": "beginner",
             "mechanic": "compound", "movement": "legs", "inputType": "weightReps",
-            "primaryRegions": ["quads"], "secondaryRegions": [], "images": \(images)\(drawingsField)
+            "primaryRegions": ["quads"], "secondaryRegions": [], "images": \(images)\(extraFields)
           }]
         }
         """.utf8)
 }
 
-@Suite("Crteži vježbi")
+@Suite("Prikaz vježbe")
 struct ExerciseIllustrationTests {
 
-    @Test("Katalog bez polja za crteže se učitava, a vježba zadržava fotografije")
-    func catalogWithoutDrawings() throws {
-        let catalog = try ExerciseCatalog(data: catalogJSON(drawings: nil))
+    @Test("Dvije fotografije čine animaciju: početni pa završni položaj")
+    func twoPhotosAnimate() throws {
+        let catalog = try ExerciseCatalog(data: catalogJSON())
         let exercise = try #require(catalog.exercise(withID: "X"))
-        #expect(catalog.drawingsSource == nil)
-        #expect(exercise.drawings == nil)
-        #expect(exercise.illustration == .photos(["Images/X/0.jpg", "Images/X/1.jpg"]))
+        #expect(exercise.illustration == .animation(start: "Images/X/0.jpg", end: "Images/X/1.jpg"))
     }
 
-    @Test("Crtež ima prednost pred fotografijama: početni pa završni položaj")
-    func drawingWins() throws {
-        let data = catalogJSON(drawings: #"["Everkinetic-0122-start", "Everkinetic-0122-end"]"#, drawingsSource: true)
-        let catalog = try ExerciseCatalog(data: data)
-        let exercise = try #require(catalog.exercise(withID: "X"))
-        #expect(exercise.illustration == .drawing(start: "Everkinetic-0122-start", end: "Everkinetic-0122-end"))
-        #expect(catalog.drawingsSource?.license == "CC BY-SA 4.0")
+    @Test("Jedna fotografija stoji mirno, a bez fotografija nema prikaza")
+    func fewerPhotos() throws {
+        let one = try ExerciseCatalog(data: catalogJSON(images: #"["Images/X/0.jpg"]"#))
+        #expect(one.exercises[0].illustration == .photo("Images/X/0.jpg"))
+        let none = try ExerciseCatalog(data: catalogJSON(images: "[]"))
+        #expect(none.exercises[0].illustration == .unavailable)
     }
 
-    @Test("Crtež bez točno dva položaja se ne koristi")
-    func incompleteDrawingFallsBack() throws {
-        let one = try ExerciseCatalog(data: catalogJSON(drawings: #"["Everkinetic-0122-start"]"#))
-        #expect(one.exercises[0].illustration == .photos(["Images/X/0.jpg", "Images/X/1.jpg"]))
-        let nothing = try ExerciseCatalog(data: catalogJSON(drawings: "[]", images: "[]"))
-        #expect(nothing.exercises[0].illustration == .unavailable)
+    @Test("Animaciju čine prve dvije fotografije kad ih ima više")
+    func morePhotos() throws {
+        let catalog = try ExerciseCatalog(data: catalogJSON(images: #"["A.jpg", "B.jpg", "C.jpg"]"#))
+        #expect(catalog.exercises[0].illustration == .animation(start: "A.jpg", end: "B.jpg"))
     }
 
-    @Test("Kodiranje i dekodiranje čuva crteže i njihov izvor")
+    @Test("Stari katalog s poljem za crteže i dalje se učitava")
+    func legacyDrawingsFieldIgnored() throws {
+        let catalog = try ExerciseCatalog(data: catalogJSON(extraFields: #", "drawings": ["Everkinetic-0122-start", "Everkinetic-0122-end"]"#))
+        #expect(catalog.exercises[0].illustration == .animation(start: "Images/X/0.jpg", end: "Images/X/1.jpg"))
+    }
+
+    @Test("Kodiranje i dekodiranje čuva vježbe")
     func roundTrip() throws {
-        let original = try ExerciseCatalog(data: catalogJSON(drawings: #"["A", "B"]"#, drawingsSource: true))
+        let original = try ExerciseCatalog(data: catalogJSON())
         let decoded = try ExerciseCatalog(data: JSONEncoder().encode(original))
         #expect(decoded.exercises == original.exercises)
-        #expect(decoded.drawingsSource == original.drawingsSource)
+        #expect(decoded.source == original.source)
     }
 }
 
-@Suite("Ritam animacije crteža")
-struct DrawingLoopTimingTests {
-    let timing = DrawingLoopTiming(hold: 1, fade: 0.5)
+@Suite("Ritam animacije")
+struct PoseLoopTimingTests {
+    let timing = PoseLoopTiming(hold: 1, fade: 0.5)
 
     @Test("Krug: početni, pretapanje, završni, pretapanje natrag")
     func cycle() {
@@ -102,15 +98,57 @@ struct DrawingLoopTimingTests {
     @Test("Negativno vrijeme i nulto trajanje ne ruše izračun")
     func edgeCases() {
         #expect((0...1).contains(timing.endOpacity(at: -0.4)))
-        #expect(DrawingLoopTiming(hold: 0, fade: 0).endOpacity(at: 5) == 0)
-        let instant = DrawingLoopTiming(hold: 1, fade: 0)
+        #expect(PoseLoopTiming(hold: 0, fade: 0).endOpacity(at: 5) == 0)
+        let instant = PoseLoopTiming(hold: 1, fade: 0)
         #expect(instant.endOpacity(at: 0.5) == 0)
         #expect(instant.endOpacity(at: 1.5) == 1)
-        #expect(DrawingLoopTiming(hold: -1, fade: -1).period == 0)
+        #expect(PoseLoopTiming(hold: -1, fade: -1).period == 0)
     }
 
     @Test("Standardni ritam traje nekoliko sekundi po krugu")
     func standard() {
-        #expect((2...5).contains(DrawingLoopTiming.standard.period))
+        #expect((2...5).contains(PoseLoopTiming.standard.period))
+    }
+}
+
+@Suite("Sat animacije s pauzom")
+struct PoseLoopClockTests {
+    let origin = Date(timeIntervalSinceReferenceDate: 1_000)
+
+    @Test("Novi sat stoji na nuli dok se ne pokrene")
+    func startsStopped() {
+        let clock = PoseLoopClock()
+        #expect(!clock.isRunning)
+        #expect(clock.elapsed(at: origin.addingTimeInterval(10)) == 0)
+    }
+
+    @Test("Pauza zadrži položaj, a nastavak teče od njega")
+    func pauseAndResume() {
+        var clock = PoseLoopClock()
+        clock.start(at: origin)
+        #expect(clock.elapsed(at: origin.addingTimeInterval(2)) == 2)
+        clock.pause(at: origin.addingTimeInterval(2))
+        #expect(!clock.isRunning)
+        #expect(clock.elapsed(at: origin.addingTimeInterval(50)) == 2)
+        clock.start(at: origin.addingTimeInterval(50))
+        #expect(clock.elapsed(at: origin.addingTimeInterval(51.5)) == 3.5)
+    }
+
+    @Test("Ponovljeni start ili pauza ne mijenjaju vrijeme")
+    func idempotent() {
+        var clock = PoseLoopClock()
+        clock.start(at: origin)
+        clock.start(at: origin.addingTimeInterval(5))
+        #expect(clock.elapsed(at: origin.addingTimeInterval(6)) == 6)
+        clock.pause(at: origin.addingTimeInterval(6))
+        clock.pause(at: origin.addingTimeInterval(9))
+        #expect(clock.elapsed(at: origin.addingTimeInterval(9)) == 6)
+    }
+
+    @Test("Sat ne ide unatrag kad je datum prije pokretanja")
+    func neverNegative() {
+        var clock = PoseLoopClock()
+        clock.start(at: origin)
+        #expect(clock.elapsed(at: origin.addingTimeInterval(-3)) == 0)
     }
 }

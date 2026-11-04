@@ -7,8 +7,6 @@ struct ExerciseThumbnail: View {
     enum Source: Hashable, Sendable {
         /// Slika službene vježbe iz bundlea.
         case file(URL)
-        /// Crtež službene vježbe iz asset cataloga (početni položaj), vektorska template slika.
-        case drawing(String)
         /// Fotografija vlastite vježbe iz baze. Uspoređuje se po ključu (id vježbe) i veličini,
         /// da se pri svakom iscrtavanju ne uspoređuju cijeli podaci slike.
         case data(key: String, Data)
@@ -16,15 +14,7 @@ struct ExerciseThumbnail: View {
         static func == (lhs: Source, rhs: Source) -> Bool {
             switch (lhs, rhs) {
             case let (.file(left), .file(right)): left == right
-            case let (.drawing(left), .drawing(right)): left == right
             case let (.data(leftKey, left), .data(rightKey, right)): leftKey == rightKey && left.count == right.count
-            default: false
-            }
-        }
-
-        var isDrawing: Bool {
-            switch self {
-            case .drawing: true
             default: false
             }
         }
@@ -32,7 +22,6 @@ struct ExerciseThumbnail: View {
         func hash(into hasher: inout Hasher) {
             switch self {
             case .file(let url): hasher.combine(url)
-            case .drawing(let name): hasher.combine(name)
             case .data(let key, let data):
                 hasher.combine(key)
                 hasher.combine(data.count)
@@ -48,15 +37,7 @@ struct ExerciseThumbnail: View {
         Color(.tertiarySystemFill)
             .aspectRatio(4 / 3, contentMode: .fit)
             .overlay {
-                if case .drawing(let name) = source {
-                    // Crtež se ne umanjuje ni ne pamti: asset catalog ga crta vektorski u pravoj veličini.
-                    Image(name)
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.primary)
-                        .padding(8)
-                } else if let image {
+                if let image {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
@@ -70,7 +51,7 @@ struct ExerciseThumbnail: View {
             .accessibilityHidden(true)
             .task(id: source) {
                 image = nil
-                guard let source, !source.isDrawing else { return }
+                guard let source else { return }
                 image = await ThumbnailLoader.image(for: source)
             }
     }
@@ -92,7 +73,6 @@ enum ThumbnailLoader {
             let original: UIImage?
             switch source {
             case .file(let url): original = UIImage(contentsOfFile: url.path)
-            case .drawing: original = nil
             case .data(_, let data): original = UIImage(data: data)
             }
             guard let original else { return nil }
@@ -107,7 +87,6 @@ enum ThumbnailLoader {
     private static func cacheKey(for source: ExerciseThumbnail.Source) -> NSString {
         switch source {
         case .file(let url): url.path as NSString
-        case .drawing(let name): name as NSString
         case .data(let key, let data): "\(key)-\(data.count)" as NSString
         }
     }

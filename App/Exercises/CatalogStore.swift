@@ -38,23 +38,17 @@ final class CatalogStore {
         }
     }
 
-    /// Slike su u bundleu i nikad ne idu u iCloud.
-    func imageURLs(for exercise: CatalogExercise) -> [URL] {
-        guard let directory else { return [] }
-        return exercise.images.map { directory.appendingPathComponent($0) }
+    /// Slike su u bundleu i nikad ne idu u iCloud. `path` je putanja iz kataloga, npr. "Images/Pushups/0.jpg".
+    func imageURL(_ path: String) -> URL {
+        (directory ?? Bundle.main.bundleURL).appendingPathComponent(path)
     }
 
-    /// Sličica službene vježbe u mreži kataloga: početni položaj crteža ako postoji, inače prva fotografija.
+    /// Sličica službene vježbe u mreži kataloga: prva fotografija (početni položaj).
     func thumbnail(for summary: ExerciseSummary) -> ExerciseThumbnail.Source? {
-        guard case .catalog(let id) = summary.source, let exercise = catalog?.exercise(withID: id) else { return nil }
-        switch exercise.illustration {
-        case let .drawing(start, _):
-            return .drawing(start)
-        case .photos(let images):
-            guard let first = images.first, let directory else { return nil }
-            return .file(directory.appendingPathComponent(first))
-        case .unavailable:
-            return nil
-        }
+        guard case .catalog(let id) = summary.source,
+              let exercise = catalog?.exercise(withID: id),
+              let first = exercise.images.first,
+              let directory else { return nil }
+        return .file(directory.appendingPathComponent(first))
     }
 }

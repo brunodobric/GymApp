@@ -15,7 +15,7 @@ Ovaj dokument sadrži ažuriranu i proširenu specifikaciju moderne iOS (Swift) 
 * **Licenciranje:** Public domain (Unlicense) — bez obaveza attributiona ili share-alike. Idealno za komercijalnu aplikaciju.
 * **Količina:** ~870 vježbi s slikama. Početni opseg može biti filtriran na 150–200 najkorisnijih, s mogućnošću proširenja na cijeli set.
 * **Vizualni sadržaj:** Statične slike vježbi (JPEG) + detaljne korak-po-korak instrukcije. Body heatmap (primarni i sekundarni mišići) za vizualni prikaz.
-* **Crteži vježbi (faza 7a):** za vježbe za koje postoji crtež u **Everkineticu** (everkinetic/data, CC BY-SA 4.0) fotografije zamjenjuje crtež s dva položaja (početni i završni). Na detalju vježbe crtež se u krug pretapa iz jednog položaja u drugi, a u mreži kataloga prikazuje se početni položaj. Uz Smanji kretanje oba položaja stoje jedan do drugoga bez animacije. Linije prate boju teksta, pa su u tamnom načinu svijetle. Vježbe bez crteža zadržavaju fotografije. CC BY-SA traži atribuciju i javnu kopiju izmijenjenih crteža (`docs/PRAVNO_I_PRIVATNOST.md`).
+* **Animacija vježbe:** na detalju vježbe dvije fotografije iz free-exercise-db (početni i završni položaj) u krug se pretapaju jedna u drugu, a gumb u kutu pauzira i nastavlja animaciju. Animacija stoji dok nije na ekranu ili je aplikacija u pozadini. Uz Smanji kretanje oba položaja stoje jedan do drugoga bez animacije. U mreži kataloga prikazuje se početni položaj. Everkinetic crteži iz faze 7a su izbačeni jer su pokrivali samo dio vježbi (92 od 181), pa prikaz nije bio ujednačen.
 
 ### Kategorizacija i Strukturiranje
 * **Kategorije / Anatomija:** Prsa, Leđa, Ramena, Ruke, Noge, Core/Trbuh, Kardio.
@@ -169,7 +169,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
   * Export u CSV / JSON.
   * Import iz CSV-a (vlastiti backup — format koji app i exportira).
   * Import treninga iz CSV izvoza drugih aplikacija (vidi odjeljak 5).
-* **O aplikaciji:** verzija, atribucija free-exercise-db, atribucija crteža vježbi (Everkinetic, CC BY-SA 4.0) s poveznicom na izmijenjene crteže, pravila privatnosti.
+* **O aplikaciji:** verzija, atribucija free-exercise-db i MuscleMap, pravila privatnosti.
 
 ### Opis tabova
 
@@ -466,7 +466,7 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening** (ono što je stvarno izvedeno) su odvojeni modeli. Odrađeni trening kopira potrebne podatke iz predloška pri pokretanju i nakon toga je neovisan. Zato privremene izmjene, zamjene vježbi i kasnije promjene predloška nikad ne mijenjaju povijest.
 
 ### Katalog (zasebna baza, ne sinkronizira se)
-* **CatalogExercise:** `catalogId` (id iz free-exercise-db), nazivi po jeziku, upute po jeziku, kategorija, primarni i sekundarni mišići, oprema, razina, mehanika (isolation/compound), tip pokreta (push/pull/legs), vrsta unosa (vidi tablicu u odjeljku 2), slike, opcionalno crteži (dva položaja iz Everkinetica).
+* **CatalogExercise:** `catalogId` (id iz free-exercise-db), nazivi po jeziku, upute po jeziku, kategorija, primarni i sekundarni mišići, oprema, razina, mehanika (isolation/compound), tip pokreta (push/pull/legs), vrsta unosa (vidi tablicu u odjeljku 2), slike (dvije: početni i završni položaj, od kojih aplikacija radi animaciju).
 
 ### Korisnička baza (sinkronizira se)
 * **CustomExercise:** `id`, naziv, opis, kategorija, mišići, oprema, vrsta unosa, slika (opcionalno, kao `externalStorage`), `isArchived`.

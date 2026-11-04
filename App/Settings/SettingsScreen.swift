@@ -185,12 +185,6 @@ private struct AboutScreen: View {
                 } label: {
                     LabeledContent("Crteži tijela", value: "MuscleMap")
                 }
-                // Atribucija crteža vježbi (CC BY-SA 4.0 traži autora, licencu, izvor i napomenu o izmjenama).
-                NavigationLink {
-                    ExerciseDrawingsLicenseScreen()
-                } label: {
-                    LabeledContent("Crteži vježbi", value: "Everkinetic")
-                }
             }
             Section {
                 Link("Pravila privatnosti", destination: PrivacyPolicy.url)

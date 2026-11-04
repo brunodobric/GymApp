@@ -6,12 +6,6 @@
   "commit": "f00c92c7dcf1216a928a52c3706c7ce8e2f71ed5",
   "license": "Unlicense"
  },
- "drawingsSource": {
-  "name": "Everkinetic",
-  "repository": "everkinetic/data",
-  "commit": "446bb9a3d0c3beb6b84f7c9d77dfc8af707a2ab6",
-  "license": "CC BY-SA 4.0"
- },
  "exercises": [
   {
    "id": "Barbell_Bench_Press_-_Medium_Grip",
@@ -58,10 +52,6 @@
    "images": [
     "Images/Barbell_Bench_Press_-_Medium_Grip/0.jpg",
     "Images/Barbell_Bench_Press_-_Medium_Grip/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0042-start",
-    "Everkinetic-0042-end"
    ]
   },
   {
@@ -109,10 +99,6 @@
    "images": [
     "Images/Barbell_Incline_Bench_Press_-_Medium_Grip/0.jpg",
     "Images/Barbell_Incline_Bench_Press_-_Medium_Grip/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0043-start",
-    "Everkinetic-0043-end"
    ]
   },
   {
@@ -162,10 +148,6 @@
    "images": [
     "Images/Decline_Barbell_Bench_Press/0.jpg",
     "Images/Decline_Barbell_Bench_Press/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0051-start",
-    "Everkinetic-0051-end"
    ]
   },
   {
@@ -213,10 +195,6 @@
    "images": [
     "Images/Dumbbell_Bench_Press/0.jpg",
     "Images/Dumbbell_Bench_Press/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0055-start",
-    "Everkinetic-0055-end"
    ]
   },
   {
@@ -268,10 +246,6 @@
    "images": [
     "Images/Incline_Dumbbell_Press/0.jpg",
     "Images/Incline_Dumbbell_Press/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0080-start",
-    "Everkinetic-0080-end"
    ]
   },
   {
@@ -313,10 +287,6 @@
    "images": [
     "Images/Dumbbell_Flyes/0.jpg",
     "Images/Dumbbell_Flyes/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0056-start",
-    "Everkinetic-0056-end"
    ]
   },
   {
@@ -364,10 +334,6 @@
    "images": [
     "Images/Incline_Dumbbell_Flyes/0.jpg",
     "Images/Incline_Dumbbell_Flyes/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0062-start",
-    "Everkinetic-0062-end"
    ]
   },
   {
@@ -413,10 +379,6 @@
    "images": [
     "Images/Cable_Crossover/0.jpg",
     "Images/Cable_Crossover/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0048-start",
-    "Everkinetic-0048-end"
    ]
   },
   {
@@ -552,10 +514,6 @@
    "images": [
     "Images/Incline_Cable_Flye/0.jpg",
     "Images/Incline_Cable_Flye/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0060-start",
-    "Everkinetic-0060-end"
    ]
   },
   {
@@ -648,10 +606,6 @@
    "images": [
     "Images/Machine_Bench_Press/0.jpg",
     "Images/Machine_Bench_Press/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0066-start",
-    "Everkinetic-0066-end"
    ]
   },
   {
@@ -699,10 +653,6 @@
    "images": [
     "Images/Smith_Machine_Bench_Press/0.jpg",
     "Images/Smith_Machine_Bench_Press/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0078-start",
-    "Everkinetic-0078-end"
    ]
   },
   {
@@ -748,10 +698,6 @@
    "images": [
     "Images/Pushups/0.jpg",
     "Images/Pushups/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0077-start",
-    "Everkinetic-0077-end"
    ]
   },
   {
@@ -840,10 +786,6 @@
    "images": [
     "Images/Decline_Push-Up/0.jpg",
     "Images/Decline_Push-Up/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0075-start",
-    "Everkinetic-0075-end"
    ]
   },
   {
@@ -889,10 +831,6 @@
    "images": [
     "Images/Dips_-_Chest_Version/0.jpg",
     "Images/Dips_-_Chest_Version/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0054-start",
-    "Everkinetic-0054-end"
    ]
   },
   {
@@ -944,10 +882,6 @@
    "images": [
     "Images/Bent-Arm_Dumbbell_Pullover/0.jpg",
     "Images/Bent-Arm_Dumbbell_Pullover/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0046-start",
-    "Everkinetic-0046-end"
    ]
   },
   {
@@ -995,10 +929,6 @@
    "images": [
     "Images/Pullups/0.jpg",
     "Images/Pullups/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0087-start",
-    "Everkinetic-0087-end"
    ]
   },
   {
@@ -1293,10 +1223,6 @@
    "images": [
     "Images/V-Bar_Pulldown/0.jpg",
     "Images/V-Bar_Pulldown/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0096-start",
-    "Everkinetic-0096-end"
    ]
   },
   {
@@ -1348,10 +1274,6 @@
    "images": [
     "Images/Underhand_Cable_Pulldowns/0.jpg",
     "Images/Underhand_Cable_Pulldowns/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0093-start",
-    "Everkinetic-0093-end"
    ]
   },
   {
@@ -1438,10 +1360,6 @@
    "images": [
     "Images/Straight-Arm_Pulldown/0.jpg",
     "Images/Straight-Arm_Pulldown/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0092-start",
-    "Everkinetic-0092-end"
    ]
   },
   {
@@ -1577,10 +1495,6 @@
    "images": [
     "Images/Reverse_Grip_Bent-Over_Rows/0.jpg",
     "Images/Reverse_Grip_Bent-Over_Rows/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0026-start",
-    "Everkinetic-0026-end"
    ]
   },
   {
@@ -1779,10 +1693,6 @@
    "images": [
     "Images/Seated_Cable_Rows/0.jpg",
     "Images/Seated_Cable_Rows/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0025-start",
-    "Everkinetic-0025-end"
    ]
   },
   {
@@ -1881,10 +1791,6 @@
    "images": [
     "Images/T-Bar_Row_with_Handle/0.jpg",
     "Images/T-Bar_Row_with_Handle/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0029-start",
-    "Everkinetic-0029-end"
    ]
   },
   {
@@ -2022,10 +1928,6 @@
    "images": [
     "Images/Inverted_Row/0.jpg",
     "Images/Inverted_Row/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0086-start",
-    "Everkinetic-0086-end"
    ]
   },
   {
@@ -2085,10 +1987,6 @@
    "images": [
     "Images/Barbell_Deadlift/0.jpg",
     "Images/Barbell_Deadlift/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0099-start",
-    "Everkinetic-0099-end"
    ]
   },
   {
@@ -2185,10 +2083,6 @@
    "images": [
     "Images/Hyperextensions_Back_Extensions/0.jpg",
     "Images/Hyperextensions_Back_Extensions/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0103-start",
-    "Everkinetic-0103-end"
    ]
   },
   {
@@ -2228,10 +2122,6 @@
    "images": [
     "Images/Barbell_Shrug/0.jpg",
     "Images/Barbell_Shrug/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0030-start",
-    "Everkinetic-0030-end"
    ]
   },
   {
@@ -2271,10 +2161,6 @@
    "images": [
     "Images/Dumbbell_Shrug/0.jpg",
     "Images/Dumbbell_Shrug/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0005-start",
-    "Everkinetic-0005-end"
    ]
   },
   {
@@ -2367,10 +2253,6 @@
    "images": [
     "Images/Barbell_Shoulder_Press/0.jpg",
     "Images/Barbell_Shoulder_Press/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0004-start",
-    "Everkinetic-0004-end"
    ]
   },
   {
@@ -2772,10 +2654,6 @@
    "images": [
     "Images/Side_Lateral_Raise/0.jpg",
     "Images/Side_Lateral_Raise/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0018-start",
-    "Everkinetic-0018-end"
    ]
   },
   {
@@ -2866,10 +2744,6 @@
    "images": [
     "Images/Front_Dumbbell_Raise/0.jpg",
     "Images/Front_Dumbbell_Raise/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0033-start",
-    "Everkinetic-0033-end"
    ]
   },
   {
@@ -2913,10 +2787,6 @@
    "images": [
     "Images/Reverse_Flyes/0.jpg",
     "Images/Reverse_Flyes/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0023-start",
-    "Everkinetic-0023-end"
    ]
   },
   {
@@ -3075,10 +2945,6 @@
    "images": [
     "Images/Upright_Barbell_Row/0.jpg",
     "Images/Upright_Barbell_Row/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0014-start",
-    "Everkinetic-0014-end"
    ]
   },
   {
@@ -3236,10 +3102,6 @@
    "images": [
     "Images/Barbell_Curl/0.jpg",
     "Images/Barbell_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0211-start",
-    "Everkinetic-0211-end"
    ]
   },
   {
@@ -3281,10 +3143,6 @@
    "images": [
     "Images/EZ-Bar_Curl/0.jpg",
     "Images/EZ-Bar_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0226-start",
-    "Everkinetic-0226-end"
    ]
   },
   {
@@ -3328,10 +3186,6 @@
    "images": [
     "Images/Dumbbell_Bicep_Curl/0.jpg",
     "Images/Dumbbell_Bicep_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0224-start",
-    "Everkinetic-0224-end"
    ]
   },
   {
@@ -3377,10 +3231,6 @@
    "images": [
     "Images/Dumbbell_Alternate_Bicep_Curl/0.jpg",
     "Images/Dumbbell_Alternate_Bicep_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0223-start",
-    "Everkinetic-0223-end"
    ]
   },
   {
@@ -3422,10 +3272,6 @@
    "images": [
     "Images/Hammer_Curls/0.jpg",
     "Images/Hammer_Curls/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0227-start",
-    "Everkinetic-0227-end"
    ]
   },
   {
@@ -3465,10 +3311,6 @@
    "images": [
     "Images/Incline_Dumbbell_Curl/0.jpg",
     "Images/Incline_Dumbbell_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0214-start",
-    "Everkinetic-0214-end"
    ]
   },
   {
@@ -3514,10 +3356,6 @@
    "images": [
     "Images/Concentration_Curls/0.jpg",
     "Images/Concentration_Curls/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0220-start",
-    "Everkinetic-0220-end"
    ]
   },
   {
@@ -3559,10 +3397,6 @@
    "images": [
     "Images/Preacher_Curl/0.jpg",
     "Images/Preacher_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0239-start",
-    "Everkinetic-0239-end"
    ]
   },
   {
@@ -3604,10 +3438,6 @@
    "images": [
     "Images/Machine_Preacher_Curls/0.jpg",
     "Images/Machine_Preacher_Curls/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0236-start",
-    "Everkinetic-0236-end"
    ]
   },
   {
@@ -3647,10 +3477,6 @@
    "images": [
     "Images/Machine_Bicep_Curl/0.jpg",
     "Images/Machine_Bicep_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0253-start",
-    "Everkinetic-0253-end"
    ]
   },
   {
@@ -3690,10 +3516,6 @@
    "images": [
     "Images/Standing_Biceps_Cable_Curl/0.jpg",
     "Images/Standing_Biceps_Cable_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0212-start",
-    "Everkinetic-0212-end"
    ]
   },
   {
@@ -3737,10 +3559,6 @@
    "images": [
     "Images/Cable_Hammer_Curls_-_Rope_Attachment/0.jpg",
     "Images/Cable_Hammer_Curls_-_Rope_Attachment/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0216-start",
-    "Everkinetic-0216-end"
    ]
   },
   {
@@ -3835,10 +3653,6 @@
    "images": [
     "Images/Zottman_Curl/0.jpg",
     "Images/Zottman_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0251-start",
-    "Everkinetic-0251-end"
    ]
   },
   {
@@ -3880,10 +3694,6 @@
    "images": [
     "Images/Triceps_Pushdown/0.jpg",
     "Images/Triceps_Pushdown/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0205-start",
-    "Everkinetic-0205-end"
    ]
   },
   {
@@ -3925,10 +3735,6 @@
    "images": [
     "Images/Triceps_Pushdown_-_Rope_Attachment/0.jpg",
     "Images/Triceps_Pushdown_-_Rope_Attachment/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0206-start",
-    "Everkinetic-0206-end"
    ]
   },
   {
@@ -3970,10 +3776,6 @@
    "images": [
     "Images/Triceps_Pushdown_-_V-Bar_Attachment/0.jpg",
     "Images/Triceps_Pushdown_-_V-Bar_Attachment/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0207-start",
-    "Everkinetic-0207-end"
    ]
   },
   {
@@ -4058,10 +3860,6 @@
    "images": [
     "Images/EZ-Bar_Skullcrusher/0.jpg",
     "Images/EZ-Bar_Skullcrusher/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0183-start",
-    "Everkinetic-0183-end"
    ]
   },
   {
@@ -4107,10 +3905,6 @@
    "images": [
     "Images/Lying_Dumbbell_Tricep_Extension/0.jpg",
     "Images/Lying_Dumbbell_Tricep_Extension/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0181-start",
-    "Everkinetic-0181-end"
    ]
   },
   {
@@ -4152,10 +3946,6 @@
    "images": [
     "Images/Standing_Dumbbell_Triceps_Extension/0.jpg",
     "Images/Standing_Dumbbell_Triceps_Extension/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0198-start",
-    "Everkinetic-0198-end"
    ]
   },
   {
@@ -4195,10 +3985,6 @@
    "images": [
     "Images/Seated_Triceps_Press/0.jpg",
     "Images/Seated_Triceps_Press/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0194-start",
-    "Everkinetic-0194-end"
    ]
   },
   {
@@ -4244,10 +4030,6 @@
    "images": [
     "Images/Standing_Overhead_Barbell_Triceps_Extension/0.jpg",
     "Images/Standing_Overhead_Barbell_Triceps_Extension/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0201-start",
-    "Everkinetic-0201-end"
    ]
   },
   {
@@ -4287,10 +4069,6 @@
    "images": [
     "Images/Tricep_Dumbbell_Kickback/0.jpg",
     "Images/Tricep_Dumbbell_Kickback/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0204-start",
-    "Everkinetic-0204-end"
    ]
   },
   {
@@ -4338,10 +4116,6 @@
    "images": [
     "Images/Close-Grip_Barbell_Bench_Press/0.jpg",
     "Images/Close-Grip_Barbell_Bench_Press/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0049-start",
-    "Everkinetic-0049-end"
    ]
   },
   {
@@ -4387,10 +4161,6 @@
    "images": [
     "Images/Dips_-_Triceps_Version/0.jpg",
     "Images/Dips_-_Triceps_Version/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0172-start",
-    "Everkinetic-0172-end"
    ]
   },
   {
@@ -4436,10 +4206,6 @@
    "images": [
     "Images/Parallel_Bar_Dip/0.jpg",
     "Images/Parallel_Bar_Dip/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0172-start",
-    "Everkinetic-0172-end"
    ]
   },
   {
@@ -4485,10 +4251,6 @@
    "images": [
     "Images/Bench_Dips/0.jpg",
     "Images/Bench_Dips/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0162-start",
-    "Everkinetic-0162-end"
    ]
   },
   {
@@ -4536,10 +4298,6 @@
    "images": [
     "Images/Dip_Machine/0.jpg",
     "Images/Dip_Machine/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0171-start",
-    "Everkinetic-0171-end"
    ]
   },
   {
@@ -4579,10 +4337,6 @@
    "images": [
     "Images/Machine_Triceps_Extension/0.jpg",
     "Images/Machine_Triceps_Extension/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0210-start",
-    "Everkinetic-0210-end"
    ]
   },
   {
@@ -4816,10 +4570,6 @@
    "images": [
     "Images/Barbell_Squat/0.jpg",
     "Images/Barbell_Squat/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0122-start",
-    "Everkinetic-0122-end"
    ]
   },
   {
@@ -4867,10 +4617,6 @@
    "images": [
     "Images/Front_Squat_Clean_Grip/0.jpg",
     "Images/Front_Squat_Clean_Grip/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0138-start",
-    "Everkinetic-0138-end"
    ]
   },
   {
@@ -4922,10 +4668,6 @@
    "images": [
     "Images/Box_Squat/0.jpg",
     "Images/Box_Squat/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0133-start",
-    "Everkinetic-0133-end"
    ]
   },
   {
@@ -5069,10 +4811,6 @@
    "images": [
     "Images/Smith_Machine_Squat/0.jpg",
     "Images/Smith_Machine_Squat/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0124-start",
-    "Everkinetic-0124-end"
    ]
   },
   {
@@ -5126,10 +4864,6 @@
    "images": [
     "Images/Hack_Squat/0.jpg",
     "Images/Hack_Squat/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0123-start",
-    "Everkinetic-0123-end"
    ]
   },
   {
@@ -5179,10 +4913,6 @@
    "images": [
     "Images/Leg_Press/0.jpg",
     "Images/Leg_Press/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0127-start",
-    "Everkinetic-0127-end"
    ]
   },
   {
@@ -5222,10 +4952,6 @@
    "images": [
     "Images/Leg_Extensions/0.jpg",
     "Images/Leg_Extensions/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0142-start",
-    "Everkinetic-0142-end"
    ]
   },
   {
@@ -5275,10 +5001,6 @@
    "images": [
     "Images/Barbell_Lunge/0.jpg",
     "Images/Barbell_Lunge/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0114-start",
-    "Everkinetic-0114-end"
    ]
   },
   {
@@ -5373,10 +5095,6 @@
    "images": [
     "Images/Dumbbell_Lunges/0.jpg",
     "Images/Dumbbell_Lunges/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0115-start",
-    "Everkinetic-0115-end"
    ]
   },
   {
@@ -5424,10 +5142,6 @@
    "images": [
     "Images/Dumbbell_Rear_Lunge/0.jpg",
     "Images/Dumbbell_Rear_Lunge/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0129-start",
-    "Everkinetic-0129-end"
    ]
   },
   {
@@ -5567,10 +5281,6 @@
    "images": [
     "Images/Dumbbell_Step_Ups/0.jpg",
     "Images/Dumbbell_Step_Ups/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0137-start",
-    "Everkinetic-0137-end"
    ]
   },
   {
@@ -5665,10 +5375,6 @@
    "images": [
     "Images/Romanian_Deadlift/0.jpg",
     "Images/Romanian_Deadlift/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0118-start",
-    "Everkinetic-0118-end"
    ]
   },
   {
@@ -5763,10 +5469,6 @@
    "images": [
     "Images/Stiff-Legged_Dumbbell_Deadlift/0.jpg",
     "Images/Stiff-Legged_Dumbbell_Deadlift/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0107-start",
-    "Everkinetic-0107-end"
    ]
   },
   {
@@ -5867,10 +5569,6 @@
    "images": [
     "Images/Good_Morning/0.jpg",
     "Images/Good_Morning/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0101-start",
-    "Everkinetic-0101-end"
    ]
   },
   {
@@ -5910,10 +5608,6 @@
    "images": [
     "Images/Lying_Leg_Curls/0.jpg",
     "Images/Lying_Leg_Curls/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0117-start",
-    "Everkinetic-0117-end"
    ]
   },
   {
@@ -5955,10 +5649,6 @@
    "images": [
     "Images/Seated_Leg_Curl/0.jpg",
     "Images/Seated_Leg_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0119-start",
-    "Everkinetic-0119-end"
    ]
   },
   {
@@ -6000,10 +5690,6 @@
    "images": [
     "Images/Standing_Leg_Curl/0.jpg",
     "Images/Standing_Leg_Curl/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0120-start",
-    "Everkinetic-0120-end"
    ]
   },
   {
@@ -6403,10 +6089,6 @@
    "images": [
     "Images/One-Legged_Cable_Kickback/0.jpg",
     "Images/One-Legged_Cable_Kickback/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0112-start",
-    "Everkinetic-0112-end"
    ]
   },
   {
@@ -6491,10 +6173,6 @@
    "images": [
     "Images/Thigh_Abductor/0.jpg",
     "Images/Thigh_Abductor/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0156-start",
-    "Everkinetic-0156-end"
    ]
   },
   {
@@ -6540,10 +6218,6 @@
    "images": [
     "Images/Thigh_Adductor/0.jpg",
     "Images/Thigh_Adductor/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0157-start",
-    "Everkinetic-0157-end"
    ]
   },
   {
@@ -6589,10 +6263,6 @@
    "images": [
     "Images/Cable_Hip_Adduction/0.jpg",
     "Images/Cable_Hip_Adduction/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0135-start",
-    "Everkinetic-0135-end"
    ]
   },
   {
@@ -6671,10 +6341,6 @@
    "images": [
     "Images/Standing_Calf_Raises/0.jpg",
     "Images/Standing_Calf_Raises/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0282-start",
-    "Everkinetic-0282-end"
    ]
   },
   {
@@ -6718,10 +6384,6 @@
    "images": [
     "Images/Seated_Calf_Raise/0.jpg",
     "Images/Seated_Calf_Raise/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0279-start",
-    "Everkinetic-0279-end"
    ]
   },
   {
@@ -6765,10 +6427,6 @@
    "images": [
     "Images/Standing_Barbell_Calf_Raise/0.jpg",
     "Images/Standing_Barbell_Calf_Raise/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0281-start",
-    "Everkinetic-0281-end"
    ]
   },
   {
@@ -6849,10 +6507,6 @@
    "images": [
     "Images/Calf_Press_On_The_Leg_Press_Machine/0.jpg",
     "Images/Calf_Press_On_The_Leg_Press_Machine/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0273-start",
-    "Everkinetic-0273-end"
    ]
   },
   {
@@ -6935,10 +6589,6 @@
    "images": [
     "Images/Donkey_Calf_Raises/0.jpg",
     "Images/Donkey_Calf_Raises/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0275-start",
-    "Everkinetic-0275-end"
    ]
   },
   {
@@ -6982,10 +6632,6 @@
    "images": [
     "Images/Crunches/0.jpg",
     "Images/Crunches/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0291-start",
-    "Everkinetic-0291-end"
    ]
   },
   {
@@ -7111,10 +6757,6 @@
    "images": [
     "Images/Decline_Crunch/0.jpg",
     "Images/Decline_Crunch/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0292-start",
-    "Everkinetic-0292-end"
    ]
   },
   {
@@ -7400,10 +7042,6 @@
    "images": [
     "Images/Flat_Bench_Lying_Leg_Raise/0.jpg",
     "Images/Flat_Bench_Lying_Leg_Raise/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0021-start",
-    "Everkinetic-0021-end"
    ]
   },
   {
@@ -7633,10 +7271,6 @@
    "images": [
     "Images/Dumbbell_Side_Bend/0.jpg",
     "Images/Dumbbell_Side_Bend/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0294-start",
-    "Everkinetic-0294-end"
    ]
   },
   {
@@ -7723,10 +7357,6 @@
    "images": [
     "Images/Air_Bike/0.jpg",
     "Images/Air_Bike/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0284-start",
-    "Everkinetic-0284-end"
    ]
   },
   {
@@ -7768,10 +7398,6 @@
    "images": [
     "Images/Bent-Knee_Hip_Raise/0.jpg",
     "Images/Bent-Knee_Hip_Raise/1.jpg"
-   ],
-   "drawings": [
-    "Everkinetic-0287-start",
-    "Everkinetic-0287-end"
    ]
   },
   {

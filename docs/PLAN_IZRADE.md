@@ -59,7 +59,7 @@ GymApp/
 | 5 | Povijest, statistika i praćenje tijela | 3 tj. | 3 |
 | 6 | Dashboard, postavke, onboarding, export | 2 tj. | 3, 4 |
 | 7 | HealthKit | 2 tj. | 3 |
-| 7a | Crteži vježbi (Everkinetic) | 1 tj. | 2 |
+| 7a | Crteži vježbi (Everkinetic), poslije izbačeni | 1 tj. | 2 |
 | 8 | Apple Watch aplikacija | 5 tj. | 3, 7 |
 | 9 | Live Activity i notifikacije odmora | 1,5 tj. | 3, 8 |
 | 10 | WorkoutKit za kardio | 1,5 tj. | 4, 7 |
@@ -183,6 +183,8 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 
 ## Faza 7a: Crteži vježbi (Everkinetic) (1 tj.)
 
+> **Izbačeno (studeni 2026).** Everkinetic crteži pokrivali su samo 92 od 181 vježbe, pa je katalog miješao crteže i fotografije. Crteži, `everkinetic.json` i atribucija su uklonjeni. Sve vježbe sada prikazuju animaciju od svojih dviju fotografija iz free-exercise-db (pretapanje početnog i završnog položaja, s pauzom i podrškom za Smanji kretanje). Izmijenjeni crteži ostaju javno dostupni u povijesti repozitorija (`Resources/Drawings/`, commit `52fe599`). Tekst ispod opisuje izvorni plan faze.
+
 **Cilj:** fotografije iz free-exercise-db zamjenjuju se crtežima iz Everkinetica gdje postoje. Nazivi, upute, mišići i regije ostaju iz sadašnjeg kataloga.
 
 * Izvor: [everkinetic/data](https://github.com/everkinetic/data), CC BY-SA 4.0 (© Everkinetic, Greg Priday). Oko 290 vježbi, svaka s dva SVG crteža: početni (`relaxation`) i završni (`tension`) položaj. Fiksira se commit, kao kod free-exercise-db.
@@ -296,7 +298,6 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 | Sinkronizacija sata i iPhonea gubi ili duplicira serije | Visok | Događaji s UUID-om, jedan uređaj vodi trening, testovi protokola |
 | Faza 3 traje dulje od procjene | Visok | Ne skraćuje se. Ako kasni, kasnije faze se pomiču, a opseg ostaje |
 | Prijevod kataloga kasni | Srednji | Počinje u fazi 2 kao usporedni posao. Nepregledane vježbe privremeno ostaju na engleskom |
-| Licenca crteža (CC BY-SA 4.0) se krivo primijeni | Nizak | Atribucija u "O aplikaciji" i javna kopija izmijenjenih crteža, provjera u fazi 13 |
 | App Store review odbije zbog HealthKita ili privatnosti | Srednji | Faza 13 i jasni opisi dozvola. Rezerva u fazi 14 |
 
 ## Prvi koraci

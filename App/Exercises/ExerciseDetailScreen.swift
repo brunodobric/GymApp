@@ -43,19 +43,24 @@ private struct CatalogExerciseDetail: View {
 
         List {
             switch exercise.illustration {
-            case let .drawing(start, end):
+            case let .animation(start, end):
                 Section {
-                    ExerciseDrawingView(start: start, end: end, accessibilityText: name)
-                        .frame(height: 260)
-                        .frame(maxWidth: .infinity)
-                        .listRowInsets(EdgeInsets())
-                } footer: {
-                    Text("Crtež: Everkinetic, CC BY-SA 4.0")
+                    ExercisePhotoAnimationView(
+                        start: catalogStore.imageURL(start),
+                        end: catalogStore.imageURL(end),
+                        accessibilityText: name
+                    )
+                    .listRowInsets(EdgeInsets())
                 }
-            case .photos:
+            case let .photo(path):
                 Section {
-                    ExerciseImagePager(urls: catalogStore.imageURLs(for: exercise), accessibilityText: name)
-                        .listRowInsets(EdgeInsets())
+                    if let image = UIImage(contentsOfFile: catalogStore.imageURL(path).path) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .accessibilityLabel(name)
+                            .listRowInsets(EdgeInsets())
+                    }
                 }
             case .unavailable:
                 EmptyView()
@@ -92,27 +97,6 @@ private struct CatalogExerciseDetail: View {
         }
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-/// Dvije slike vježbe (početni i završni položaj) koje se listaju prstom.
-private struct ExerciseImagePager: View {
-    let urls: [URL]
-    let accessibilityText: String
-
-    var body: some View {
-        TabView {
-            ForEach(urls, id: \.self) { url in
-                if let image = UIImage(contentsOfFile: url.path) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .accessibilityLabel(accessibilityText)
-                }
-            }
-        }
-        .tabViewStyle(.page)
-        .frame(height: 240)
     }
 }
 

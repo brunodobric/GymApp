@@ -350,34 +350,3 @@ struct MuscleMapLicenseScreen: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
-/// Atribucija crteža vježbi: autor, licenca s poveznicom, izvor, opis izmjena i javna kopija izmijenjenih crteža.
-struct ExerciseDrawingsLicenseScreen: View {
-    var body: some View {
-        List {
-            Section {
-                Text("""
-                    Crteži vježbi preuzeti su iz projekta Everkinetic (© Greg Priday i suradnici) i koriste se \
-                    pod licencom Creative Commons Imenovanje-Dijeli pod istim uvjetima 4.0 (CC BY-SA 4.0).
-                    """)
-                Text("""
-                    Crteži su izmijenjeni: uklonjena je bijela pozadina, a linije se boje prema temi aplikacije. \
-                    Izmijenjeni crteži javno su dostupni pod istom licencom.
-                    """)
-            }
-            Section {
-                Link(destination: URL(string: "https://github.com/everkinetic/data")!) {
-                    LabeledContent("Izvor", value: "github.com/everkinetic/data")
-                }
-                Link(destination: URL(string: "https://creativecommons.org/licenses/by-sa/4.0/")!) {
-                    LabeledContent("Licenca", value: "CC BY-SA 4.0")
-                }
-                Link(destination: URL(string: "https://github.com/brunodobric/GymApp/tree/main/Resources/Drawings")!) {
-                    LabeledContent("Izmijenjeni crteži", value: "GitHub")
-                }
-            }
-        }
-        .navigationTitle("Everkinetic")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}

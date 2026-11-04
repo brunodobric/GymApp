@@ -47,8 +47,6 @@ targets:
       - path: Resources/BodyMap
         type: folder
         buildPhase: resources
-      # Crteži vježbi (Everkinetic, CC BY-SA 4.0) kao vektorske template slike. Gradi ih Tools/CatalogBuilder.
-      - path: Resources/Drawings/Drawings.xcassets
     dependencies:
       - package: GymKit
         products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup, HealthSync, Diagnostics, Demo]
