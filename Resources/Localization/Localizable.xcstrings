@@ -6198,6 +6198,16 @@
         }
       }
     },
+    "Unlicense stavlja djelo u javno vlasništvo: slobodno se smije koristiti, mijenjati i dijeliti, bez uvjeta." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Unlicense places the work in the public domain: it may be freely used, modified and shared, without conditions."
+          }
+        }
+      }
+    },
     "Unos" : {
       "localizations" : {
         "en" : {
@@ -6614,6 +6624,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exercises that aren't in the catalog are added as your custom exercises. Empty sets aren't imported."
+          }
+        }
+      }
+    },
+    "Vježbe, upute i fotografije preuzete su iz projekta free-exercise-db (Unlicense)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercises, instructions and photos come from the free-exercise-db project (Unlicense)."
           }
         }
       }
@@ -7374,12 +7394,32 @@
         }
       }
     },
+    "free-exercise-db" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "free-exercise-db"
+          }
+        }
+      }
+    },
     "github.com/Jsplice/MuscleMap" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "github.com/Jsplice/MuscleMap"
+          }
+        }
+      }
+    },
+    "github.com/yuhonas/free-exercise-db" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "github.com/yuhonas/free-exercise-db"
           }
         }
       }
