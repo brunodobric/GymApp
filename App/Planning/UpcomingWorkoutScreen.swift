@@ -20,9 +20,17 @@ struct UpcomingWorkoutScreen: View {
 
     private var engine: ScheduleEngine { ScheduleEngine(context: context) }
 
+    /// Sljedeći trening s izmjenama ciklusa. Čitanje `overrides` veže zaslon na izmjene, pa se osvježi kad se
+    /// promijene. Nekad je to radio `.id(overrides.count)`, ali on je gradio cijeli zaslon iznova, zajedno
+    /// s otvorenim listom i treningom.
+    private var nextWorkout: PlannedWorkout? {
+        _ = overrides.count
+        return try? engine.nextWorkout(of: schedule)
+    }
+
     var body: some View {
         List {
-            if let planned = try? engine.nextWorkout(of: schedule) {
+            if let planned = nextWorkout {
                 content(for: planned)
             } else {
                 ContentUnavailableView("Nema sljedećeg treninga", systemImage: "calendar.badge.checkmark")
@@ -43,7 +51,6 @@ struct UpcomingWorkoutScreen: View {
         } message: {
             Text(errorText ?? "")
         }
-        .id(overrides.count)
     }
 
     @ViewBuilder

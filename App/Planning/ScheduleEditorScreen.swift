@@ -166,7 +166,7 @@ struct ScheduleEditorScreen: View {
                 Stepper(value: Binding(
                     get: { cycles },
                     set: { schedule.cycleCount = $0 }
-                ), in: max(schedule.currentCycle, 1)...52) {
+                ), in: ScheduleEngine.cycleCountRange(currentCycle: schedule.currentCycle)) {
                     Text("Broj ciklusa: \(cycles)")
                 }
             }

@@ -29,7 +29,9 @@ struct ActiveWorkoutScreen: View {
     @State private var showsFinishConfirmation = false
     @State private var showsDiscardConfirmation = false
     @State private var showsNothingCompleted = false
-    @State private var finishedSummary: WorkoutSummary?
+    /// Sažetak se spremi jednom: id lista mora ostati isti dok je otvoren, inače se list zatvori i otvori
+    /// iznova i izgubi upisanu bilješku.
+    @State private var finishedSummary: SummaryBox?
     @State private var lastRemoved: SessionExercise?
     @State private var errorText: String?
     @State private var completedCount = 0
@@ -80,10 +82,7 @@ struct ActiveWorkoutScreen: View {
                 // Trening je završen ili odbačen na satu: ekran se zatvara.
                 if session.state != .active, !isClosingHere { dismiss() }
             }
-            .sheet(item: Binding(
-                get: { finishedSummary.map(SummaryBox.init) },
-                set: { if $0 == nil { finishedSummary = nil } }
-            )) { box in
+            .sheet(item: $finishedSummary) { box in
                 WorkoutSummarySheet(session: session, summary: box.summary, unit: unit) {
                     finishedSummary = nil
                     dismiss()
@@ -332,7 +331,7 @@ struct ActiveWorkoutScreen: View {
             _ = try? ScheduleEngine(context: context).sessionFinished(session)
             ReminderScheduler.refresh(context: context)
             let tracked = PRKind.tracked(by: settings)
-            finishedSummary = try engine.summary(of: session, trackedKinds: tracked)
+            finishedSummary = SummaryBox(summary: try engine.summary(of: session, trackedKinds: tracked))
             Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {
             isClosingHere = false

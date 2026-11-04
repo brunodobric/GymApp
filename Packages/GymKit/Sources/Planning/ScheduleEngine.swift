@@ -123,6 +123,16 @@ public struct ScheduleEngine {
         try rollIfCycleComplete(schedule)
     }
 
+    /// Uobičajena gornja granica broja ciklusa u uređivaču.
+    public static let usualMaxCycleCount = 52
+
+    /// Dopušteni broj ciklusa: ne manje od tekućeg ciklusa, a gornja granica raste s rasporedom koji je
+    /// već prošao `usualMaxCycleCount` ciklusa (inače bi raspon bio prazan i `Stepper` bi srušio aplikaciju).
+    public static func cycleCountRange(currentCycle: Int) -> ClosedRange<Int> {
+        let lower = max(currentCycle, 1)
+        return lower...max(usualMaxCycleCount, lower)
+    }
+
     public func setActive(_ active: Bool, for schedule: Schedule) throws {
         schedule.isActive = active
         try context.save()

@@ -44,11 +44,19 @@ struct SetRow: View {
         self.onChangeKind = onChangeKind
         self.onDelete = onDelete
 
-        let load = inputType == .weightedBodyweight || inputType == .assisted ? set.extraWeightKg : set.weightKg
-        _weightText = State(initialValue: NumberInput.format(load.map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }))
+        _weightText = State(initialValue: Self.weightText(Self.load(of: set, inputType: inputType), unit: unit))
         _reps = State(initialValue: set.reps.map(String.init) ?? "")
         _duration = State(initialValue: DurationInput.format(set.durationSeconds))
         _distance = State(initialValue: NumberInput.format(set.distanceMeters.map { $0 / 1000 }))
+    }
+
+    /// Težina koju polje prikazuje: dodatna težina ili pomoć za vježbe s vlastitom težinom, inače težina.
+    private static func load(of set: SetLog, inputType: ExerciseInputType) -> Double? {
+        inputType == .weightedBodyweight || inputType == .assisted ? set.extraWeightKg : set.weightKg
+    }
+
+    private static func weightText(_ kilograms: Double?, unit: WeightUnit) -> String {
+        NumberInput.format(kilograms.map { WeightConversion.displayValue(fromKilograms: $0, in: unit) })
     }
 
     var body: some View {
@@ -82,6 +90,14 @@ struct SetRow: View {
             PlateCalculatorSheet(targetText: weightText, unit: unit)
         }
         .listRowBackground(isHighlighted ? Color.accentColor.opacity(0.12) : nil)
+        // Serija se može promijeniti i izvana (sat, Live Activity). Polje tada preuzima novu vrijednost,
+        // da ga kvačica (`applyAllFields`) ne bi vratila na staru. Vlastiti unos se ne dira, jer nakon
+        // `apply` model već odgovara tekstu u polju.
+        .onChange(of: Self.load(of: set, inputType: inputType)) { syncWeight() }
+        .onChange(of: unit) { syncWeight() }
+        .onChange(of: set.reps) { syncReps() }
+        .onChange(of: set.durationSeconds) { syncDuration() }
+        .onChange(of: set.distanceMeters) { syncDistance() }
     }
 
     // MARK: Dijelovi
@@ -192,6 +208,39 @@ struct SetRow: View {
     private func setRPE(_ value: Double?) {
         set.rpe = value
         onEdit()
+    }
+
+    // MARK: Promjene izvana
+
+    private func syncWeight() {
+        let shown = Self.load(of: set, inputType: inputType).map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
+        // Prikaz se zaokružuje na 0,05, pa unos s više decimala (npr. 82,53) ne smije prepisati sam sebe.
+        guard !Self.same(NumberInput.parse(weightText), shown, tolerance: 0.051) else { return }
+        weightText = NumberInput.format(shown)
+    }
+
+    private func syncReps() {
+        guard Int(reps.trimmingCharacters(in: .whitespaces)) != set.reps else { return }
+        reps = set.reps.map(String.init) ?? ""
+    }
+
+    private func syncDuration() {
+        guard DurationInput.parse(duration) != set.durationSeconds else { return }
+        duration = DurationInput.format(set.durationSeconds)
+    }
+
+    private func syncDistance() {
+        let kilometres = set.distanceMeters.map { $0 / 1000 }
+        guard !Self.same(NumberInput.parse(distance), kilometres) else { return }
+        distance = NumberInput.format(kilometres)
+    }
+
+    private static func same(_ lhs: Double?, _ rhs: Double?, tolerance: Double = 0.001) -> Bool {
+        switch (lhs, rhs) {
+        case (nil, nil): true
+        case let (lhs?, rhs?): abs(lhs - rhs) < tolerance
+        default: false
+        }
     }
 
     // MARK: Primjena unosa
