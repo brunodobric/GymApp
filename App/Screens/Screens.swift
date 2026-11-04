@@ -322,8 +322,8 @@ struct SettingsScreen: View {
                     } label: {
                         LabeledContent("Crteži tijela", value: "MuscleMap")
                     }
-                    // TODO(faza 13): javni URL pravila privatnosti.
-                    LabeledContent("Pravila privatnosti", value: "Uskoro")
+                    Link("Pravila privatnosti", destination: PrivacyPolicy.url)
+                    NavigationLink("Dijagnostika") { DiagnosticsScreen() }
                 }
             }
             .navigationTitle("Postavke")

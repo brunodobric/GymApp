@@ -73,5 +73,7 @@ enum AppServices {
         }
         PhoneWatchSync.shared.start(container: container)
         SyncMonitor.shared.start()
+        // Rušenja, zastoji i performanse (MetricKit), samo u lokalni dnevnik.
+        MetricsReporter.shared.start()
     }
 }

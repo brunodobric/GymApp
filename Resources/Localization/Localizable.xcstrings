@@ -1308,6 +1308,26 @@
         }
       }
     },
+    "Dijagnostika" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagnostics"
+          }
+        }
+      }
+    },
+    "Dnevne metrike" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily metrics"
+          }
+        }
+      }
+    },
     "Dobro došao" : {
       "localizations" : {
         "en" : {
@@ -1728,6 +1748,16 @@
         }
       }
     },
+    "Greška u radu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error report"
+          }
+        }
+      }
+    },
     "HIIT" : {
       "localizations" : {
         "en" : {
@@ -1908,6 +1938,16 @@
         }
       }
     },
+    "Izvezi izvještaje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export reports"
+          }
+        }
+      }
+    },
     "Izvezi mjerenja tijela (CSV)" : {
       "localizations" : {
         "en" : {
@@ -1934,6 +1974,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Export workouts (CSV)"
+          }
+        }
+      }
+    },
+    "Izvještaji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reports"
           }
         }
       }
@@ -1984,6 +2034,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Are you sure?"
+          }
+        }
+      }
+    },
+    "Još nema izvještaja. Prvi stiže dan nakon korištenja aplikacije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No reports yet. The first one arrives the day after you use the app."
           }
         }
       }
@@ -3138,6 +3198,16 @@
         }
       }
     },
+    "Obriši izvještaje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete reports"
+          }
+        }
+      }
+    },
     "Obriši seriju" : {
       "localizations" : {
         "en" : {
@@ -4088,6 +4158,26 @@
         }
       }
     },
+    "Prekomjerno korištenje procesora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excessive CPU use"
+          }
+        }
+      }
+    },
+    "Prekomjerno pisanje na disk" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excessive disk writes"
+          }
+        }
+      }
+    },
     "Preostali odmor" : {
       "localizations" : {
         "en" : {
@@ -4658,6 +4748,16 @@
         }
       }
     },
+    "Rušenja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crashes"
+          }
+        }
+      }
+    },
     "Samo šipka." : {
       "localizations" : {
         "en" : {
@@ -5008,6 +5108,16 @@
         }
       }
     },
+    "Sporo pokretanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slow launch"
+          }
+        }
+      }
+    },
     "Sprava" : {
       "localizations" : {
         "en" : {
@@ -5164,6 +5274,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "System"
+          }
+        }
+      }
+    },
+    "Sustav jednom dnevno pripremi izvještaj o radu aplikacije (pokretanje, memorija, baterija), a nakon rušenja ili zastoja i izvještaj o grešci. Izvještaji ostaju na ovom uređaju i ne sadrže tvoje treninge. Možeš ih izvesti i poslati uz prijavu greške." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once a day the system prepares a report on how the app runs (launch, memory, battery), and after a crash or hang, an error report. Reports stay on this device and don't contain your workouts. You can export them and send them with a bug report."
           }
         }
       }
@@ -6598,6 +6718,16 @@
         }
       }
     },
+    "Zadnjih 90 dana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 90 days"
+          }
+        }
+      }
+    },
     "Zagrijavanje" : {
       "localizations" : {
         "en" : {
@@ -6744,6 +6874,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start: %@"
+          }
+        }
+      }
+    },
+    "Zastoji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hangs"
           }
         }
       }

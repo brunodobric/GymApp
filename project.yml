@@ -48,7 +48,7 @@ targets:
         buildPhase: resources
     dependencies:
       - package: GymKit
-        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup, HealthSync]
+        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup, HealthSync, Diagnostics]
       - target: GymAppWatch
       - target: GymAppWidgets
     info:
@@ -70,6 +70,8 @@ targets:
           - UIInterfaceOrientationLandscapeRight
         UIBackgroundModes: [remote-notification]
         NSSupportsLiveActivities: true
+        # Samo Appleova enkripcija (HTTPS, iCloud): izuzeto od izvoznih pravila.
+        ITSAppUsesNonExemptEncryption: false
         NSHealthShareUsageDescription: "Apollo čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
         NSHealthUpdateUsageDescription: "Apollo sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
     configFiles:
@@ -104,6 +106,7 @@ targets:
         CFBundleDevelopmentRegion: hr
         CFBundleLocalizations: [hr, en]
         WKApplication: true
+        ITSAppUsesNonExemptEncryption: false
         WKCompanionAppBundleIdentifier: com.brunodobric.gymapp
         # HKWorkoutSession: aplikacija radi i sa spuštenim zapešćem dok traje trening.
         WKBackgroundModes: [workout-processing]
