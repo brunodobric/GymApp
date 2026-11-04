@@ -147,14 +147,22 @@ public struct ProgramInstaller {
         self.context = context
     }
 
+    /// - Parameters:
+    ///   - name: naziv rasporeda na jeziku sučelja (zadano: hrvatski naziv programa)
+    ///   - workoutName: naziv treninga na jeziku sučelja (zadano: hrvatski naziv)
     @discardableResult
-    public func install(_ program: Program, exerciseName: (String) -> String) throws -> Schedule {
+    public func install(
+        _ program: Program,
+        name: String? = nil,
+        workoutName: (ProgramWorkout) -> String = { $0.name },
+        exerciseName: (String) -> String
+    ) throws -> Schedule {
         let templates = TemplateEngine(context: context)
         let schedules = ScheduleEngine(context: context)
         var created: [String: WorkoutTemplate] = [:]
 
         for workout in program.workouts {
-            let template = try templates.createTemplate(name: workout.name)
+            let template = try templates.createTemplate(name: workoutName(workout))
             for item in workout.exercises {
                 let ref = ExerciseRef(catalogId: item.catalogId, name: exerciseName(item.catalogId))
                 let exercise = try templates.addExercise(ref, inputType: item.inputType, to: template, setCount: item.sets)
@@ -166,7 +174,7 @@ public struct ProgramInstaller {
         }
         try context.save()
 
-        let schedule = try schedules.createSchedule(name: program.name)
+        let schedule = try schedules.createSchedule(name: name ?? program.name)
         for step in program.sequence {
             switch step {
             case .workout(let key):

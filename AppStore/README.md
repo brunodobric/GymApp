@@ -15,7 +15,7 @@ Sve što se upisuje u App Store Connect za Apollo, na hrvatskom (`hr`, primarni 
 | `metadata/<jezik>/support_url.txt` | Support URL | ispravan https URL |
 | `metadata/<jezik>/privacy_url.txt` | Privacy Policy URL | ispravan https URL |
 | `review_notes.txt` | App Review Information > Notes | 4000 znakova, na engleskom |
-| `screenshots/` | snimke zaslona (faza 14, dio 3) | |
+| `screenshots/<jezik>/<uređaj>/` | snimke zaslona | 6,9" iPhone i 13" iPad, vidi niže |
 
 Ključne riječi ne ponavljaju riječi iz naziva i podnaslova, jer ih App Store već pretražuje.
 
@@ -55,3 +55,29 @@ Očekivana oznaka: **4+**.
 ## Naziv
 
 Ime "Apollo" samo po sebi vjerojatno je zauzeto u App Storeu, zato je naziv "Apollo: dnevnik treninga" i "Apollo: Workout Log". Ako ni to nije slobodno pri stvaranju aplikacije u App Store Connectu, rezerva je "Apollo Gym: dnevnik treninga" / "Apollo Gym: Workout Log". Ime ispod ikone na uređaju (`CFBundleDisplayName`) ostaje "Apollo".
+
+## Snimke zaslona
+
+**iPhone i iPad** se snimaju automatski, na Macu:
+
+```sh
+scripts/snimke-zaslona.sh
+```
+
+Skripta za iPhone 16 Pro Max (6,9") i iPad Pro 13" (M4), na hrvatskom i engleskom, pokrene UI test `UITests/ScreenshotTests.swift`. Test pokreće aplikaciju s `-ScreenshotMode`: baza je samo u memoriji i puni se demo podacima (`DemoDataGenerator` u GymKitu: program Upper/Lower, deset tjedana treninga s napretkom, mjere tijela), pa podaci na simulatoru ostaju netaknuti. Status bar je postavljen na 9:41 s punom baterijom. Snimke idu u `AppStore/screenshots/<jezik>/<uređaj>/`:
+
+1. `01-pocetna`: Početna sa sljedećim treningom
+2. `02-trening`: trening u tijeku s prošlim rezultatima
+3. `03-povijest`: povijest treninga
+4. `04-statistika`: grafovi, heatmap i rekordi
+5. `05-rasporedi`: rasporedi
+6. `06-vjezbe` i `07-vjezba`: katalog i detalj vježbe
+
+U App Store Connect se učitavaju redom 02, 01, 04, 07, 03, 05 (prva snimka je ono što se vidi u pretrazi). Ako Xcode nema neki od simulatora, uređaj se zadaje varijablom: `IPHONE="iPhone 17 Pro Max" IPAD="iPad Pro 13-inch (M5)" scripts/snimke-zaslona.sh`. Za demo podatke ne treba nikakva postavka: način rada postoji samo u Debug buildu.
+
+**Apple Watch** se snima ručno, jer sat prikazuje trening koji vodi iPhone:
+
+1. U Xcodeu pokrenuti shemu GymApp na paru simulatora iPhone 16 Pro Max + Apple Watch Series 10 (46 mm), s argumentom `-ScreenshotMode` (Edit Scheme > Run > Arguments) i jezikom sheme (Options > App Language).
+2. Na iPhoneu dodirnuti Započni, pa na satu otvoriti Apollo.
+3. Snimiti zaslon sata: `xcrun simctl io booted screenshot AppStore/screenshots/<jezik>/watch/01-trening.png` (s `--device` ako je pokrenuto više simulatora) ili ⌘S u Simulatoru.
+4. Ponoviti za odmor (označiti seriju) i za komplikaciju na brojčaniku.

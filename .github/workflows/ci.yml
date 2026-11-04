@@ -42,10 +42,11 @@ jobs:
       - name: Generiranje projekta
         run: xcodegen generate
 
-      - name: Build iOS (simulator)
+      # build-for-testing gradi aplikaciju i UI testove (snimke zaslona), da se i oni provjere.
+      - name: Build iOS i UI testova (simulator)
         run: |
           set -o pipefail
-          xcodebuild build \
+          xcodebuild build-for-testing \
             -project GymApp.xcodeproj \
             -scheme GymApp \
             -configuration Debug \

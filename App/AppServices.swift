@@ -23,6 +23,9 @@ enum AppServices {
     /// Korisnička baza i način na koji je otvorena. Uključivanje i isključivanje sinkronizacije
     /// vrijedi od sljedećeg pokretanja, jer se otvorena baza ne može sigurno zamijeniti dok je ekrani koriste.
     private static let store: (container: ModelContainer, isSyncRunning: Bool, syncStartFailed: Bool) = {
+        #if DEBUG
+        if ScreenshotMode.isActive { return (ScreenshotMode.makeContainer(), false, false) }
+        #endif
         if SyncPreferences().usesCloudKit(isSupported: isCloudSyncSupported) {
             do {
                 let container = try GymPersistence.makeUserContainer(
@@ -60,6 +63,9 @@ enum AppServices {
     static func start() {
         guard !isStarted else { return }
         isStarted = true
+        #if DEBUG
+        if ScreenshotMode.isActive { ScreenshotMode.populate(container) }
+        #endif
         // Dodir na podsjetnik rasporeda otvara pregled treninga.
         NotificationRouter.shared.start()
         // WatchConnectivity sesija mora se aktivirati što ranije, da poruke sa sata

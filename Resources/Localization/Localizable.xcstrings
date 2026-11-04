@@ -1118,6 +1118,36 @@
         }
       }
     },
+    "Cijelo tijelo A" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full body A"
+          }
+        }
+      }
+    },
+    "Cijelo tijelo B" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full body B"
+          }
+        }
+      }
+    },
+    "Cijelo tijelo C" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full body C"
+          }
+        }
+      }
+    },
     "Ciklus %lld" : {
       "localizations" : {
         "en" : {
@@ -1488,6 +1518,16 @@
         }
       }
     },
+    "Donji dio tijela" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lower body"
+          }
+        }
+      }
+    },
     "Dostupna oprema" : {
       "localizations" : {
         "en" : {
@@ -1504,6 +1544,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Permission"
+          }
+        }
+      }
+    },
+    "Dva dana gornjeg i dva dana donjeg dijela tijela tjedno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two upper-body and two lower-body days a week."
           }
         }
       }
@@ -1598,6 +1648,16 @@
         }
       }
     },
+    "Full Body (3 dana)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full Body (3 days)"
+          }
+        }
+      }
+    },
     "Funte" : {
       "localizations" : {
         "en" : {
@@ -1644,6 +1704,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Upper back"
+          }
+        }
+      }
+    },
+    "Gornji dio tijela" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upper body"
           }
         }
       }
@@ -1754,6 +1824,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Error report"
+          }
+        }
+      }
+    },
+    "Guranje, povlačenje i noge u zasebnim danima, %lld treninga u nizu pa jedan dan odmora." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push, pull and legs on separate days: %lld workouts in a row, then one rest day."
           }
         }
       }
@@ -4528,6 +4608,36 @@
         }
       }
     },
+    "Pull" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pull"
+          }
+        }
+      }
+    },
+    "Push" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push"
+          }
+        }
+      }
+    },
+    "Push/Pull/Legs (%lld dana)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push/Pull/Legs (%lld days)"
+          }
+        }
+      }
+    },
     "RIR" : {
       "localizations" : {
         "en" : {
@@ -5848,6 +5958,16 @@
         }
       }
     },
+    "Tri treninga cijelog tijela tjedno s danom odmora između." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Three full-body workouts a week with a rest day in between."
+          }
+        }
+      }
+    },
     "Triceps" : {
       "localizations" : {
         "en" : {
@@ -6054,6 +6174,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter all values for the set."
+          }
+        }
+      }
+    },
+    "Upper/Lower (4 dana)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upper/Lower (4 days)"
           }
         }
       }

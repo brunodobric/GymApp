@@ -21,6 +21,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * `App/`: iPhone i iPad aplikacija
 * `WatchApp/`: watchOS aplikacija
 * `Widgets/`: Live Activity (i kasnije widgeti)
+* `UITests/`: UI test koji radi snimke zaslona za App Store (`scripts/snimke-zaslona.sh`)
 * `Shared/Common/`: kod koji dijele iPhone i Watch
 * `Shared/LiveActivity/`: kod koji dijele aplikacija i widget extension
 * `Packages/GymKit/`: logika bez sučelja, s unit testovima (Swift Testing)
