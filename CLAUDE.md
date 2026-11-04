@@ -25,6 +25,8 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * `Shared/Common/`: kod koji dijele iPhone i Watch
 * `Shared/LiveActivity/`: kod koji dijele aplikacija i widget extension
 * `Packages/GymKit/`: logika bez sučelja, s unit testovima (Swift Testing)
+* `AppStore/`: tekstovi za App Store Connect (hr i en), napomena za review i snimke zaslona. Duljine provjerava CI.
+* `site/`: pravila privatnosti i podrška (GitHub Pages)
 
 ## Pravila
 

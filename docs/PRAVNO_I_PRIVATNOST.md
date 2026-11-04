@@ -16,7 +16,7 @@ GymApp je u dobrom položaju jer nema vlastiti server, korisničke račune, anal
 | **GDPR (EU, uključujući Hrvatsku)** | Pravo na pristup i prenosivost pokriva export u CSV i JSON. Pravo na brisanje pokriva "Obriši sve podatke" (lokalno i iCloud). Minimalni podaci: bez imena, e-maila i lokacije. Prijenos podataka izvan EU ne radi aplikacija nego Apple (iCloud), što treba navesti u pravilima privatnosti. | Faze 6 i 12 |
 | **Vanjski resursi** | Fontovi su sistemski, slike vježbi u bundleu. Aplikacija se ne spaja ni na kakav vanjski server osim Appleovih servisa. Ne smije se dodati Google Fonts, embed ni CDN. | Pravilo za cijeli projekt |
 | **Session replay i tracking** | Ne koristi se. Za rušenja i performanse koristi se MetricKit i Xcode Organizer. MetricKit izvještaji spremaju se samo u lokalni dnevnik (`Diagnostics` u GymKitu, `App/Diagnostics/`), bez korisničkih podataka; korisnik ih sam izvozi u Postavke > O aplikaciji > Dijagnostika. Ništa se ne šalje automatski, pa to nije "prikupljanje" u smislu privacy labela. | Faza 13 (gotovo) |
-| **Dobna oznaka i djeca (COPPA)** | Aplikacija nije namijenjena djeci i ne prikuplja osobne podatke prema razvojnom timu. Dobna oznaka u App Store Connectu: 4+ ili 12+ prema upitniku. Age gate nije potreban jer nema računa ni prikupljanja. | Faza 14 |
+| **Dobna oznaka i djeca (COPPA)** | Aplikacija nije namijenjena djeci i ne prikuplja osobne podatke prema razvojnom timu. Dobna oznaka u App Store Connectu: 4+, odgovori na upitnik su u `AppStore/README.md`. Age gate nije potreban jer nema računa ni prikupljanja. | Faza 14 (gotovo) |
 | **Pristupačnost** | Dynamic Type, VoiceOver oznake, dovoljan kontrast (WCAG 2.2 AA kao smjernica). Pravila i ručna provjera su u `docs/DIZAJN.md`. | Faza 13 (gotovo) |
 | **Open source licence** | free-exercise-db je Unlicense (javno vlasništvo), uz atribuciju u "O aplikaciji". Za svaku novu biblioteku provjeriti licencu i upisati je ovdje. Prednost imaju MIT, Apache i BSD. GPL se ne koristi. | Stalno |
 | **Sigurnost podataka** | Podatke štiti iOS enkripcija uređaja i iCloud. Aplikacija ne drži ni ne šalje lozinke. Datoteke baze koriste zadanu zaštitu datoteka (Data Protection). | Faza 1 |
@@ -30,7 +30,8 @@ Odgovori za App Privacy u App Store Connectu (vrijede dok aplikacija nema server
 * **Tracking:** ne.
 * **Export Compliance:** aplikacija koristi samo Appleovu enkripciju (HTTPS i iCloud), pa je izuzeta. `ITSAppUsesNonExemptEncryption = NO` je u Info.plist aplikacije i sata, pa App Store Connect ne pita kod svakog builda.
 * **Napomena za App Review (HealthKit):** "Apollo saves strength workouts to Health so they count toward Activity rings, and reads cardio workouts, body mass and height to show them in the workout history and body tracking. Health data is stored only on device, is never synced to iCloud, and is never shared. The app works fully without Health access; permission is requested only when the user chooses to connect Health during onboarding or in Settings."
-* **Dobna oznaka:** upitnik u fazi 14 (očekivano 4+).
+* **Dobna oznaka:** 4+, odgovori na upitnik su u `AppStore/README.md`.
+* **Support URL:** https://brunodobric.github.io/GymApp/podrska/ (engleska verzija: `/support/`).
 
 ## Evidencija ovisnosti
 
