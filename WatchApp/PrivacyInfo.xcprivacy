@@ -18,6 +18,8 @@
 			<key>NSPrivacyAccessedAPITypeReasons</key>
 			<array>
 				<string>CA92.1</string>
+				<!-- Stanje za complications dijeli se sa satnim widgetom kroz App Group. -->
+				<string>1C8F.1</string>
 			</array>
 		</dict>
 	</array>

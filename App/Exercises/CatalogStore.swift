@@ -28,8 +28,9 @@ final class CatalogStore {
             return
         }
         do {
-            let data = try Data(contentsOf: directory.appendingPathComponent("catalog.json"))
-            let loaded = try ExerciseCatalog(data: data)
+            let loaded = try PerformanceSignpost.measure("CatalogLoad") {
+                try ExerciseCatalog(data: Data(contentsOf: directory.appendingPathComponent("catalog.json")))
+            }
             catalog = loaded
             summaries = loaded.summaries(language: language)
         } catch {

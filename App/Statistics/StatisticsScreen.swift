@@ -70,6 +70,10 @@ struct StatisticsScreen: View {
     }
 
     private func load() {
+        PerformanceSignpost.measure("Statistics") { compute() }
+    }
+
+    private func compute() {
         let engine = StatisticsEngine(context: context)
         let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
         buckets = (try? engine.volumeBuckets(size: period, count: period == .week ? 8 : 6, info: info)) ?? []

@@ -183,6 +183,7 @@ struct DataSettingsSection: View {
         do {
             try DataReset.deleteAll(in: context)
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            DiagnosticsStore.shared.removeAll()
             onReset()
             show("Podaci su obrisani.", String(localized: "Aplikacija je vraćena na početno stanje."))
         } catch {

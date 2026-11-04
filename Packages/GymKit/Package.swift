@@ -21,6 +21,7 @@ let package = Package(
         .library(name: "Stats", targets: ["Stats"]),
         .library(name: "Backup", targets: ["Backup"]),
         .library(name: "HealthSync", targets: ["HealthSync"]),
+        .library(name: "Diagnostics", targets: ["Diagnostics"]),
     ],
     targets: [
         .target(name: "Units"),
@@ -63,7 +64,10 @@ let package = Package(
             dependencies: ["Models"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
+        // MetricKit izvještaji spremljeni na uređaju (rušenja, zastoji, performanse).
+        .target(name: "Diagnostics"),
         .testTarget(name: "UnitsTests", dependencies: ["Units"]),
+        .testTarget(name: "DiagnosticsTests", dependencies: ["Diagnostics"]),
         .testTarget(
             name: "ConnectivityTests",
             dependencies: ["Connectivity", "Models", "Catalog", "Training", "Planning", "Units"],

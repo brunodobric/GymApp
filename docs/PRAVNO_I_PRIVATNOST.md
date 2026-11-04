@@ -8,17 +8,29 @@ GymApp je u dobrom položaju jer nema vlastiti server, korisničke račune, anal
 
 | Područje | Što GymApp radi | Status |
 |---|---|---|
-| **Privacy policy** | Javni URL. Navodi da su podaci samo na uređaju i u korisnikovom iCloudu, da HealthKit podaci ne idu nikome i ne koriste se za oglase, da nema praćenja ni analitike. Mora točno odgovarati ponašanju aplikacije. | Faza 13 |
-| **App Store privacy label** | "Data Not Collected", dok god nema analitike ni servera. Privacy Manifest (`PrivacyInfo.xcprivacy`) postoji u aplikaciji i na satu. | Manifest u fazi 0 |
+| **Privacy policy** | `site/privacy/` (hrvatski) i `site/privacy/en/` (engleski), objavljuje ih `.github/workflows/pages.yml` na https://brunodobric.github.io/GymApp/privacy/. Aplikacija ih otvara iz Postavke > O aplikaciji na jeziku sučelja. Navodi da su podaci samo na uređaju i u korisnikovom iCloudu, da HealthKit podaci ne idu nikome i ne koriste se za oglase, da nema praćenja ni analitike, i kako radi MetricKit. Mora točno odgovarati ponašanju aplikacije: svaka promjena u radu s podacima mijenja i ovaj tekst i datum. | Faza 13 (gotovo) |
+| **App Store privacy label** | "Data Not Collected", dok god nema analitike ni servera. Odgovori za App Store Connect su ispod. | Faza 13 (gotovo) |
+| **Privacy Manifest** | `PrivacyInfo.xcprivacy` u sva četiri targeta. Bez praćenja i bez prikupljenih podataka. UserDefaults: `CA92.1` (aplikacija i sat), `1C8F.1` (App Group između satne aplikacije i complicationsa). Svaki novi API s obaveznim razlogom (datumi datoteka, slobodan prostor, vrijeme od pokretanja sustava) traži upis razloga. | Faza 13 (gotovo) |
 | **HealthKit pravila** | Dozvole samo za korištene tipove, s jasnim objašnjenjem: zapis treninga; čitanje treninga, aktivnih kalorija, udaljenosti (hodanje i trčanje, bicikl, plivanje), pulsa, težine i visine. Dozvola se traži tek kad korisnik u onboardingu ili Postavkama odabere povezivanje. Podaci se ne šalju trećima. Aplikacija radi i bez dozvole. | Faza 7 (gotovo) |
 | **HealthKit podaci i iCloud** | Pravilo App Storea 5.1.3 (ii) zabranjuje spremanje osobnih zdravstvenih podataka u iCloud. Odlučeno: uvezeni treninzi, mjerenja iz Zdravlja te kalorije i puls treninga spremaju se u zasebnu lokalnu bazu (konfiguracija `HealthLocal`, bez CloudKita). Svaki uređaj ih sam čita iz Zdravlja. Korisnička baza koja se sinkronizira nema zdravstvenih vrijednosti, a zapisi koji su u nju dospjeli (starije verzije, uvoz kopije) premještaju se u lokalnu bazu. | Faza 12 (gotovo) |
 | **GDPR (EU, uključujući Hrvatsku)** | Pravo na pristup i prenosivost pokriva export u CSV i JSON. Pravo na brisanje pokriva "Obriši sve podatke" (lokalno i iCloud). Minimalni podaci: bez imena, e-maila i lokacije. Prijenos podataka izvan EU ne radi aplikacija nego Apple (iCloud), što treba navesti u pravilima privatnosti. | Faze 6 i 12 |
 | **Vanjski resursi** | Fontovi su sistemski, slike vježbi u bundleu. Aplikacija se ne spaja ni na kakav vanjski server osim Appleovih servisa. Ne smije se dodati Google Fonts, embed ni CDN. | Pravilo za cijeli projekt |
-| **Session replay i tracking** | Ne koristi se. Za rušenja i performanse koristi se MetricKit i Xcode Organizer. | Pravilo za cijeli projekt |
+| **Session replay i tracking** | Ne koristi se. Za rušenja i performanse koristi se MetricKit i Xcode Organizer. MetricKit izvještaji spremaju se samo u lokalni dnevnik (`Diagnostics` u GymKitu, `App/Diagnostics/`), bez korisničkih podataka; korisnik ih sam izvozi u Postavke > O aplikaciji > Dijagnostika. Ništa se ne šalje automatski, pa to nije "prikupljanje" u smislu privacy labela. | Faza 13 (gotovo) |
 | **Dobna oznaka i djeca (COPPA)** | Aplikacija nije namijenjena djeci i ne prikuplja osobne podatke prema razvojnom timu. Dobna oznaka u App Store Connectu: 4+ ili 12+ prema upitniku. Age gate nije potreban jer nema računa ni prikupljanja. | Faza 14 |
-| **Pristupačnost** | Dynamic Type, VoiceOver oznake, dovoljan kontrast (WCAG 2.2 AA kao smjernica). | Faza 13 |
+| **Pristupačnost** | Dynamic Type, VoiceOver oznake, dovoljan kontrast (WCAG 2.2 AA kao smjernica). Pravila i ručna provjera su u `docs/DIZAJN.md`. | Faza 13 (gotovo) |
 | **Open source licence** | free-exercise-db je Unlicense (javno vlasništvo), uz atribuciju u "O aplikaciji". Za svaku novu biblioteku provjeriti licencu i upisati je ovdje. Prednost imaju MIT, Apache i BSD. GPL se ne koristi. | Stalno |
 | **Sigurnost podataka** | Podatke štiti iOS enkripcija uređaja i iCloud. Aplikacija ne drži ni ne šalje lozinke. Datoteke baze koriste zadanu zaštitu datoteka (Data Protection). | Faza 1 |
+
+## App Store Connect: privatnost
+
+Odgovori za App Privacy u App Store Connectu (vrijede dok aplikacija nema server, analitiku ni SDK-ove trećih strana):
+
+* **Privacy Policy URL:** https://brunodobric.github.io/GymApp/privacy/ (engleska verzija: `/privacy/en/`).
+* **Data Collection:** "No, we do not collect data from this app." Rezultat je oznaka **Data Not Collected**. Obrazloženje: podaci su na uređaju i u korisnikovoj privatnoj CloudKit bazi, kojoj razvojni tim nema pristup; Apple to ne smatra prikupljanjem. HealthKit podaci ne napuštaju uređaj. MetricKit izvještaji ostaju na uređaju, a izvoz pokreće korisnik.
+* **Tracking:** ne.
+* **Export Compliance:** aplikacija koristi samo Appleovu enkripciju (HTTPS i iCloud), pa je izuzeta. `ITSAppUsesNonExemptEncryption = NO` je u Info.plist aplikacije i sata, pa App Store Connect ne pita kod svakog builda.
+* **Napomena za App Review (HealthKit):** "Apollo saves strength workouts to Health so they count toward Activity rings, and reads cardio workouts, body mass and height to show them in the workout history and body tracking. Health data is stored only on device, is never synced to iCloud, and is never shared. The app works fully without Health access; permission is requested only when the user chooses to connect Health during onboarding or in Settings."
+* **Dobna oznaka:** upitnik u fazi 14 (očekivano 4+).
 
 ## Evidencija ovisnosti
 
