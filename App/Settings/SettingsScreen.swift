@@ -176,7 +176,9 @@ private struct AboutScreen: View {
             }
             Section {
                 // Atribucija kataloga (specifikacija, odjeljak 10), iako je javno vlasništvo.
-                Link(destination: URL(string: "https://github.com/yuhonas/free-exercise-db")!) {
+                NavigationLink {
+                    ExerciseCatalogLicenseScreen()
+                } label: {
                     LabeledContent("Katalog vježbi", value: "free-exercise-db")
                 }
                 // Atribucija crteža tijela (MIT licenca zahtijeva copyright napomenu i tekst licence).
