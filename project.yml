@@ -49,7 +49,7 @@ targets:
         buildPhase: resources
     dependencies:
       - package: GymKit
-        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup, HealthSync, Diagnostics]
+        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup, HealthSync, Diagnostics, Demo]
       - target: GymAppWatch
       - target: GymAppWidgets
     info:
@@ -84,7 +84,22 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         GENERATE_INFOPLIST_FILE: NO
     scheme:
-      testTargets: []
+      # Snimke zaslona za App Store (scripts/snimke-zaslona.sh).
+      testTargets: [GymAppUITests]
+
+  # UI testovi: snimke zaslona za App Store s demo podacima (UITests/ScreenshotTests.swift).
+  GymAppUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: GymApp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
 
   # Apple Watch aplikacija (single-target watchOS app)
   GymAppWatch:

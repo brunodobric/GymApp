@@ -16,6 +16,10 @@ python3 -m unittest discover -s Tools/CatalogBuilder
 step "Testovi provjere lokalizacije"
 python3 -m unittest discover -s Tools/Localization
 
+step "App Store tekstovi"
+python3 -m unittest discover -s Tools/AppStore
+python3 Tools/AppStore/check_metadata.py
+
 step "Testovi paketa GymKit"
 swift test --package-path Packages/GymKit
 
@@ -27,8 +31,8 @@ fi
 step "Generiranje projekta"
 xcodegen generate
 
-step "Build iOS (simulator)"
-xcodebuild build -project GymApp.xcodeproj -scheme GymApp -configuration Debug \
+step "Build iOS i UI testova (simulator)"
+xcodebuild build-for-testing -project GymApp.xcodeproj -scheme GymApp -configuration Debug \
     -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO | tail -n 60
 
 step "Build watchOS (simulator)"

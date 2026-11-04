@@ -505,6 +505,18 @@ struct ProgramTests {
         #expect(push.orderedExercises[0].exerciseName == "Vježba Barbell_Bench_Press_-_Medium_Grip")
     }
 
+    @Test("Nazivi rasporeda i treninga na jeziku sučelja")
+    func localizedNames() throws {
+        let context = try makeContext()
+        let program = try #require(ProgramLibrary.all.first { $0.id == "upper-lower-4" })
+        let schedule = try ProgramInstaller(context: context).install(
+            program, name: "Upper/Lower (4 days)", workoutName: { $0.key == "upper" ? "Upper body" : "Lower body" }
+        ) { $0 }
+        #expect(schedule.name == "Upper/Lower (4 days)")
+        let names = Set(try context.fetch(FetchDescriptor<WorkoutTemplate>()).map(\.name))
+        #expect(names == ["Upper body", "Lower body"])
+    }
+
     @Test("Plank ima serije bez ponavljanja")
     func durationExercise() throws {
         let context = try makeContext()

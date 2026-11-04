@@ -1,0 +1,14 @@
+Apollo is a workout log for iPhone, iPad and Apple Watch. There is no account or sign-in, so no demo credentials are needed. All features are available right after the short onboarding.
+
+How to try the main flow:
+1. Finish onboarding or tap "Skip all".
+2. Tap Start on the Home tab, add an exercise from the catalog, log a set and tap the checkmark. The rest timer starts automatically.
+3. Tap Finish to see the summary. The workout appears in History and in Statistics.
+
+HealthKit: Apollo saves strength workouts to Health so they count toward Activity rings, and reads cardio workouts, body mass and height to show them in the workout history and body tracking. Health data is stored only on device, is never synced to iCloud, and is never shared. The app works fully without Health access; permission is requested only when the user chooses to connect Health during onboarding or in Settings.
+
+iCloud: workout data syncs through the user's private CloudKit database. The developer has no access to it. Sync can be turned off in Settings.
+
+Apple Watch: the watch app logs sets and rest during a workout started on the watch or on iPhone, using an HKWorkoutSession for heart rate and calories.
+
+Notifications are used only for the rest timer and optional workout reminders that the user sets up in a schedule.

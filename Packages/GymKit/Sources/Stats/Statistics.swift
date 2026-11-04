@@ -188,7 +188,8 @@ public struct StatisticsEngine {
                         date: session.startedAt, exerciseKey: key, exerciseName: exercise.exerciseName, record: record
                     ))
                 }
-                history[key, default: []].append(done)
+                // Sažeta povijest daje iste rekorde, a ne raste s brojem treninga.
+                history[key] = PersonalRecordDetector.condensed((history[key] ?? []) + [done])
             }
         }
         return entries.reversed()

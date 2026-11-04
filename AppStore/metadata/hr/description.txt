@@ -1,0 +1,43 @@
+Apollo je dnevnik treninga za teretanu. Napravljen je da bilježenje ne smeta treningu: seriju upišeš u nekoliko dodira, a ono što si radio prošli put vidiš u istom retku.
+
+TRENING
+• Prethodni rezultati uz svaku seriju i prijedlog težine i ponavljanja za sljedeću
+• Tajmer odmora kreće sam nakon serije, uz +10 i −10 sekundi
+• Superserije, zagrijavanje i radne serije, RPE ili RIR
+• Vježbe s težinom, vlastitom težinom, dodatnim teretom, pomoći ili trajanjem
+• Kalkulator ploča za tvoju šipku i ploče koje imaš
+• Trening koji se prekine (poziv, ugašen mobitel) nastavlja se gdje je stao
+
+RASPOREDI
+• Gotovi programi: Full Body, Upper / Lower i Push / Pull / Legs
+• Vlastiti rasporedi s ciklusima i danima odmora
+• Podsjetnici na fiksne dane ili fleksibilno, kad ti odgovara
+• Izmjena samo za trenutni ciklus, bez diranja plana
+
+KATALOG VJEŽBI
+• Više od 180 vježbi sa slikama i uputama na hrvatskom i engleskom
+• Pretraga i filteri po mišićima, opremi i vrsti pokreta
+• Vlastite vježbe sa slikom
+
+NAPREDAK
+• Osobni rekordi: težina, volumen, ponavljanja, trajanje i udaljenost
+• Procjena 1RM i graf napretka za svaku vježbu
+• Volumen po mišićima, učestalost treninga i karta opterećenja tijela
+• Mjere tijela s grafom za svaku mjeru
+
+APPLE WATCH
+• Serije i odmor sa zapešća, s pulsom i kalorijama
+• Komplikacije za sljedeći trening i odmor koji traje
+• Live Activity na iPhoneu dok treniraš sa satom
+
+IPAD
+• Bočna traka, više stupaca i veći grafovi za pregled napretka i slaganje rasporeda
+
+ZDRAVLJE I ICLOUD
+• Treninzi se spremaju u Zdravlje i zatvaraju Activity prstenove
+• Kardio, masa i visina iz Zdravlja prikazuju se u povijesti i mjerama
+• Sinkronizacija između iPhonea, iPada i sata preko tvog iClouda
+• Izvoz u CSV i JSON u bilo kojem trenutku
+
+PRIVATNOST
+Apollo nema račun, oglase, analitiku ni praćenje. Podaci su na tvojim uređajima i u tvom iCloudu, a podaci iz Zdravlja ne napuštaju uređaj.

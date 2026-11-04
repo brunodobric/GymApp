@@ -146,7 +146,7 @@ struct ActiveWorkoutScreen: View {
             }
             _ = try? GymQueries(context: context).settings()
             if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
-            reloadPrevious()
+            PerformanceSignpost.measure("WorkoutOpen") { reloadPrevious() }
             if openExerciseID == nil {
                 openExerciseID = visible.first { $0.orderedSets.contains { !$0.isCompleted } }?.id ?? visible.first?.id
             }

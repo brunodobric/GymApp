@@ -10,6 +10,7 @@ iOS, iPadOS i watchOS aplikacija za bilježenje treninga. Swift + SwiftUI, Swift
 * `docs/PRAVNO_I_PRIVATNOST.md`: privatnost, licence, App Store pravila
 * `docs/prototipi.md`: prototipi faze 0 i nalazi
 * `docs/sinkronizacija.md`: iCloud sinkronizacija, objava CloudKit sheme i provjera na uređajima
+* `docs/performanse.md`: signposti, ciljevi i mjerenje performansi u Instrumentsu
 * `docs/izdanje.md`: TestFlight beta, greške iz bete i slanje na App Store review
 * `docs/lokalizacija.md`: String Catalog (hr i en), pisanje teksta u kodu i provjera prijevoda na CI-ju
 
@@ -22,9 +23,12 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * `App/`: iPhone i iPad aplikacija
 * `WatchApp/`: watchOS aplikacija
 * `Widgets/`: Live Activity (i kasnije widgeti)
+* `UITests/`: UI test koji radi snimke zaslona za App Store (`scripts/snimke-zaslona.sh`)
 * `Shared/Common/`: kod koji dijele iPhone i Watch
 * `Shared/LiveActivity/`: kod koji dijele aplikacija i widget extension
 * `Packages/GymKit/`: logika bez sučelja, s unit testovima (Swift Testing)
+* `AppStore/`: tekstovi za App Store Connect (hr i en), napomena za review i snimke zaslona. Duljine provjerava CI.
+* `site/`: pravila privatnosti i podrška (GitHub Pages)
 
 ## Pravila
 

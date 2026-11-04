@@ -65,9 +65,11 @@ struct HomeScreen: View {
                     }
                 }
                 #if DEBUG
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Prototipi", systemImage: "hammer") {
-                        showsPrototypes = true
+                if !ScreenshotMode.isActive {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Prototipi", systemImage: "hammer") {
+                            showsPrototypes = true
+                        }
                     }
                 }
                 #endif
@@ -174,6 +176,7 @@ struct HomeScreen: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
+                    .accessibilityIdentifier("home.startPlanned")
                 }
                 if upcomingWorkouts.isEmpty {
                     Button { startWorkout() } label: {
@@ -252,7 +255,9 @@ struct HomeScreen: View {
 
     private func start(_ planned: PlannedWorkout) {
         do {
-            presentedSession = try TemplateStarter(context: context).start(planned)
+            presentedSession = try PerformanceSignpost.measure("WorkoutStart") {
+                try TemplateStarter(context: context).start(planned)
+            }
             ReminderScheduler.refresh(context: context)
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
