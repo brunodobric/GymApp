@@ -25,6 +25,7 @@ struct HomeScreen: View {
     @Query private var cycleOverrides: [CycleOverride]
     @State private var showsSettings = false
     @State private var showsCardEditor = false
+    @Namespace private var workoutTransition
     @State private var presentedSession: Session?
     /// Kardio iz rasporeda: pregled plana s uputom za sat umjesto pokretanja treninga.
     @State private var cardioSchedule: Schedule?
@@ -92,6 +93,8 @@ struct HomeScreen: View {
             }
             .fullScreenCover(item: $presentedSession) { session in
                 ActiveWorkoutScreen(session: session)
+                    // Zoom prijelaz iz kartice: povlačenje ekrana prema dolje sažima trening natrag u karticu.
+                    .navigationTransition(.zoom(sourceID: Self.workoutTransitionID, in: workoutTransition))
             }
             .task { checkRecovery() }
             .onChange(of: request) { _, newValue in
@@ -147,51 +150,32 @@ struct HomeScreen: View {
         }
     }
 
-    /// Veliki gumb "Započni" na vrhu: nastavak aktivnog treninga ili početak novog (iz rasporeda ili praznog).
+    /// Kartica na vrhu: trening u tijeku sažet u karticu (kao Live Activity) ili početak novog (iz rasporeda ili praznog).
+    /// Ista je izvor zoom prijelaza, pa se ekran treninga otvara iz nje i povlačenjem dolje sažima natrag u nju.
     private var startSection: some View {
-        VStack(spacing: 12) {
+        Group {
             if let active = activeSessions.first {
-                Text("Trening je u tijeku").font(.title2.bold())
-                Button("Nastavi trening", systemImage: "play.fill") { presentedSession = active }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
+                ActiveWorkoutCard(session: active, unit: unit) { presentedSession = active }
             } else {
-                ForEach(upcomingWorkouts, id: \.item.id) { planned in
-                    Button {
+                StartWorkoutCard(
+                    planned: upcomingWorkouts,
+                    onStart: { planned in
                         if planned.template.kind == .cardio {
                             cardioSchedule = planned.schedule
                         } else {
                             start(planned)
                         }
-                    } label: {
-                        VStack(spacing: 2) {
-                            if planned.template.kind == .cardio {
-                                Label("Na satu: \(planned.template.name)", systemImage: "applewatch")
-                            } else {
-                                Label("Započni: \(planned.template.name)", systemImage: "play.fill")
-                            }
-                            Text(planned.schedule.name).font(.caption)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .accessibilityIdentifier("home.startPlanned")
-                }
-                if upcomingWorkouts.isEmpty {
-                    Button { startWorkout() } label: {
-                        Label("Započni trening", systemImage: "play.fill").frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.extraLarge)
-                } else {
-                    Button("Prazan trening", systemImage: "plus") { startWorkout() }
-                        .buttonStyle(.bordered)
-                }
+                    },
+                    onStartEmpty: startWorkout
+                )
             }
         }
-        .frame(maxWidth: .infinity)
+        .matchedTransitionSource(id: Self.workoutTransitionID, in: workoutTransition) { source in
+            source.clipShape(RoundedRectangle(cornerRadius: 16))
+        }
     }
+
+    private static let workoutTransitionID = "workout"
 
     /// ⌘N nastavlja trening u tijeku ili pokreće sljedeći iz rasporeda (prazan ako rasporeda nema),
     /// isto kao prvi gumb na Početnoj. Kardio se ne pokreće u aplikaciji, pa ⌘N tada otvara prazan trening.
