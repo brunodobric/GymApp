@@ -412,3 +412,18 @@ struct PlateGroupingTests {
         #expect(PlateCalculator.grouped([]).isEmpty)
     }
 }
+
+@Suite("Uključivanje i isključivanje ploča")
+struct PlateToggleTests {
+    @Test("Uključena ploča se dodaje na svoje mjesto, bez duplikata")
+    func enable() {
+        #expect(PlateCalculator.setting(5, enabled: true, in: [20, 1.25, 10]) == [1.25, 5, 10, 20])
+        #expect(PlateCalculator.setting(10, enabled: true, in: [10, 20]) == [10, 20])
+    }
+
+    @Test("Isključena ploča se miče, ostale ostaju")
+    func disable() {
+        #expect(PlateCalculator.setting(10, enabled: false, in: [1.25, 10, 20]) == [1.25, 20])
+        #expect(PlateCalculator.setting(0.5, enabled: false, in: [10]) == [10])
+    }
+}

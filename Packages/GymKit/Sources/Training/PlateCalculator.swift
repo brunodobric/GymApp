@@ -80,6 +80,13 @@ public enum PlateCalculator {
         return result
     }
 
+    /// Dostupne ploče nakon što se jedna uključi ili isključi: bez duplikata, od najlakše prema najtežoj.
+    public static func setting(_ plate: Double, enabled: Bool, in plates: [Double]) -> [Double] {
+        var result = plates.filter { abs($0 - plate) > 1e-9 }
+        if enabled { result.append(plate) }
+        return result.sorted()
+    }
+
     /// Uobičajene ploče i šipka za funte (postavke ploča čuvaju se u kilogramima).
     public static let defaultPoundPlates: [Double] = [2.5, 5, 10, 25, 35, 45]
     public static let defaultPoundBarbell: Double = 45
