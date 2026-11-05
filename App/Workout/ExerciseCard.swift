@@ -37,8 +37,10 @@ struct ExerciseCard: View {
                     effortScale: effortScale, onEdit: onEdit, onToggleComplete: { onToggleComplete(row.set) },
                     onChangeKind: { onChangeKind(row.set, $0) }, onDelete: { onDeleteSet(row.set) }
                 )
+                // Akcent boja cijele aplikacije (.tint u RootView) inače oboji i ovaj gumb, pa je crvena izričita.
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button("Obriši", systemImage: "trash", role: .destructive) { onDeleteSet(row.set) }
+                        .tint(.red)
                 }
             }
             HStack {

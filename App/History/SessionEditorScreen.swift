@@ -147,6 +147,7 @@ struct SessionEditorScreen: View {
             )
             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                 Button("Obriši", systemImage: "trash", role: .destructive) { delete(set) }
+                    .tint(.red)
             }
         }
         HStack {

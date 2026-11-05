@@ -68,6 +68,7 @@ struct SessionDetailScreen: View {
         .toolbar {
             ToolbarItem(placement: .destructiveAction) {
                 Button("Obriši", systemImage: "trash", role: .destructive) { confirmsDelete = true }
+                    .tint(.red)
             }
             // Trening iz Zdravlja nema svoje serije: ne uređuje se ovdje.
             if !session.isImportedFromWorkoutsApp && session.modelContext != nil {
@@ -87,7 +88,7 @@ struct SessionDetailScreen: View {
         .sheet(item: $newTemplate, onDismiss: discardTemplateIfNeeded) { template in
             NewTemplateFromSessionSheet(template: template) { discardedTemplate = template }
         }
-        .confirmationDialog("Obrisati trening?", isPresented: $confirmsDelete, titleVisibility: .visible) {
+        .alert("Obrisati trening?", isPresented: $confirmsDelete) {
             Button("Obriši trening", role: .destructive) { delete() }
             Button("Odustani", role: .cancel) {}
         } message: {
