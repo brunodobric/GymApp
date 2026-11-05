@@ -140,7 +140,7 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 1. **Dashboard** — Početni ekran.
    * Na vrhu kartica **Započni** istog oblika kao kartice ispod, s laganom poluprozirnom pozadinom u boji akcenta da se istakne: sljedeći trening svakog rasporeda i prazan trening.
    * Dok trening traje, ekran treninga se povlačenjem prema dolje (ili gumbom Smanji) sažima u tu karticu. Kartica prikazuje isto što i Live Activity: vježbu i seriju, odbrojavanje odmora, težinu i ponavljanja s gumbima − i + te kvačicu za potvrdu serije. Dodir na karticu ponovno otvara cijeli ekran treninga.
-   * Ispod njega kartica zadnjeg treninga (datum, trajanje, tip).
+   * Ispod njega kartica zadnjeg treninga (datum, trajanje, tip). Zadano je prikazana, a korisnik je može ukloniti ili premjestiti kao ostale kartice.
    * Ispod toga gumb za dodavanje widgeta.
    * **Plate Calculator** je jedan od dostupnih widgeta.
    * Gore desno gumb **Postavke**.
@@ -176,7 +176,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 
 ### Opis tabova
 
-1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (npr. Plate Calculator, sljedeći trening, tjedni volumen) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u popisu "Kasnije").
+1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (npr. zadnji trening, Plate Calculator, sljedeći trening, tjedni volumen) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u popisu "Kasnije").
 2. **Odrađeni treninzi** — Povijest svih završenih treninga s filterima i detaljima.
    * Lista treninga prikazuje: datum, tip i trajanje.
    * Klik na trening otvara detalje:

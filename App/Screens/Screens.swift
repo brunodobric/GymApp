@@ -31,6 +31,8 @@ struct HomeScreen: View {
     @State private var cardioSchedule: Schedule?
     @State private var errorText: String?
     @State private var checkedRecovery = false
+    /// Kartica zadnjeg treninga je jednom stavljena na Početnu (prije je bila stalno prikazana).
+    @AppStorage("dashboard.lastWorkoutSeeded") private var lastWorkoutSeeded = false
     @State private var recovery: RecoveryPrompt?
     #if DEBUG
     @State private var showsPrototypes = false
@@ -41,9 +43,6 @@ struct HomeScreen: View {
             ScrollView {
                 VStack(spacing: 16) {
                     startSection
-                    if let last = lastSession {
-                        LastWorkoutCard(session: last, unit: unit)
-                    }
                     ForEach(visibleCards) { card in
                         if let kind = card.kind {
                             cardView(kind)
@@ -96,7 +95,10 @@ struct HomeScreen: View {
                     // Zoom prijelaz iz kartice: povlačenje ekrana prema dolje sažima trening natrag u karticu.
                     .navigationTransition(.zoom(sourceID: Self.workoutTransitionID, in: workoutTransition))
             }
-            .task { checkRecovery() }
+            .task {
+                seedLastWorkoutCard()
+                checkRecovery()
+            }
             .onChange(of: request) { _, newValue in
                 guard let newValue else { return }
                 request = nil
@@ -144,6 +146,10 @@ struct HomeScreen: View {
     @ViewBuilder
     private func cardView(_ kind: DashboardCardKind) -> some View {
         switch kind {
+        case .lastWorkout:
+            if let last = lastSession {
+                LastWorkoutCard(session: last, unit: unit)
+            }
         case .plateCalculator: PlateCalculatorCard(unit: unit)
         case .nextWorkout: NextWorkoutCard(planned: upcomingWorkouts)
         case .weeklyVolume: WeeklyVolumeCard(unit: unit)
@@ -192,6 +198,18 @@ struct HomeScreen: View {
             } else {
                 startWorkout()
             }
+        }
+    }
+
+    /// Zadnji trening je prije bio stalno na Početnoj. Sad je kartica koja se može ukloniti,
+    /// pa se jednom po uređaju dodaje na vrh da ga postojeći i novi korisnici i dalje vide.
+    private func seedLastWorkoutCard() {
+        guard !lastWorkoutSeeded else { return }
+        do {
+            try DashboardLayout(context: context).seedLastWorkout()
+            lastWorkoutSeeded = true
+        } catch {
+            // Pokušava se opet pri sljedećem otvaranju Početne.
         }
     }
 
