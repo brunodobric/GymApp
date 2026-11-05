@@ -19,10 +19,15 @@ struct RestTimerLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: RestTimerActivityAttributes.self) { context in
             LockScreenView(state: context.state, workoutName: context.attributes.workoutName, isStale: context.isStale)
+                .widgetURL(LiveActivityLink.activeWorkout)
         } dynamicIsland: { context in
             let state = context.state
             let rest = RestState(state: state, isStale: context.isStale)
             return DynamicIsland {
+                DynamicIslandExpandedRegion(.center) {
+                    WorkoutHeader(workoutName: context.attributes.workoutName, startedAt: state.workoutStartedAt)
+                        .font(.caption)
+                }
                 DynamicIslandExpandedRegion(.leading) {
                     ExerciseLabel(state: state)
                         .padding(.leading, 4)
@@ -64,6 +69,7 @@ struct RestTimerLiveActivity: Widget {
                         .accessibilityLabel(Text("Trening"))
                 }
             }
+            .widgetURL(LiveActivityLink.activeWorkout)
             .keylineTint(.accentColor)
         }
     }
@@ -95,7 +101,10 @@ private struct LockScreenView: View {
 
     var body: some View {
         let rest = RestState(state: state, isStale: isStale)
-        VStack(alignment: .leading, spacing: 10) {
+        // Visina Live Activityja na zaključanom zaslonu ograničena je na 160 pt, pa su razmaci zbijeni.
+        VStack(alignment: .leading, spacing: 8) {
+            WorkoutHeader(workoutName: workoutName, startedAt: state.workoutStartedAt)
+                .font(.subheadline)
             HStack(alignment: .top) {
                 ExerciseLabel(state: state, showsNextExercise: true)
                 Spacer(minLength: 12)
@@ -106,11 +115,36 @@ private struct LockScreenView: View {
             RestProgress(rest: rest)
             NextSetRow(state: state)
         }
-        .padding()
+        .padding(.horizontal)
+        .padding(.vertical, 14)
     }
 }
 
 // MARK: Dijelovi
+
+/// Naziv treninga i trajanje od početka (sustav ga sam odbrojava prema gore).
+private struct WorkoutHeader: View {
+    let workoutName: String
+    let startedAt: Date?
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Label(workoutName, systemImage: "dumbbell.fill")
+                .fontWeight(.semibold)
+                .lineLimit(1)
+            Spacer(minLength: 8)
+            if let startedAt {
+                Text(startedAt, style: .timer)
+                    .monospacedDigit()
+                    .multilineTextAlignment(.trailing)
+                    .foregroundStyle(.secondary)
+                    // Tekst s odbrojavanjem inače zauzme svu širinu i potisne naziv.
+                    .frame(maxWidth: 72, alignment: .trailing)
+                    .accessibilityLabel(Text("Trajanje treninga"))
+            }
+        }
+    }
+}
 
 private struct ExerciseLabel: View {
     let state: RestTimerActivityAttributes.ContentState

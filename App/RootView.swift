@@ -54,6 +54,12 @@ struct RootView: View {
                 homeRequest = request
             }
         ))
+        // Dodir na Live Activity otvara Početnu i preko nje puni ekran aktivnog treninga.
+        .onOpenURL { url in
+            guard LiveActivityLink.isActiveWorkout(url) else { return }
+            selection = .home
+            homeRequest = .activeWorkout
+        }
         .tint(settings?.accent.color ?? AccentChoice.blue.color)
         .preferredColorScheme(settings?.theme.colorScheme)
         .fullScreenCover(isPresented: $showsOnboarding) {

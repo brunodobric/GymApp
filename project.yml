@@ -71,6 +71,10 @@ targets:
           - UIInterfaceOrientationLandscapeRight
         UIBackgroundModes: [remote-notification]
         NSSupportsLiveActivities: true
+        # Dodir na Live Activity otvara aktivni trening (Shared/LiveActivity/LiveActivityLink.swift).
+        CFBundleURLTypes:
+          - CFBundleURLName: com.brunodobric.gymapp
+            CFBundleURLSchemes: [apolon]
         # Samo Appleova enkripcija (HTTPS, iCloud): izuzeto od izvoznih pravila.
         ITSAppUsesNonExemptEncryption: false
         NSHealthShareUsageDescription: "Apolon čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."

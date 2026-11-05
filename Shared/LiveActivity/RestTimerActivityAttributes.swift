@@ -35,6 +35,8 @@ struct RestTimerActivityAttributes: ActivityAttributes {
         /// Odmor u tijeku. `nil` kad odmora nema.
         var restStartedAt: Date?
         var restEndsAt: Date?
+        /// Početak treninga, za trajanje na vrhu. Opcionalno da se dekodira i stanje starije verzije.
+        var workoutStartedAt: Date?
         /// Trening vodi Apple Watch.
         var isLedByWatch: Bool
     }

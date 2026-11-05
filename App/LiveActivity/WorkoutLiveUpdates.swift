@@ -159,6 +159,7 @@ final class WorkoutLiveUpdates {
             canConfirm: status.canConfirmNextSet,
             restStartedAt: status.rest?.startedAt,
             restEndsAt: status.rest?.endsAt,
+            workoutStartedAt: session.startedAt,
             isLedByWatch: session.controllingDevice == .watch
         )
     }

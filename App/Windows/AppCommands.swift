@@ -4,6 +4,8 @@ import SwiftUI
 enum HomeRequest: Equatable {
     case startWorkout
     case settings
+    /// Dodir na Live Activity: puni ekran aktivnog treninga.
+    case activeWorkout
 }
 
 /// Radnje glavnog prozora koje izbornik prečaca može pozvati. Objavljuje ih `RootView` aktivnog prozora.
