@@ -100,8 +100,9 @@ struct SetRow: View {
         dimsCompleted && set.isCompleted && contrast != .increased
     }
 
+    // `self.` je nužan: redak koji počinje sa `set` Swift čita kao setter.
     private var showsEffort: Bool {
-        set.rpe != nil || isHighlighted || !set.isCompleted
+        self.set.rpe != nil || isHighlighted || !set.isCompleted
     }
 
     /// Lijevi dio retka: oznaka, veliki brojevi i ispod njih prošli put i napor.
@@ -204,42 +205,6 @@ struct SetRow: View {
             .setFieldFrame()
             .accessibilityLabel(Text(title))
             .onChange(of: text.wrappedValue) { _, _ in apply() }
-    }
-
-    /// Znak između težine i ponavljanja; VoiceOver ga preskače jer polja imaju svoje nazive.
-    private var timesSign: some View {
-        Text(verbatim: "×")
-            .font(.title3)
-            .foregroundStyle(.secondary)
-            .accessibilityHidden(true)
-    }
-
-    /// Velika zelena kvačica uz desni rub retka: obrubljena dok serija nije završena, puna kad jest.
-    private var completeButton: some View {
-        Button {
-            // Tekst iz polja ide u model prije provjere, i kad je polje još u fokusu, da prvi dodir ne javi lažnu grešku.
-            if !set.isCompleted { applyAllFields() }
-            onToggleComplete()
-        } label: {
-            Image(systemName: "checkmark")
-                .font(.title2.weight(.bold))
-                .foregroundStyle(set.isCompleted ? Color.white : Color.green)
-                .frame(minWidth: completeButtonWidth, maxHeight: .infinity)
-                .frame(minHeight: 52)
-                .background(
-                    set.isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(Color.green.opacity(0.14)),
-                    in: .rect(cornerRadius: 14)
-                )
-                .overlay {
-                    // Uz jači kontrast nezavršena kvačica dobiva i obrub, ne samo svijetlu pozadinu.
-                    if !set.isCompleted && contrast == .increased {
-                        RoundedRectangle(cornerRadius: 14).strokeBorder(Color.green, lineWidth: 2)
-                    }
-                }
-                .contentShape(.rect)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(set.isCompleted ? Text("Poništi završetak serije") : Text("Označi seriju završenom"))
     }
 
     private var effortMenu: some View {
@@ -373,5 +338,45 @@ extension SetRow {
         let kilograms = isExtraLoad ? suggestion?.extraWeightKg : suggestion?.weightKg
         return kilograms.map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
             ?? WheelOptions.defaultWeight(for: unit, isExtraLoad: isExtraLoad)
+    }
+}
+
+// MARK: Kvačica i znak ×
+
+extension SetRow {
+    /// Znak između težine i ponavljanja; VoiceOver ga preskače jer polja imaju svoje nazive.
+    private var timesSign: some View {
+        Text(verbatim: "×")
+            .font(.title3)
+            .foregroundStyle(.secondary)
+            .accessibilityHidden(true)
+    }
+
+    /// Velika zelena kvačica uz desni rub retka: obrubljena dok serija nije završena, puna kad jest.
+    private var completeButton: some View {
+        Button {
+            // Tekst iz polja ide u model prije provjere, i kad je polje još u fokusu, da prvi dodir ne javi lažnu grešku.
+            if !set.isCompleted { applyAllFields() }
+            onToggleComplete()
+        } label: {
+            Image(systemName: "checkmark")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(set.isCompleted ? Color.white : Color.green)
+                .frame(minWidth: completeButtonWidth, maxHeight: .infinity)
+                .frame(minHeight: 52)
+                .background(
+                    set.isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(Color.green.opacity(0.14)),
+                    in: .rect(cornerRadius: 14)
+                )
+                .overlay {
+                    // Uz jači kontrast nezavršena kvačica dobiva i obrub, ne samo svijetlu pozadinu.
+                    if !set.isCompleted && contrast == .increased {
+                        RoundedRectangle(cornerRadius: 14).strokeBorder(Color.green, lineWidth: 2)
+                    }
+                }
+                .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(set.isCompleted ? Text("Poništi završetak serije") : Text("Označi seriju završenom"))
     }
 }
