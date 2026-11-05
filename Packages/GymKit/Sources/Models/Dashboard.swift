@@ -4,6 +4,7 @@ import SwiftData
 /// Vrste kartica koje korisnik može dodati na Početnu. Nepoznate vrste (iz novije verzije aplikacije)
 /// ostaju u bazi, ali se ne prikazuju.
 public enum DashboardCardKind: String, CaseIterable, Sendable {
+    case lastWorkout
     case plateCalculator
     case nextWorkout
     case weeklyVolume
@@ -48,6 +49,20 @@ public struct DashboardLayout {
         let next = (try allCards().last?.orderIndex ?? -1) + 1
         let card = DashboardCard(kindRaw: kind.rawValue, orderIndex: next)
         context.insert(card)
+        try context.save()
+        return card
+    }
+
+    /// Kartica zadnjeg treninga prije je uvijek bila na vrhu Početne. Ako je nema, stavlja je na vrh,
+    /// da je korisnik zadrži i nakon što je postala kartica koja se može ukloniti.
+    /// Poziva se jednom po uređaju; duplikat s drugog uređaja uklanja deduplikacija.
+    @discardableResult
+    public func seedLastWorkout() throws -> DashboardCard? {
+        guard try availableKinds().contains(.lastWorkout) else { return nil }
+        let existing = try allCards()
+        let card = DashboardCard(kindRaw: DashboardCardKind.lastWorkout.rawValue, orderIndex: 0)
+        context.insert(card)
+        try renumber([card] + existing)
         try context.save()
         return card
     }
