@@ -21,14 +21,16 @@ struct SessionDetailScreen: View {
     @State private var newTemplate: WorkoutTemplate?
     /// Predložak koji se briše tek kad se list zatvori, da uređivač ne prikazuje obrisan objekt.
     @State private var discardedTemplate: WorkoutTemplate?
+    /// Je li veliki naslov na vrhu liste vidljiv; dok jest, naslov u traci je prazan da se ne ponavlja.
+    @State private var showsHeader = true
 
     /// Kalorije i puls su u lokalnoj bazi podataka iz Zdravlja.
     private var health: HealthLocalStore { HealthLocalStore(context: context) }
 
     var body: some View {
         List {
+            header
             Section {
-                LabeledContent("Datum", value: session.startedAt.formatted(date: .complete, time: .shortened))
                 if let end = session.endedAt {
                     LabeledContent("Trajanje", value: Duration.seconds(max(0, end.timeIntervalSince(session.startedAt)))
                         .formatted(.units(allowed: [.hours, .minutes], width: .abbreviated)))
@@ -65,7 +67,8 @@ struct SessionDetailScreen: View {
             // Mapa mišića je na dnu, ispod serija i bilješki.
             SessionMusclesSection(session: session)
         }
-        .navigationTitle(session.name)
+        .fontDesign(.rounded)
+        .navigationTitle(showsHeader ? "" : session.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .destructiveAction) {
@@ -96,6 +99,22 @@ struct SessionDetailScreen: View {
             Text("Trening i njegove serije bit će trajno obrisani, a rekordi i statistika preračunat će se bez njega.")
         }
         .errorAlert($errorText)
+    }
+
+    /// Veliki zaobljeni naslov s datumom, dio sadržaja liste. Kad se odskrola, naziv treninga prelazi u traku.
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(session.name)
+                .font(.largeTitle.bold())
+                .accessibilityAddTraits(.isHeader)
+            Text(session.startedAt.formatted(date: .complete, time: .shortened))
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+        .onScrollVisibilityChange(threshold: 0.3) { showsHeader = $0 }
     }
 
     /// Redni broj radne serije; zagrijavanje nema broj.
@@ -174,10 +193,18 @@ private struct SetLine: View {
     let unit: WeightUnit
     let number: Int?
 
+    /// Stupac rednog broja raste s Dynamic Typeom, da su vrijednosti poravnate u svim retcima.
+    @ScaledMetric(relativeTo: .body) private var numberWidth: CGFloat = 26
+
     var body: some View {
         HStack(spacing: 10) {
-            SetBadge(kind: set.kind, number: number)
+            // Redni broj bez kruga; zagrijavanje je narančasto "Z".
+            symbol
+                .font(.body.bold().monospacedDigit())
+                .foregroundStyle(set.kind == .warmUp ? AnyShapeStyle(.orange) : AnyShapeStyle(.secondary))
+                .frame(minWidth: numberWidth, alignment: .leading)
             Text(text)
+                .font(.body.weight(.semibold).monospacedDigit())
             Spacer()
             if let rpe = set.rpe {
                 Text("RPE \(NumberInput.format(rpe))")
@@ -188,6 +215,11 @@ private struct SetLine: View {
         // VoiceOver čita cijeli redak kao rečenicu ("Serija 2, 80 kg, 8 ponavljanja") umjesto znaka ×.
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(spokenText)
+    }
+
+    private var symbol: Text {
+        if set.kind != .warmUp, let number { return Text(verbatim: "\(number)") }
+        return Text("Z")
     }
 
     private var spokenText: Text {
