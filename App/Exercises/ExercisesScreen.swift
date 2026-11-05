@@ -124,8 +124,8 @@ private struct ExerciseGridCell: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14))
-        .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 14))
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.card))
+        .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: CornerRadius.card))
         .hoverEffect()
         .accessibilityElement(children: .combine)
     }

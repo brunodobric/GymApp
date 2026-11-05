@@ -73,10 +73,12 @@ struct ActiveWorkoutScreen: View {
                 }
             }
             .environment(\.editMode, $editMode)
+            // Zaobljeni SF Pro za nazive vježbi i brojeve, kao na karticama Početne.
+            .fontDesign(.rounded)
             .navigationTitle(session.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
-            .safeAreaInset(edge: .bottom) { bottomBars }
+            .safeAreaInset(edge: .bottom) { bottomBars.fontDesign(.rounded) }
             .sensoryFeedback(.success, trigger: completedCount)
             .sensoryFeedback(.error, trigger: errorCount)
             .onChange(of: session.restTimerEndsAt) {
@@ -228,7 +230,7 @@ struct ActiveWorkoutScreen: View {
                     Button("Poništi") { self.undo(undo) }
                 }
                 .padding(12)
-                .background(.regularMaterial, in: .rect(cornerRadius: 12))
+                .background(.regularMaterial, in: .rect(cornerRadius: CornerRadius.floating))
                 .padding(.horizontal)
                 .task(id: undo.id) {
                     try? await Task.sleep(for: .seconds(8))

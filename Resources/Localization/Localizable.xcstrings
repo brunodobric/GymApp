@@ -4178,6 +4178,16 @@
         }
       }
     },
+    "Pon." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reps"
+          }
+        }
+      }
+    },
     "Ponavljanja" : {
       "localizations" : {
         "en" : {
@@ -4788,6 +4798,16 @@
         }
       }
     },
+    "Prošli put" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last time"
+          }
+        }
+      }
+    },
     "Prošli put %@" : {
       "localizations" : {
         "en" : {
@@ -5144,6 +5164,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seconds: %lld"
+          }
+        }
+      }
+    },
+    "Ser." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set"
           }
         }
       }

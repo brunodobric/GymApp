@@ -32,23 +32,48 @@ struct SetBadge: View {
 
 /// Okvir polja za unos u retku serije: velik, podebljan broj da se vrijednost vidi i iz daljine.
 /// Širina raste s Dynamic Typeom, da broj ne bude odrezan.
+/// U tablici serija polje ima fiksnu širinu stupca (`setFieldWidth`), da su brojevi poravnati u svim retcima.
 struct SetFieldFrame: ViewModifier {
     @ScaledMetric(relativeTo: .title2) private var minWidth: CGFloat = 60
     @ScaledMetric(relativeTo: .title2) private var maxWidth: CGFloat = 112
+    @Environment(\.setFieldWidth) private var columnWidth
 
     func body(content: Content) -> some View {
         content
             .font(.title2.weight(.semibold).monospacedDigit())
             .multilineTextAlignment(.center)
-            .frame(minWidth: minWidth, maxWidth: maxWidth)
+            .frame(minWidth: columnWidth == nil ? minWidth : nil, maxWidth: columnWidth == nil ? maxWidth : nil)
             .padding(.horizontal, 6)
+            .frame(width: columnWidth)
             .padding(.vertical, 6)
-            .background(.quaternary, in: .rect(cornerRadius: 10))
+            .background(.quaternary, in: .rect(cornerRadius: CornerRadius.inner))
     }
 }
 
 extension View {
     func setFieldFrame() -> some View {
         modifier(SetFieldFrame())
+    }
+}
+
+/// Širine stupaca tablice serija: oznaka, polja i kvačica. Dijele ih redak serije i zaglavlje tablice,
+/// pa su stupci poravnati. Rastu s Dynamic Typeom.
+struct SetTableMetrics: DynamicProperty {
+    @ScaledMetric(relativeTo: .subheadline) var badge: CGFloat = 30
+    @ScaledMetric(relativeTo: .title2) var wideField: CGFloat = 76
+    @ScaledMetric(relativeTo: .title2) var narrowField: CGFloat = 52
+    @ScaledMetric(relativeTo: .title2) var check: CGFloat = 56
+    let columnSpacing: CGFloat = 6
+}
+
+private struct SetFieldWidthKey: EnvironmentKey {
+    static let defaultValue: CGFloat? = nil
+}
+
+extension EnvironmentValues {
+    /// Fiksna širina polja u tablici serija; bez nje polje raste sa sadržajem.
+    var setFieldWidth: CGFloat? {
+        get { self[SetFieldWidthKey.self] }
+        set { self[SetFieldWidthKey.self] = newValue }
     }
 }

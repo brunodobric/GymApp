@@ -69,6 +69,8 @@ struct HomeScreen: View {
                         .padding(.top, 4)
                 }
                 .padding()
+                // Zaobljeni SF Pro za naslove i brojeve na karticama.
+                .fontDesign(.rounded)
                 .frame(maxWidth: 700)
                 .frame(maxWidth: .infinity)
             }
@@ -186,7 +188,7 @@ struct HomeScreen: View {
             }
         }
         .matchedTransitionSource(id: Self.workoutTransitionID, in: workoutTransition) { source in
-            source.clipShape(RoundedRectangle(cornerRadius: 16))
+            source.clipShape(RoundedRectangle(cornerRadius: CornerRadius.card))
         }
     }
 

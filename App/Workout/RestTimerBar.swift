@@ -2,7 +2,8 @@ import Foundation
 import SwiftUI
 import Training
 
-/// Traka rest timera pri dnu ekrana: odbrojavanje, linija koja teče, +10 / −10 i preskakanje.
+/// Traka rest timera pri dnu ekrana, kao zaobljeni otok: oznaka "Odmor" i veliko odbrojavanje lijevo,
+/// okrugli −10 i +10 i Preskoči desno, a vrijeme koje teče je tanka linija uz gornji rub.
 struct RestTimerBar: View {
     let timer: RestTimer
     let onAdjust: (Int) -> Void
@@ -12,31 +13,32 @@ struct RestTimerBar: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        VStack(spacing: 6) {
+        Group {
             if dynamicTypeSize.isAccessibilitySize {
                 // Kod najvećih veličina teksta gumbi idu ispod odbrojavanja.
-                countdown
-                HStack(spacing: 12) { buttons }
-                    .buttonStyle(.bordered)
-            } else {
-                HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 10) {
                     countdown
-                    Spacer()
+                    HStack(spacing: 10) { buttons }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                HStack(spacing: 10) {
+                    countdown
+                    Spacer(minLength: 8)
                     buttons
                 }
-                .buttonStyle(.bordered)
-            }
-
-            ProgressView(timerInterval: timer.startedAt...max(timer.endsAt, timer.startedAt.addingTimeInterval(1)), countsDown: true) {
-                EmptyView()
-            } currentValueLabel: {
-                EmptyView()
             }
         }
-        .padding(12)
-        .background(.regularMaterial, in: .rect(cornerRadius: 16))
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .padding(.vertical, 14)
+        .padding(.leading, 20)
+        .padding(.trailing, 14)
+        .overlay(alignment: .top) { progressLine }
+        .background(.regularMaterial)
+        .clipShape(.rect(cornerRadius: CornerRadius.floating))
         .accessibilityElement(children: .contain)
-        .padding(.horizontal)
+        .padding(.horizontal, 12)
         // Pri istjeku (ili promjeni završetka zbog +10 / −10) čeka se do novog trenutka.
         .task(id: timer.endsAt) {
             let wait = timer.remaining(at: Date())
@@ -45,21 +47,41 @@ struct RestTimerBar: View {
         }
     }
 
+    /// Tanka linija uz gornji rub otoka koja se prazni kako odmor teče.
+    private var progressLine: some View {
+        ProgressView(timerInterval: timer.startedAt...max(timer.endsAt, timer.startedAt.addingTimeInterval(1)), countsDown: true) {
+            EmptyView()
+        } currentValueLabel: {
+            EmptyView()
+        }
+        .progressViewStyle(.linear)
+        .accessibilityHidden(true)
+    }
+
     private var countdown: some View {
-        Text(timer.endsAt, style: .timer)
-            .font(.title2.bold().monospacedDigit())
-            .frame(minWidth: 70, alignment: .leading)
-            .accessibilityLabel(Text("Preostali odmor"))
-            .accessibilityValue(Text(timer.endsAt, style: .timer))
+        VStack(alignment: .leading, spacing: 2) {
+            Text("Odmor")
+                .font(.caption.bold())
+                .textCase(.uppercase)
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            Text(timer.endsAt, style: .timer)
+                .font(.largeTitle.bold().monospacedDigit())
+                .frame(minWidth: 80, alignment: .leading)
+                .accessibilityLabel(Text("Preostali odmor"))
+                .accessibilityValue(Text(timer.endsAt, style: .timer))
+        }
     }
 
     @ViewBuilder
     private var buttons: some View {
         Button("−10") { onAdjust(-10) }
+            .buttonBorderShape(.circle)
             .accessibilityLabel(Text("Skrati odmor za 10 sekundi"))
         Button("+10") { onAdjust(10) }
+            .buttonBorderShape(.circle)
             .accessibilityLabel(Text("Produlji odmor za 10 sekundi"))
-        Button("Preskoči", systemImage: "forward.end.fill", action: onSkip)
-            .labelStyle(.iconOnly)
+        Button("Preskoči", action: onSkip)
+            .buttonBorderShape(.capsule)
     }
 }

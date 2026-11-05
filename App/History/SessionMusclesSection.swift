@@ -32,12 +32,19 @@ struct SessionMusclesSection: View {
                 .frame(maxHeight: 300)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text("Prikaz tijela. Rađeno: \(names(primary))"))
+                let most = primary.map(\.primarySets).max() ?? 1
                 ForEach(primary, id: \.region) { load in
                     LabeledContent {
                         Text("\(load.primarySets) serije")
                     } label: {
-                        Text(BodyRegion.title(load.region))
-                            .fontWeight(load.region == selection ? .semibold : nil)
+                        // Traka u boji mišićne skupine, dulja što je više serija.
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(BodyRegion.title(load.region))
+                                .fontWeight(load.region == selection ? .semibold : nil)
+                            ProgressView(value: Double(load.primarySets), total: Double(max(most, 1)))
+                                .tint(BodyRegion.color(load.region))
+                                .accessibilityHidden(true)
+                        }
                     }
                 }
                 if !assisting.isEmpty {

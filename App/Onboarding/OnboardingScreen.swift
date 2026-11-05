@@ -274,7 +274,7 @@ private struct ChoiceRow<Label: View>: View {
                     .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
             }
             .padding()
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12))
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.inner))
             .foregroundStyle(.primary)
         }
         .buttonStyle(.plain)

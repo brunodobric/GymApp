@@ -22,12 +22,14 @@ struct WheelInputField: View {
     var showsUnit = false
 
     @State private var isPresented = false
+    /// U tablici serija jedinica piše u zaglavlju stupca, pa se uz broj ne ponavlja.
+    @Environment(\.setFieldWidth) private var columnWidth
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 3) {
             Text(verbatim: text.isEmpty ? hint : text)
                 .foregroundStyle(text.isEmpty ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary))
-            if showsUnit && !text.isEmpty {
+            if showsUnit && columnWidth == nil && !text.isEmpty {
                 Text(verbatim: hint)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
@@ -118,7 +120,7 @@ private struct WheelInputPanel: View {
                 .multilineTextAlignment(.center)
                 .focused($isFocused)
                 .padding(.vertical, 8)
-                .background(.quaternary, in: .rect(cornerRadius: 10))
+                .background(.quaternary, in: .rect(cornerRadius: CornerRadius.inner))
                 .onAppear { isFocused = true }
                 .onChange(of: typed) { _, new in
                     draft = new.trimmingCharacters(in: .whitespaces).isEmpty ? textBeforeTyping : new
@@ -135,7 +137,7 @@ private struct WheelInputPanel: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
-                    .background(.quaternary, in: .rect(cornerRadius: 10))
+                    .background(.quaternary, in: .rect(cornerRadius: CornerRadius.inner))
                     .contentShape(.rect)
                 }
                 .buttonStyle(.plain)

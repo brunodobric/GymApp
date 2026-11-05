@@ -47,7 +47,7 @@ struct ExerciseThumbnail: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.inner))
             .accessibilityHidden(true)
             .task(id: source) {
                 image = nil
