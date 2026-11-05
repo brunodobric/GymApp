@@ -136,6 +136,21 @@ struct TemplateStarterTests {
         #expect(session.orderedExercises.count == 3)
     }
 
+    @Test("Izbor treninga bez rasporeda: samo treninzi snage s vježbama, po nazivu")
+    func startableTemplates() throws {
+        let context = try makeContext()
+        let pull = try template("Pull", in: context)
+        let legs = try template("noge", in: context)
+        let push = try template("Push", in: context)
+        let empty = try template("Prazan", in: context, exercises: [])
+        let cardio = try template("Trčanje", in: context)
+        cardio.kind = .cardio
+
+        let result = TemplateStarter.startable([pull, empty, push, cardio, legs])
+        #expect(result.map(\.name) == ["noge", "Pull", "Push"])
+        #expect(TemplateStarter.startable([]).isEmpty)
+    }
+
     @Test("Ne može se pokrenuti drugi trening dok je jedan aktivan")
     func onlyOneActive() throws {
         let context = try makeContext()

@@ -7,11 +7,20 @@ import Units
 
 /// Kartica za početak treninga na vrhu Početne, istog oblika kao kartice ispod nje.
 /// Svaki red je jedan način početka: sljedeći trening svakog rasporeda (kardio se otvara kao uputa za sat)
-/// i prazan trening.
+/// i prazan trening. Kad nijedan raspored ne nudi trening snage, a postoje spremljeni treninzi, prvi red
+/// otvara njihov popis (`TemplatePickerSheet`).
 struct StartWorkoutCard: View {
     let planned: [PlannedWorkout]
+    /// Broj spremljenih treninga koji se mogu pokrenuti bez rasporeda (`TemplateStarter.startable`).
+    let templateCount: Int
     let onStart: (PlannedWorkout) -> Void
+    let onChooseTemplate: () -> Void
     let onStartEmpty: () -> Void
+
+    /// Red za izbor spremljenog treninga, samo kad raspored ne nudi trening snage.
+    private var offersTemplates: Bool {
+        templateCount > 0 && !planned.contains { $0.template.kind != .cardio }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,8 +39,17 @@ struct StartWorkoutCard: View {
                 .accessibilityIdentifier("home.startPlanned")
                 Divider().padding(.leading, 68)
             }
+            if offersTemplates {
+                Button(action: onChooseTemplate) {
+                    StartRow(symbol: "list.bullet", isProminent: true, subtitle: String(localized: "\(templateCount) spremljenih treninga")) {
+                        Text("Odaberi trening")
+                    }
+                }
+                .accessibilityIdentifier("home.chooseTemplate")
+                Divider().padding(.leading, 68)
+            }
             Button(action: onStartEmpty) {
-                if planned.isEmpty {
+                if planned.isEmpty && !offersTemplates {
                     StartRow(symbol: "play.fill", isProminent: true, subtitle: nil) { Text("Započni trening") }
                 } else {
                     StartRow(symbol: "plus", isProminent: false, subtitle: nil) { Text("Prazan trening") }

@@ -22,12 +22,17 @@ struct HomeScreen: View {
     @Query private var settingsList: [UserSettings]
     @Query private var schedules: [Schedule]
     @Query private var cycleOverrides: [CycleOverride]
+    @Query private var templates: [WorkoutTemplate]
     @State private var showsSettings = false
     @State private var showsCardEditor = false
     @Namespace private var workoutTransition
     @State private var presentedSession: Session?
     /// Kardio iz rasporeda: pregled plana s uputom za sat umjesto pokretanja treninga.
     @State private var cardioSchedule: Schedule?
+    /// Izbor spremljenog treninga kad nema rasporeda.
+    @State private var showsTemplatePicker = false
+    /// Trening odabran u listu; pokreće se tek kad se list zatvori, jer se puni ekran ne može prikazati dok se list zatvara.
+    @State private var chosenTemplate: WorkoutTemplate?
     @State private var errorText: String?
     @State private var checkedRecovery = false
     /// Prazna Početna je jednom dobila karticu zadnjeg treninga.
@@ -95,6 +100,9 @@ struct HomeScreen: View {
             }
             .sheet(item: $cardioSchedule) { schedule in
                 UpcomingWorkoutSheet(schedule: schedule) { cardioSchedule = nil }
+            }
+            .sheet(isPresented: $showsTemplatePicker, onDismiss: startChosenTemplate) {
+                TemplatePickerSheet(templates: startableTemplates) { chosenTemplate = $0 }
             }
             .sheet(isPresented: $showsCardEditor) {
                 DashboardEditor()
@@ -174,6 +182,7 @@ struct HomeScreen: View {
             } else {
                 StartWorkoutCard(
                     planned: upcoming,
+                    templateCount: startableTemplates.count,
                     onStart: { planned in
                         if planned.template.kind == .cardio {
                             cardioSchedule = planned.schedule
@@ -181,6 +190,7 @@ struct HomeScreen: View {
                             start(planned)
                         }
                     },
+                    onChooseTemplate: { showsTemplatePicker = true },
                     onStartEmpty: startWorkout
                 )
             }
@@ -192,17 +202,19 @@ struct HomeScreen: View {
 
     private static let workoutTransitionID = "workout"
 
-    /// ⌘N nastavlja trening u tijeku ili pokreće sljedeći iz rasporeda (prazan ako rasporeda nema),
-    /// isto kao prvi gumb na Početnoj. Kardio se ne pokreće u aplikaciji, pa ⌘N tada otvara prazan trening.
+    /// ⌘N nastavlja trening u tijeku ili pokreće sljedeći iz rasporeda, isto kao prvi gumb na Početnoj. Bez rasporeda
+    /// otvara izbor spremljenog treninga, a bez spremljenih treninga prazan trening. Kardio se ne pokreće u aplikaciji.
     private func handle(_ request: HomeRequest) {
         guard presentedSession == nil else { return }
         switch request {
         case .activeWorkout:
             // Iz Live Activityja: zatvara se ono što je otvoreno preko Početne i otvara puni ekran treninga.
             guard let active = activeSessions.first else { return }
-            let hadSheet = showsSettings || showsCardEditor || cardioSchedule != nil
+            let hadSheet = showsSettings || showsCardEditor || showsTemplatePicker || cardioSchedule != nil
             showsSettings = false
             showsCardEditor = false
+            showsTemplatePicker = false
+            chosenTemplate = nil
             cardioSchedule = nil
             recovery = nil
             if hadSheet {
@@ -221,6 +233,8 @@ struct HomeScreen: View {
                 presentedSession = active
             } else if let planned = upcomingWorkouts.first(where: { $0.template.kind != .cardio }) {
                 start(planned)
+            } else if !startableTemplates.isEmpty {
+                showsTemplatePicker = true
             } else {
                 startWorkout()
             }
@@ -285,6 +299,24 @@ struct HomeScreen: View {
         do {
             presentedSession = try PerformanceSignpost.measure("WorkoutStart") {
                 try TemplateStarter(context: context).start(planned)
+            }
+            ReminderScheduler.refresh(context: context)
+        } catch {
+            errorText = String(localized: "Trening se nije mogao pokrenuti.")
+        }
+    }
+
+    /// Spremljeni treninzi koji se mogu pokrenuti bez rasporeda.
+    private var startableTemplates: [WorkoutTemplate] {
+        TemplateStarter.startable(templates)
+    }
+
+    private func startChosenTemplate() {
+        guard let template = chosenTemplate else { return }
+        chosenTemplate = nil
+        do {
+            presentedSession = try PerformanceSignpost.measure("WorkoutStart") {
+                try TemplateStarter(context: context).start(template)
             }
             ReminderScheduler.refresh(context: context)
         } catch {
