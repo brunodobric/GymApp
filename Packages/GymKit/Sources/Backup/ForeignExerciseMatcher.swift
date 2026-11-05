@@ -6,8 +6,8 @@ import Foundation
 public enum ForeignExerciseMatcher {
 
     /// Poznati nazivi iz izvoza druge aplikacije: (naziv, oprema) → id u katalogu.
-    /// Vježbe koje u katalogu nemaju pravi par (npr. "Hanging Leg Raises", "Drag Hammer Curls")
-    /// namjerno nisu ovdje: bolje vlastita vježba nego pogrešna povijest i rekordi druge vježbe.
+    /// Vježbe koje u katalogu nemaju pravi par (npr. veslanje s trakama) namjerno nisu ovdje:
+    /// bolje vlastita vježba nego pogrešna povijest i rekordi druge vježbe.
     struct KnownName {
         let name: String
         let equipment: String
@@ -96,6 +96,16 @@ public enum ForeignExerciseMatcher {
         KnownName("Crunches", "Bodyweight", "Crunches"),
         KnownName("Cable Crunches", "Cable", "Cable_Crunch"),
         KnownName("Plank", "Bodyweight", "Plank"),
+        KnownName("Side Plank", "Bodyweight", "Side_Bridge"),
+        KnownName("Hanging Leg Raises", "Bodyweight", "Hanging_Leg_Raise"),
+        KnownName("Seated Curls", "Dumbbells", "Seated_Dumbbell_Curl"),
+        KnownName("Drag Curls", "Barbell", "Drag_Curl"),
+        KnownName("Drag Hammer Curls", "Dumbbells", "Drag_Curl"),
+        KnownName("Skull Crushers with Rope", "Cable", "Cable_Lying_Triceps_Extension"),
+        KnownName("Skull Crushers", "Cable", "Cable_Lying_Triceps_Extension"),
+        KnownName("Incline Chest Press", "Machine", "Leverage_Incline_Chest_Press"),
+        // Isti pokret: u katalogu je na spravi, a u izvozu s vlastitom težinom i teretom.
+        KnownName("Standing Calf Raises", "Bodyweight", "Standing_Calf_Raises"),
         KnownName("Russian Twists", "Bodyweight", "Russian_Twist"),
     ]
 

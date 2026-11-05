@@ -21,6 +21,7 @@ Incline_Push-Up
 Decline_Push-Up
 Dips_-_Chest_Version
 Bent-Arm_Dumbbell_Pullover
+Leverage_Incline_Chest_Press
 
 # Leđa
 Pullups
@@ -88,6 +89,8 @@ Standing_Biceps_Cable_Curl
 Cable_Hammer_Curls_-_Rope_Attachment
 Reverse_Barbell_Curl
 Zottman_Curl
+Seated_Dumbbell_Curl
+Drag_Curl
 
 # Triceps
 Triceps_Pushdown
@@ -106,6 +109,7 @@ Parallel_Bar_Dip
 Bench_Dips
 Dip_Machine
 Machine_Triceps_Extension
+Cable_Lying_Triceps_Extension
 
 # Podlaktice
 Palms-Up_Barbell_Wrist_Curl_Over_A_Bench
@@ -186,6 +190,8 @@ Mountain_Climbers
 Air_Bike
 Bent-Knee_Hip_Raise
 Knee_Hip_Raise_On_Parallel_Bars
+Hanging_Leg_Raise
+Side_Bridge
 
 # Olimpijska dizanja
 Power_Clean

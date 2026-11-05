@@ -44,6 +44,7 @@
   "cardioInputType": "durationDistance",
 
   "inputTypeOverrides": {
+    "Side_Bridge": "duration",
     "Pullups": "bodyweight",
     "Chin-Up": "bodyweight",
     "Weighted_Pull_Ups": "weightedBodyweight",
@@ -58,6 +59,16 @@
     "Plank": "duration",
     "Air_Bike": "duration",
     "Rope_Jumping": "duration"
+  },
+
+  "_instructionOverrides": "Engleske upute za vježbe koje ih u izvoru nemaju.",
+  "instructionOverrides": {
+    "Side_Bridge": [
+      "Lie on your side on a mat with your legs straight and stacked. Place the forearm of the lower arm on the floor, with the elbow directly under the shoulder.",
+      "Lift your hips off the floor so that your body forms a straight line from head to feet. Keep your core tight and do not let your hips sag. This will be your starting position.",
+      "Hold the position for the recommended amount of time while breathing steadily.",
+      "Lower your hips back to the floor and repeat on the other side."
+    ]
   },
 
   "equipmentOverrides": {
