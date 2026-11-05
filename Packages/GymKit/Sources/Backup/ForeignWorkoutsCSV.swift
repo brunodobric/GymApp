@@ -1,4 +1,5 @@
 import Foundation
+import Units
 
 /// Čitanje CSV izvoza treninga iz druge aplikacije. Ne ovisi o bazi, pa se može testirati samostalno.
 ///
@@ -225,7 +226,7 @@ public enum ForeignWorkoutsCSV {
             }
             switch column {
             case .kilograms, .pounds:
-                guard let value = Double(text), value >= 0 else { throw BackupError.invalidCSV(line: line) }
+                guard let value = Double(text), NumberInput.isAcceptable(value) else { throw BackupError.invalidCSV(line: line) }
                 let kilograms = column == .pounds ? value * 0.45359237 : value
                 if weighted { set.extraWeightKg = kilograms } else { set.weightKg = kilograms }
             case .reps:
@@ -235,7 +236,7 @@ public enum ForeignWorkoutsCSV {
                 guard let seconds = parseTime(text, minutes: column == .minutes) else { throw BackupError.invalidCSV(line: line) }
                 set.durationSeconds = seconds
             case .kilometers, .miles:
-                guard let value = Double(text), value >= 0 else { throw BackupError.invalidCSV(line: line) }
+                guard let value = Double(text), NumberInput.isAcceptable(value) else { throw BackupError.invalidCSV(line: line) }
                 set.distanceMeters = value * (column == .kilometers ? 1000 : 1609.344)
             }
         }
@@ -316,11 +317,17 @@ public enum ForeignWorkoutsCSV {
     private static func parseTime(_ text: String, minutes: Bool) -> Int? {
         let pieces = text.split(separator: ":")
         // "1:30" je uvijek minute i sekunde.
+        let limit = DurationInput.maximumSeconds
         if pieces.count == 2, let whole = Int(pieces[0]), let part = Int(pieces[1]), (0...59).contains(part) {
+            // Granica prije množenja: ogroman broj minuta inače prelije `Int` i sruši aplikaciju.
+            guard (0...limit / 60).contains(whole) else { return nil }
             return whole * 60 + part
         }
-        guard let value = Double(text), value >= 0 else { return nil }
-        return Int((value * (minutes ? 60 : 1)).rounded())
+        // "inf" i "nan" su `Double`, ali `Int(_:)` ih ne može pretvoriti i ruši aplikaciju.
+        guard let value = Double(text), value.isFinite, value >= 0 else { return nil }
+        let seconds = value * (minutes ? 60 : 1)
+        guard seconds <= Double(limit) else { return nil }
+        return Int(seconds.rounded())
     }
 }
 

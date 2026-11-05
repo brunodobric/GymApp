@@ -139,3 +139,28 @@ public struct ReminderBuilder {
         return result.sorted { $0.fireDate < $1.fireDate }
     }
 }
+
+/// Vrijeme podsjetnika: u rasporedu se sprema kao minute od ponoći, a `DatePicker` radi s datumom.
+public enum ReminderTime {
+    /// Današnji datum u zadano vrijeme (minute od ponoći).
+    public static func date(fromMinutes minutes: Int, on day: Date = Date(), calendar: Calendar = .current) -> Date {
+        let clamped = min(max(minutes, 0), 24 * 60 - 1)
+        return calendar.date(bySettingHour: clamped / 60, minute: clamped % 60, second: 0, of: day) ?? day
+    }
+
+    /// Minute od ponoći za vrijeme iz datuma (sekunde se zanemaruju).
+    public static func minutes(from date: Date, calendar: Calendar = .current) -> Int {
+        let parts = calendar.dateComponents([.hour, .minute], from: date)
+        return (parts.hour ?? 0) * 60 + (parts.minute ?? 0)
+    }
+
+    /// Dani u tjednu redom od ponedjeljka (`Calendar.weekday`: nedjelja je 1, ponedjeljak 2).
+    public static let weekdaysFromMonday = [2, 3, 4, 5, 6, 7, 1]
+
+    /// Uključuje ili isključuje dan u popisu dana podsjetnika. Rezultat je sortiran i bez ponavljanja.
+    public static func toggling(_ weekday: Int, in weekdays: [Int]) -> [Int] {
+        var days = Set(weekdays)
+        if days.contains(weekday) { days.remove(weekday) } else { days.insert(weekday) }
+        return days.sorted()
+    }
+}

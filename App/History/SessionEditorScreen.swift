@@ -100,11 +100,7 @@ struct SessionEditorScreen: View {
                 Button("Odbaci izmjene", role: .destructive) { dismiss() }
                 Button("Nastavi uređivati", role: .cancel) {}
             }
-            .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-                Button("U redu") {}
-            } message: {
-                Text(errorText ?? "")
-            }
+            .errorAlert($errorText)
         }
     }
 

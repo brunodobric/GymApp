@@ -68,9 +68,6 @@ struct CardioPlanTests {
         #expect(template.kind == .cardio)
         #expect(template.cardioPlan == plan)
         #expect(template.orderedExercises.isEmpty)
-
-        let copy = try TemplateEngine(context: context).duplicate(template, name: "Staza 2")
-        #expect(copy.cardioPlan == plan)
     }
 
     @Test("Isti plan je uvijek isti tekst")

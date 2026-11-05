@@ -6,7 +6,7 @@ import Units
 
 /// Jedan redak serije: oznaka, veliki brojevi s prošlim putem ispod njih i velika kvačica desno.
 /// Završena serija se zasivi, a kvačica ostaje zelena.
-/// Polja drže vlastiti tekst, a svaka izmjena odmah ide u model (i u bazu).
+/// Polja drže vlastiti tekst. Izmjena ide u model (i u bazu) kad korisnik potvrdi kotačić ili tipka u polje.
 /// Težina i ponavljanja se biraju kotačićem (`WheelInputField`), trajanje i udaljenost tipkovnicom.
 struct SetRow: View {
     let set: SetLog
@@ -30,6 +30,9 @@ struct SetRow: View {
     @State private var duration: String
     @State private var distance: String
     @State private var showsPlates = false
+    /// Tekst koji je polje dobilo iz modela (promjena sa sata ili iz Live Activityja). Njegov `onChange` ne smije
+    /// vratiti vrijednost u model, jer bi se zaokružena vratila natrag i još jednom spremila.
+    @State private var syncedTexts: [Field: String] = [:]
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.colorSchemeContrast) private var contrast
     @ScaledMetric(relativeTo: .title2) private var completeButtonWidth: CGFloat = 64
@@ -175,7 +178,7 @@ struct SetRow: View {
                 "Težina", hint: unit.symbol, text: $weightText, unit: unit, fallback: weightFallback,
                 longPress: ("Kalkulator ploča", { showsPlates = true })
             )
-            .onChange(of: weightText) { _, _ in applyWeight() }
+            .onChange(of: weightText) { _, new in userChanged(.weight, new, apply: applyWeight) }
             timesSign
             repsField
         case .bodyweight:
@@ -189,22 +192,22 @@ struct SetRow: View {
             timesSign
             repsField
         case .duration:
-            field("Trajanje", "m:ss", $duration, keyboard: .numbersAndPunctuation) { applyDuration() }
+            field("Trajanje", "m:ss", $duration, key: .duration, keyboard: .numbersAndPunctuation) { applyDuration() }
         case .durationDistance:
-            field("Trajanje", "m:ss", $duration, keyboard: .numbersAndPunctuation) { applyDuration() }
-            field("Udaljenost", "km", $distance) { applyDistance() }
+            field("Trajanje", "m:ss", $duration, key: .duration, keyboard: .numbersAndPunctuation) { applyDuration() }
+            field("Udaljenost", "km", $distance, key: .distance) { applyDistance() }
         }
     }
 
     private func field(
-        _ title: LocalizedStringKey, _ hint: String, _ text: Binding<String>,
+        _ title: LocalizedStringKey, _ hint: String, _ text: Binding<String>, key: Field,
         keyboard: UIKeyboardType = .decimalPad, apply: @escaping () -> Void
     ) -> some View {
         TextField(hint, text: text)
             .keyboardType(keyboard)
             .setFieldFrame()
             .accessibilityLabel(Text(title))
-            .onChange(of: text.wrappedValue) { _, _ in apply() }
+            .onChange(of: text.wrappedValue) { _, new in userChanged(key, new, apply: apply) }
     }
 
     private var effortMenu: some View {
@@ -245,27 +248,48 @@ struct SetRow: View {
 
     // MARK: Promjene izvana
 
+    /// Polja retka, za razlikovanje vlastitog unosa od teksta koji je stigao iz modela.
+    private enum Field: Hashable {
+        case weight, reps, duration, distance
+    }
+
+    /// Tekst polja se promijenio: vlastiti unos ide u model, a tekst koji je upisao `sync…` se preskače.
+    private func userChanged(_ field: Field, _ text: String, apply: () -> Void) {
+        if let synced = syncedTexts[field], synced == text {
+            syncedTexts[field] = nil
+            return
+        }
+        syncedTexts[field] = nil
+        apply()
+    }
+
     private func syncWeight() {
         let shown = Self.load(of: set, inputType: inputType).map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
         // Prikaz se zaokružuje na 0,05, pa unos s više decimala (npr. 82,53) ne smije prepisati sam sebe.
         guard !Self.same(NumberInput.parse(weightText), shown, tolerance: 0.051) else { return }
-        weightText = NumberInput.format(shown)
+        setFromModel(.weight, NumberInput.format(shown), into: $weightText)
     }
 
     private func syncReps() {
         guard Int(reps.trimmingCharacters(in: .whitespaces)) != set.reps else { return }
-        reps = set.reps.map(String.init) ?? ""
+        setFromModel(.reps, set.reps.map(String.init) ?? "", into: $reps)
     }
 
     private func syncDuration() {
         guard DurationInput.parse(duration) != set.durationSeconds else { return }
-        duration = DurationInput.format(set.durationSeconds)
+        setFromModel(.duration, DurationInput.format(set.durationSeconds), into: $duration)
     }
 
     private func syncDistance() {
         let kilometres = set.distanceMeters.map { $0 / 1000 }
         guard !Self.same(NumberInput.parse(distance), kilometres) else { return }
-        distance = NumberInput.format(kilometres)
+        setFromModel(.distance, NumberInput.format(kilometres), into: $distance)
+    }
+
+    private func setFromModel(_ field: Field, _ text: String, into binding: Binding<String>) {
+        guard binding.wrappedValue != text else { return }
+        syncedTexts[field] = text
+        binding.wrappedValue = text
     }
 
     private static func same(_ lhs: Double?, _ rhs: Double?, tolerance: Double = 0.001) -> Bool {
@@ -324,12 +348,12 @@ struct SetRow: View {
 extension SetRow {
     private func weightField(_ title: LocalizedStringKey, _ hint: String) -> some View {
         WheelInputField.weight(title, hint: hint, text: $weightText, unit: unit, fallback: weightFallback)
-            .onChange(of: weightText) { _, _ in applyWeight() }
+            .onChange(of: weightText) { _, new in userChanged(.weight, new, apply: applyWeight) }
     }
 
     private var repsField: some View {
         WheelInputField.reps("Ponavljanja", hint: "×", text: $reps, fallback: suggestion?.reps ?? WheelOptions.defaultReps)
-            .onChange(of: reps) { _, _ in applyReps() }
+            .onChange(of: reps) { _, new in userChanged(.reps, new, apply: applyReps) }
     }
 
     /// Početak kotačića za praznu težinu: prošli trening, inače prazna šipka (ili 0 za dodatnu težinu i pomoć).

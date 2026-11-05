@@ -43,7 +43,6 @@ struct TemplateEditorScreen: View {
                     add(catalogStore.choices(from: payloads, custom: customExercises), at: index)
                 }
                 Button("Dodaj vježbe", systemImage: "plus") { showsCatalog = true }
-                    .keyboardShortcut("k", modifiers: .command)
                     // Puštena na gumb (i u praznom treningu) vježba ide na kraj.
                     .dropDestination(for: String.self) { payloads, _ in
                         let choices = catalogStore.choices(from: payloads, custom: customExercises)
@@ -56,15 +55,12 @@ struct TemplateEditorScreen: View {
         .navigationBarTitleDisplayMode(.inline)
         // Katalog se otvara samo gumbom Dodaj vježbe (i ⌘K), a zatvara gumbom Zatvori u ploči.
         .toolbar { EditButton() }
+        .commandShortcut("Dodaj vježbe", key: "k") { showsCatalog = true }
         .navigationDestination(for: TemplateExercise.self) { TemplateExerciseEditor(exercise: $0) }
         .planningPanel(isPresented: $showsCatalog, minWidth: 300, idealWidth: 360, maxWidth: 480) {
             ExerciseCatalogPanel(isPresented: $showsCatalog) { add($0, at: nil) }
         }
-        .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-            Button("U redu") {}
-        } message: {
-            Text(errorText ?? "")
-        }
+        .errorAlert($errorText)
         .onDisappear { try? context.save() }
     }
 
@@ -131,7 +127,7 @@ struct TemplateExerciseEditor: View {
     // Jedinica iz upita, dostupna već pri prvom prikazu: redak serije zapamti tekst težine u jedinici
     // koju je dobio prvi put, pa bi kasnije stigla jedinica (npr. iz `.task`) krivo preračunala unos.
     @Query private var settingsList: [UserSettings]
-    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
+    private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
 
     private var engine: TemplateEngine { TemplateEngine(context: context) }
 
@@ -141,7 +137,8 @@ struct TemplateExerciseEditor: View {
                 ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
                     TemplateSetRow(set: set, inputType: exercise.inputType, unit: unit, position: index + 1)
                         // Promjena jedinice gradi redak iznova, da tekst težine bude u novoj jedinici.
-                        .id(unit)
+                        // Id sadrži i seriju: samo `unit` bi svim retcima dao isti identitet u listi.
+                        .id("\(set.id.uuidString)-\(unit.rawValue)")
                 }
                 .onDelete { offsets in
                     let list = exercise.orderedSets

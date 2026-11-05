@@ -6,35 +6,15 @@ import SwiftUI
 import Training
 import Units
 
-/// Vježba iz odrađenih treninga, za odabir grafa napretka i usporedbe.
-struct DoneExercise: Identifiable, Hashable {
-    let key: String
-    let name: String
-    var id: String { key }
-
-    var ref: ExerciseRef? { ExerciseRef(key: key, name: name) }
-
-    /// Različite vježbe iz završenih treninga, abecedno.
-    static func list(from exercises: [SessionExercise]) -> [DoneExercise] {
-        var seen = Set<String>()
-        var result: [DoneExercise] = []
-        for exercise in exercises where exercise.session?.state == .finished && !exercise.exerciseKey.isEmpty {
-            if seen.insert(exercise.exerciseKey).inserted {
-                result.append(DoneExercise(key: exercise.exerciseKey, name: exercise.exerciseName))
-            }
-        }
-        return result.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
-    }
-}
-
 /// Popis vježbi koje je korisnik radio, za odabir grafa napretka.
 struct ExerciseProgressPicker: View {
-    @Query(filter: #Predicate<SessionExercise> { $0.isRemoved == false }) private var exercises: [SessionExercise]
+    @Environment(\.modelContext) private var context
+    /// Vježbe se učitaju jednom pri otvaranju, a pretraga filtrira taj popis.
+    @State private var done: [DoneExercise] = []
     @State private var search = ""
 
     private var items: [DoneExercise] {
-        let all = DoneExercise.list(from: exercises)
-        return search.isEmpty ? all : all.filter { $0.name.localizedCaseInsensitiveContains(search) }
+        search.isEmpty ? done : done.filter { $0.name.localizedCaseInsensitiveContains(search) }
     }
 
     var body: some View {
@@ -50,6 +30,7 @@ struct ExerciseProgressPicker: View {
         }
         .navigationTitle("Napredak vježbe")
         .searchable(text: $search, prompt: "Vježba")
+        .task { done = (try? DoneExercises.fetch(in: context)) ?? [] }
     }
 }
 
@@ -69,11 +50,12 @@ struct ExerciseProgressScreen: View {
         }
     }
 
+    /// Točka grafa. Id je stabilan (vježba i datum), da graf ne crta sve iznova pri svakom iscrtavanju.
     private struct PlotPoint: Identifiable {
-        let id = UUID()
         let series: String
         let date: Date
         let value: Double
+        var id: String { "\(series)|\(date.timeIntervalSinceReferenceDate)" }
     }
 
     private struct LoadKey: Equatable {
@@ -83,7 +65,8 @@ struct ExerciseProgressScreen: View {
 
     @Environment(\.modelContext) private var context
     @Query private var settingsList: [UserSettings]
-    @Query(filter: #Predicate<SessionExercise> { $0.isRemoved == false }) private var exercises: [SessionExercise]
+    /// Vježbe za usporedbu, učitane jednom pri otvaranju.
+    @State private var done: [DoneExercise] = []
     @State private var metric: Metric = .weight
     @State private var useBrzycki = false
     @State private var points: [ExercisePoint] = []
@@ -91,7 +74,7 @@ struct ExerciseProgressScreen: View {
     @State private var compared: ExerciseRef?
     @State private var comparedPoints: [ExercisePoint] = []
 
-    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
+    private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
 
     private func value(_ point: ExercisePoint) -> Double? {
         let kilograms: Double?
@@ -156,6 +139,7 @@ struct ExerciseProgressScreen: View {
         }
         .navigationTitle(ref.name)
         .navigationBarTitleDisplayMode(.inline)
+        .task { done = (try? DoneExercises.fetch(in: context)) ?? [] }
         .task(id: LoadKey(useBrzycki: useBrzycki, comparedKey: compared?.key)) {
             let engine = StatisticsEngine(context: context)
             let formula: SetMetrics.OneRepMaxFormula = useBrzycki ? .brzycki : .epley
@@ -177,7 +161,7 @@ struct ExerciseProgressScreen: View {
             if compared != nil {
                 Button("Bez usporedbe", systemImage: "xmark") { compared = nil }
             }
-            ForEach(DoneExercise.list(from: exercises).filter { $0.key != ref.key }) { item in
+            ForEach(done.filter { $0.key != ref.key }) { item in
                 Button(item.name) { compared = item.ref }
             }
         } label: {

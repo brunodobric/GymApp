@@ -137,7 +137,8 @@ public enum CSVBackup {
     private static func makeSet(order: Int, fields: [String], line: Int) throws -> SetLog {
         func double(_ text: String) throws -> Double? {
             if text.isEmpty { return nil }
-            guard let value = Double(text) else { throw BackupError.invalidCSV(line: line) }
+            // "inf", "nan" i negativni brojevi nisu ispravna vrijednost serije.
+            guard let value = Double(text), value.isFinite, value >= 0 else { throw BackupError.invalidCSV(line: line) }
             return value
         }
         func integer(_ text: String) throws -> Int? {
@@ -181,7 +182,7 @@ public enum CSVBackup {
         var result = BackupImportResult()
         for (index, row) in rows.enumerated().dropFirst() {
             guard row.count == bodyColumns.count, let id = UUID(uuidString: row[0]), let value = Double(row[3]),
-                  let date = CSVDate.parse(row[4]) else { throw BackupError.invalidCSV(line: index + 1) }
+                  value.isFinite, value >= 0, let date = CSVDate.parse(row[4]) else { throw BackupError.invalidCSV(line: index + 1) }
             guard known.insert(id).inserted else {
                 result.skipped += 1
                 continue

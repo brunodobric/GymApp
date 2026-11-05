@@ -1,5 +1,6 @@
 import Foundation
 import Models
+import Units
 
 // Tekstovi za prikaz kardio plana. Udaljenost je uvijek metrička (km i m), kao u unosu kardija na treningu.
 

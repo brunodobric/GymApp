@@ -78,8 +78,8 @@ struct SchedulesScreen: View {
                     NavigationLink(value: PlanningSelection.schedule(schedule.id)) { ScheduleRow(schedule: schedule) }
                 }
                 .onDelete { offsets in
-                    for index in offsets { context.delete(schedules[index]) }
-                    try? context.save()
+                    let engine = ScheduleEngine(context: context)
+                    for index in offsets { try? engine.delete(schedules[index]) }
                     ReminderScheduler.refresh(context: context)
                 }
             }
@@ -121,11 +121,7 @@ struct SchedulesScreen: View {
             }
         }
         .sheet(isPresented: $showsPrograms) { ProgramsScreen() }
-        .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-            Button("U redu") {}
-        } message: {
-            Text(errorText ?? "")
-        }
+        .errorAlert($errorText)
     }
 
     private func newSchedule() {

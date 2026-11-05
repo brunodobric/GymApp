@@ -102,6 +102,18 @@ struct SyncActivityTrackerTests {
         tracker.apply(SyncEvent(id: UUID(), kind: .import, endDate: early))
         #expect(tracker.lastSuccess == late)
     }
+
+    @Test("Kraj uvoza se pamti zasebno, a izvoz i neuspjeli uvoz ga ne mijenjaju")
+    func lastImport() {
+        var tracker = SyncActivityTracker()
+        tracker.apply(SyncEvent(id: UUID(), kind: .export, endDate: Date(timeIntervalSince1970: 100)))
+        #expect(tracker.lastImport == nil)
+        tracker.apply(SyncEvent(id: UUID(), kind: .import, endDate: Date(timeIntervalSince1970: 50), failure: .network))
+        #expect(tracker.lastImport == nil)
+        let end = Date(timeIntervalSince1970: 300)
+        tracker.apply(SyncEvent(id: UUID(), kind: .import, endDate: end))
+        #expect(tracker.lastImport == end)
+    }
 }
 
 @Suite("Sinkronizacija: postavka")

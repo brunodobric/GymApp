@@ -120,8 +120,14 @@ public struct SessionEditor {
             for (index, set) in completedSets(exercise).enumerated() { set.orderIndex = index }
         }
 
+        // Udaljenost treninga snage je zbroj udaljenosti serija, pa nestaje kad se obrišu serije s udaljenošću.
+        // Kardio trening ostaje sa svojom udaljenošću (može doći sa sata, ne iz serija).
         let distance = remaining.flatMap(completedSets).compactMap(\.distanceMeters).reduce(0, +)
-        if distance > 0 { session.distanceMeters = distance }
+        if distance > 0 {
+            session.distanceMeters = distance
+        } else if session.kind == .strength {
+            session.distanceMeters = nil
+        }
         if let end = session.endedAt, end < session.startedAt { session.endedAt = session.startedAt }
         session.name = session.name.trimmingCharacters(in: .whitespacesAndNewlines)
         session.lastActivityAt = session.endedAt ?? session.lastActivityAt

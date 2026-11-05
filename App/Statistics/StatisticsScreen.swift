@@ -25,7 +25,7 @@ struct StatisticsScreen: View {
     @State private var heatmap: [String: RegionLoad] = [:]
     @State private var records: [RecordEntry] = []
 
-    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
+    private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
 
     private var trackedKinds: Set<PRKind> {
         PRKind.tracked(by: UserSettings.preferred(in: settingsList))
@@ -138,11 +138,12 @@ private struct VolumeCard: View {
     let buckets: [VolumeBucket]
     let unit: WeightUnit
 
+    /// Stupac grafa. Id je stabilan (razdoblje i mišić), da graf ne crta sve iznova pri svakom iscrtavanju.
     private struct Entry: Identifiable {
-        let id = UUID()
         let start: Date
         let name: String
         let volume: Double
+        var id: String { "\(start.timeIntervalSinceReferenceDate)|\(name)" }
     }
 
     /// Pet najopterećenijih mišića posebno, ostali zajedno.
@@ -206,11 +207,12 @@ private struct ComparisonCard: View {
     let period: BucketSize
     let unit: WeightUnit
 
+    /// Stupac grafa. Id je stabilan (mišić i razdoblje), da graf ne crta sve iznova pri svakom iscrtavanju.
     private struct Entry: Identifiable {
-        let id = UUID()
         let muscle: String
         let series: String
         let volume: Double
+        var id: String { "\(muscle)|\(series)" }
     }
 
     private var currentTitle: String {

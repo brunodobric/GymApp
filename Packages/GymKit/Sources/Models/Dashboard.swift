@@ -53,16 +53,16 @@ public struct DashboardLayout {
         return card
     }
 
-    /// Kartica zadnjeg treninga prije je uvijek bila na vrhu Početne. Ako je nema, stavlja je na vrh,
-    /// da je korisnik zadrži i nakon što je postala kartica koja se može ukloniti.
-    /// Poziva se jednom po uređaju; duplikat s drugog uređaja uklanja deduplikacija.
+    /// Početna bez ijedne kartice dobiva karticu zadnjeg treninga.
+    ///
+    /// Samo na praznoj Početnoj: ako kartice već postoje (npr. stigle su s drugog uređaja), korisnik ih je
+    /// složio sam, pa se kartica zadnjeg treninga koju je uklonio ne vraća. Duplikat s drugog uređaja
+    /// uklanja deduplikacija.
     @discardableResult
     public func seedLastWorkout() throws -> DashboardCard? {
-        guard try availableKinds().contains(.lastWorkout) else { return nil }
-        let existing = try allCards()
+        guard try allCards().isEmpty else { return nil }
         let card = DashboardCard(kindRaw: DashboardCardKind.lastWorkout.rawValue, orderIndex: 0)
         context.insert(card)
-        try renumber([card] + existing)
         try context.save()
         return card
     }
@@ -76,10 +76,7 @@ public struct DashboardLayout {
     /// Premješta prikazane kartice (`offsets` i `destination` su indeksi u `cards()`, kao kod `onMove`).
     public func move(fromOffsets offsets: IndexSet, toOffset destination: Int) throws {
         var visible = try cards()
-        let moved = offsets.sorted().compactMap { visible.indices.contains($0) ? visible[$0] : nil }
-        let target = destination - offsets.filter { $0 < destination }.count
-        visible.removeAll { card in moved.contains { $0.persistentModelID == card.persistentModelID } }
-        visible.insert(contentsOf: moved, at: max(0, min(target, visible.count)))
+        visible.moveElements(fromOffsets: offsets, toOffset: destination)
         let hidden = try allCards().filter { card in !visible.contains { $0.persistentModelID == card.persistentModelID } }
         try renumber(visible + hidden)
         try context.save()

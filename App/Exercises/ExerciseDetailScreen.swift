@@ -168,11 +168,7 @@ private struct CustomExerciseDetail: View {
         } message: {
             Text("Ako je vježba već korištena u treningu, samo će se arhivirati i povijest ostaje.")
         }
-        .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-            Button("U redu") {}
-        } message: {
-            Text(errorText ?? "")
-        }
+        .errorAlert($errorText)
     }
 
     private func remove() {

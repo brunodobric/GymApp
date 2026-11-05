@@ -60,6 +60,8 @@ public enum SyncActivity: Equatable, Sendable {
 public struct SyncActivityTracker: Equatable, Sendable {
     public private(set) var running: Set<UUID> = []
     public private(set) var lastSuccess: Date?
+    /// Kraj zadnjeg uspješnog uvoza s iClouda. Dok ga nema, baza na novom uređaju možda još nema podatke s drugih uređaja.
+    public private(set) var lastImport: Date?
     public private(set) var failure: SyncFailure?
 
     public init() {}
@@ -79,7 +81,9 @@ public struct SyncActivityTracker: Equatable, Sendable {
         }
         failure = nil
         lastSuccess = max(lastSuccess ?? endDate, endDate)
-        return event.kind == .import
+        guard event.kind == .import else { return false }
+        lastImport = max(lastImport ?? endDate, endDate)
+        return true
     }
 
     public var activity: SyncActivity {

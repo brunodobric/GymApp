@@ -50,6 +50,37 @@ private func fetchSession(_ id: UUID, in context: ModelContext) throws -> Sessio
 @Suite("Uređivanje odrađenog treninga")
 struct SessionEditorTests {
 
+    @Test("Brisanje svih serija s udaljenošću briše i udaljenost treninga")
+    func clearsDistance() throws {
+        let container = try GymPersistence.makeUserContainer(storage: .inMemory)
+        let context = ModelContext(container)
+        let engine = WorkoutEngine(context: context)
+        let session = try engine.startSession(name: "Kondicija", now: base)
+        let pressing = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        for set in pressing.orderedSets { try engine.removeSet(set, now: base) }
+        let pressSet = try engine.addSet(to: pressing, now: base)
+        pressSet.weightKg = 80
+        pressSet.reps = 8
+        try engine.completeSet(pressSet, defaultRestSeconds: 0, now: base.addingTimeInterval(60))
+        let rowing = try engine.addExercise(row, inputType: .durationDistance, to: session, now: base)
+        for set in rowing.orderedSets { try engine.removeSet(set, now: base) }
+        let rowSet = try engine.addSet(to: rowing, now: base)
+        rowSet.durationSeconds = 300
+        rowSet.distanceMeters = 1000
+        try engine.completeSet(rowSet, defaultRestSeconds: 0, now: base.addingTimeInterval(120))
+        try engine.finishSession(session, now: base.addingTimeInterval(3600))
+        #expect(session.distanceMeters == 1000)
+
+        let stored = Stored(id: session.id, modelID: session.persistentModelID)
+        let (editor, copy) = try editingCopy(of: stored, in: container)
+        let copiedRowing = try #require(copy.orderedExercises.first { $0.exercise.key == row.key })
+        editor.removeExercise(copiedRowing)
+        try editor.save(copy)
+
+        let reader = ModelContext(container)
+        #expect(try fetchSession(stored.id, in: reader).distanceMeters == nil)
+    }
+
     @Test("Spremljene izmjene: naziv, vrijednosti, nova serija i nova vježba")
     func savesChanges() throws {
         let (container, session) = try finishedSession()

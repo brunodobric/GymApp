@@ -19,18 +19,36 @@ final class WorkoutLiveUpdates {
     private let logger = Logger(subsystem: "com.brunodobric.gymapp", category: "LiveActivity")
     /// Osvježavanja idu jedno za drugim, da dva brza poziva ne pokrenu dvije Live Activityje.
     private var lastRefresh: Task<Void, Never>?
+    /// Odgođeno osvježavanje: niz brzih izmjena (tipkanje u polje serije) daje jedno ažuriranje Live Activityja,
+    /// jer ActivityKit ograničava broj ažuriranja.
+    private var pendingRefresh: Task<Void, Never>?
+    /// Prethodne vrijednosti po vježbi za trening u tijeku. Završeni treninzi se tijekom treninga ne mijenjaju,
+    /// pa se povijest vježbe ne čita iznova pri svakom osvježavanju.
+    private var previousSessionID: UUID?
+    private var previousByExercise: [String: [SetValues]] = [:]
+
+    /// Odgoda osvježavanja nakon zadnje izmjene.
+    private static let debounce: Duration = .milliseconds(400)
 
     private init() {}
 
     private var context: ModelContext { AppServices.container.mainContext }
 
-    /// Osvježava Live Activity i obavijest prema aktivnom treningu, bez čekanja.
+    /// Osvježava Live Activity i obavijest prema aktivnom treningu, bez čekanja. Više poziva u kratkom
+    /// razmaku daje jedno osvježavanje.
     func refresh() {
-        _ = enqueue()
+        pendingRefresh?.cancel()
+        pendingRefresh = Task { [weak self] in
+            try? await Task.sleep(for: Self.debounce)
+            guard !Task.isCancelled else { return }
+            _ = self?.enqueue()
+        }
     }
 
-    /// Kao `refresh()`, ali čeka da Live Activity bude ažurirana (za radnje koje sustav izvodi u pozadini).
+    /// Kao `refresh()`, ali odmah i čeka da Live Activity bude ažurirana (za radnje koje sustav izvodi u pozadini).
     func refreshAndWait() async {
+        pendingRefresh?.cancel()
+        pendingRefresh = nil
         await enqueue().value
     }
 
@@ -134,19 +152,22 @@ final class WorkoutLiveUpdates {
         guard let set = WorkoutEngine(context: context).nextSet(in: session), let exercise = set.exercise else {
             return NextSetDetails(values: [], previousText: nil)
         }
-        let values = LiveSetEditor.values(of: set, inputType: exercise.inputType, unit: unit).map { value in
-            RestTimerActivityAttributes.SetValue(
-                field: value.field.rawValue,
-                text: value.text,
-                unitSymbol: value.unitSymbol,
-                canDecrease: value.canDecrease,
-                canIncrease: value.canIncrease
-            )
-        }
-        let last = try? GymQueries(context: context).lastPerformance(of: exercise.exercise)
-        let previous = last?.orderedSets.filter(\.isCompleted).map(\.values) ?? []
+        let values = LiveSetEditor.values(of: set, inputType: exercise.inputType, unit: unit).map(\.activityValue)
+        let previous = previousValues(of: exercise, in: session)
         let previousText = LiveSetEditor.previousText(of: set, inputType: exercise.inputType, previous: previous, unit: unit)
         return NextSetDetails(values: values, previousText: previousText)
+    }
+
+    private func previousValues(of exercise: SessionExercise, in session: Session) -> [SetValues] {
+        if previousSessionID != session.id {
+            previousSessionID = session.id
+            previousByExercise = [:]
+        }
+        let key = exercise.exercise.key
+        if let cached = previousByExercise[key] { return cached }
+        let values = (try? GymQueries(context: context).previousSetValues(of: exercise.exercise)) ?? []
+        previousByExercise[key] = values
+        return values
     }
 
     private struct NextSetDetails {
@@ -174,6 +195,19 @@ final class WorkoutLiveUpdates {
             restEndsAt: status.rest?.endsAt,
             workoutStartedAt: session.startedAt,
             isLedByWatch: session.controllingDevice == .watch
+        )
+    }
+}
+
+extension LiveSetValue {
+    /// Vrijednost za Live Activity i karticu treninga na Početnoj (widget ne ovisi o GymKitu).
+    var activityValue: RestTimerActivityAttributes.SetValue {
+        RestTimerActivityAttributes.SetValue(
+            field: field.rawValue,
+            text: text,
+            unitSymbol: unitSymbol,
+            canDecrease: canDecrease,
+            canIncrease: canIncrease
         )
     }
 }

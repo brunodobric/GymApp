@@ -16,7 +16,7 @@ struct BodyScreen: View {
     @State private var showsNewCustom = false
     @State private var customName = ""
 
-    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
+    private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
 
     private var customNames: [String] {
         Array(Set(measurements.filter { $0.kind == .custom }.compactMap(\.customName).filter { !$0.isEmpty })).sorted()

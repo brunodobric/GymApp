@@ -479,42 +479,6 @@ private struct SetValueStepper: View {
     }
 }
 
-/// Tekst vrijednosti i opisi gumba za VoiceOver, zajednički za Dynamic Island i zaključani zaslon.
-private extension RestTimerActivityAttributes.SetValue {
-    @ViewBuilder
-    var valueText: some View {
-        if field == "reps" {
-            if let reps = Int(text) {
-                Text("\(reps) pon.")
-            } else {
-                Text("– pon.")
-            }
-        } else if unitSymbol.isEmpty {
-            Text(verbatim: text)
-        } else {
-            Text(verbatim: "\(text) \(unitSymbol)")
-        }
-    }
-
-    var decreaseLabel: Text {
-        switch field {
-        case "reps": Text("Smanji ponavljanja")
-        case "duration": Text("Skrati trajanje")
-        case "distance": Text("Smanji udaljenost")
-        default: Text("Smanji težinu")
-        }
-    }
-
-    var increaseLabel: Text {
-        switch field {
-        case "reps": Text("Povećaj ponavljanja")
-        case "duration": Text("Produlji trajanje")
-        case "distance": Text("Povećaj udaljenost")
-        default: Text("Povećaj težinu")
-        }
-    }
-}
-
 /// Kvačica za sljedeću seriju. Bez upisanih vrijednosti nema gumba: vrijednosti se upisuju s + ili u aplikaciji.
 /// U Dynamic Islandu je uz vrijednosti serije samo kvačica u krugu, da sve stane u jedan red.
 /// Inače je široki gumb sa zaobljenim kutovima.

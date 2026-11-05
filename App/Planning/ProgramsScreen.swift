@@ -37,11 +37,7 @@ struct ProgramsScreen: View {
             } message: {
                 Text("Raspored \(added ?? "") nalazi se u kartici Rasporedi, a ciljeve u treningu možeš prilagoditi.")
             }
-            .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-                Button("U redu") {}
-            } message: {
-                Text(errorText ?? "")
-            }
+            .errorAlert($errorText)
         }
     }
 

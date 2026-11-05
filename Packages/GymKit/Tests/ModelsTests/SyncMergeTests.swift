@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 import Testing
+import Units
 @testable import Models
 
 private func makeContext() throws -> ModelContext {
@@ -48,6 +49,15 @@ struct SyncMergeTests {
         #expect(UserSettings.preferred(in: [first, second]) === expected)
         #expect(UserSettings.preferred(in: [second, first]) === expected)
         #expect(UserSettings.preferred(in: []) == nil)
+    }
+
+    @Test("Jedinica težine dolazi iz važećeg zapisa postavki, a bez postavki su kilogrami")
+    func weightUnitFromSettings() {
+        #expect(UserSettings.weightUnit(in: []) == .kilograms)
+        let single = UserSettings()
+        single.weightUnit = .pounds
+        #expect(UserSettings.weightUnit(in: [single]) == .pounds)
+        #expect(UserSettings.preferred(in: [single]) === single)
     }
 
     @Test("Ista vrsta kartice ostaje jednom, a redoslijed se zatvara")

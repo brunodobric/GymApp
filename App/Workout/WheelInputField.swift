@@ -62,6 +62,10 @@ struct WheelInputField: View {
 }
 
 /// Sadržaj oblačića: naslov, broj koji se dodirom pretvara u polje za tipkovnicu i kotačić.
+///
+/// Kotačić i tipkovnica mijenjaju samo lokalni nacrt (`draft`). U polje (pa u model i bazu) on ide jednom,
+/// kad se oblačić zatvori, a ne pri svakom koraku kotačića: svaki upis u model sprema bazu, šalje snimku
+/// satu i osvježava Live Activity.
 private struct WheelInputPanel: View {
     let title: LocalizedStringKey
     let hint: String
@@ -70,6 +74,7 @@ private struct WheelInputPanel: View {
     let keyboard: UIKeyboardType
     let format: (Double) -> String
 
+    @State private var draft: String
     @State private var selection: Double
     @State private var isTyping = false
     /// Tekst s tipkovnice. Počinje prazan da se novi broj ne lijepi na stari.
@@ -90,7 +95,10 @@ private struct WheelInputPanel: View {
         self.options = options
         self.keyboard = keyboard
         self.format = format
-        _selection = State(initialValue: WheelOptions.nearest(to: start, in: options) ?? start)
+        let initial = WheelOptions.nearest(to: start, in: options) ?? start
+        _selection = State(initialValue: initial)
+        // Prazno polje odmah dobiva vrijednost s kotačića, pa "Gotovo" bez okretanja prihvaća ono što se vidi.
+        _draft = State(initialValue: text.wrappedValue.isEmpty ? format(initial) : text.wrappedValue)
     }
 
     var body: some View {
@@ -113,12 +121,13 @@ private struct WheelInputPanel: View {
                 .background(.quaternary, in: .rect(cornerRadius: 10))
                 .onAppear { isFocused = true }
                 .onChange(of: typed) { _, new in
-                    text = new.trimmingCharacters(in: .whitespaces).isEmpty ? textBeforeTyping : new
+                    draft = new.trimmingCharacters(in: .whitespaces).isEmpty ? textBeforeTyping : new
                 }
+                .onSubmit { dismiss() }
             } else {
                 Button(action: startTyping) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        Text(verbatim: text.isEmpty ? format(selection) : text)
+                        Text(verbatim: draft)
                             .font(.largeTitle.monospacedDigit().bold())
                         Text(verbatim: hint)
                             .font(.title3)
@@ -131,7 +140,7 @@ private struct WheelInputPanel: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(title))
-                .accessibilityValue(Text(verbatim: text))
+                .accessibilityValue(Text(verbatim: draft))
                 .accessibilityHint(Text("Upiši broj tipkovnicom"))
 
                 Picker(title, selection: $selection) {
@@ -151,15 +160,17 @@ private struct WheelInputPanel: View {
         }
         .padding()
         .frame(width: width)
-        // Prazno polje odmah dobiva vrijednost s kotačića, pa "Gotovo" bez okretanja prihvaća ono što se vidi.
-        .onAppear { if text.isEmpty { text = format(selection) } }
         .onChange(of: selection) { _, new in
-            if !isTyping { text = format(new) }
+            if !isTyping { draft = format(new) }
+        }
+        // Oblačić se zatvara gumbom Gotovo ili dodirom izvan njega: tek tada vrijednost ide u polje.
+        .onDisappear {
+            if draft != text { text = draft }
         }
     }
 
     private func startTyping() {
-        textBeforeTyping = text
+        textBeforeTyping = draft
         typed = ""
         isTyping = true
     }

@@ -25,11 +25,12 @@ struct SyncSettingsSection: View {
                     .foregroundStyle(status.needsAttention ? Color.orange : Color.secondary)
             }
             .accessibilityElement(children: .combine)
+            // Račun se mogao promijeniti dok je aplikacija bila u pozadini. `.task` je na retku, a ne na
+            // `Section`: na sekciji bi se izveo za svaki redak posebno.
+            .task { monitor.refreshAccount() }
         } footer: {
             Text(status.footer)
         }
-        // Račun se mogao promijeniti dok je aplikacija bila u pozadini.
-        .task { monitor.refreshAccount() }
     }
 }
 

@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import Units
 
 /// Uklanjanje duplikata po UUID-u. CloudKit može isporučiti isti zapis dvaput (npr. nakon
 /// istovremenog stvaranja na dva uređaja), a bez `unique` ograničenja baza to ne sprječava.
@@ -85,12 +86,20 @@ public enum Deduplication {
 }
 
 public extension UserSettings {
+    /// Jedinica težine iz važećeg zapisa postavki, a bez postavki kilogrami.
+    static func weightUnit(in all: [UserSettings]) -> WeightUnit {
+        preferred(in: all)?.weightUnit ?? .kilograms
+    }
+
     /// Koji od više zapisa postavki vrijedi. Isti zapis promijenjen na dva uređaja razrješava CloudKit
     /// (vrijedi zadnja promjena), a više zapisa nastaje samo kad novi uređaj stvori svoje postavke prije
     /// nego što stignu one iz iClouda. Tada prednost ima zapis s obavljenim onboardingom, zatim onaj koji
     /// se više razlikuje od zadanih vrijednosti (korisnik ga je mijenjao), zatim najmanji `id`.
     /// Pravilo je isto na svim uređajima, pa svi zadrže isti zapis.
     static func preferred(in all: [UserSettings]) -> UserSettings? {
+        // Uobičajeno je jedan zapis: bez usporedbe (i bez stvaranja zapisa sa zadanim vrijednostima),
+        // jer se ovo zove pri svakom iscrtavanju ekrana koji čita postavke.
+        guard all.count > 1 else { return all.first }
         let defaults = UserSettings()
         return all.min { lhs, rhs in
             if lhs.onboardingCompleted != rhs.onboardingCompleted { return lhs.onboardingCompleted }
