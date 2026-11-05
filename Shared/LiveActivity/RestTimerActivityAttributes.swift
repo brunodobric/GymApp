@@ -30,11 +30,15 @@ struct RestTimerActivityAttributes: ActivityAttributes {
         var nextSetID: String?
         /// Vrijednosti serije koju gumb potvrđuje, s gumbima − i +. Prazno kad nema sljedeće serije.
         var setValues: [SetValue]
+        /// Ista serija u prethodnom treningu, npr. "30 kg\n12 ×" (dva reda). Opcionalno i zbog stanja starije verzije.
+        var previousText: String?
         /// Serija ima sve vrijednosti. Bez njih gumb se ne prikazuje, a dodir otvara aplikaciju.
         var canConfirm: Bool
         /// Odmor u tijeku. `nil` kad odmora nema.
         var restStartedAt: Date?
         var restEndsAt: Date?
+        /// Početak treninga, za trajanje na vrhu. Opcionalno da se dekodira i stanje starije verzije.
+        var workoutStartedAt: Date?
         /// Trening vodi Apple Watch.
         var isLedByWatch: Bool
     }

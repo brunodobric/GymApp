@@ -99,7 +99,8 @@ struct HomeScreen: View {
                 seedLastWorkoutCard()
                 checkRecovery()
             }
-            .onChange(of: request) { _, newValue in
+            // `initial`: pri hladnom pokretanju iz Live Activityja zahtjev stigne prije nego što se Početna prikaže.
+            .onChange(of: request, initial: true) { _, newValue in
                 guard let newValue else { return }
                 request = nil
                 handle(newValue)
@@ -188,6 +189,23 @@ struct HomeScreen: View {
     private func handle(_ request: HomeRequest) {
         guard presentedSession == nil else { return }
         switch request {
+        case .activeWorkout:
+            // Iz Live Activityja: zatvara se ono što je otvoreno preko Početne i otvara puni ekran treninga.
+            guard let active = activeSessions.first else { return }
+            let hadSheet = showsSettings || showsCardEditor || cardioSchedule != nil
+            showsSettings = false
+            showsCardEditor = false
+            cardioSchedule = nil
+            recovery = nil
+            if hadSheet {
+                // Puni ekran se ne može prikazati dok se list još zatvara.
+                Task {
+                    try? await Task.sleep(for: .milliseconds(500))
+                    presentedSession = active
+                }
+            } else {
+                presentedSession = active
+            }
         case .settings:
             showsSettings = true
         case .startWorkout:

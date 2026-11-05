@@ -382,12 +382,14 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 * **Trening se vodi na Watchu:** haptika na satu, a na iPhoneu nema notifikacije kraja odmora (samo Live Activity).
 * Aplikacija ne drži audio sesiju aktivnom u pozadini samo radi timera.
 * Na iPhoneu može biti aktivna **Live Activity** koja prikazuje:
+  * Na vrhu naziv treninga i trajanje od početka
   * Preostalo vrijeme rest timera (traka + odbrojavanje u sekundama u realnom vremenu)
   * Trenutnu / sljedeću vježbu
   * Broj serija
   * Težinu i ponavljanja (ili trajanje i udaljenost) sljedeće serije, s gumbima − i + za promjenu (isti koraci kao Digital Crown na satu)
   * Kvačicu za potvrdu sljedeće serije
 * Live Activity je tiha (bez zvuka i notifikacijskih bannera). Timer u njoj prikazuje se sustavskim odbrojavanjem (`Text(timerInterval:)`), pa ne treba stalna ažuriranja.
+* Dodir na Live Activity (izvan gumba) otvara aplikaciju izravno na puni ekran aktivnog treninga.
 * Gasi se automatski kad trening završi.
 
 ### Apple Health (HealthKit)

@@ -1,6 +1,7 @@
 import Catalog
 import Foundation
 import Models
+import Training
 import Units
 
 /// Jedna vrijednost sljedeće serije u Live Activityju, s gumbima − i + (specifikacija, odjeljak 6).
@@ -56,6 +57,45 @@ public enum LiveSetEditor {
         set.durationSeconds = snapshot.durationSeconds
         set.distanceMeters = snapshot.distanceMeters
         return true
+    }
+
+    /// Vrijednosti iste serije u prethodnom treningu u dva reda: težina (ili trajanje) gore, ponavljanja
+    /// (ili udaljenost) dolje, npr. "30 kg\n12 ×", "12 ×" ili "1:30\n400 m".
+    /// Serija se uspoređuje po poziciji među serijama iste vrste (kao smart defaults). `nil` kad prošli put nema.
+    public static func previousText(
+        of set: SetLog,
+        inputType: ExerciseInputType,
+        previous: [SetValues],
+        unit: WeightUnit,
+        locale: Locale = .current
+    ) -> String? {
+        let sameKind = set.exercise?.orderedSets.filter { $0.kind == set.kind } ?? [set]
+        let position = sameKind.firstIndex { $0.id == set.id } ?? 0
+        guard let old = SmartDefaults.defaults(forPosition: position, kind: set.kind, previous: previous) else { return nil }
+        let weight = WeightFormatter(unit: unit, locale: locale)
+        switch inputType {
+        case .weightReps:
+            guard let kilograms = old.weightKg, let reps = old.reps else { return nil }
+            return "\(weight.string(fromKilograms: kilograms))\n\(reps) ×"
+        case .bodyweight:
+            return old.reps.map { "\($0) ×" }
+        case .weightedBodyweight, .assisted:
+            guard let reps = old.reps else { return nil }
+            return "\(weight.string(fromKilograms: old.extraWeightKg ?? 0))\n\(reps) ×"
+        case .duration:
+            return old.durationSeconds.map(durationText)
+        case .durationDistance:
+            let parts = [
+                old.durationSeconds.map(durationText),
+                old.distanceMeters.map { "\($0.formatted(.number.precision(.fractionLength(0)).locale(locale))) m" },
+            ]
+            let text = parts.compactMap { $0 }.joined(separator: "\n")
+            return text.isEmpty ? nil : text
+        }
+    }
+
+    private static func durationText(_ seconds: Int) -> String {
+        String(format: "%d:%02d", seconds / 60, seconds % 60)
     }
 
     private static func unitSymbol(of field: WatchSetField, unit: WeightUnit) -> String {
