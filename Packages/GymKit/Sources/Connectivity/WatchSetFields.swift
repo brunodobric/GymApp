@@ -76,7 +76,8 @@ public enum WatchSetField: String, CaseIterable, Sendable {
             && isFilled(in: set) == isFilled(in: copy)
     }
 
-    private func isFilled(in set: SetSnapshot) -> Bool {
+    /// Je li polje upisano (prazno se prikazuje kao "–").
+    func isFilled(in set: SetSnapshot) -> Bool {
         switch self {
         case .weight: set.weightKg != nil
         case .extraWeight: set.extraWeightKg != nil

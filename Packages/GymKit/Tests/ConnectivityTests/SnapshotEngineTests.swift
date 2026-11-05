@@ -1,6 +1,7 @@
 import Catalog
 import Foundation
 import Models
+import SwiftData
 import Testing
 import Training
 import Units
@@ -239,5 +240,88 @@ struct WatchSetFieldTests {
         #expect(WatchSetField.reps.matches(8, in: set, unit: .kilograms))
         #expect(!WatchSetField.distance.matches(0, in: set, unit: .kilograms))
         #expect(WatchSetField.duration.text(in: set, unit: .kilograms) == "1:35")
+    }
+}
+
+@Suite("Vrijednosti serije u Live Activityju")
+struct LiveSetEditorTests {
+    private let hr = Locale(identifier: "hr_HR")
+
+    /// Prva serija nove vježbe. Vraća i engine, da baza živi do kraja testa.
+    private func makeSet(_ inputType: ExerciseInputType = .weightReps) throws -> (WorkoutEngine, SetLog) {
+        let engine = WorkoutEngine(context: ModelContext(try GymPersistence.makeUserContainer(storage: .inMemory)))
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: inputType, to: session, now: base)
+        return (engine, try #require(exercise.orderedSets.first))
+    }
+
+    @Test("Težina i ponavljanja s jedinicom, prazno polje kao crtica")
+    func values() throws {
+        let (engine, set) = try makeSet()
+        defer { withExtendedLifetime(engine) {} }
+        set.weightKg = 82.5
+        set.reps = nil
+
+        let values = LiveSetEditor.values(of: set, inputType: .weightReps, unit: .kilograms, locale: hr)
+        #expect(values.map(\.field) == [.weight, .reps])
+        #expect(values[0].text == "82,5")
+        #expect(values[0].unitSymbol == "kg")
+        #expect(values[0].canDecrease && values[0].canIncrease)
+        #expect(values[1].text == "–")
+        #expect(values[1].unitSymbol.isEmpty)
+        // Prazno polje se ne smanjuje, a + ga popunjava.
+        #expect(!values[1].canDecrease)
+        #expect(values[1].canIncrease)
+    }
+
+    @Test("Plus i minus mijenjaju za jedan korak krune, težina ostaje u kilogramima")
+    func adjust() throws {
+        let (engine, set) = try makeSet()
+        defer { withExtendedLifetime(engine) {} }
+        set.weightKg = 80
+        set.reps = 8
+
+        #expect(LiveSetEditor.adjust(set, field: .weight, steps: 1, unit: .kilograms))
+        #expect(set.weightKg == 81.25)
+        #expect(LiveSetEditor.adjust(set, field: .reps, steps: -1, unit: .kilograms))
+        #expect(set.reps == 7)
+        #expect(set.weightKg == 81.25)
+
+        // U funtama je korak 2,5 lbs, a sprema se u kilogramima.
+        set.weightKg = 100 * WeightConversion.kilogramsPerPound
+        #expect(LiveSetEditor.adjust(set, field: .weight, steps: 1, unit: .pounds))
+        #expect(abs((set.weightKg ?? 0) - 102.5 * WeightConversion.kilogramsPerPound) < 1e-9)
+    }
+
+    @Test("Na rubu raspona i u praznom polju minus ne mijenja ništa")
+    func bounds() throws {
+        let (engine, set) = try makeSet()
+        defer { withExtendedLifetime(engine) {} }
+        set.reps = 0
+        #expect(!LiveSetEditor.adjust(set, field: .reps, steps: -1, unit: .kilograms))
+        #expect(set.reps == 0)
+
+        set.weightKg = nil
+        #expect(!LiveSetEditor.adjust(set, field: .weight, steps: -1, unit: .kilograms))
+        #expect(set.weightKg == nil)
+        #expect(LiveSetEditor.adjust(set, field: .weight, steps: 1, unit: .kilograms))
+        #expect(set.weightKg == 1.25)
+    }
+
+    @Test("Trajanje i udaljenost")
+    func cardio() throws {
+        let (engine, set) = try makeSet(.durationDistance)
+        defer { withExtendedLifetime(engine) {} }
+        set.durationSeconds = 90
+        set.distanceMeters = 400
+
+        let values = LiveSetEditor.values(of: set, inputType: .durationDistance, unit: .kilograms, locale: hr)
+        #expect(values.map(\.text) == ["1:30", "400"])
+        #expect(values.map(\.unitSymbol) == ["", "m"])
+
+        #expect(LiveSetEditor.adjust(set, field: .duration, steps: 1, unit: .kilograms))
+        #expect(set.durationSeconds == 95)
+        #expect(LiveSetEditor.adjust(set, field: .distance, steps: -1, unit: .kilograms))
+        #expect(set.distanceMeters == 350)
     }
 }

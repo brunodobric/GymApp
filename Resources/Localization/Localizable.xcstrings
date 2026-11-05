@@ -2408,6 +2408,16 @@
         }
       }
     },
+    "Korak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step"
+          }
+        }
+      }
+    },
     "Korak %lld od %lld" : {
       "localizations" : {
         "en" : {
@@ -4058,6 +4068,16 @@
         }
       }
     },
+    "Polje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Field"
+          }
+        }
+      }
+    },
     "Pomoć" : {
       "localizations" : {
         "en" : {
@@ -4184,6 +4204,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Connect to Apple Health?"
+          }
+        }
+      }
+    },
+    "Povećaj ponavljanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Increase reps"
+          }
+        }
+      }
+    },
+    "Povećaj težinu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Increase weight"
+          }
+        }
+      }
+    },
+    "Povećaj udaljenost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Increase distance"
+          }
+        }
+      }
+    },
+    "Povećava ili smanjuje vrijednost sljedeće serije aktivnog treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Increases or decreases a value of the next set in the active workout."
           }
         }
       }
@@ -4488,6 +4548,16 @@
         }
       }
     },
+    "Produlji trajanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Increase duration"
+          }
+        }
+      }
+    },
     "Program je dodan" : {
       "localizations" : {
         "en" : {
@@ -4524,6 +4594,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reorder"
+          }
+        }
+      }
+    },
+    "Promijeni vrijednost serije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change set value"
           }
         }
       }
@@ -5128,6 +5208,16 @@
         }
       }
     },
+    "Skrati trajanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decrease duration"
+          }
+        }
+      }
+    },
     "Slika" : {
       "localizations" : {
         "en" : {
@@ -5254,6 +5344,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Minimize"
+          }
+        }
+      }
+    },
+    "Smanji ponavljanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decrease reps"
+          }
+        }
+      }
+    },
+    "Smanji težinu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decrease weight"
+          }
+        }
+      }
+    },
+    "Smanji udaljenost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decrease distance"
           }
         }
       }
@@ -7678,6 +7798,16 @@
     },
     "–" : {
       "shouldTranslate" : false
+    },
+    "– pon." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "– reps"
+          }
+        }
+      }
     },
     "−10" : {
       "shouldTranslate" : false
