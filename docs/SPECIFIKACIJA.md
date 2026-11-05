@@ -136,7 +136,7 @@ Aplikacija koristi **adaptivni layout** (SwiftUI size classes / NavigationSplitV
 Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 
 1. **Dashboard** — Početni ekran.
-   * Na vrhu kartica **Započni** istog oblika kao kartice ispod: sljedeći trening svakog rasporeda i prazan trening.
+   * Na vrhu kartica **Započni** istog oblika kao kartice ispod, s laganom poluprozirnom pozadinom u boji akcenta da se istakne: sljedeći trening svakog rasporeda i prazan trening.
    * Dok trening traje, ekran treninga se povlačenjem prema dolje (ili gumbom Smanji) sažima u tu karticu. Kartica prikazuje isto što i Live Activity: vježbu i seriju, odbrojavanje odmora, težinu i ponavljanja s gumbima − i + te kvačicu za potvrdu serije. Dodir na karticu ponovno otvara cijeli ekran treninga.
    * Ispod njega kartica zadnjeg treninga (datum, trajanje, tip).
    * Ispod toga gumb za dodavanje widgeta.
