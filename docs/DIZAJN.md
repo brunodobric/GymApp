@@ -54,7 +54,7 @@ Pravila iz Apple Human Interface Guidelines (skill *apple-hig-dizajn*) primijenj
 * **Dynamic Type:** veličine elemenata uz tekst (oznaka serije, polja za unos, odbrojavanje na satu) idu kroz `@ScaledMetric`, ne fiksne brojeve. Retci s više polja (redak serije, traka odmora) kod veličina pristupačnosti (`dynamicTypeSize.isAccessibilitySize`) prelaze u dva retka.
 * **VoiceOver:** svaki gumb sa samo simbolom ima tekst (`Button("Preskoči", systemImage:)` s `.labelStyle(.iconOnly)` ili `accessibilityLabel`). Znakovi koji se ne čitaju dobro (×, Z, +10) dobivaju izgovorljiv opis: "Serija 2, 80 kg, 8 ponavljanja", "Zagrijavanje", "Produlji odmor za 10 sekundi". Odabrano stanje ide kroz `.isSelected`, a ukrasne slike su `accessibilityHidden`.
 * **Grafovi** imaju `accessibilityLabel` koji kaže što prikazuju, a heatmap tijela ima tekstualni sažetak.
-* **Kontrast:** boje su sistemske (prilagođavaju se za "Povećaj kontrast"). Prigušivanje prozirnošću (završene serije) isključuje se kad je `colorSchemeContrast == .increased`. Stanje se nikad ne prikazuje samo bojom: završena serija ima i kvačicu, dan s treningom i točku i opis za VoiceOver.
+* **Kontrast:** boje su sistemske (prilagođavaju se za "Povećaj kontrast"). Zasivljenje i prigušivanje prozirnošću (završene serije) isključuje se kad je `colorSchemeContrast == .increased`. Stanje se nikad ne prikazuje samo bojom: završena serija ima i punu zelenu kvačicu (nezavršena je obrubljena ili svijetla), dan s treningom i točku i opis za VoiceOver.
 * **Smanji kretanje:** animacije prijelaza poštuju `accessibilityReduceMotion`.
 
 ### Ručna provjera prije izdanja

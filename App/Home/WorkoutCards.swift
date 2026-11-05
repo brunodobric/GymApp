@@ -40,8 +40,8 @@ struct StartWorkoutCard: View {
             .accessibilityIdentifier("home.startEmpty")
         }
         .buttonStyle(CardRowButtonStyle())
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .workoutCardBackground()
     }
 }
 
@@ -78,6 +78,38 @@ private struct StartRow<Title: View>: View {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(.rect)
+    }
+}
+
+/// Pozadina kartice treninga: ista podloga kao ostale kartice, preko nje lagani poluprozirni sjaj u boji akcenta
+/// (jači gore lijevo, slabiji dolje desno) i tanki rub, da se kartica istakne među ostalima.
+private struct WorkoutCardBackground: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+
+    func body(content: Content) -> some View {
+        let shape = RoundedRectangle(cornerRadius: 16)
+        // U tamnom načinu akcent na tamnoj podlozi treba malo više boje da se jednako vidi.
+        let strength = colorScheme == .dark ? 1.4 : 1.0
+        content
+            .background {
+                shape
+                    .fill(Color(.secondarySystemGroupedBackground))
+                    .overlay {
+                        // `.tint` je akcent iz postavki (RootView ga postavlja), a ne AccentColor iz asseta.
+                        shape
+                            .fill(.tint.opacity(0.22 * strength))
+                            .mask(LinearGradient(colors: [.white, .white.opacity(0.4)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    }
+                    .overlay {
+                        shape.strokeBorder(.tint.opacity(0.3), lineWidth: 1)
+                    }
+            }
+    }
+}
+
+private extension View {
+    func workoutCardBackground() -> some View {
+        modifier(WorkoutCardBackground())
     }
 }
 
@@ -133,7 +165,7 @@ struct ActiveWorkoutCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
+        .workoutCardBackground()
         .contentShape(.rect(cornerRadius: 16))
         .onTapGesture(perform: onOpen)
         .accessibilityElement(children: .contain)

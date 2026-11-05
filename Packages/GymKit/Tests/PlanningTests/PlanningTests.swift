@@ -618,3 +618,71 @@ struct CycleCountRangeTests {
         #expect(ScheduleEngine.cycleCountRange(currentCycle: 60) == 60...60)
     }
 }
+
+@Suite("Novi trening iz odrađenog treninga")
+struct TemplateFromSessionTests {
+
+    /// Odrađeni trening: potisak (zagrijavanje + dvije radne), superset veslanja i pregiba.
+    private func pastSession(in context: ModelContext) throws -> Session {
+        let engine = WorkoutEngine(context: context)
+        let session = try engine.startSession(name: "Push", now: base)
+        let pressing = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        for set in pressing.orderedSets { try engine.removeSet(set, now: base) }
+        for (kind, weight, reps) in [(SetKind.warmUp, 40.0, 10), (.working, 80, 8), (.working, 85, 6)] {
+            let set = try engine.addSet(to: pressing, kind: kind, now: base)
+            set.weightKg = weight
+            set.reps = reps
+            try engine.completeSet(set, defaultRestSeconds: 0, now: base)
+        }
+        pressing.restSeconds = 150
+        let rowing = try engine.addExercise(row, inputType: .weightReps, to: session, now: base)
+        let curling = try engine.addExercise(curl, inputType: .weightReps, to: session, now: base)
+        try engine.makeSuperset([rowing, curling], in: session, now: base)
+        for exercise in [rowing, curling] {
+            let set = exercise.orderedSets[0]
+            set.weightKg = 30
+            set.reps = 12
+            try engine.completeSet(set, defaultRestSeconds: 0, now: base)
+        }
+        try engine.finishSession(session, now: base.addingTimeInterval(3600))
+        return session
+    }
+
+    @Test("Predložak ima naziv, vježbe, završene serije kao ciljeve, pauze i superset")
+    func copiesSession() throws {
+        let context = try makeContext()
+        let session = try pastSession(in: context)
+        let template = try TemplateEngine(context: context).createTemplate(from: session)
+
+        #expect(template.name == "Push")
+        #expect(template.kind == .strength)
+        let exercises = template.orderedExercises
+        #expect(exercises.map(\.exerciseName) == ["Potisak s klupe", "Veslanje", "Pregib"])
+        #expect(exercises[0].orderedSets.map(\.kind) == [.warmUp, .working, .working])
+        #expect(exercises[0].orderedSets.map(\.targetWeightKg) == [40, 80, 85])
+        #expect(exercises[0].orderedSets.map(\.targetReps) == [10, 8, 6])
+        #expect(exercises[0].restSeconds == 150)
+        // Nezavršene serije iz treninga su obrisane pri završetku, pa ostaje jedna serija.
+        #expect(exercises[1].orderedSets.count == 1)
+        let group = exercises[1].supersetGroupId
+        #expect(group != nil && group == exercises[2].supersetGroupId)
+        #expect(group != session.orderedExercises[1].supersetGroupId)
+    }
+
+    @Test("Izmjene novog treninga ne diraju odrađeni trening")
+    func independentCopy() throws {
+        let context = try makeContext()
+        let session = try pastSession(in: context)
+        let engine = TemplateEngine(context: context)
+        let template = try engine.createTemplate(from: session)
+        template.name = "Push 2"
+        try engine.removeExercise(template.orderedExercises[0])
+        try engine.removeExercise(template.orderedExercises[0])
+        #expect(template.orderedExercises.count == 1)
+        // Superset s jednom vježbom se raspušta.
+        #expect(template.orderedExercises[0].supersetGroupId == nil)
+        #expect(session.name == "Push")
+        #expect(session.orderedExercises.count == 3)
+        #expect(session.orderedExercises[0].orderedSets.count == 3)
+    }
+}

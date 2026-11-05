@@ -8,6 +8,7 @@ import Units
 extension DashboardCardKind {
     var title: LocalizedStringKey {
         switch self {
+        case .lastWorkout: "Zadnji trening"
         case .plateCalculator: "Kalkulator ploča"
         case .nextWorkout: "Sljedeći trening"
         case .weeklyVolume: "Tjedni volumen"
@@ -16,6 +17,7 @@ extension DashboardCardKind {
 
     var symbol: String {
         switch self {
+        case .lastWorkout: "clock.arrow.circlepath"
         case .plateCalculator: "scalemass"
         case .nextWorkout: "calendar.badge.clock"
         case .weeklyVolume: "chart.bar.fill"

@@ -327,13 +327,13 @@ struct DashboardLayoutTests {
         try layout.add(.plateCalculator)
         #expect(try layout.add(.weeklyVolume) == nil)
         #expect(try kinds(layout) == [.weeklyVolume, .plateCalculator])
-        #expect(try layout.availableKinds() == [.nextWorkout])
+        #expect(try layout.availableKinds() == [.lastWorkout, .nextWorkout])
     }
 
     @Test("Uklanjanje zatvara rupu u redoslijedu")
     func removeRenumbers() throws {
         let layout = DashboardLayout(context: try makeContext())
-        for kind in DashboardCardKind.allCases { try layout.add(kind) }
+        for kind: DashboardCardKind in [.plateCalculator, .nextWorkout, .weeklyVolume] { try layout.add(kind) }
         try layout.remove(try layout.cards()[1])
         #expect(try layout.cards().map(\.orderIndex) == [0, 1])
         #expect(try kinds(layout) == [.plateCalculator, .weeklyVolume])
@@ -344,13 +344,36 @@ struct DashboardLayoutTests {
     @Test("Premještanje slijedi pravila onMove")
     func moves() throws {
         let layout = DashboardLayout(context: try makeContext())
-        for kind in DashboardCardKind.allCases { try layout.add(kind) } // plate, next, weekly
+        for kind: DashboardCardKind in [.plateCalculator, .nextWorkout, .weeklyVolume] { try layout.add(kind) }
         try layout.move(fromOffsets: IndexSet(integer: 0), toOffset: 3)
         #expect(try kinds(layout) == [.nextWorkout, .weeklyVolume, .plateCalculator])
         try layout.move(fromOffsets: IndexSet(integer: 2), toOffset: 0)
         #expect(try kinds(layout) == [.plateCalculator, .nextWorkout, .weeklyVolume])
         try layout.move(fromOffsets: IndexSet(integer: 0), toOffset: 1)
         #expect(try kinds(layout) == [.plateCalculator, .nextWorkout, .weeklyVolume])
+    }
+
+    @Test("Zadnji trening se jednom stavlja na vrh i može se ukloniti")
+    func seedsLastWorkoutOnTop() throws {
+        let layout = DashboardLayout(context: try makeContext())
+        try layout.add(.nextWorkout)
+        try layout.add(.weeklyVolume)
+        #expect(try layout.seedLastWorkout() != nil)
+        #expect(try kinds(layout) == [.lastWorkout, .nextWorkout, .weeklyVolume])
+        #expect(try layout.cards().map(\.orderIndex) == [0, 1, 2])
+        #expect(try layout.seedLastWorkout() == nil)
+        #expect(try layout.allCards().count == 3)
+
+        try layout.remove(try layout.cards()[0])
+        #expect(try kinds(layout) == [.nextWorkout, .weeklyVolume])
+        #expect(try layout.availableKinds() == [.lastWorkout, .plateCalculator])
+    }
+
+    @Test("Zadnji trening na praznoj Početnoj")
+    func seedsLastWorkoutOnEmpty() throws {
+        let layout = DashboardLayout(context: try makeContext())
+        try layout.seedLastWorkout()
+        #expect(try kinds(layout) == [.lastWorkout])
     }
 
     @Test("Nepoznata vrsta se ne prikazuje, ali ostaje u bazi")

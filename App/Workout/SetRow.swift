@@ -1,18 +1,25 @@
 import Catalog
 import Models
 import SwiftUI
+import Training
 import Units
 
-/// Jedan redak serije: oznaka, prošli put, polja za unos i kvačica.
+/// Jedan redak serije: oznaka, veliki brojevi s prošlim putem ispod njih i velika kvačica desno.
+/// Završena serija se zasivi, a kvačica ostaje zelena.
 /// Polja drže vlastiti tekst, a svaka izmjena odmah ide u model (i u bazu).
+/// Težina i ponavljanja se biraju kotačićem (`WheelInputField`), trajanje i udaljenost tipkovnicom.
 struct SetRow: View {
     let set: SetLog
     let inputType: ExerciseInputType
     let position: Int
     let previousText: String?
+    /// Vrijednosti prošlog treninga za ovu seriju, na koje se kotačić postavi kad je polje prazno.
+    let suggestion: SetValues?
     let isHighlighted: Bool
     let unit: WeightUnit
     let effortScale: EffortScale
+    /// Završene serije su prigušene u aktivnom treningu; u uređivaču odrađenog treninga su sve završene.
+    let dimsCompleted: Bool
     let onEdit: () -> Void
     let onToggleComplete: () -> Void
     let onChangeKind: (SetKind) -> Void
@@ -25,10 +32,12 @@ struct SetRow: View {
     @State private var showsPlates = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.colorSchemeContrast) private var contrast
+    @ScaledMetric(relativeTo: .title2) private var completeButtonWidth: CGFloat = 64
 
     init(
-        set: SetLog, inputType: ExerciseInputType, position: Int, previousText: String?, isHighlighted: Bool,
-        unit: WeightUnit, effortScale: EffortScale,
+        set: SetLog, inputType: ExerciseInputType, position: Int, previousText: String?, suggestion: SetValues?,
+        isHighlighted: Bool,
+        unit: WeightUnit, effortScale: EffortScale, dimsCompleted: Bool = true,
         onEdit: @escaping () -> Void, onToggleComplete: @escaping () -> Void,
         onChangeKind: @escaping (SetKind) -> Void, onDelete: @escaping () -> Void
     ) {
@@ -36,9 +45,11 @@ struct SetRow: View {
         self.inputType = inputType
         self.position = position
         self.previousText = previousText
+        self.suggestion = suggestion
         self.isHighlighted = isHighlighted
         self.unit = unit
         self.effortScale = effortScale
+        self.dimsCompleted = dimsCompleted
         self.onEdit = onEdit
         self.onToggleComplete = onToggleComplete
         self.onChangeKind = onChangeKind
@@ -60,32 +71,17 @@ struct SetRow: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            if dynamicTypeSize.isAccessibilitySize {
-                // Kod najvećih veličina teksta polja idu u svoj redak, da se ništa ne reže.
-                HStack(spacing: 8) {
-                    kindBadge
-                    previous
-                    Spacer(minLength: 0)
-                    completeButton
-                }
-                HStack(spacing: 8) { fields }
-            } else {
-                HStack(spacing: 8) {
-                    kindBadge
-                    previous
-                    fields
-                    Spacer(minLength: 0)
-                    completeButton
-                }
-            }
-            if set.rpe != nil || isHighlighted || !set.isCompleted {
-                effortMenu
-            }
+        HStack(spacing: 12) {
+            content
+                // Završena serija se zasivi i priguši, osim kad korisnik traži jači kontrast.
+                .saturation(isDimmed ? 0 : 1)
+                .opacity(isDimmed ? 0.45 : 1)
+            completeButton
         }
-        .padding(.vertical, 4)
-        // Završene serije su prigušene, osim kad korisnik traži jači kontrast.
-        .opacity(set.isCompleted && contrast != .increased ? 0.6 : 1)
+        // Kvačica se rasteže na visinu cijelog retka.
+        .fixedSize(horizontal: false, vertical: true)
+        .padding(.vertical, 6)
+        .animation(.easeInOut(duration: 0.2), value: set.isCompleted)
         .sheet(isPresented: $showsPlates) {
             PlateCalculatorSheet(targetText: weightText, unit: unit)
         }
@@ -100,16 +96,63 @@ struct SetRow: View {
         .onChange(of: set.distanceMeters) { syncDistance() }
     }
 
+    private var isDimmed: Bool {
+        dimsCompleted && set.isCompleted && contrast != .increased
+    }
+
+    // `self.` je nužan: redak koji počinje sa `set` Swift čita kao setter.
+    private var showsEffort: Bool {
+        self.set.rpe != nil || isHighlighted || !set.isCompleted
+    }
+
+    /// Lijevi dio retka: oznaka, veliki brojevi i ispod njih prošli put i napor.
+    @ViewBuilder
+    private var content: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            // Kod najvećih veličina teksta svaki dio ide u svoj redak, da se ništa ne reže.
+            VStack(alignment: .leading, spacing: 8) {
+                kindBadge
+                HStack(spacing: 6) { fields }
+                infoLine
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        } else {
+            HStack(spacing: 10) {
+                kindBadge
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 6) { fields }
+                    infoLine
+                }
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
+    /// Prošli put i napor u jednom retku ispod brojeva.
+    @ViewBuilder
+    private var infoLine: some View {
+        if previousText != nil || showsEffort {
+            HStack(spacing: 8) {
+                previous
+                if showsEffort { effortMenu }
+            }
+        }
+    }
+
     // MARK: Dijelovi
 
     @ViewBuilder
     private var previous: some View {
         if let previousText {
-            Text(previousText)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(minWidth: 52, alignment: .leading)
-                .accessibilityLabel(Text("Prošli put \(previousText)"))
+            HStack(spacing: 4) {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.footnote)
+                Text(verbatim: previousText)
+                    .font(.subheadline.weight(.medium).monospacedDigit())
+            }
+            .foregroundStyle(.secondary)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text("Prošli put \(previousText)"))
         }
     }
 
@@ -128,17 +171,23 @@ struct SetRow: View {
     private var fields: some View {
         switch inputType {
         case .weightReps:
-            field("Težina", unit.symbol, $weightText) { applyWeight() }
-                .simultaneousGesture(LongPressGesture(minimumDuration: 0.6).onEnded { _ in showsPlates = true })
-            field("Ponavljanja", "×", $reps) { applyReps() }
+            WheelInputField.weight(
+                "Težina", hint: unit.symbol, text: $weightText, unit: unit, fallback: weightFallback,
+                longPress: ("Kalkulator ploča", { showsPlates = true })
+            )
+            .onChange(of: weightText) { _, _ in applyWeight() }
+            timesSign
+            repsField
         case .bodyweight:
-            field("Ponavljanja", "×", $reps) { applyReps() }
+            repsField
         case .weightedBodyweight:
-            field("Dodatna težina", "+\(unit.symbol)", $weightText) { applyWeight() }
-            field("Ponavljanja", "×", $reps) { applyReps() }
+            weightField("Dodatna težina", "+\(unit.symbol)")
+            timesSign
+            repsField
         case .assisted:
-            field("Pomoć", "−\(unit.symbol)", $weightText) { applyWeight() }
-            field("Ponavljanja", "×", $reps) { applyReps() }
+            weightField("Pomoć", "−\(unit.symbol)")
+            timesSign
+            repsField
         case .duration:
             field("Trajanje", "m:ss", $duration, keyboard: .numbersAndPunctuation) { applyDuration() }
         case .durationDistance:
@@ -158,21 +207,6 @@ struct SetRow: View {
             .onChange(of: text.wrappedValue) { _, _ in apply() }
     }
 
-    private var completeButton: some View {
-        Button {
-            // Tekst iz polja ide u model prije provjere, i kad je polje još u fokusu, da prvi dodir ne javi lažnu grešku.
-            if !set.isCompleted { applyAllFields() }
-            onToggleComplete()
-        } label: {
-            Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
-                .font(.title)
-                .frame(minWidth: 44, minHeight: 44)
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(set.isCompleted ? Color.green : Color.secondary)
-        .accessibilityLabel(set.isCompleted ? Text("Poništi završetak serije") : Text("Označi seriju završenom"))
-    }
-
     private var effortMenu: some View {
         Menu {
             Button("Bez ocjene") { setRPE(nil) }
@@ -189,7 +223,6 @@ struct SetRow: View {
         .foregroundStyle(.secondary)
         .accessibilityLabel(Text("Napor"))
         .accessibilityValue(set.rpe.map { Text(effortLabel($0)) } ?? Text("Bez ocjene"))
-        .padding(.leading, dynamicTypeSize.isAccessibilitySize ? 0 : 38)
     }
 
     // MARK: RPE
@@ -283,5 +316,67 @@ struct SetRow: View {
     private func applyDistance() {
         set.distanceMeters = NumberInput.parse(distance).map { $0 * 1000 }
         onEdit()
+    }
+}
+
+// MARK: Kotačić za težinu i ponavljanja
+
+extension SetRow {
+    private func weightField(_ title: LocalizedStringKey, _ hint: String) -> some View {
+        WheelInputField.weight(title, hint: hint, text: $weightText, unit: unit, fallback: weightFallback)
+            .onChange(of: weightText) { _, _ in applyWeight() }
+    }
+
+    private var repsField: some View {
+        WheelInputField.reps("Ponavljanja", hint: "×", text: $reps, fallback: suggestion?.reps ?? WheelOptions.defaultReps)
+            .onChange(of: reps) { _, _ in applyReps() }
+    }
+
+    /// Početak kotačića za praznu težinu: prošli trening, inače prazna šipka (ili 0 za dodatnu težinu i pomoć).
+    private var weightFallback: Double {
+        let isExtraLoad = inputType == .weightedBodyweight || inputType == .assisted
+        let kilograms = isExtraLoad ? suggestion?.extraWeightKg : suggestion?.weightKg
+        return kilograms.map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
+            ?? WheelOptions.defaultWeight(for: unit, isExtraLoad: isExtraLoad)
+    }
+}
+
+// MARK: Kvačica i znak ×
+
+extension SetRow {
+    /// Znak između težine i ponavljanja; VoiceOver ga preskače jer polja imaju svoje nazive.
+    private var timesSign: some View {
+        Text(verbatim: "×")
+            .font(.title3)
+            .foregroundStyle(.secondary)
+            .accessibilityHidden(true)
+    }
+
+    /// Velika zelena kvačica uz desni rub retka: obrubljena dok serija nije završena, puna kad jest.
+    private var completeButton: some View {
+        Button {
+            // Tekst iz polja ide u model prije provjere, i kad je polje još u fokusu, da prvi dodir ne javi lažnu grešku.
+            if !set.isCompleted { applyAllFields() }
+            onToggleComplete()
+        } label: {
+            Image(systemName: "checkmark")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(set.isCompleted ? Color.white : Color.green)
+                .frame(minWidth: completeButtonWidth, maxHeight: .infinity)
+                .frame(minHeight: 52)
+                .background(
+                    set.isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(Color.green.opacity(0.14)),
+                    in: .rect(cornerRadius: 14)
+                )
+                .overlay {
+                    // Uz jači kontrast nezavršena kvačica dobiva i obrub, ne samo svijetlu pozadinu.
+                    if !set.isCompleted && contrast == .increased {
+                        RoundedRectangle(cornerRadius: 14).strokeBorder(Color.green, lineWidth: 2)
+                    }
+                }
+                .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(set.isCompleted ? Text("Poništi završetak serije") : Text("Označi seriju završenom"))
     }
 }

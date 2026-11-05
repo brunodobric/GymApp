@@ -30,17 +30,20 @@ struct SetBadge: View {
     }
 }
 
-/// Okvir polja za unos u retku serije: širina raste s Dynamic Typeom, da broj ne bude odrezan.
+/// Okvir polja za unos u retku serije: velik, podebljan broj da se vrijednost vidi i iz daljine.
+/// Širina raste s Dynamic Typeom, da broj ne bude odrezan.
 struct SetFieldFrame: ViewModifier {
-    @ScaledMetric(relativeTo: .body) private var minWidth: CGFloat = 52
-    @ScaledMetric(relativeTo: .body) private var maxWidth: CGFloat = 80
+    @ScaledMetric(relativeTo: .title2) private var minWidth: CGFloat = 60
+    @ScaledMetric(relativeTo: .title2) private var maxWidth: CGFloat = 112
 
     func body(content: Content) -> some View {
         content
+            .font(.title2.weight(.semibold).monospacedDigit())
             .multilineTextAlignment(.center)
             .frame(minWidth: minWidth, maxWidth: maxWidth)
-            .padding(.vertical, 8)
-            .background(.quaternary, in: .rect(cornerRadius: 8))
+            .padding(.horizontal, 6)
+            .padding(.vertical, 6)
+            .background(.quaternary, in: .rect(cornerRadius: 10))
     }
 }
 

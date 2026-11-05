@@ -100,6 +100,7 @@ Aplikacija podržava 3 glavna modula:
   * Izračunati volumen
   * Kvačicu desno
 * Klik na polje težine ili ponavljanja omogućuje izmjenu.
+* Težina i ponavljanja se biraju kotačićem umjesto tipkovnice: težina u koracima od 2,5 kg (5 lbs), ponavljanja od 1 do 50. Kotačić kreće od trenutne vrijednosti, prošlog treninga ili prazne šipke. Dodir na broj iznad kotačića otvara tipkovnicu za vrijednost koje na kotačiću nema (npr. 83 kg). Isto vrijedi za ciljeve u predlošku.
 * Klik na kvačicu kompletira seriju (zasivi redak) i pokreće rest timer.
 * Rest timer se pojavljuje kao redak ispod s linijom koja teče i gumbima +10 / -10.
 * U jednom trenutku samo jedna vježba može biti otvorena.
@@ -108,6 +109,7 @@ Aplikacija podržava 3 glavna modula:
 * Korisnik može mijenjati redoslijed vježbi povlačenjem (drag & drop).
 * **Plate Calculator je dostupan i ovdje:** dugi pritisak na polje težine (ili stavka u izborniku vježbe) otvara kalkulator s već upisanom težinom te serije.
 * **Izbacivanje vježbe iz treninga može se poništiti:** nakon izbacivanja pojavljuje se traka "Vježba uklonjena · Poništi", a do kraja treninga vježbu je moguće vratiti i iz izbornika "Uklonjene vježbe" s već upisanim serijama.
+* **Serija se briše povlačenjem retka ulijevo** (ili iz izbornika na oznaci serije). Nakon brisanja pojavljuje se traka "Serija obrisana · Poništi" koja vraća seriju na isto mjesto s upisanim vrijednostima.
 * Kad se kompletira zadnja serija zadnje nekompletirane vježbe, pojavljuje se prozor: **Završi trening** ili **Dodaj vježbu**.
 * Ako korisnik odabere Završi trening → prikazuje se sažetak treninga koji uključuje:
   * Trajanje
@@ -136,9 +138,9 @@ Aplikacija koristi **adaptivni layout** (SwiftUI size classes / NavigationSplitV
 Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 
 1. **Dashboard** — Početni ekran.
-   * Na vrhu kartica **Započni** istog oblika kao kartice ispod: sljedeći trening svakog rasporeda i prazan trening.
+   * Na vrhu kartica **Započni** istog oblika kao kartice ispod, s laganom poluprozirnom pozadinom u boji akcenta da se istakne: sljedeći trening svakog rasporeda i prazan trening.
    * Dok trening traje, ekran treninga se povlačenjem prema dolje (ili gumbom Smanji) sažima u tu karticu. Kartica prikazuje isto što i Live Activity: vježbu i seriju, odbrojavanje odmora, težinu i ponavljanja s gumbima − i + te kvačicu za potvrdu serije. Dodir na karticu ponovno otvara cijeli ekran treninga.
-   * Ispod njega kartica zadnjeg treninga (datum, trajanje, tip).
+   * Ispod njega kartica zadnjeg treninga (datum, trajanje, tip). Zadano je prikazana, a korisnik je može ukloniti ili premjestiti kao ostale kartice.
    * Ispod toga gumb za dodavanje widgeta.
    * **Plate Calculator** je jedan od dostupnih widgeta.
    * Gore desno gumb **Postavke**.
@@ -174,7 +176,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 
 ### Opis tabova
 
-1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (npr. Plate Calculator, sljedeći trening, tjedni volumen) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u popisu "Kasnije").
+1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (npr. zadnji trening, Plate Calculator, sljedeći trening, tjedni volumen) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u popisu "Kasnije").
 2. **Odrađeni treninzi** — Povijest svih završenih treninga s filterima i detaljima.
    * Lista treninga prikazuje: datum, tip i trajanje.
    * Klik na trening otvara detalje:
@@ -182,6 +184,10 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
      * Sve serije po vježbi
      * Bilješke na dnu
    * Moguće je izbrisati trening.
+   * U detaljima gore desno, uz brisanje, izbornik s dvije opcije:
+     * **Uredi trening:** naknadno mijenjanje naziva, početka i kraja, vježbi, serija i bilješki. Izmjene se spremaju tek na "Spremi", a "Odustani" ih odbacuje. Kao kod završetka treninga, serije bez kvačice i vježbe bez završene serije se ne spremaju. Izmjene se ne prenose u Zdravlje.
+     * **Novi trening iz ovog:** stvara novi trening (predložak) s istim nazivom, istim vježbama redom, pauzama, supersetovima i serijama (završene serije postaju ciljevi). Otvara se u uređivaču treninga, gdje se može preimenovati i izbaciti što ne treba. "Odustani" ga briše, a "Spremi" ga ostavlja u Rasporedima pod Treninzima.
+   * Trening uvezen iz Zdravlja nema taj izbornik.
    * Gore desno gumb za **kalendar**:
      * Dani s odrađenim treningom imaju točkicu.
      * Klik na dan prikazuje ispod kalendara popis treninga odrađenih taj dan (isti prikaz kao u listi).
