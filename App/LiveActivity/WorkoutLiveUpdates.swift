@@ -87,7 +87,7 @@ final class WorkoutLiveUpdates {
 
     private func show(session: Session, status: LiveWorkoutStatus, unit: WeightUnit) async {
         let sessionID = session.id.uuidString
-        let state = Self.contentState(session: session, status: status, setValues: setValues(in: session, unit: unit))
+        let state = Self.contentState(session: session, status: status, next: nextSetDetails(in: session, unit: unit))
         let now = Date()
         // Kad odmor istekne, sadržaj zastari i widget umjesto odbrojavanja piše da je odmor gotov.
         let staleDate = status.rest.flatMap { $0.endsAt > now ? $0.endsAt : nil }
@@ -128,10 +128,13 @@ final class WorkoutLiveUpdates {
         }
     }
 
-    /// Vrijednosti serije koju gumb potvrđuje, formatirane za widget (koji ne ovisi o GymKitu).
-    private func setValues(in session: Session, unit: WeightUnit) -> [RestTimerActivityAttributes.SetValue] {
-        guard let set = WorkoutEngine(context: context).nextSet(in: session), let exercise = set.exercise else { return [] }
-        return LiveSetEditor.values(of: set, inputType: exercise.inputType, unit: unit).map { value in
+    /// Vrijednosti serije koju gumb potvrđuje i ista serija u prethodnom treningu, formatirane za widget
+    /// (koji ne ovisi o GymKitu).
+    private func nextSetDetails(in session: Session, unit: WeightUnit) -> NextSetDetails {
+        guard let set = WorkoutEngine(context: context).nextSet(in: session), let exercise = set.exercise else {
+            return NextSetDetails(values: [], previousText: nil)
+        }
+        let values = LiveSetEditor.values(of: set, inputType: exercise.inputType, unit: unit).map { value in
             RestTimerActivityAttributes.SetValue(
                 field: value.field.rawValue,
                 text: value.text,
@@ -140,12 +143,21 @@ final class WorkoutLiveUpdates {
                 canIncrease: value.canIncrease
             )
         }
+        let last = try? GymQueries(context: context).lastPerformance(of: exercise.exercise)
+        let previous = last?.orderedSets.filter(\.isCompleted).map(\.values) ?? []
+        let previousText = LiveSetEditor.previousText(of: set, inputType: exercise.inputType, previous: previous, unit: unit)
+        return NextSetDetails(values: values, previousText: previousText)
+    }
+
+    private struct NextSetDetails {
+        var values: [RestTimerActivityAttributes.SetValue]
+        var previousText: String?
     }
 
     private static func contentState(
         session: Session,
         status: LiveWorkoutStatus,
-        setValues: [RestTimerActivityAttributes.SetValue]
+        next: NextSetDetails
     ) -> RestTimerActivityAttributes.ContentState {
         RestTimerActivityAttributes.ContentState(
             exerciseName: status.currentExerciseName,
@@ -155,7 +167,8 @@ final class WorkoutLiveUpdates {
             completedSets: status.completedSets,
             totalSets: status.totalSets,
             nextSetID: status.nextSetID?.uuidString,
-            setValues: setValues,
+            setValues: next.values,
+            previousText: next.previousText,
             canConfirm: status.canConfirmNextSet,
             restStartedAt: status.rest?.startedAt,
             restEndsAt: status.rest?.endsAt,

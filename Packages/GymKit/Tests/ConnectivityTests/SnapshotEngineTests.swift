@@ -325,3 +325,45 @@ struct LiveSetEditorTests {
         #expect(set.distanceMeters == 350)
     }
 }
+
+@Suite("Prethodni trening u Live Activityju")
+struct LiveSetPreviousTests {
+    private let hr = Locale(identifier: "hr_HR")
+
+    @Test("Ista pozicija iz prošlog treninga, a kad je novih serija više, zadnja prošla")
+    func previousByPosition() throws {
+        let engine = WorkoutEngine(context: ModelContext(try GymPersistence.makeUserContainer(storage: .inMemory)))
+        defer { withExtendedLifetime(engine) {} }
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let previous = [
+            SetValues(weightKg: 30, reps: 12),
+            SetValues(weightKg: 32.5, reps: 10),
+        ]
+        let sets = exercise.orderedSets
+        #expect(LiveSetEditor.previousText(of: sets[0], inputType: .weightReps, previous: previous, unit: .kilograms, locale: hr)
+            == "30 kg × 12")
+        #expect(LiveSetEditor.previousText(of: sets[1], inputType: .weightReps, previous: previous, unit: .kilograms, locale: hr)
+            == "32,5 kg × 10")
+        #expect(LiveSetEditor.previousText(of: sets[2], inputType: .weightReps, previous: previous, unit: .kilograms, locale: hr)
+            == "32,5 kg × 10")
+        #expect(LiveSetEditor.previousText(of: sets[0], inputType: .weightReps, previous: [], unit: .kilograms) == nil)
+    }
+
+    @Test("Vlastita težina i kardio")
+    func otherInputTypes() throws {
+        let engine = WorkoutEngine(context: ModelContext(try GymPersistence.makeUserContainer(storage: .inMemory)))
+        defer { withExtendedLifetime(engine) {} }
+        let session = try engine.startSession(name: "A", now: base)
+        let pullUps = try engine.addExercise(row, inputType: .bodyweight, to: session, now: base)
+        let run = try engine.addExercise(bench, inputType: .durationDistance, to: session, now: base)
+
+        #expect(LiveSetEditor.previousText(
+            of: pullUps.orderedSets[0], inputType: .bodyweight, previous: [SetValues(reps: 8)], unit: .kilograms
+        ) == "× 8")
+        #expect(LiveSetEditor.previousText(
+            of: run.orderedSets[0], inputType: .durationDistance,
+            previous: [SetValues(durationSeconds: 90, distanceMeters: 400)], unit: .kilograms, locale: hr
+        ) == "1:30 · 400 m")
+    }
+}
