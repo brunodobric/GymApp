@@ -108,6 +108,7 @@ Aplikacija podržava 3 glavna modula:
 * Korisnik može mijenjati redoslijed vježbi povlačenjem (drag & drop).
 * **Plate Calculator je dostupan i ovdje:** dugi pritisak na polje težine (ili stavka u izborniku vježbe) otvara kalkulator s već upisanom težinom te serije.
 * **Izbacivanje vježbe iz treninga može se poništiti:** nakon izbacivanja pojavljuje se traka "Vježba uklonjena · Poništi", a do kraja treninga vježbu je moguće vratiti i iz izbornika "Uklonjene vježbe" s već upisanim serijama.
+* **Serija se briše povlačenjem retka ulijevo** (ili iz izbornika na oznaci serije). Nakon brisanja pojavljuje se traka "Serija obrisana · Poništi" koja vraća seriju na isto mjesto s upisanim vrijednostima.
 * Kad se kompletira zadnja serija zadnje nekompletirane vježbe, pojavljuje se prozor: **Završi trening** ili **Dodaj vježbu**.
 * Ako korisnik odabere Završi trening → prikazuje se sažetak treninga koji uključuje:
   * Trajanje

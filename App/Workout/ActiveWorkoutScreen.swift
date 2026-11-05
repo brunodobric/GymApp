@@ -8,7 +8,7 @@ import Training
 import Units
 
 /// Ekran aktivnog treninga (specifikacija, odjeljak 2): popis vježbi s jednom otvorenom, kvačica na seriji,
-/// rest timer pri dnu, superset, uklanjanje s poništavanjem i promjena redoslijeda povlačenjem.
+/// rest timer pri dnu, superset, uklanjanje vježbe i brisanje serije s poništavanjem te promjena redoslijeda povlačenjem.
 struct ActiveWorkoutScreen: View {
     let session: Session
 
@@ -32,7 +32,8 @@ struct ActiveWorkoutScreen: View {
     /// Sažetak se spremi jednom: id lista mora ostati isti dok je otvoren, inače se list zatvori i otvori
     /// iznova i izgubi upisanu bilješku.
     @State private var finishedSummary: SummaryBox?
-    @State private var lastRemoved: SessionExercise?
+    /// Zadnja radnja koja se može poništiti: izbačena vježba ili obrisana serija.
+    @State private var lastUndo: UndoAction?
     @State private var errorText: String?
     @State private var completedCount = 0
     @State private var errorCount = 0
@@ -52,11 +53,19 @@ struct ActiveWorkoutScreen: View {
                     Label("Trening vodi Apple Watch", systemImage: "applewatch")
                         .foregroundStyle(.secondary)
                 }
-                ForEach(visible) { exercise in
-                    card(for: exercise)
-                }
-                .onMove { source, destination in
-                    try? engine.moveExercises(in: session, from: source, to: destination)
+                if editMode.isEditing {
+                    // Kod promjene redoslijeda vježbe su zatvorene, jedna vježba je jedan redak.
+                    ForEach(visible) { exercise in
+                        card(for: exercise)
+                    }
+                    .onMove { source, destination in
+                        try? engine.moveExercises(in: session, from: source, to: destination)
+                    }
+                } else {
+                    // Svaka vježba je svoja sekcija, a serija svoj redak koji se briše povlačenjem.
+                    ForEach(visible) { exercise in
+                        Section { card(for: exercise) }
+                    }
                 }
 
                 Section {
@@ -176,7 +185,7 @@ struct ActiveWorkoutScreen: View {
                 set.kind = kind
                 try? engine.touch(session)
             },
-            onDeleteSet: { try? engine.removeSet($0) },
+            onDeleteSet: { deleteSet($0, in: exercise) },
             onAddSet: { kind in _ = try? engine.addSet(to: exercise, kind: kind) },
             onRemove: { remove(exercise) },
             onSuperset: { supersetSource = exercise },
@@ -214,22 +223,18 @@ struct ActiveWorkoutScreen: View {
     @ViewBuilder
     private var bottomBars: some View {
         VStack(spacing: 8) {
-            if let removed = lastRemoved {
+            if let undo = lastUndo {
                 HStack {
-                    Text("Vježba uklonjena")
+                    Text(undo.message)
                     Spacer()
-                    Button("Poništi") {
-                        try? engine.restoreExercise(removed)
-                        openExerciseID = removed.id
-                        lastRemoved = nil
-                    }
+                    Button("Poništi") { self.undo(undo) }
                 }
                 .padding(12)
                 .background(.regularMaterial, in: .rect(cornerRadius: 12))
                 .padding(.horizontal)
-                .task(id: removed.id) {
+                .task(id: undo.id) {
                     try? await Task.sleep(for: .seconds(8))
-                    if !Task.isCancelled { lastRemoved = nil }
+                    if !Task.isCancelled { lastUndo = nil }
                 }
             }
             if let timer = engine.restTimer(of: session) {
@@ -303,10 +308,27 @@ struct ActiveWorkoutScreen: View {
 
     private func remove(_ exercise: SessionExercise) {
         try? engine.removeExercise(exercise)
-        lastRemoved = exercise
+        lastUndo = .exercise(exercise)
         if openExerciseID == exercise.id {
             openExerciseID = visible.first { $0.orderedSets.contains { !$0.isCompleted } }?.id
         }
+    }
+
+    private func deleteSet(_ set: SetLog, in exercise: SessionExercise) {
+        guard let removed = try? engine.removeSet(set) else { return }
+        lastUndo = .set(removed, exercise: exercise)
+    }
+
+    private func undo(_ action: UndoAction) {
+        switch action {
+        case .exercise(let exercise):
+            try? engine.restoreExercise(exercise)
+            openExerciseID = exercise.id
+        case .set(let removed, let exercise):
+            try? engine.restoreSet(removed, to: exercise)
+            openExerciseID = exercise.id
+        }
+        lastUndo = nil
     }
 
     private func restExpired() {
@@ -428,6 +450,27 @@ private struct RemovedExercisesSheet: View {
 }
 
 /// Omot da se sažetak može koristiti kao `item` lista.
+/// Radnja s trake "Poništi" pri dnu ekrana.
+private enum UndoAction {
+    case exercise(SessionExercise)
+    case set(RemovedSet, exercise: SessionExercise)
+
+    /// Nova radnja ponovno pokreće odbrojavanje trake.
+    var id: UUID {
+        switch self {
+        case .exercise(let exercise): return exercise.id
+        case .set(let removed, _): return removed.id
+        }
+    }
+
+    var message: LocalizedStringResource {
+        switch self {
+        case .exercise: return "Vježba uklonjena"
+        case .set: return "Serija obrisana"
+        }
+    }
+}
+
 private struct SummaryBox: Identifiable, Equatable {
     let id = UUID()
     let summary: WorkoutSummary

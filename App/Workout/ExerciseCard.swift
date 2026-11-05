@@ -4,7 +4,7 @@ import SwiftUI
 import Training
 import Units
 
-/// Vježba u aktivnom treningu: zaglavlje i, kad je otvorena, retci serija.
+/// Vježba u aktivnom treningu: zaglavlje i, kad je otvorena, retci serija i gumbi za dodavanje.
 struct ExerciseCard: View {
     let exercise: SessionExercise
     let isOpen: Bool
@@ -24,29 +24,30 @@ struct ExerciseCard: View {
     let onSuperset: () -> Void
     let onLeaveSuperset: () -> Void
 
+    /// Svaki dio je svoj redak u listi (sekcija vježbe), da se serija može obrisati povlačenjem ulijevo.
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            header
-            if isOpen && !isEditing {
-                ForEach(rows, id: \.set.id) { row in
-                    SetRow(
-                        set: row.set, inputType: exercise.inputType, position: row.position,
-                        previousText: row.previous, isHighlighted: row.set.id == highlightedSetID, unit: unit,
-                        effortScale: effortScale, onEdit: onEdit, onToggleComplete: { onToggleComplete(row.set) },
-                        onChangeKind: { onChangeKind(row.set, $0) }, onDelete: { onDeleteSet(row.set) }
-                    )
-                    Divider()
+        header
+            .padding(.vertical, 6)
+        if isOpen && !isEditing {
+            ForEach(rows, id: \.set.id) { row in
+                SetRow(
+                    set: row.set, inputType: exercise.inputType, position: row.position,
+                    previousText: row.previous, isHighlighted: row.set.id == highlightedSetID, unit: unit,
+                    effortScale: effortScale, onEdit: onEdit, onToggleComplete: { onToggleComplete(row.set) },
+                    onChangeKind: { onChangeKind(row.set, $0) }, onDelete: { onDeleteSet(row.set) }
+                )
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button("Obriši", systemImage: "trash", role: .destructive) { onDeleteSet(row.set) }
                 }
-                HStack {
-                    Button("Dodaj seriju", systemImage: "plus") { onAddSet(.working) }
-                    Spacer()
-                    Button("Zagrijavanje", systemImage: "flame") { onAddSet(.warmUp) }
-                }
-                .font(.subheadline)
-                .buttonStyle(.borderless)
             }
+            HStack {
+                Button("Dodaj seriju", systemImage: "plus") { onAddSet(.working) }
+                Spacer()
+                Button("Zagrijavanje", systemImage: "flame") { onAddSet(.warmUp) }
+            }
+            .font(.subheadline)
+            .buttonStyle(.borderless)
         }
-        .padding(.vertical, 6)
     }
 
     private var header: some View {

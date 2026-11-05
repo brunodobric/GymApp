@@ -151,7 +151,12 @@ public struct WorkoutEngine {
         return set
     }
 
-    public func removeSet(_ set: SetLog, now: Date = Date()) throws {
+    /// Briše seriju i vraća njezinu snimku, da se brisanje može poništiti (`restoreSet`).
+    @discardableResult
+    public func removeSet(_ set: SetLog, now: Date = Date()) throws -> RemovedSet {
+        let removed = RemovedSet(
+            id: set.id, position: set.orderIndex, values: set.values, completedAt: set.completedAt
+        )
         let session = set.exercise?.session
         context.delete(set)
         if let exercise = set.exercise {
@@ -160,6 +165,28 @@ public struct WorkoutEngine {
             }
         }
         if let session { try touch(session, now: now) } else { try context.save() }
+        return removed
+    }
+
+    /// Vraća obrisanu seriju na njezino mjesto, s istim vrijednostima i oznakom završetka.
+    @discardableResult
+    public func restoreSet(_ removed: RemovedSet, to exercise: SessionExercise, now: Date = Date()) throws -> SetLog {
+        var sets = exercise.orderedSets
+        let set = SetLog(orderIndex: 0, kind: removed.values.kind)
+        set.id = removed.id
+        set.weightKg = removed.values.weightKg
+        set.reps = removed.values.reps
+        set.extraWeightKg = removed.values.extraWeightKg
+        set.durationSeconds = removed.values.durationSeconds
+        set.distanceMeters = removed.values.distanceMeters
+        set.rpe = removed.values.rpe
+        set.completedAt = removed.completedAt
+        context.insert(set)
+        set.exercise = exercise
+        sets.insert(set, at: min(max(removed.position, 0), sets.count))
+        for (index, item) in sets.enumerated() { item.orderIndex = index }
+        if let session = exercise.session { try touch(session, now: now) } else { try context.save() }
+        return set
     }
 
     /// Izbacivanje se može poništiti do kraja treninga (`restoreExercise`).
@@ -374,5 +401,21 @@ public struct WorkoutEngine {
             }
             .sorted { $0.0 > $1.0 }
             .map(\.1)
+    }
+}
+
+/// Obrisana serija, zapamćena dok korisnik ne potvrdi brisanje (traka "Poništi").
+public struct RemovedSet: Equatable, Sendable {
+    public let id: UUID
+    /// Mjesto serije u vježbi prije brisanja.
+    public let position: Int
+    public let values: SetValues
+    public let completedAt: Date?
+
+    public init(id: UUID, position: Int, values: SetValues, completedAt: Date?) {
+        self.id = id
+        self.position = position
+        self.values = values
+        self.completedAt = completedAt
     }
 }
