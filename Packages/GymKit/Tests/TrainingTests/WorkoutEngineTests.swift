@@ -168,6 +168,47 @@ struct WorkoutEngineTests {
         #expect(engine.removedExercises(in: session).isEmpty)
     }
 
+    @Test("Brisanje serije se poništava: serija se vraća na isto mjesto s istim vrijednostima")
+    func removeRestoreSet() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let sets = exercise.orderedSets
+        let middle = sets[1]
+        middle.weightKg = 80
+        middle.reps = 8
+        middle.rpe = 8.5
+        try engine.completeSet(middle, defaultRestSeconds: 90, now: base.addingTimeInterval(60))
+        let ids = sets.map(\.id)
+
+        let removed = try engine.removeSet(middle, now: base.addingTimeInterval(120))
+        #expect(exercise.orderedSets.map(\.id) == [ids[0], ids[2]])
+        #expect(exercise.orderedSets.map(\.orderIndex) == [0, 1])
+        #expect(removed.position == 1)
+        #expect(session.lastActivityAt == base.addingTimeInterval(120))
+
+        let restored = try engine.restoreSet(removed, to: exercise, now: base.addingTimeInterval(130))
+        #expect(exercise.orderedSets.map(\.id) == ids)
+        #expect(exercise.orderedSets.map(\.orderIndex) == [0, 1, 2])
+        #expect(restored.values == SetValues(kind: .working, weightKg: 80, reps: 8, rpe: 8.5))
+        #expect(restored.completedAt == base.addingTimeInterval(60))
+        #expect(session.lastActivityAt == base.addingTimeInterval(130))
+    }
+
+    @Test("Vraćena serija ide na kraj ako je vježba u međuvremenu ostala bez serija")
+    func restoreSetPastEnd() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let last = try #require(exercise.orderedSets.last)
+        let removed = try engine.removeSet(last, now: base)
+        for set in exercise.orderedSets { try engine.removeSet(set, now: base) }
+
+        try engine.restoreSet(removed, to: exercise, now: base)
+        #expect(exercise.orderedSets.map(\.id) == [removed.id])
+        #expect(exercise.orderedSets.map(\.orderIndex) == [0])
+    }
+
     @Test("Završetak briše nezavršene serije, prazne i izbačene vježbe")
     func finishCleansUp() throws {
         let (engine, context) = try makeEngine()

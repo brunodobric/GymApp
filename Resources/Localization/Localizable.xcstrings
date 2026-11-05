@@ -5068,6 +5068,16 @@
         }
       }
     },
+    "Serija obrisana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set deleted"
+          }
+        }
+      }
+    },
     "Serija se nije mogla spremiti." : {
       "localizations" : {
         "en" : {
