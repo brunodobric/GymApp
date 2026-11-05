@@ -62,10 +62,11 @@ struct ExerciseCard: View {
                 VStack(alignment: .leading, spacing: 2) {
                     if exercise.supersetGroupId != nil {
                         Text("Superset")
-                            .font(.caption.bold())
+                            .font(.eyebrow)
+                            .textCase(.uppercase)
                             .foregroundStyle(.tint)
                     }
-                    Text(exercise.exerciseName).font(.headline.bold())
+                    Text(exercise.exerciseName).font(.itemTitle)
                     Text("\(completedCount) od \(exercise.orderedSets.count) serija")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)

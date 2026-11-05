@@ -102,7 +102,7 @@ struct OnboardingScreen: View {
 
     private var goalStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Što je tvoj cilj?").font(.title3.bold())
+            Text("Što je tvoj cilj?").font(.cardTitle)
             ForEach(TrainingGoal.allCases, id: \.self) { goal in
                 ChoiceRow(isSelected: answers.goal == goal) {
                     answers.goal = answers.goal == goal ? nil : goal
@@ -118,7 +118,7 @@ struct OnboardingScreen: View {
 
     private var unitsStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("U kojoj jedinici bilježiš težinu?").font(.title3.bold())
+            Text("U kojoj jedinici bilježiš težinu?").font(.cardTitle)
             ChoiceRow(isSelected: answers.unit == .kilograms) { answers.unit = .kilograms } label: {
                 Text("Kilogrami (kg)")
             }
@@ -132,7 +132,7 @@ struct OnboardingScreen: View {
 
     private var bodyStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Visina i težina").font(.title3.bold())
+            Text("Visina i težina").font(.cardTitle)
             Text("Neobavezno. Služi za praćenje mjera tijela; možeš ih unijeti i kasnije.")
                 .font(.footnote).foregroundStyle(.secondary)
             LabeledContent("Visina") {
@@ -152,7 +152,7 @@ struct OnboardingScreen: View {
 
     private var healthStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Povezati s Apple Zdravljem?").font(.title3.bold())
+            Text("Povezati s Apple Zdravljem?").font(.cardTitle)
             Text("Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove, a kardio treninzi, težina i visina dolaze iz njega. Aplikacija radi i bez toga, a odluku mijenjaš u Postavkama.")
                 .font(.subheadline).foregroundStyle(.secondary)
             ChoiceRow(isSelected: answers.wantsHealthKit) {
@@ -170,7 +170,7 @@ struct OnboardingScreen: View {
 
     private var experienceStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Koliko dugo treniraš?").font(.title3.bold())
+            Text("Koliko dugo treniraš?").font(.cardTitle)
             ForEach(ExperienceLevel.allCases, id: \.self) { level in
                 ChoiceRow(isSelected: answers.experience == level) {
                     answers.experience = answers.experience == level ? nil : level
@@ -183,7 +183,7 @@ struct OnboardingScreen: View {
 
     private var equipmentStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Dostupna oprema").font(.title3.bold())
+            Text("Dostupna oprema").font(.cardTitle)
             ForEach(Equipment.allCases, id: \.self) { item in
                 ChoiceRow(isSelected: answers.equipment.contains(item), isMultiple: true) {
                     if answers.equipment.contains(item) {
@@ -195,7 +195,7 @@ struct OnboardingScreen: View {
                     Text(item.title)
                 }
             }
-            Text("Koliko dana tjedno treniraš?").font(.title3.bold()).padding(.top, 8)
+            Text("Koliko dana tjedno treniraš?").font(.cardTitle).padding(.top, 8)
             HStack {
                 ForEach(OnboardingAnswers.daysPerWeekRange, id: \.self) { days in
                     Button {

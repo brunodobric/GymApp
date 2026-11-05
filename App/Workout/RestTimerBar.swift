@@ -11,6 +11,8 @@ struct RestTimerBar: View {
     let onExpire: () -> Void
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    /// Najmanja širina odbrojavanja, da se traka ne trese dok se znamenke mijenjaju. Raste s tekstom.
+    @ScaledMetric(relativeTo: .largeTitle) private var countdownMinWidth: CGFloat = 80
 
     var body: some View {
         Group {
@@ -61,13 +63,13 @@ struct RestTimerBar: View {
     private var countdown: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("Odmor")
-                .font(.caption.bold())
+                .font(.eyebrow)
                 .textCase(.uppercase)
                 .foregroundStyle(.secondary)
                 .accessibilityHidden(true)
             Text(timer.endsAt, style: .timer)
-                .font(.largeTitle.bold().monospacedDigit())
-                .frame(minWidth: 80, alignment: .leading)
+                .font(.metricLarge)
+                .frame(minWidth: countdownMinWidth, alignment: .leading)
                 .accessibilityLabel(Text("Preostali odmor"))
                 .accessibilityValue(Text(timer.endsAt, style: .timer))
         }

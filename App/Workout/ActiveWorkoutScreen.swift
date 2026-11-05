@@ -73,12 +73,10 @@ struct ActiveWorkoutScreen: View {
                 }
             }
             .environment(\.editMode, $editMode)
-            // Zaobljeni SF Pro za nazive vježbi i brojeve, kao na karticama Početne.
-            .fontDesign(.rounded)
             .navigationTitle(session.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
-            .safeAreaInset(edge: .bottom) { bottomBars.fontDesign(.rounded) }
+            .safeAreaInset(edge: .bottom) { bottomBars }
             .sensoryFeedback(.success, trigger: completedCount)
             .sensoryFeedback(.error, trigger: errorCount)
             .onChange(of: session.restTimerEndsAt) {
@@ -200,7 +198,8 @@ struct ActiveWorkoutScreen: View {
         }
         ToolbarItem(placement: .principal) {
             Text(session.startedAt, style: .timer)
-                .font(.headline.monospacedDigit())
+                // Isti broj kao u retku liste: zaobljen, semibold, veličine naslova u traci.
+                .font(.rowValue)
                 .accessibilityLabel(Text("Trajanje treninga"))
         }
         ToolbarItem(placement: .topBarTrailing) {

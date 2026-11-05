@@ -62,7 +62,7 @@ private struct StartRow<Title: View>: View {
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 title
-                    .font(isProminent ? .title3.bold() : .headline)
+                    .font(isProminent ? .cardTitle : .itemTitle)
                     .foregroundStyle(.primary)
                 if let subtitle {
                     Text(subtitle).font(.subheadline).foregroundStyle(.secondary)
@@ -235,7 +235,7 @@ struct ActiveWorkoutCard: View {
                     Text(session.name)
                 }
             }
-            .font(.headline)
+            .font(.itemTitle)
             .multilineTextAlignment(.center)
             .lineLimit(2)
             .frame(maxWidth: .infinity)
@@ -250,7 +250,7 @@ struct ActiveWorkoutCard: View {
             }
             .frame(minWidth: 64, alignment: .trailing)
         }
-        .font(.footnote.weight(.light))
+        .font(.footnote)
         .foregroundStyle(.secondary)
     }
 
@@ -291,7 +291,7 @@ struct ActiveWorkoutCard: View {
                 Image(systemName: "clock.arrow.circlepath")
                     .font(.caption)
                 Text(verbatim: text)
-                    .font(.subheadline.weight(.medium).monospacedDigit())
+                    .font(.rowValueSmall)
             }
             .foregroundStyle(.secondary)
             .accessibilityElement(children: .ignore)
@@ -315,7 +315,7 @@ struct ActiveWorkoutCard: View {
     private func confirmOrRest(setID: UUID, canConfirm: Bool, rest: RestTimer?) -> some View {
         if let rest {
             Text(timerInterval: rest.startedAt...rest.endsAt, countsDown: true)
-                .font(.title2.bold().monospacedDigit())
+                .font(.metric)
                 .multilineTextAlignment(.center)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
@@ -389,7 +389,7 @@ private struct SetValueStepper: View {
             .disabled(!value.canDecrease)
 
             value.valueText
-                .font(.title3.bold().monospacedDigit())
+                .font(.metricSmall)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
                 .contentTransition(.numericText())

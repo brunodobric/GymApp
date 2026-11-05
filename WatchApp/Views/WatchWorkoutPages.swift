@@ -97,7 +97,7 @@ struct WatchExerciseListView: View {
                     } label: {
                         HStack {
                             Text(exercise.exercise.name)
-                                .font(.headline)
+                                .font(.itemTitle)
                                 .foregroundStyle(exercise.id == store.currentExerciseID ? .green : .primary)
                             if exercise.supersetGroupId != nil {
                                 Image(systemName: "link").accessibilityLabel(Text("Superset"))
@@ -150,7 +150,7 @@ struct WatchSummaryView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                Text(summary.name).font(.headline)
+                Text(summary.name).font(.itemTitle)
                 row("Trajanje", Duration.seconds(summary.duration).formatted(.time(pattern: .hourMinuteSecond)))
                 row("Serije", "\(summary.completedSets)")
                 if summary.volumeKg > 0 {

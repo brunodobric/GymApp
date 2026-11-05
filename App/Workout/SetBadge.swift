@@ -12,7 +12,7 @@ struct SetBadge: View {
 
     var body: some View {
         symbol
-            .font(.subheadline.bold())
+            .font(.rowValueSmall)
             .frame(minWidth: size, minHeight: size)
             .background(kind == .warmUp ? Color.orange.opacity(0.25) : Color.secondary.opacity(0.15), in: .circle)
             .accessibilityLabel(label)
@@ -40,7 +40,7 @@ struct SetFieldFrame: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .font(.title2.weight(.semibold).monospacedDigit())
+            .font(.fieldValue)
             .multilineTextAlignment(.center)
             .frame(minWidth: columnWidth == nil ? minWidth : nil, maxWidth: columnWidth == nil ? maxWidth : nil)
             .padding(.horizontal, 6)

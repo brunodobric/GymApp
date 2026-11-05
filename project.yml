@@ -36,6 +36,7 @@ targets:
     sources:
       - App
       - Shared/Common
+      - Shared/Design
       - Shared/LiveActivity
       # Zajednički String Catalog (hr i en) za sve targete.
       - path: Resources/Localization
@@ -112,6 +113,7 @@ targets:
     sources:
       - WatchApp
       - Shared/Common
+      - Shared/Design
       - Shared/WatchComplication
       # Zajednički String Catalog (hr i en) za sve targete.
       - path: Resources/Localization
@@ -147,6 +149,7 @@ targets:
     platform: iOS
     sources:
       - Widgets
+      - Shared/Design
       - Shared/LiveActivity
       # Zajednički String Catalog (hr i en) za sve targete.
       - path: Resources/Localization

@@ -106,7 +106,7 @@ private struct WheelInputPanel: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text(title).font(.headline)
+                Text(title).font(.itemTitle)
                 Spacer()
                 Button("Gotovo") { dismiss() }
                     .bold()
@@ -116,7 +116,7 @@ private struct WheelInputPanel: View {
                     Text(title)
                 }
                 .keyboardType(keyboard)
-                .font(.largeTitle.monospacedDigit().bold())
+                .font(.metricLarge)
                 .multilineTextAlignment(.center)
                 .focused($isFocused)
                 .padding(.vertical, 8)
@@ -130,7 +130,7 @@ private struct WheelInputPanel: View {
                 Button(action: startTyping) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Text(verbatim: draft)
-                            .font(.largeTitle.monospacedDigit().bold())
+                            .font(.metricLarge)
                         Text(verbatim: hint)
                             .font(.title3)
                             .foregroundStyle(.secondary)

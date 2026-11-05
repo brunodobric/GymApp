@@ -9,6 +9,7 @@ struct GymApp: App {
     init() {
         // Otvaranje baze i pokretanje veza, dio vremena pokretanja (MetricKit ga mjeri i kao cjelinu).
         PerformanceSignpost.measure("AppServicesStart") { AppServices.start() }
+        NavigationBarFont.apply()
     }
 
     var body: some Scene {

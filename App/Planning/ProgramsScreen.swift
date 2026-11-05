@@ -16,7 +16,7 @@ struct ProgramsScreen: View {
         NavigationStack {
             List(ProgramLibrary.all) { program in
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(program.title).font(.headline)
+                    Text(program.title).font(.itemTitle)
                     Text(program.details)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)

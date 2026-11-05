@@ -26,6 +26,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * `UITests/`: UI test koji radi snimke zaslona za App Store (`scripts/snimke-zaslona.sh`)
 * `Shared/Common/`: kod koji dijele iPhone i Watch
 * `Shared/LiveActivity/`: kod koji dijele aplikacija i widget extension
+* `Shared/Design/`: stilovi fontova (`AppFont`) koje dijele aplikacija, widgeti i sat
 * `Packages/GymKit/`: logika bez sučelja, s unit testovima (Swift Testing)
 * `AppStore/`: tekstovi za App Store Connect (hr i en), napomena za review i snimke zaslona. Duljine provjerava CI.
 * `site/`: pravila privatnosti i podrška (GitHub Pages)

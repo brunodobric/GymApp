@@ -67,7 +67,6 @@ struct SessionDetailScreen: View {
             // Mapa mišića je na dnu, ispod serija i bilješki.
             SessionMusclesSection(session: session)
         }
-        .fontDesign(.rounded)
         .navigationTitle(showsHeader ? "" : session.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -105,7 +104,7 @@ struct SessionDetailScreen: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(session.name)
-                .font(.largeTitle.bold())
+                .font(.screenTitle)
                 .accessibilityAddTraits(.isHeader)
             Text(session.startedAt.formatted(date: .complete, time: .shortened))
                 .font(.subheadline.weight(.medium))
@@ -200,11 +199,11 @@ private struct SetLine: View {
         HStack(spacing: 10) {
             // Redni broj bez kruga; zagrijavanje je narančasto "Z".
             symbol
-                .font(.body.bold().monospacedDigit())
+                .font(.rowValue)
                 .foregroundStyle(set.kind == .warmUp ? AnyShapeStyle(.orange) : AnyShapeStyle(.secondary))
                 .frame(minWidth: numberWidth, alignment: .leading)
             Text(text)
-                .font(.body.weight(.semibold).monospacedDigit())
+                .font(.rowValue)
             Spacer()
             if let rpe = set.rpe {
                 Text("RPE \(NumberInput.format(rpe))")

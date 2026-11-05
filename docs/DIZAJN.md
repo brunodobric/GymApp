@@ -34,6 +34,32 @@ Pravila iz Apple Human Interface Guidelines (skill *apple-hig-dizajn*) primijenj
 * Akcije su sistemski simboli bez rubova i bez obojenih pozadina toolbara. Kad projekt prijeđe na iOS 26 SDK, barovi koriste Liquid Glass i scroll edge effect, bez vlastitih pozadina.
 * Najviše oko tri grupe stavki u toolbaru. Rijetke akcije idu u izbornik.
 
+## Tipografija
+
+Smjer "Apolon, mirniji": zaobljeni bold za naslove i brojeve, obični SF Pro za opise. Stilovi su na jednom mjestu, `Shared/Design/AppFont.swift`, i dijele ih aplikacija, Live Activity i sat.
+
+* **SF Pro Rounded** (stilovi iz `AppFont`): naslovi ekrana i kartica, nazivi treninga, vježbi i programa, mala oznaka verzalom i svi brojevi (težina, ponavljanja, vrijeme, volumen, rekordi).
+* **Obični SF Pro** (sistemski stilovi, npr. `.subheadline`): opisi i sekundarni tekst, gumbi, retci listi i formi, zaglavlja sekcija. Postavke, onboarding (osim naslova pitanja) i katalog vježbi su u običnom SF Pro.
+* `.fontDesign(.rounded)` se ne stavlja na cijeli ekran ili karticu, jer tada zaobli i opise. Stil se bira po ulozi teksta.
+* **Težine:** bold za naslove i istaknute brojeve, semibold za brojeve u retku i polju za unos, regular za opise. Bez light i medium.
+* **Naslovi u navigacijskoj traci** su zaobljeni (`App/Design/NavigationBarFont.swift`): veliki bold, mali semibold.
+* **Dynamic Type:** uvijek tekstualni stil. Fiksna veličina samo kroz `@ScaledMetric`.
+* **Sat:** brojevi su zaobljeni semibold (`.system(..., design: .rounded, weight: .semibold)`), nazivi `Font.itemTitle`, ostalo obični SF Pro.
+
+| Stil | Uloga | Primjer |
+|---|---|---|
+| `screenTitle` | veliki naslov u sadržaju | naziv treninga na detalju |
+| `cardTitle` | naslov kartice ili istaknutog retka | "Započni: Push dan", pitanje u onboardingu |
+| `itemTitle` | naziv vježbe, treninga ili programa | kartica vježbe, Povijest, Live Activity |
+| `cardHeading` | naslov kartice verzalom uz ikonu | ZADNJI TRENING |
+| `eyebrow` | mala oznaka verzalom | ODMOR, zaglavlje tablice serija, SUPERSET |
+| `metricLarge` | najveći broj | odbrojavanje odmora, kotačić |
+| `metric` | istaknut broj na kartici | volumen tjedna, odmor na kartici |
+| `metricSmall` | manji istaknut broj | težina i ponavljanja u kartici treninga |
+| `fieldValue` | vrijednost u polju za unos | težina i ponavljanja u retku serije |
+| `rowValue` | broj u retku liste | serija na detalju, rekord |
+| `rowValueSmall` | manji broj u retku | redni broj serije, prošli put |
+
 ## Ekran aktivnog treninga (iPhone)
 
 * Kontrole za unos serije su u srednjem i donjem dijelu ekrana, za rad jednom rukom.

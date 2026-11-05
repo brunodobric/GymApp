@@ -155,7 +155,7 @@ struct SetRow: View {
                 Image(systemName: "clock.arrow.circlepath")
                     .font(.footnote)
                 Text(verbatim: previousText)
-                    .font(.subheadline.weight(.medium).monospacedDigit())
+                    .font(.rowValueSmall)
             }
             .foregroundStyle(.secondary)
             .accessibilityElement(children: .ignore)
@@ -351,7 +351,7 @@ extension SetRow {
     private var previousValue: some View {
         if let previousText {
             Text(verbatim: previousText)
-                .font(.subheadline.weight(.medium).monospacedDigit())
+                .font(.rowValueSmall)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
@@ -497,7 +497,7 @@ struct SetTableHeader: View {
                 }
                 Color.clear.frame(width: metrics.check, height: 1)
             }
-            .font(.caption.bold())
+            .font(.eyebrow)
             .textCase(.uppercase)
             .foregroundStyle(.secondary)
             .lineLimit(1)

@@ -94,7 +94,7 @@ struct ComplicationView: View {
             if let rest {
                 Label("Odmor", systemImage: "timer").font(.headline).widgetAccentable()
                 Text(timerInterval: rest, countsDown: true)
-                    .font(.title2.monospacedDigit())
+                    .font(.system(.title2, design: .rounded, weight: .semibold).monospacedDigit())
             } else if let active = state.activeWorkoutName {
                 Label("Trening u tijeku", systemImage: "dumbbell.fill").font(.headline).widgetAccentable()
                 Text(active).lineLimit(1)

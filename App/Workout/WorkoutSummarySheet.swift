@@ -48,10 +48,10 @@ struct WorkoutSummarySheet: View {
                     } else {
                         ForEach(summary.records, id: \.exerciseName) { item in
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(item.exerciseName).font(.headline)
+                                Text(item.exerciseName).font(.itemTitle)
                                 ForEach(item.records, id: \.kind) { record in
                                     Label(recordText(record), systemImage: "trophy.fill")
-                                        .font(.subheadline)
+                                        .font(.rowValueSmall)
                                         .foregroundStyle(.orange)
                                 }
                             }
