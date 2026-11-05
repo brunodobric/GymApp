@@ -330,6 +330,20 @@ struct ExerciseInfoBuilderTests {
             #expect(BodyRegion.all.contains(BodyRegion.region(for: muscle)))
         }
     }
+
+    @Test("Svaka regija ima boju, bliske regije dijele boju, a nepoznata nema")
+    func colorGroups() {
+        for region in BodyRegion.all {
+            #expect(BodyRegion.colorGroup(for: region) != nil)
+        }
+        #expect(BodyRegion.colorGroup(for: "lats") == BodyRegion.colorGroup(for: "lowerBack"))
+        #expect(BodyRegion.colorGroup(for: "quads") == .legs)
+        #expect(BodyRegion.colorGroup(for: "chest") != BodyRegion.colorGroup(for: "triceps"))
+        #expect(BodyRegion.colorGroup(for: "neck") == nil)
+        // Sve boje se koriste.
+        let used = Set(BodyRegion.all.compactMap { BodyRegion.colorGroup(for: $0) })
+        #expect(used.count == BodyRegion.ColorGroup.allCases.count)
+    }
 }
 
 @Suite("ExerciseRef ključ")

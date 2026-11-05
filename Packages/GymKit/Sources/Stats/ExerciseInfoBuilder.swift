@@ -10,6 +10,28 @@ public enum BodyRegion {
         "traps", "upperBack", "lats", "triceps", "lowerBack", "glutes", "hamstrings", "calves"
     ]
 
+    /// Skupina mišića koja ima svoju boju u sučelju (čipovi, graf mišića). Bliske regije dijele boju,
+    /// da paleta ostane mala: sva leđa su jedna boja, sve noge osim gluteusa druga.
+    public enum ColorGroup: CaseIterable, Sendable {
+        case chest, shoulders, biceps, triceps, forearms, core, back, legs, glutes
+    }
+
+    /// Boja regije; nepoznata regija nema boju.
+    public static func colorGroup(for region: String) -> ColorGroup? {
+        switch region {
+        case "chest": .chest
+        case "shoulders": .shoulders
+        case "biceps": .biceps
+        case "triceps": .triceps
+        case "forearms": .forearms
+        case "abs": .core
+        case "traps", "upperBack", "lats", "lowerBack": .back
+        case "quads", "hamstrings", "innerThigh", "outerThigh", "calves": .legs
+        case "glutes": .glutes
+        default: nil
+        }
+    }
+
     /// Regija za mišić. Koristi se za vlastite vježbe, koje nemaju regije iz kataloga.
     public static func region(for muscle: Muscle) -> String {
         switch muscle {
