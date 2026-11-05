@@ -210,10 +210,13 @@ private struct TemplateSetRow: View {
         HStack(spacing: 10) {
             SetBadge(kind: set.kind, number: position)
             if usesWeight {
-                field("Težina", unit.symbol, $weight)
+                WheelInputField.weight(
+                    weightTitle, hint: weightHint, text: $weight, unit: unit,
+                    fallback: WheelOptions.defaultWeight(for: unit, isExtraLoad: inputType != .weightReps)
+                )
             }
             if usesReps {
-                field("Ponavljanja", "×", $reps)
+                WheelInputField.reps("Ponavljanja", hint: "×", text: $reps, fallback: WheelOptions.defaultReps)
             }
             if !usesReps {
                 Text("Bez ciljeva").foregroundStyle(.secondary)
@@ -224,11 +227,20 @@ private struct TemplateSetRow: View {
         .onChange(of: reps) { _, _ in apply() }
     }
 
-    private func field(_ title: LocalizedStringKey, _ hint: String, _ text: Binding<String>) -> some View {
-        TextField(hint, text: text)
-            .keyboardType(.decimalPad)
-            .setFieldFrame()
-            .accessibilityLabel(Text(title))
+    private var weightTitle: LocalizedStringKey {
+        switch inputType {
+        case .weightedBodyweight: "Dodatna težina"
+        case .assisted: "Pomoć"
+        default: "Težina"
+        }
+    }
+
+    private var weightHint: String {
+        switch inputType {
+        case .weightedBodyweight: "+\(unit.symbol)"
+        case .assisted: "−\(unit.symbol)"
+        default: unit.symbol
+        }
     }
 
     private func apply() {

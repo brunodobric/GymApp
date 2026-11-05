@@ -1,15 +1,19 @@
 import Catalog
 import Models
 import SwiftUI
+import Training
 import Units
 
 /// Jedan redak serije: oznaka, prošli put, polja za unos i kvačica.
 /// Polja drže vlastiti tekst, a svaka izmjena odmah ide u model (i u bazu).
+/// Težina i ponavljanja se biraju kotačićem (`WheelInputField`), trajanje i udaljenost tipkovnicom.
 struct SetRow: View {
     let set: SetLog
     let inputType: ExerciseInputType
     let position: Int
     let previousText: String?
+    /// Vrijednosti prošlog treninga za ovu seriju, na koje se kotačić postavi kad je polje prazno.
+    let suggestion: SetValues?
     let isHighlighted: Bool
     let unit: WeightUnit
     let effortScale: EffortScale
@@ -27,7 +31,8 @@ struct SetRow: View {
     @Environment(\.colorSchemeContrast) private var contrast
 
     init(
-        set: SetLog, inputType: ExerciseInputType, position: Int, previousText: String?, isHighlighted: Bool,
+        set: SetLog, inputType: ExerciseInputType, position: Int, previousText: String?, suggestion: SetValues?,
+        isHighlighted: Bool,
         unit: WeightUnit, effortScale: EffortScale,
         onEdit: @escaping () -> Void, onToggleComplete: @escaping () -> Void,
         onChangeKind: @escaping (SetKind) -> Void, onDelete: @escaping () -> Void
@@ -36,6 +41,7 @@ struct SetRow: View {
         self.inputType = inputType
         self.position = position
         self.previousText = previousText
+        self.suggestion = suggestion
         self.isHighlighted = isHighlighted
         self.unit = unit
         self.effortScale = effortScale
@@ -128,17 +134,20 @@ struct SetRow: View {
     private var fields: some View {
         switch inputType {
         case .weightReps:
-            field("Težina", unit.symbol, $weightText) { applyWeight() }
-                .simultaneousGesture(LongPressGesture(minimumDuration: 0.6).onEnded { _ in showsPlates = true })
-            field("Ponavljanja", "×", $reps) { applyReps() }
+            WheelInputField.weight(
+                "Težina", hint: unit.symbol, text: $weightText, unit: unit, fallback: weightFallback,
+                longPress: ("Kalkulator ploča", { showsPlates = true })
+            )
+            .onChange(of: weightText) { _, _ in applyWeight() }
+            repsField
         case .bodyweight:
-            field("Ponavljanja", "×", $reps) { applyReps() }
+            repsField
         case .weightedBodyweight:
-            field("Dodatna težina", "+\(unit.symbol)", $weightText) { applyWeight() }
-            field("Ponavljanja", "×", $reps) { applyReps() }
+            weightField("Dodatna težina", "+\(unit.symbol)")
+            repsField
         case .assisted:
-            field("Pomoć", "−\(unit.symbol)", $weightText) { applyWeight() }
-            field("Ponavljanja", "×", $reps) { applyReps() }
+            weightField("Pomoć", "−\(unit.symbol)")
+            repsField
         case .duration:
             field("Trajanje", "m:ss", $duration, keyboard: .numbersAndPunctuation) { applyDuration() }
         case .durationDistance:
@@ -283,5 +292,27 @@ struct SetRow: View {
     private func applyDistance() {
         set.distanceMeters = NumberInput.parse(distance).map { $0 * 1000 }
         onEdit()
+    }
+}
+
+// MARK: Kotačić za težinu i ponavljanja
+
+extension SetRow {
+    private func weightField(_ title: LocalizedStringKey, _ hint: String) -> some View {
+        WheelInputField.weight(title, hint: hint, text: $weightText, unit: unit, fallback: weightFallback)
+            .onChange(of: weightText) { _, _ in applyWeight() }
+    }
+
+    private var repsField: some View {
+        WheelInputField.reps("Ponavljanja", hint: "×", text: $reps, fallback: suggestion?.reps ?? WheelOptions.defaultReps)
+            .onChange(of: reps) { _, _ in applyReps() }
+    }
+
+    /// Početak kotačića za praznu težinu: prošli trening, inače prazna šipka (ili 0 za dodatnu težinu i pomoć).
+    private var weightFallback: Double {
+        let isExtraLoad = inputType == .weightedBodyweight || inputType == .assisted
+        let kilograms = isExtraLoad ? suggestion?.extraWeightKg : suggestion?.weightKg
+        return kilograms.map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
+            ?? WheelOptions.defaultWeight(for: unit, isExtraLoad: isExtraLoad)
     }
 }
