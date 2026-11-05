@@ -17,6 +17,8 @@ struct SetRow: View {
     let isHighlighted: Bool
     let unit: WeightUnit
     let effortScale: EffortScale
+    /// Završene serije su prigušene u aktivnom treningu; u uređivaču odrađenog treninga su sve završene.
+    let dimsCompleted: Bool
     let onEdit: () -> Void
     let onToggleComplete: () -> Void
     let onChangeKind: (SetKind) -> Void
@@ -33,7 +35,7 @@ struct SetRow: View {
     init(
         set: SetLog, inputType: ExerciseInputType, position: Int, previousText: String?, suggestion: SetValues?,
         isHighlighted: Bool,
-        unit: WeightUnit, effortScale: EffortScale,
+        unit: WeightUnit, effortScale: EffortScale, dimsCompleted: Bool = true,
         onEdit: @escaping () -> Void, onToggleComplete: @escaping () -> Void,
         onChangeKind: @escaping (SetKind) -> Void, onDelete: @escaping () -> Void
     ) {
@@ -45,6 +47,7 @@ struct SetRow: View {
         self.isHighlighted = isHighlighted
         self.unit = unit
         self.effortScale = effortScale
+        self.dimsCompleted = dimsCompleted
         self.onEdit = onEdit
         self.onToggleComplete = onToggleComplete
         self.onChangeKind = onChangeKind
@@ -91,7 +94,7 @@ struct SetRow: View {
         }
         .padding(.vertical, 4)
         // Završene serije su prigušene, osim kad korisnik traži jači kontrast.
-        .opacity(set.isCompleted && contrast != .increased ? 0.6 : 1)
+        .opacity(dimsCompleted && set.isCompleted && contrast != .increased ? 0.6 : 1)
         .sheet(isPresented: $showsPlates) {
             PlateCalculatorSheet(targetText: weightText, unit: unit)
         }

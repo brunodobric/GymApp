@@ -2018,6 +2018,16 @@
         }
       }
     },
+    "Izmjene se ne prenose u Zdravlje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changes aren't copied to Health."
+          }
+        }
+      }
+    },
     "Izolacijska" : {
       "localizations" : {
         "en" : {
@@ -2434,6 +2444,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Step %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Kraj" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
           }
         }
       }
@@ -2878,6 +2898,16 @@
         }
       }
     },
+    "Nastavi uređivati" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep editing"
+          }
+        }
+      }
+    },
     "Natrag" : {
       "localizations" : {
         "en" : {
@@ -3228,6 +3258,16 @@
         }
       }
     },
+    "Novi trening iz ovog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New workout from this one"
+          }
+        }
+      }
+    },
     "Novi treninzi" : {
       "localizations" : {
         "en" : {
@@ -3378,6 +3418,16 @@
         }
       }
     },
+    "Obriši vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete exercise"
+          }
+        }
+      }
+    },
     "Odaberi Aplikacija, zatim Apolon i Otvorena." : {
       "localizations" : {
         "en" : {
@@ -3458,12 +3508,32 @@
         }
       }
     },
+    "Odbaci izmjene" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard changes"
+          }
+        }
+      }
+    },
     "Odbaci trening" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Discard workout"
+          }
+        }
+      }
+    },
+    "Odbaciti izmjene?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard changes?"
           }
         }
       }
@@ -4264,6 +4334,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "History"
+          }
+        }
+      }
+    },
+    "Početak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
           }
         }
       }
@@ -5108,6 +5188,16 @@
         }
       }
     },
+    "Serije bez kvačice i vježbe bez završene serije neće se spremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets without a checkmark and exercises without a completed set won't be saved."
+          }
+        }
+      }
+    },
     "Serije koje nisu označene završenima neće se spremiti." : {
       "localizations" : {
         "en" : {
@@ -5908,6 +5998,16 @@
         }
       }
     },
+    "Trening bez ijedne završene serije ne može se spremiti. Ako ga više ne trebaš, obriši ga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A workout without a completed set can't be saved. If you no longer need it, delete it."
+          }
+        }
+      }
+    },
     "Trening i njegove serije bit će trajno obrisani, a rekordi i statistika preračunat će se bez njega." : {
       "localizations" : {
         "en" : {
@@ -5984,6 +6084,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Workout on iPhone only"
+          }
+        }
+      }
+    },
+    "Trening se ne može urediti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This workout can't be edited."
           }
         }
       }
@@ -6454,6 +6564,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Edit cards"
+          }
+        }
+      }
+    },
+    "Uredi trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit workout"
           }
         }
       }

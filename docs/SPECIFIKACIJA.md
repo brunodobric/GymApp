@@ -184,6 +184,10 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
      * Sve serije po vježbi
      * Bilješke na dnu
    * Moguće je izbrisati trening.
+   * U detaljima gore desno, uz brisanje, izbornik s dvije opcije:
+     * **Uredi trening:** naknadno mijenjanje naziva, početka i kraja, vježbi, serija i bilješki. Izmjene se spremaju tek na "Spremi", a "Odustani" ih odbacuje. Kao kod završetka treninga, serije bez kvačice i vježbe bez završene serije se ne spremaju. Izmjene se ne prenose u Zdravlje.
+     * **Novi trening iz ovog:** stvara novi trening (predložak) s istim nazivom, istim vježbama redom, pauzama, supersetovima i serijama (završene serije postaju ciljevi). Otvara se u uređivaču treninga, gdje se može preimenovati i izbaciti što ne treba. "Odustani" ga briše, a "Spremi" ga ostavlja u Rasporedima pod Treninzima.
+   * Trening uvezen iz Zdravlja nema taj izbornik.
    * Gore desno gumb za **kalendar**:
      * Dani s odrađenim treningom imaju točkicu.
      * Klik na dan prikazuje ispod kalendara popis treninga odrađenih taj dan (isti prikaz kao u listi).
