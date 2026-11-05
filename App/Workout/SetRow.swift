@@ -156,24 +156,6 @@ struct SetRow: View {
         }
     }
 
-    private func weightField(_ title: LocalizedStringKey, _ hint: String) -> some View {
-        WheelInputField.weight(title, hint: hint, text: $weightText, unit: unit, fallback: weightFallback)
-            .onChange(of: weightText) { _, _ in applyWeight() }
-    }
-
-    private var repsField: some View {
-        WheelInputField.reps("Ponavljanja", hint: "×", text: $reps, fallback: suggestion?.reps ?? WheelOptions.defaultReps)
-            .onChange(of: reps) { _, _ in applyReps() }
-    }
-
-    /// Početak kotačića za praznu težinu: prošli trening, inače prazna šipka (ili 0 za dodatnu težinu i pomoć).
-    private var weightFallback: Double {
-        let isExtraLoad = inputType == .weightedBodyweight || inputType == .assisted
-        let kilograms = isExtraLoad ? suggestion?.extraWeightKg : suggestion?.weightKg
-        return kilograms.map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
-            ?? WheelOptions.defaultWeight(for: unit, isExtraLoad: isExtraLoad)
-    }
-
     private func field(
         _ title: LocalizedStringKey, _ hint: String, _ text: Binding<String>,
         keyboard: UIKeyboardType = .decimalPad, apply: @escaping () -> Void
@@ -310,5 +292,27 @@ struct SetRow: View {
     private func applyDistance() {
         set.distanceMeters = NumberInput.parse(distance).map { $0 * 1000 }
         onEdit()
+    }
+}
+
+// MARK: Kotačić za težinu i ponavljanja
+
+extension SetRow {
+    private func weightField(_ title: LocalizedStringKey, _ hint: String) -> some View {
+        WheelInputField.weight(title, hint: hint, text: $weightText, unit: unit, fallback: weightFallback)
+            .onChange(of: weightText) { _, _ in applyWeight() }
+    }
+
+    private var repsField: some View {
+        WheelInputField.reps("Ponavljanja", hint: "×", text: $reps, fallback: suggestion?.reps ?? WheelOptions.defaultReps)
+            .onChange(of: reps) { _, _ in applyReps() }
+    }
+
+    /// Početak kotačića za praznu težinu: prošli trening, inače prazna šipka (ili 0 za dodatnu težinu i pomoć).
+    private var weightFallback: Double {
+        let isExtraLoad = inputType == .weightedBodyweight || inputType == .assisted
+        let kilograms = isExtraLoad ? suggestion?.extraWeightKg : suggestion?.weightKg
+        return kilograms.map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
+            ?? WheelOptions.defaultWeight(for: unit, isExtraLoad: isExtraLoad)
     }
 }

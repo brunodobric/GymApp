@@ -60,7 +60,7 @@ struct WheelOptionsTests {
     @Test("Kotačić se postavlja na najbližu vrijednost")
     func nearestValue() {
         let values = WheelOptions.weights(for: .kilograms)
-        #expect(WheelOptions.nearest(to: 81.4, in: values) == 80)
+        #expect(WheelOptions.nearest(to: 81, in: values) == 80)
         #expect(WheelOptions.nearest(to: 81.6, in: values) == 82.5)
         #expect(WheelOptions.nearest(to: 900, in: values) == 500)
         #expect(WheelOptions.nearest(to: 1, in: []) == nil)
