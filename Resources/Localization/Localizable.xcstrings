@@ -5158,16 +5158,6 @@
         }
       }
     },
-    "Serija %lld/%lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set %1$lld/%2$lld"
-          }
-        }
-      }
-    },
     "Serija obrisana" : {
       "localizations" : {
         "en" : {

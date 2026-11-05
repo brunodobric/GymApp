@@ -30,7 +30,7 @@ struct RestTimerActivityAttributes: ActivityAttributes {
         var nextSetID: String?
         /// Vrijednosti serije koju gumb potvrđuje, s gumbima − i +. Prazno kad nema sljedeće serije.
         var setValues: [SetValue]
-        /// Ista serija u prethodnom treningu, npr. "30 kg × 12". Opcionalno i zbog stanja starije verzije.
+        /// Ista serija u prethodnom treningu, npr. "30 kg\n12 ×" (dva reda). Opcionalno i zbog stanja starije verzije.
         var previousText: String?
         /// Serija ima sve vrijednosti. Bez njih gumb se ne prikazuje, a dodir otvara aplikaciju.
         var canConfirm: Bool

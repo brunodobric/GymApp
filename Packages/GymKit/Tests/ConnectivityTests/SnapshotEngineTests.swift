@@ -342,11 +342,11 @@ struct LiveSetPreviousTests {
         ]
         let sets = exercise.orderedSets
         #expect(LiveSetEditor.previousText(of: sets[0], inputType: .weightReps, previous: previous, unit: .kilograms, locale: hr)
-            == "30 kg × 12")
+            == "30 kg\n12 ×")
         #expect(LiveSetEditor.previousText(of: sets[1], inputType: .weightReps, previous: previous, unit: .kilograms, locale: hr)
-            == "32,5 kg × 10")
+            == "32,5 kg\n10 ×")
         #expect(LiveSetEditor.previousText(of: sets[2], inputType: .weightReps, previous: previous, unit: .kilograms, locale: hr)
-            == "32,5 kg × 10")
+            == "32,5 kg\n10 ×")
         #expect(LiveSetEditor.previousText(of: sets[0], inputType: .weightReps, previous: [], unit: .kilograms) == nil)
     }
 
@@ -360,10 +360,10 @@ struct LiveSetPreviousTests {
 
         #expect(LiveSetEditor.previousText(
             of: pullUps.orderedSets[0], inputType: .bodyweight, previous: [SetValues(reps: 8)], unit: .kilograms
-        ) == "× 8")
+        ) == "8 ×")
         #expect(LiveSetEditor.previousText(
             of: run.orderedSets[0], inputType: .durationDistance,
             previous: [SetValues(durationSeconds: 90, distanceMeters: 400)], unit: .kilograms, locale: hr
-        ) == "1:30 · 400 m")
+        ) == "1:30\n400 m")
     }
 }

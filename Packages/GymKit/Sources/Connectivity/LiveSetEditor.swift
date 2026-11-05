@@ -59,7 +59,8 @@ public enum LiveSetEditor {
         return true
     }
 
-    /// Vrijednosti iste serije u prethodnom treningu, npr. "30 kg × 12", "× 12" ili "1:30 · 400 m".
+    /// Vrijednosti iste serije u prethodnom treningu u dva reda: težina (ili trajanje) gore, ponavljanja
+    /// (ili udaljenost) dolje, npr. "30 kg\n12 ×", "12 ×" ili "1:30\n400 m".
     /// Serija se uspoređuje po poziciji među serijama iste vrste (kao smart defaults). `nil` kad prošli put nema.
     public static func previousText(
         of set: SetLog,
@@ -75,12 +76,12 @@ public enum LiveSetEditor {
         switch inputType {
         case .weightReps:
             guard let kilograms = old.weightKg, let reps = old.reps else { return nil }
-            return "\(weight.string(fromKilograms: kilograms)) × \(reps)"
+            return "\(weight.string(fromKilograms: kilograms))\n\(reps) ×"
         case .bodyweight:
-            return old.reps.map { "× \($0)" }
+            return old.reps.map { "\($0) ×" }
         case .weightedBodyweight, .assisted:
             guard let reps = old.reps else { return nil }
-            return "\(weight.string(fromKilograms: old.extraWeightKg ?? 0)) × \(reps)"
+            return "\(weight.string(fromKilograms: old.extraWeightKg ?? 0))\n\(reps) ×"
         case .duration:
             return old.durationSeconds.map(durationText)
         case .durationDistance:
@@ -88,7 +89,7 @@ public enum LiveSetEditor {
                 old.durationSeconds.map(durationText),
                 old.distanceMeters.map { "\($0.formatted(.number.precision(.fractionLength(0)).locale(locale))) m" },
             ]
-            let text = parts.compactMap { $0 }.joined(separator: " · ")
+            let text = parts.compactMap { $0 }.joined(separator: "\n")
             return text.isEmpty ? nil : text
         }
     }

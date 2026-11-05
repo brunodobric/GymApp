@@ -106,8 +106,11 @@ private struct LockScreenView: View {
 
     var body: some View {
         let rest = RestState(state: state, isStale: isStale)
-        VStack(spacing: 8) {
+        // Fiksna visina (ispod granice od 160 pt) da dva jednaka razmaka smjeste donji dio točno između
+        // naslova i donjeg ruba.
+        VStack(spacing: 0) {
             LockScreenHeader(state: state)
+            Spacer(minLength: 8)
             if let setID = state.nextSetID, !state.setValues.isEmpty {
                 HStack(spacing: 8) {
                     PreviousSetLabel(text: state.previousText)
@@ -128,9 +131,11 @@ private struct LockScreenView: View {
                     Spacer(minLength: 0)
                 }
             }
+            Spacer(minLength: 8)
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.top, 12)
+        .frame(height: 156)
         .background {
             RestBackground(rest: rest)
         }
@@ -172,7 +177,7 @@ private struct LockScreenHeader: View {
 
             Group {
                 if state.exerciseName != nil {
-                    Text("Serija \(state.setNumber)/\(state.setCount)")
+                    Text("\(state.setNumber)/\(state.setCount)")
                         .accessibilityLabel(Text("Serija \(state.setNumber) od \(state.setCount)"))
                 } else {
                     Text("\(state.completedSets)/\(state.totalSets)")
@@ -202,6 +207,7 @@ private struct PreviousSetLabel: View {
                     .minimumScaleFactor(0.7)
             }
         }
+        .frame(maxHeight: .infinity, alignment: .center)
         .foregroundStyle(.secondary)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(text.map { Text("Prošli put \($0)") } ?? Text(verbatim: ""))
