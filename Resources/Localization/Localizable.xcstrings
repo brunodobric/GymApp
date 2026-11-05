@@ -3748,16 +3748,6 @@
         }
       }
     },
-    "Otvori kalkulator" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open calculator"
-          }
-        }
-      }
-    },
     "Otvori u novom prozoru" : {
       "localizations" : {
         "en" : {
@@ -7912,6 +7902,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Barbell"
+          }
+        }
+      }
+    },
+    "Šipka i ploče" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bar and plates"
           }
         }
       }

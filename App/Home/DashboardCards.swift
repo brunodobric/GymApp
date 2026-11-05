@@ -75,20 +75,20 @@ struct LastWorkoutCard: View {
     }
 }
 
+/// Kalkulator ploča: dodir na cijelu karticu otvara kalkulator preko cijelog ekrana.
 struct PlateCalculatorCard: View {
     let unit: WeightUnit
-    @State private var showsCalculator = false
 
     var body: some View {
-        HomeCard(title: DashboardCardKind.plateCalculator.title, symbol: DashboardCardKind.plateCalculator.symbol) {
-            Text("Koje ploče staviti na svaku stranu šipke.")
-                .font(.subheadline).foregroundStyle(.secondary)
-            Button("Otvori kalkulator", systemImage: "scalemass") { showsCalculator = true }
-                .buttonStyle(.bordered)
+        NavigationLink {
+            PlateCalculatorScreen(unit: unit)
+        } label: {
+            HomeCard(title: DashboardCardKind.plateCalculator.title, symbol: DashboardCardKind.plateCalculator.symbol) {
+                Text("Koje ploče staviti na svaku stranu šipke.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+            }
         }
-        .sheet(isPresented: $showsCalculator) {
-            PlateCalculatorSheet(targetText: "", unit: unit)
-        }
+        .buttonStyle(.plain)
     }
 }
 

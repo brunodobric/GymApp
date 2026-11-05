@@ -233,7 +233,8 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 2. **Plate Calculator** (kartica na Dashboardu i unutar aktivnog treninga).  
    Korisnik unese ciljnu težinu, a app prikaže koje ploče treba staviti na šipku.  
    Podržava različite težine šipke (npr. 20 kg, 15 kg) i korisnikov skup dostupnih ploča.  
-   Unutar treninga otvara se iz polja težine s već upisanom vrijednošću.
+   Unutar treninga otvara se iz polja težine s već upisanom vrijednošću.  
+   Na Dashboardu je cijela kartica dodirljiva i otvara kalkulator preko cijelog ekrana, gdje se ispod izračuna mogu uključiti i isključiti dostupne ploče i promijeniti težina šipke (iste postavke kao u Postavkama).
 3. **Zamjena vježbi (Exercise Swap):** Uz očuvanje povijesti. Povijest se uvijek veže uz vježbu koja je stvarno odrađena, a ne uz onu iz predloška.
 4. **Povijest i Napredak:**
    * Prethodni rezultati uvijek vidljivi u sučelju unosa.

@@ -1,5 +1,6 @@
 import Models
 import SwiftUI
+import Training
 import Units
 
 extension AppTheme {
@@ -139,6 +140,8 @@ struct PlatesSettingsSection: View {
             ForEach(Self.options, id: \.self) { plate in
                 Toggle("\(NumberInput.format(plate)) kg", isOn: binding(for: plate))
             }
+        } header: {
+            Text("Šipka i ploče")
         } footer: {
             Text("Kalkulator ploča koristi ove ploče kad su jedinice kilogrami. Za funte koristi uobičajene ploče.")
         }
@@ -148,9 +151,7 @@ struct PlatesSettingsSection: View {
         Binding(
             get: { settings.availablePlatesKg.contains(plate) },
             set: { isOn in
-                var plates = settings.availablePlatesKg.filter { $0 != plate }
-                if isOn { plates.append(plate) }
-                settings.availablePlatesKg = plates.sorted()
+                settings.availablePlatesKg = PlateCalculator.setting(plate, enabled: isOn, in: settings.availablePlatesKg)
             }
         )
     }
