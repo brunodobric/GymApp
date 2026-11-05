@@ -32,7 +32,8 @@ struct ExerciseCard: View {
             ForEach(rows, id: \.set.id) { row in
                 SetRow(
                     set: row.set, inputType: exercise.inputType, position: row.position,
-                    previousText: row.previous, isHighlighted: row.set.id == highlightedSetID, unit: unit,
+                    previousText: row.previous, suggestion: row.suggestion,
+                    isHighlighted: row.set.id == highlightedSetID, unit: unit,
                     effortScale: effortScale, onEdit: onEdit, onToggleComplete: { onToggleComplete(row.set) },
                     onChangeKind: { onChangeKind(row.set, $0) }, onDelete: { onDeleteSet(row.set) }
                 )
@@ -91,6 +92,7 @@ struct ExerciseCard: View {
         let set: SetLog
         let position: Int
         let previous: String?
+        let suggestion: SetValues?
     }
 
     /// Redni broj se računa zasebno za radne serije, a zagrijavanje se označava slovom.
@@ -107,7 +109,10 @@ struct ExerciseCard: View {
                 index = warmUp - 1
             }
             let old = SmartDefaults.defaults(forPosition: index, kind: set.kind, previous: previous)
-            return Row(set: set, position: set.kind == .working ? working : warmUp, previous: old.flatMap(previousText))
+            return Row(
+                set: set, position: set.kind == .working ? working : warmUp, previous: old.flatMap(previousText),
+                suggestion: old
+            )
         }
     }
 

@@ -100,6 +100,7 @@ Aplikacija podržava 3 glavna modula:
   * Izračunati volumen
   * Kvačicu desno
 * Klik na polje težine ili ponavljanja omogućuje izmjenu.
+* Težina i ponavljanja se biraju kotačićem umjesto tipkovnice: težina u koracima od 2,5 kg (5 lbs), ponavljanja od 1 do 50. Kotačić kreće od trenutne vrijednosti, prošlog treninga ili prazne šipke. Dodir na broj iznad kotačića otvara tipkovnicu za vrijednost koje na kotačiću nema (npr. 83 kg). Isto vrijedi za ciljeve u predlošku.
 * Klik na kvačicu kompletira seriju (zasivi redak) i pokreće rest timer.
 * Rest timer se pojavljuje kao redak ispod s linijom koja teče i gumbima +10 / -10.
 * U jednom trenutku samo jedna vježba može biti otvorena.
