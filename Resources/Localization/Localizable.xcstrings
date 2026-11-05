@@ -1428,6 +1428,16 @@
         }
       }
     },
+    "Dodaj opis i sliku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add description and photo"
+          }
+        }
+      }
+    },
     "Dodaj program" : {
       "localizations" : {
         "en" : {
@@ -3814,6 +3824,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "All your completed workouts will appear here."
+          }
+        }
+      }
+    },
+    "Ovo je tvoja vježba, pa nema animaciju iz kataloga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is your own exercise, so it has no animation from the catalog."
           }
         }
       }
@@ -6594,6 +6614,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Instructions for this exercise are only in English for now."
+          }
+        }
+      }
+    },
+    "Upute za vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise instructions"
+          }
+        }
+      }
+    },
+    "Upute: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instructions: %@"
           }
         }
       }

@@ -24,6 +24,8 @@ struct ActiveWorkoutScreen: View {
 
     @State private var showsPicker = false
     @State private var supersetSource: SessionExercise?
+    /// Vježba čije se upute (animacija i opis) prikazuju u listu.
+    @State private var infoExercise: SessionExercise?
     @State private var showsRemoved = false
     @State private var showsFinishPrompt = false
     @State private var showsFinishConfirmation = false
@@ -112,6 +114,11 @@ struct ActiveWorkoutScreen: View {
                     try? engine.makeSuperset(members, in: session)
                 }
             }
+            .sheet(item: $infoExercise) { exercise in
+                if let source = exercise.exercise.source {
+                    ExerciseInfoSheet(source: source)
+                }
+            }
             .sheet(isPresented: $showsRemoved) {
                 RemovedExercisesSheet(exercises: engine.removedExercises(in: session)) { exercise in
                     try? engine.restoreExercise(exercise)
@@ -187,7 +194,8 @@ struct ActiveWorkoutScreen: View {
             onAddSet: { kind in _ = try? engine.addSet(to: exercise, kind: kind) },
             onRemove: { remove(exercise) },
             onSuperset: { supersetSource = exercise },
-            onLeaveSuperset: { try? engine.removeFromSuperset(exercise) }
+            onLeaveSuperset: { try? engine.removeFromSuperset(exercise) },
+            onShowInfo: exercise.exercise.source == nil ? nil : { infoExercise = exercise }
         )
     }
 
@@ -378,6 +386,23 @@ struct ActiveWorkoutScreen: View {
         for exercise in session.orderedExercises where previousSets[exercise.id] == nil {
             previousSets[exercise.id] = (try? queries.previousSetValues(of: exercise.exercise)) ?? []
         }
+    }
+}
+
+/// Stranica vježbe iz kataloga (animacija, mišići, upute) ili vlastite vježbe, otvorena usred treninga.
+private struct ExerciseInfoSheet: View {
+    let source: ExerciseSummary.Source
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ExerciseDetailScreen(source: source, allowsRemoving: false)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) { Button("Gotovo") { dismiss() } }
+                }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationContentInteraction(.scrolls)
     }
 }
 
