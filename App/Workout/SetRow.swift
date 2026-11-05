@@ -4,7 +4,8 @@ import SwiftUI
 import Training
 import Units
 
-/// Jedan redak serije: oznaka, prošli put, polja za unos i kvačica.
+/// Jedan redak serije: oznaka, veliki brojevi s prošlim putem ispod njih i velika kvačica desno.
+/// Završena serija se zasivi, a kvačica ostaje zelena.
 /// Polja drže vlastiti tekst, a svaka izmjena odmah ide u model (i u bazu).
 /// Težina i ponavljanja se biraju kotačićem (`WheelInputField`), trajanje i udaljenost tipkovnicom.
 struct SetRow: View {
@@ -31,6 +32,7 @@ struct SetRow: View {
     @State private var showsPlates = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.colorSchemeContrast) private var contrast
+    @ScaledMetric(relativeTo: .title2) private var completeButtonWidth: CGFloat = 64
 
     init(
         set: SetLog, inputType: ExerciseInputType, position: Int, previousText: String?, suggestion: SetValues?,
@@ -69,32 +71,17 @@ struct SetRow: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            if dynamicTypeSize.isAccessibilitySize {
-                // Kod najvećih veličina teksta polja idu u svoj redak, da se ništa ne reže.
-                HStack(spacing: 8) {
-                    kindBadge
-                    previous
-                    Spacer(minLength: 0)
-                    completeButton
-                }
-                HStack(spacing: 8) { fields }
-            } else {
-                HStack(spacing: 8) {
-                    kindBadge
-                    previous
-                    fields
-                    Spacer(minLength: 0)
-                    completeButton
-                }
-            }
-            if set.rpe != nil || isHighlighted || !set.isCompleted {
-                effortMenu
-            }
+        HStack(spacing: 12) {
+            content
+                // Završena serija se zasivi i priguši, osim kad korisnik traži jači kontrast.
+                .saturation(isDimmed ? 0 : 1)
+                .opacity(isDimmed ? 0.45 : 1)
+            completeButton
         }
-        .padding(.vertical, 4)
-        // Završene serije su prigušene, osim kad korisnik traži jači kontrast.
-        .opacity(dimsCompleted && set.isCompleted && contrast != .increased ? 0.6 : 1)
+        // Kvačica se rasteže na visinu cijelog retka.
+        .fixedSize(horizontal: false, vertical: true)
+        .padding(.vertical, 6)
+        .animation(.easeInOut(duration: 0.2), value: set.isCompleted)
         .sheet(isPresented: $showsPlates) {
             PlateCalculatorSheet(targetText: weightText, unit: unit)
         }
@@ -109,16 +96,63 @@ struct SetRow: View {
         .onChange(of: set.distanceMeters) { syncDistance() }
     }
 
+    private var isDimmed: Bool {
+        dimsCompleted && set.isCompleted && contrast != .increased
+    }
+
+    // `self.` je nužan: redak koji počinje sa `set` Swift čita kao setter.
+    private var showsEffort: Bool {
+        self.set.rpe != nil || isHighlighted || !set.isCompleted
+    }
+
+    /// Lijevi dio retka: oznaka, veliki brojevi i ispod njih prošli put i napor.
+    @ViewBuilder
+    private var content: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            // Kod najvećih veličina teksta svaki dio ide u svoj redak, da se ništa ne reže.
+            VStack(alignment: .leading, spacing: 8) {
+                kindBadge
+                HStack(spacing: 6) { fields }
+                infoLine
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        } else {
+            HStack(spacing: 10) {
+                kindBadge
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 6) { fields }
+                    infoLine
+                }
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
+    /// Prošli put i napor u jednom retku ispod brojeva.
+    @ViewBuilder
+    private var infoLine: some View {
+        if previousText != nil || showsEffort {
+            HStack(spacing: 8) {
+                previous
+                if showsEffort { effortMenu }
+            }
+        }
+    }
+
     // MARK: Dijelovi
 
     @ViewBuilder
     private var previous: some View {
         if let previousText {
-            Text(previousText)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(minWidth: 52, alignment: .leading)
-                .accessibilityLabel(Text("Prošli put \(previousText)"))
+            HStack(spacing: 4) {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.footnote)
+                Text(verbatim: previousText)
+                    .font(.subheadline.weight(.medium).monospacedDigit())
+            }
+            .foregroundStyle(.secondary)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text("Prošli put \(previousText)"))
         }
     }
 
@@ -142,14 +176,17 @@ struct SetRow: View {
                 longPress: ("Kalkulator ploča", { showsPlates = true })
             )
             .onChange(of: weightText) { _, _ in applyWeight() }
+            timesSign
             repsField
         case .bodyweight:
             repsField
         case .weightedBodyweight:
             weightField("Dodatna težina", "+\(unit.symbol)")
+            timesSign
             repsField
         case .assisted:
             weightField("Pomoć", "−\(unit.symbol)")
+            timesSign
             repsField
         case .duration:
             field("Trajanje", "m:ss", $duration, keyboard: .numbersAndPunctuation) { applyDuration() }
@@ -170,21 +207,6 @@ struct SetRow: View {
             .onChange(of: text.wrappedValue) { _, _ in apply() }
     }
 
-    private var completeButton: some View {
-        Button {
-            // Tekst iz polja ide u model prije provjere, i kad je polje još u fokusu, da prvi dodir ne javi lažnu grešku.
-            if !set.isCompleted { applyAllFields() }
-            onToggleComplete()
-        } label: {
-            Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
-                .font(.title)
-                .frame(minWidth: 44, minHeight: 44)
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(set.isCompleted ? Color.green : Color.secondary)
-        .accessibilityLabel(set.isCompleted ? Text("Poništi završetak serije") : Text("Označi seriju završenom"))
-    }
-
     private var effortMenu: some View {
         Menu {
             Button("Bez ocjene") { setRPE(nil) }
@@ -201,7 +223,6 @@ struct SetRow: View {
         .foregroundStyle(.secondary)
         .accessibilityLabel(Text("Napor"))
         .accessibilityValue(set.rpe.map { Text(effortLabel($0)) } ?? Text("Bez ocjene"))
-        .padding(.leading, dynamicTypeSize.isAccessibilitySize ? 0 : 38)
     }
 
     // MARK: RPE
@@ -317,5 +338,45 @@ extension SetRow {
         let kilograms = isExtraLoad ? suggestion?.extraWeightKg : suggestion?.weightKg
         return kilograms.map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
             ?? WheelOptions.defaultWeight(for: unit, isExtraLoad: isExtraLoad)
+    }
+}
+
+// MARK: Kvačica i znak ×
+
+extension SetRow {
+    /// Znak između težine i ponavljanja; VoiceOver ga preskače jer polja imaju svoje nazive.
+    private var timesSign: some View {
+        Text(verbatim: "×")
+            .font(.title3)
+            .foregroundStyle(.secondary)
+            .accessibilityHidden(true)
+    }
+
+    /// Velika zelena kvačica uz desni rub retka: obrubljena dok serija nije završena, puna kad jest.
+    private var completeButton: some View {
+        Button {
+            // Tekst iz polja ide u model prije provjere, i kad je polje još u fokusu, da prvi dodir ne javi lažnu grešku.
+            if !set.isCompleted { applyAllFields() }
+            onToggleComplete()
+        } label: {
+            Image(systemName: "checkmark")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(set.isCompleted ? Color.white : Color.green)
+                .frame(minWidth: completeButtonWidth, maxHeight: .infinity)
+                .frame(minHeight: 52)
+                .background(
+                    set.isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(Color.green.opacity(0.14)),
+                    in: .rect(cornerRadius: 14)
+                )
+                .overlay {
+                    // Uz jači kontrast nezavršena kvačica dobiva i obrub, ne samo svijetlu pozadinu.
+                    if !set.isCompleted && contrast == .increased {
+                        RoundedRectangle(cornerRadius: 14).strokeBorder(Color.green, lineWidth: 2)
+                    }
+                }
+                .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(set.isCompleted ? Text("Poništi završetak serije") : Text("Označi seriju završenom"))
     }
 }

@@ -18,37 +18,46 @@ struct WheelInputField: View {
     var keyboard: UIKeyboardType = .decimalPad
     /// Dodatna radnja na dugi pritisak (kalkulator ploča uz težinu).
     var longPress: (label: LocalizedStringKey, action: () -> Void)?
+    /// Oznaka jedinice se prikazuje i uz upisani broj (manjim slovima), ne samo u praznom polju.
+    var showsUnit = false
 
     @State private var isPresented = false
 
     var body: some View {
-        Text(verbatim: text.isEmpty ? hint : text)
-            .foregroundStyle(text.isEmpty ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary))
-            .lineLimit(1)
-            .minimumScaleFactor(0.7)
-            .setFieldFrame()
-            .contentShape(.rect)
-            .onTapGesture { isPresented = true }
-            .onLongPressGesture(minimumDuration: 0.6) { longPress?.action() }
-            .accessibilityElement()
-            .accessibilityLabel(Text(title))
-            .accessibilityValue(Text(verbatim: text))
-            .accessibilityAddTraits(.isButton)
-            .accessibilityAction { isPresented = true }
-            .accessibilityActions {
-                if let longPress {
-                    Button(longPress.label, action: longPress.action)
-                }
+        HStack(alignment: .firstTextBaseline, spacing: 3) {
+            Text(verbatim: text.isEmpty ? hint : text)
+                .foregroundStyle(text.isEmpty ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary))
+            if showsUnit && !text.isEmpty {
+                Text(verbatim: hint)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.secondary)
             }
-            .popover(isPresented: $isPresented) {
-                let current = parse(text)
-                WheelInputPanel(
-                    title: title, hint: hint, text: $text, options: options(current),
-                    start: current ?? fallback, keyboard: keyboard, format: format
-                )
-                // I na iPhoneu ostaje oblačić uz polje, da se vidi koja se serija mijenja.
-                .presentationCompactAdaptation(.popover)
+        }
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .setFieldFrame()
+        .contentShape(.rect)
+        .onTapGesture { isPresented = true }
+        .onLongPressGesture(minimumDuration: 0.6) { longPress?.action() }
+        .accessibilityElement()
+        .accessibilityLabel(Text(title))
+        .accessibilityValue(Text(verbatim: text))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { isPresented = true }
+        .accessibilityActions {
+            if let longPress {
+                Button(longPress.label, action: longPress.action)
             }
+        }
+        .popover(isPresented: $isPresented) {
+            let current = parse(text)
+            WheelInputPanel(
+                title: title, hint: hint, text: $text, options: options(current),
+                start: current ?? fallback, keyboard: keyboard, format: format
+            )
+            // I na iPhoneu ostaje oblačić uz polje, da se vidi koja se serija mijenja.
+            .presentationCompactAdaptation(.popover)
+        }
     }
 }
 
@@ -171,7 +180,8 @@ extension WheelInputField {
             format: { NumberInput.format($0) },
             parse: { NumberInput.parse($0) },
             keyboard: .decimalPad,
-            longPress: longPress
+            longPress: longPress,
+            showsUnit: true
         )
     }
 
