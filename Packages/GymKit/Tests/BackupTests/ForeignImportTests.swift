@@ -38,10 +38,7 @@ private func utcDate(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minut
 }
 
 /// Vježbe iz fixturea koje nemaju par u katalogu i uvoze se kao vlastite.
-private let expectedCustom: Set<String> = [
-    "Drag Hammer Curls", "Hanging Leg Raises", "Incline Chest Press", "Rows with Wide Neutral Grip",
-    "Seated Curls", "Side Plank", "Skull Crushers with Rope", "Standing Calf Raises",
-]
+private let expectedCustom: Set<String> = ["Rows with Wide Neutral Grip"]
 
 @Suite("Čitanje CSV-a druge aplikacije")
 struct ForeignWorkoutsCSVTests {
@@ -182,7 +179,7 @@ struct ForeignExerciseMatcherTests {
         }
     }
 
-    @Test("Vježbe iz fixturea: 27 iz kataloga, 8 vlastitih")
+    @Test("Vježbe iz fixturea: 34 iz kataloga, 1 vlastita")
     func fixtureExercises() throws {
         let catalog = try bundledCatalog()
         let exercises = try ForeignWorkoutsCSV.parse(fixture(), timeZone: utc).flatMap(\.exercises)
@@ -196,7 +193,10 @@ struct ForeignExerciseMatcherTests {
             }
         }
         #expect(custom == expectedCustom)
-        #expect(Set(matched.keys).count == 27)
+        #expect(Set(matched.keys).count == 34)
+        #expect(matched["Side Plank"] == "Side_Bridge")
+        #expect(matched["Incline Chest Press"] == "Leverage_Incline_Chest_Press")
+        #expect(matched["Standing Calf Raises"] == "Standing_Calf_Raises")
         #expect(matched["Incline Bench Press"] == "Incline_Dumbbell_Press")
         #expect(matched["Squats"] == "Barbell_Squat")
         #expect(matched["Lat Pulldowns with Close Neutral Grip"] == "V-Bar_Pulldown")
@@ -208,7 +208,8 @@ struct ForeignExerciseMatcherTests {
         let catalog = try bundledCatalog()
         #expect(ForeignExerciseMatcher.catalogId(name: "Leg Extensions", equipment: "Machine", catalog: catalog) == "Leg_Extensions")
         #expect(ForeignExerciseMatcher.catalogId(name: "Standing Calf Raises", equipment: "Machine", catalog: catalog) == "Standing_Calf_Raises")
-        #expect(ForeignExerciseMatcher.catalogId(name: "Standing Calf Raises", equipment: "Bodyweight", catalog: catalog) == nil)
+        #expect(ForeignExerciseMatcher.catalogId(name: "Rows with Wide Neutral Grip", equipment: "Resistance bands", catalog: catalog) == nil)
+        #expect(ForeignExerciseMatcher.catalogId(name: "Leg Extensions", equipment: "Dumbbells", catalog: catalog) == nil)
         #expect(ForeignExerciseMatcher.equipment(from: "EZ bar") == .ezBar)
         #expect(ForeignExerciseMatcher.equipment(from: "Resistance bands") == .bands)
     }
@@ -226,7 +227,7 @@ struct ForeignWorkoutImportTests {
         #expect(preview.newWorkouts.count == 53)
         #expect(preview.alreadyImported == 0)
         #expect(preview.exercises.count == 35)
-        #expect(preview.newCustomCount == 8)
+        #expect(preview.newCustomCount == 1)
         #expect(preview.setCount == 836)
         #expect(preview.firstDate == utcDate(2023, 3, 16, 17, 47))
         #expect(preview.lastDate == utcDate(2026, 11, 2, 16, 27))
@@ -269,10 +270,10 @@ struct ForeignWorkoutImportTests {
         #expect(times == times.sorted())
         #expect(times.allSatisfy { $0 > push.startedAt && $0 <= push.endedAt! })
 
-        let calves = try context.fetch(FetchDescriptor<SessionExercise>()).filter { $0.exerciseName == "Standing Calf Raises" }
+        let calves = try context.fetch(FetchDescriptor<SessionExercise>()).filter { $0.exerciseKey == "c:Standing_Calf_Raises" }
         #expect(calves.allSatisfy { $0.inputType == .weightedBodyweight })
         #expect(calves.contains { $0.orderedSets.map(\.extraWeightKg) == [0, 8, 12, 12] })
-        #expect(Set(calves.map(\.exerciseKey)).count == 1, "sve serije idu na istu vlastitu vježbu")
+        #expect(calves.count == 4)
     }
 
     @Test("Ponovni uvoz iste datoteke ne stvara duplikate")
@@ -288,12 +289,12 @@ struct ForeignWorkoutImportTests {
         #expect(again.alreadyImported == 53)
         #expect(try ForeignWorkoutImport.apply(again, into: context) == BackupImportResult(added: 0, skipped: 53))
         #expect(try context.fetchCount(FetchDescriptor<Session>()) == 53)
-        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 8)
+        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 1)
 
         // Novija datoteka s jednim novim treningom na vrhu dodaje samo njega, i to u drugoj vremenskoj zoni.
         let newer = """
             "Pull · Day 2 · Week 9 · Gym 2.0";"2026-11-04 4:10 pm";"50 min"
-            "1. Seated Curls · Dumbbells · 10 reps"
+            "1. Rows with Wide Neutral Grip · Resistance bands · 10 reps"
             #;KG;REPS
             1;14;10
 
@@ -304,7 +305,7 @@ struct ForeignWorkoutImportTests {
         #expect(update.exercises.map(\.target.isNewCustom) == [false], "postojeća vlastita vježba se ponovno koristi")
         try ForeignWorkoutImport.apply(update, into: context)
         #expect(try context.fetchCount(FetchDescriptor<Session>()) == 54)
-        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 8)
+        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 1)
     }
 
     @Test("Trening koji se u datoteci ponavlja uvozi se jednom")
@@ -327,16 +328,16 @@ struct ForeignWorkoutImportTests {
     @Test("Postojeća vlastita vježba istog naziva se koristi umjesto nove")
     func reusesExistingCustom() throws {
         let context = try makeContext()
-        let mine = CustomExercise(name: "seated curls")
+        let mine = CustomExercise(name: "rows with wide neutral grip")
         context.insert(mine)
         try context.save()
         let preview = try ForeignWorkoutImport.preview(
             fixture(), catalog: bundledCatalog(), language: "hr", context: context, timeZone: utc
         )
-        let curls = try #require(preview.exercises.first { $0.sourceName == "Seated Curls" })
-        #expect(curls.target == .existingCustom(id: mine.id, name: "seated curls"))
-        #expect(preview.newCustomCount == 7)
+        let rows = try #require(preview.exercises.first { $0.sourceName == "Rows with Wide Neutral Grip" })
+        #expect(rows.target == .existingCustom(id: mine.id, name: "rows with wide neutral grip"))
+        #expect(preview.newCustomCount == 0)
         try ForeignWorkoutImport.apply(preview, into: context)
-        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 8)
+        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 1)
     }
 }

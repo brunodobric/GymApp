@@ -50,6 +50,11 @@ class ConvertTests(unittest.TestCase):
         result = bc.convert(raw(id="Plank", primaryMuscles=["abdominals"], equipment="body only"), MAPPING, {})
         self.assertEqual(result["inputType"], "duration")
 
+    def test_missing_instructions_come_from_mapping(self):
+        result = bc.convert(raw(id="Side_Bridge", instructions=[], primaryMuscles=["abdominals"], equipment="body only"), MAPPING, {})
+        self.assertTrue(result["instructions"]["en"])
+        self.assertEqual(result["inputType"], "duration")
+
     def test_expert_level_becomes_advanced(self):
         self.assertEqual(bc.convert(raw(level="expert"), MAPPING, {})["level"], "advanced")
 

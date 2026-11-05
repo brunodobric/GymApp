@@ -885,6 +885,49 @@
    ]
   },
   {
+   "id": "Leverage_Incline_Chest_Press",
+   "name": {
+    "en": "Leverage Incline Chest Press",
+    "hr": "Kosi potisak prsa na spravi"
+   },
+   "instructions": {
+    "en": [
+     "Load an appropriate weight onto the pins and adjust the seat for your height. The handles should be near the top of the pectorals at the beginning of the motion. Your chest and head should be up and your shoulder blades retracted. This will be your starting position.",
+     "Press the handles forward by extending through the elbow.",
+     "After a brief pause at the top, return the weight just above the start position, keeping tension on the muscles by not returning the weight to the stops until the set is complete."
+    ],
+    "hr": [
+     "Postavi odgovarajući teret i namjesti sjedalo prema svojoj visini. Ručke bi na početku pokreta trebale biti blizu vrha prsnih mišića. Prsa i glava su podignuti, a lopatice skupljene. To je početni položaj.",
+     "Potisni ručke prema naprijed ispružanjem ruku u laktovima.",
+     "Nakon kratke pauze na vrhu vrati teret malo iznad početnog položaja. Ne spuštaj teret do kraja dok ne završiš seriju, kako bi mišići ostali pod opterećenjem."
+    ]
+   },
+   "category": "chest",
+   "primaryMuscles": [
+    "chest"
+   ],
+   "secondaryMuscles": [
+    "shoulders",
+    "triceps"
+   ],
+   "equipment": "machine",
+   "level": "beginner",
+   "mechanic": "compound",
+   "movement": "push",
+   "inputType": "weightReps",
+   "primaryRegions": [
+    "chest"
+   ],
+   "secondaryRegions": [
+    "shoulders",
+    "triceps"
+   ],
+   "images": [
+    "Images/Leverage_Incline_Chest_Press/0.jpg",
+    "Images/Leverage_Incline_Chest_Press/1.jpg"
+   ]
+  },
+  {
    "id": "Pullups",
    "name": {
     "en": "Pullups",
@@ -3656,6 +3699,90 @@
    ]
   },
   {
+   "id": "Seated_Dumbbell_Curl",
+   "name": {
+    "en": "Seated Dumbbell Curl",
+    "hr": "Pregib bučicama sjedeći"
+   },
+   "instructions": {
+    "en": [
+     "Sit on a flat bench with a dumbbell on each hand being held at arms length. The elbows should be close to the torso.",
+     "Rotate the palms of the hands so that they are facing your torso. This will be your starting position.",
+     "While holding the upper arm stationary, curl the weights and start twisting the wrists once the dumbbells pass your thighs so that the palms of your hands face forward at the end of the movement. Make sure that you contract the biceps as you breathe out and make sure that only the forearms move. Continue the movement until your biceps are fully contracted and the dumbbells are at shoulder level. Hold the contracted position for a second as you squeeze the biceps.",
+     "Slowly begin to bring the dumbbells back to the starting position as your breathe in and as you rotate the wrists back to a neutral grip.",
+     "Repeat for the recommended amount of repetitions."
+    ],
+    "hr": [
+     "Sjedni na ravnu klupu s bučicom u svakoj ruci, ruke opuštene i ispružene. Laktovi su blizu trupa.",
+     "Okreni dlanove prema trupu. To je početni položaj.",
+     "Nadlaktice drži mirno i podiži bučice. Kad bučice prođu bedra, počni okretati zapešća tako da su na kraju pokreta dlanovi okrenuti prema naprijed. Uz izdah stegni bicepse i pazi da se miču samo podlaktice. Nastavi dok bicepsi nisu potpuno stegnuti, a bučice u visini ramena. Zadrži sekundu i stisni bicepse.",
+     "Uz udah polako vrati bučice u početni položaj i pritom okreni zapešća natrag u neutralan hvat.",
+     "Ponovi pokret zadani broj ponavljanja."
+    ]
+   },
+   "category": "arms",
+   "primaryMuscles": [
+    "biceps"
+   ],
+   "secondaryMuscles": [],
+   "equipment": "dumbbell",
+   "level": "beginner",
+   "mechanic": "isolation",
+   "movement": "pull",
+   "inputType": "weightReps",
+   "primaryRegions": [
+    "biceps"
+   ],
+   "secondaryRegions": [],
+   "images": [
+    "Images/Seated_Dumbbell_Curl/0.jpg",
+    "Images/Seated_Dumbbell_Curl/1.jpg"
+   ]
+  },
+  {
+   "id": "Drag_Curl",
+   "name": {
+    "en": "Drag Curl",
+    "hr": "Drag pregib šipkom"
+   },
+   "instructions": {
+    "en": [
+     "Grab a barbell with a supinated grip (palms facing forward) and get your elbows close to your torso and back. This will be your starting position.",
+     "As you exhale, curl the bar up while keeping the elbows to the back as you \"Drag\" the bar up by keeping it in contact with your torso. Tip: As you can see, you will not be keeping the elbows pinned to your sides, but instead you will be bringing them back. Also, do not lift your shoulders.",
+     "Slowly go back to the starting position as you keep the bar in contact with the torso at all times.",
+     "Repeat for the recommended amount of repetitions."
+    ],
+    "hr": [
+     "Uhvati šipku podhvatom (dlanovi prema naprijed), a laktove drži blizu trupa i iza njega. To je početni položaj.",
+     "Uz izdah podiži šipku i laktove vuci unatrag, tako da šipku \"vučeš\" prema gore uz trup. Savjet: laktovi ne ostaju uz bokove nego idu unatrag. Ne podiži ramena.",
+     "Polako se vrati u početni položaj, a šipka cijelo vrijeme ostaje uz trup.",
+     "Ponovi pokret zadani broj ponavljanja."
+    ]
+   },
+   "category": "arms",
+   "primaryMuscles": [
+    "biceps"
+   ],
+   "secondaryMuscles": [
+    "forearms"
+   ],
+   "equipment": "barbell",
+   "level": "intermediate",
+   "mechanic": "compound",
+   "movement": "pull",
+   "inputType": "weightReps",
+   "primaryRegions": [
+    "biceps"
+   ],
+   "secondaryRegions": [
+    "forearms"
+   ],
+   "images": [
+    "Images/Drag_Curl/0.jpg",
+    "Images/Drag_Curl/1.jpg"
+   ]
+  },
+  {
    "id": "Triceps_Pushdown",
    "name": {
     "en": "Triceps Pushdown",
@@ -4337,6 +4464,47 @@
    "images": [
     "Images/Machine_Triceps_Extension/0.jpg",
     "Images/Machine_Triceps_Extension/1.jpg"
+   ]
+  },
+  {
+   "id": "Cable_Lying_Triceps_Extension",
+   "name": {
+    "en": "Cable Lying Triceps Extension",
+    "hr": "Skull crusher na kablu ležeći"
+   },
+   "instructions": {
+    "en": [
+     "Lie on a flat bench and grasp the straight bar attachment of a low pulley with a narrow overhand grip. Tip: The easiest way to do this is to have someone hand you the bar as you lay down.",
+     "With your arms extended, position the bar over your torso. Your arms and your torso should create a 90-degree angle. This will be your starting position.",
+     "Lower the bar by bending at the elbow while keeping the upper arms stationary and elbows in. Go down until the bar lightly touches your forehead. Breathe in as you perform this portion of the movement.",
+     "Flex the triceps as you lift the bar back to its starting position. Exhale as you perform this portion of the movement.",
+     "Hold for a second at the contracted position and repeat for the recommended amount of repetitions."
+    ],
+    "hr": [
+     "Lezi na ravnu klupu i uskim nadhvatom uhvati ravnu ručku donjeg kabla. Savjet: najlakše je da ti netko doda ručku kad legneš.",
+     "Ispruženim rukama postavi ručku iznad trupa, tako da ruke i trup zatvaraju kut od 90 stupnjeva. To je početni položaj.",
+     "Uz udah spuštaj ručku savijanjem laktova, a nadlaktice drži mirno i laktove uz tijelo. Spuštaj dok ručka lagano ne dotakne čelo.",
+     "Uz izdah stegni triceps i podigni ručku natrag u početni položaj.",
+     "Zadrži sekundu u stegnutom položaju i ponovi zadani broj ponavljanja."
+    ]
+   },
+   "category": "arms",
+   "primaryMuscles": [
+    "triceps"
+   ],
+   "secondaryMuscles": [],
+   "equipment": "cable",
+   "level": "beginner",
+   "mechanic": "isolation",
+   "movement": "push",
+   "inputType": "weightReps",
+   "primaryRegions": [
+    "triceps"
+   ],
+   "secondaryRegions": [],
+   "images": [
+    "Images/Cable_Lying_Triceps_Extension/0.jpg",
+    "Images/Cable_Lying_Triceps_Extension/1.jpg"
    ]
   },
   {
@@ -7439,6 +7607,88 @@
    "images": [
     "Images/Knee_Hip_Raise_On_Parallel_Bars/0.jpg",
     "Images/Knee_Hip_Raise_On_Parallel_Bars/1.jpg"
+   ]
+  },
+  {
+   "id": "Hanging_Leg_Raise",
+   "name": {
+    "en": "Hanging Leg Raise",
+    "hr": "Podizanje nogu u visu"
+   },
+   "instructions": {
+    "en": [
+     "Hang from a chin-up bar with both arms extended at arms length in top of you using either a wide grip or a medium grip. The legs should be straight down with the pelvis rolled slightly backwards. This will be your starting position.",
+     "Raise your legs until the torso makes a 90-degree angle with the legs. Exhale as you perform this movement and hold the contraction for a second or so.",
+     "Go back slowly to the starting position as you breathe in.",
+     "Repeat for the recommended amount of repetitions."
+    ],
+    "hr": [
+     "Uhvati šipku za zgibove širokim ili srednjim hvatom i visi ispruženih ruku. Noge su ispružene prema dolje, a zdjelica blago zarotirana unatrag. To je početni položaj.",
+     "Uz izdah podiži noge dok trup i noge ne zatvore kut od 90 stupnjeva. Zadrži otprilike sekundu.",
+     "Uz udah polako se vrati u početni položaj.",
+     "Ponovi pokret zadani broj ponavljanja."
+    ]
+   },
+   "category": "core",
+   "primaryMuscles": [
+    "abdominals"
+   ],
+   "secondaryMuscles": [],
+   "equipment": "bodyweight",
+   "level": "advanced",
+   "mechanic": "isolation",
+   "movement": null,
+   "inputType": "bodyweight",
+   "primaryRegions": [
+    "abs"
+   ],
+   "secondaryRegions": [],
+   "images": [
+    "Images/Hanging_Leg_Raise/0.jpg",
+    "Images/Hanging_Leg_Raise/1.jpg"
+   ]
+  },
+  {
+   "id": "Side_Bridge",
+   "name": {
+    "en": "Side Bridge",
+    "hr": "Bočni plank"
+   },
+   "instructions": {
+    "en": [
+     "Lie on your side on a mat with your legs straight and stacked. Place the forearm of the lower arm on the floor, with the elbow directly under the shoulder.",
+     "Lift your hips off the floor so that your body forms a straight line from head to feet. Keep your core tight and do not let your hips sag. This will be your starting position.",
+     "Hold the position for the recommended amount of time while breathing steadily.",
+     "Lower your hips back to the floor and repeat on the other side."
+    ],
+    "hr": [
+     "Lezi na bok na prostirku s ispruženim nogama jednom na drugoj. Podlakticu donje ruke stavi na pod, s laktom točno ispod ramena.",
+     "Podigni kukove od poda tako da tijelo bude u ravnoj liniji od glave do stopala. Trbuh drži čvrsto i ne dopusti da kukovi propadnu. To je početni položaj.",
+     "Zadrži položaj zadano vrijeme i ravnomjerno diši.",
+     "Spusti kukove na pod i ponovi na drugoj strani."
+    ]
+   },
+   "category": "core",
+   "primaryMuscles": [
+    "abdominals"
+   ],
+   "secondaryMuscles": [
+    "shoulders"
+   ],
+   "equipment": "bodyweight",
+   "level": "beginner",
+   "mechanic": null,
+   "movement": null,
+   "inputType": "duration",
+   "primaryRegions": [
+    "abs"
+   ],
+   "secondaryRegions": [
+    "shoulders"
+   ],
+   "images": [
+    "Images/Side_Bridge/0.jpg",
+    "Images/Side_Bridge/1.jpg"
    ]
   },
   {

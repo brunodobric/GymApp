@@ -91,7 +91,8 @@ def convert(raw: dict, mapping: dict, hr: dict) -> dict:
         input_type = "weightReps"
 
     names = {"en": raw["name"]}
-    instructions = {"en": raw["instructions"]}
+    # Nekoliko vježbi u izvoru nema uputa: tada se koriste upute iz mapping.json (instructionOverrides).
+    instructions = {"en": raw["instructions"] or mapping.get("instructionOverrides", {}).get(exercise_id, [])}
     translation = hr.get(exercise_id)
     if translation:
         names["hr"] = translation["name"]
