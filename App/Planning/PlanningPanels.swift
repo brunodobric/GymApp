@@ -80,7 +80,7 @@ extension View {
             draggable(payload) {
                 Label(title, systemImage: systemImage)
                     .padding(8)
-                    .background(.regularMaterial, in: .rect(cornerRadius: 8))
+                    .background(.regularMaterial, in: .rect(cornerRadius: CornerRadius.small))
             }
         } else {
             self

@@ -36,7 +36,7 @@ struct RestTimerBar: View {
         .padding(.trailing, 14)
         .overlay(alignment: .top) { progressLine }
         .background(.regularMaterial)
-        .clipShape(.rect(cornerRadius: 28))
+        .clipShape(.rect(cornerRadius: CornerRadius.floating))
         .accessibilityElement(children: .contain)
         .padding(.horizontal, 12)
         // Pri istjeku (ili promjeni završetka zbog +10 / −10) čeka se do novog trenutka.

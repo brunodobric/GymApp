@@ -33,13 +33,16 @@ struct HomeCard<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            // Naslov kartice je u boji svoje ikone (akcent iz Postavki).
             Label(title, systemImage: symbol)
-                .font(.headline)
+                .font(.subheadline.bold())
+                .textCase(.uppercase)
+                .foregroundStyle(.tint)
             content
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.card))
     }
 }
 

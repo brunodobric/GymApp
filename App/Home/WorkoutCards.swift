@@ -40,7 +40,7 @@ struct StartWorkoutCard: View {
             .accessibilityIdentifier("home.startEmpty")
         }
         .buttonStyle(CardRowButtonStyle())
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.card))
         .workoutCardBackground()
     }
 }
@@ -87,7 +87,7 @@ private struct WorkoutCardBackground: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
 
     func body(content: Content) -> some View {
-        let shape = RoundedRectangle(cornerRadius: 16)
+        let shape = RoundedRectangle(cornerRadius: CornerRadius.card)
         // U tamnom načinu akcent na tamnoj podlozi treba malo više boje da se jednako vidi.
         let strength = colorScheme == .dark ? 1.4 : 1.0
         content
@@ -176,11 +176,11 @@ struct ActiveWorkoutCard: View {
         .background {
             if let rest {
                 RestDrainBackground(rest: rest)
-                    .clipShape(.rect(cornerRadius: 16))
+                    .clipShape(.rect(cornerRadius: CornerRadius.card))
             }
         }
         .workoutCardBackground()
-        .contentShape(.rect(cornerRadius: 16))
+        .contentShape(.rect(cornerRadius: CornerRadius.card))
         .onTapGesture(perform: onOpen)
         .accessibilityElement(children: .contain)
         .accessibilityAction(named: Text("Nastavi trening"), onOpen)
@@ -332,7 +332,7 @@ struct ActiveWorkoutCard: View {
                     .foregroundStyle(Color.green)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .frame(minHeight: 52)
-                    .background(Color.green.opacity(0.14), in: .rect(cornerRadius: 14))
+                    .background(Color.green.opacity(0.14), in: .rect(cornerRadius: CornerRadius.inner))
                     .contentShape(.rect)
             }
             .buttonStyle(.plain)
@@ -403,7 +403,7 @@ private struct SetValueStepper: View {
         }
         .buttonStyle(.plain)
         .padding(3)
-        .background(Color.primary.opacity(0.08), in: .rect(cornerRadius: 12))
+        .background(Color.primary.opacity(0.08), in: .rect(cornerRadius: CornerRadius.inner))
     }
 }
 
@@ -417,7 +417,7 @@ private struct StepSymbol: View {
             .font(.body.bold())
             .foregroundStyle(.tint)
             .frame(width: 42, height: 34)
-            .background(.tint.opacity(0.18), in: .rect(cornerRadius: 9))
+            .background(.tint.opacity(0.18), in: .rect(cornerRadius: CornerRadius.small))
             .opacity(isEnabled ? 1 : 0.4)
             .contentShape(.rect)
     }

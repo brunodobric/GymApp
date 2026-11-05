@@ -390,12 +390,12 @@ extension SetRow {
                 .frame(minHeight: 52)
                 .background(
                     set.isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(Color.green.opacity(0.14)),
-                    in: .rect(cornerRadius: 14)
+                    in: .rect(cornerRadius: CornerRadius.inner)
                 )
                 .overlay {
                     // Uz jači kontrast nezavršena kvačica dobiva i obrub, ne samo svijetlu pozadinu.
                     if !set.isCompleted && contrast == .increased {
-                        RoundedRectangle(cornerRadius: 14).strokeBorder(Color.green, lineWidth: 2)
+                        RoundedRectangle(cornerRadius: CornerRadius.inner).strokeBorder(Color.green, lineWidth: 2)
                     }
                 }
                 .contentShape(.rect)

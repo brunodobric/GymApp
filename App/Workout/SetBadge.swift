@@ -43,7 +43,7 @@ struct SetFieldFrame: ViewModifier {
             .frame(minWidth: minWidth, maxWidth: maxWidth)
             .padding(.horizontal, 6)
             .padding(.vertical, 6)
-            .background(.quaternary, in: .rect(cornerRadius: 10))
+            .background(.quaternary, in: .rect(cornerRadius: CornerRadius.inner))
     }
 }
 

@@ -62,7 +62,7 @@ struct ExerciseCard: View {
                             .font(.caption.bold())
                             .foregroundStyle(.tint)
                     }
-                    Text(exercise.exerciseName).font(.headline)
+                    Text(exercise.exerciseName).font(.headline.bold())
                     Text("\(completedCount) od \(exercise.orderedSets.count) serija")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)

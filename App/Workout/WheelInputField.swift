@@ -118,7 +118,7 @@ private struct WheelInputPanel: View {
                 .multilineTextAlignment(.center)
                 .focused($isFocused)
                 .padding(.vertical, 8)
-                .background(.quaternary, in: .rect(cornerRadius: 10))
+                .background(.quaternary, in: .rect(cornerRadius: CornerRadius.inner))
                 .onAppear { isFocused = true }
                 .onChange(of: typed) { _, new in
                     draft = new.trimmingCharacters(in: .whitespaces).isEmpty ? textBeforeTyping : new
@@ -135,7 +135,7 @@ private struct WheelInputPanel: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
-                    .background(.quaternary, in: .rect(cornerRadius: 10))
+                    .background(.quaternary, in: .rect(cornerRadius: CornerRadius.inner))
                     .contentShape(.rect)
                 }
                 .buttonStyle(.plain)
