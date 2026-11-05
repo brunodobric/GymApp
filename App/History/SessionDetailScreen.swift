@@ -95,11 +95,7 @@ struct SessionDetailScreen: View {
         } message: {
             Text("Trening i njegove serije bit će trajno obrisani, a rekordi i statistika preračunat će se bez njega.")
         }
-        .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-            Button("U redu") {}
-        } message: {
-            Text(errorText ?? "")
-        }
+        .errorAlert($errorText)
     }
 
     /// Redni broj radne serije; zagrijavanje nema broj.
@@ -119,13 +115,16 @@ struct SessionDetailScreen: View {
 
     private func createTemplate() {
         do {
-            newTemplate = try TemplateEngine(context: context).createTemplate(from: session)
+            let template = try TemplateEngine(context: context).createTemplate(from: session)
+            PendingTemplateFromSession.begin(template)
+            newTemplate = template
         } catch {
             errorText = String(localized: "Trening se nije mogao stvoriti.")
         }
     }
 
     private func discardTemplateIfNeeded() {
+        PendingTemplateFromSession.end()
         guard let template = discardedTemplate else { return }
         discardedTemplate = nil
         try? TemplateEngine(context: context).delete(template)
@@ -231,5 +230,33 @@ private struct SetLine: View {
             guard let meters = set.distanceMeters else { return time }
             return "\(time) · \(NumberInput.format(meters / 1000)) km"
         }
+    }
+}
+
+/// Trening stvoren iz odrađenog treninga sprema se odmah, a briše ako korisnik odustane. Ako se aplikacija
+/// ugasi dok je list otvoren, ostao bi trening koji korisnik nije spremio: njegov id se zato pamti dok je
+/// list otvoren, a pri sljedećem pokretanju takav trening se briše.
+@MainActor
+enum PendingTemplateFromSession {
+    private static let key = "history.pendingTemplateFromSession"
+    private static var didCleanUp = false
+
+    static func begin(_ template: WorkoutTemplate) {
+        UserDefaults.standard.set(template.id.uuidString, forKey: key)
+    }
+
+    static func end() {
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+
+    /// Jednom po pokretanju aplikacije briše trening koji je ostao od prekinutog lista.
+    static func discardLeftover(context: ModelContext) {
+        guard !didCleanUp else { return }
+        didCleanUp = true
+        guard let raw = UserDefaults.standard.string(forKey: key), let id = UUID(uuidString: raw) else { return }
+        end()
+        let descriptor = FetchDescriptor<WorkoutTemplate>(predicate: #Predicate { $0.id == id })
+        guard let template = try? context.fetch(descriptor).first else { return }
+        try? TemplateEngine(context: context).delete(template)
     }
 }

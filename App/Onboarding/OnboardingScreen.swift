@@ -70,11 +70,7 @@ struct OnboardingScreen: View {
                 }
             }
             .safeAreaInset(edge: .bottom) { bottomBar }
-            .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-                Button("U redu") {}
-            } message: {
-                Text(errorText ?? "")
-            }
+            .errorAlert($errorText)
         }
         .interactiveDismissDisabled()
     }

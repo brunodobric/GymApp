@@ -37,6 +37,7 @@ struct ScheduleEditorScreen: View {
         .navigationBarTitleDisplayMode(.inline)
         // Ploča s treninzima otvara se samo gumbom Odaberi više treninga (i ⌘K), a zatvara gumbom Zatvori.
         .toolbar { EditButton() }
+        .commandShortcut("Odaberi više treninga", key: "k") { showsTemplates = true }
         .planningPanel(isPresented: $showsTemplates, minWidth: 280, idealWidth: 320, maxWidth: 420) {
             TemplateListPanel(isPresented: $showsTemplates) { insert($0, at: nil) }
         }
@@ -62,6 +63,23 @@ struct ScheduleEditorScreen: View {
                         Text("Ciklus \(planned.cycle)")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
+                    }
+                }
+                // Preskočeni trening se može vratiti dok je ciklus u tijeku (podnožje Sljedećeg treninga to obećaje).
+                ForEach((try? engine.skippedWorkouts(of: schedule)) ?? []) { skipped in
+                    HStack {
+                        Label {
+                            Text("Preskočeno: \(skipped.templateName)")
+                        } icon: {
+                            Image(systemName: "forward.end")
+                        }
+                        .foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Vrati") {
+                            try? engine.unskip(skipped.change, in: schedule)
+                            refreshReminders()
+                        }
+                        .buttonStyle(.borderless)
                     }
                 }
             } else if schedule.isActive {
@@ -121,7 +139,6 @@ struct ScheduleEditorScreen: View {
                     Button("Novi trening", systemImage: "dumbbell") { addNewWorkout() }
                 }
                 Button("Odaberi više treninga", systemImage: "checklist") { showsTemplates = true }
-                    .keyboardShortcut("k", modifiers: .command)
                     // Puštena na gumb (i u praznom nizu) stavka ide na kraj.
                     .dropDestination(for: String.self) { payloads, _ in
                         let dropped = droppedTemplates(payloads)
@@ -202,9 +219,9 @@ struct ScheduleEditorScreen: View {
             ))
             if let minutes = schedule.reminderMinutes {
                 DatePicker("Vrijeme", selection: Binding(
-                    get: { Self.date(fromMinutes: minutes) },
+                    get: { ReminderTime.date(fromMinutes: minutes) },
                     set: {
-                        schedule.reminderMinutes = Self.minutes(from: $0)
+                        schedule.reminderMinutes = ReminderTime.minutes(from: $0)
                         refreshReminders()
                     }
                 ), displayedComponents: .hourAndMinute)
@@ -240,12 +257,10 @@ struct ScheduleEditorScreen: View {
     private var weekdayPicker: some View {
         HStack {
             // Ponedjeljak prvi: Calendar.weekday je 2...7, pa nedjelja (1) na kraju.
-            ForEach([2, 3, 4, 5, 6, 7, 1], id: \.self) { weekday in
+            ForEach(ReminderTime.weekdaysFromMonday, id: \.self) { weekday in
                 let isOn = schedule.weekdays.contains(weekday)
                 Button {
-                    var days = Set(schedule.weekdays)
-                    if isOn { days.remove(weekday) } else { days.insert(weekday) }
-                    schedule.weekdays = days.sorted()
+                    schedule.weekdays = ReminderTime.toggling(weekday, in: schedule.weekdays)
                     refreshReminders()
                 } label: {
                     Text(Calendar.current.veryShortStandaloneWeekdaySymbols[weekday - 1])
@@ -255,6 +270,8 @@ struct ScheduleEditorScreen: View {
                         .foregroundStyle(isOn ? Color.white : Color.primary)
                 }
                 .buttonStyle(.plain)
+                // Na ekranu je samo slovo (P, U, S…), a dva P i dva S VoiceOveru ne govore koji je dan.
+                .accessibilityLabel(Text(verbatim: Calendar.current.standaloneWeekdaySymbols[weekday - 1]))
                 .accessibilityAddTraits(isOn ? .isSelected : [])
             }
         }
@@ -263,14 +280,5 @@ struct ScheduleEditorScreen: View {
     private func refreshReminders() {
         try? context.save()
         ReminderScheduler.refresh(context: context)
-    }
-
-    private static func date(fromMinutes minutes: Int) -> Date {
-        Calendar.current.date(bySettingHour: minutes / 60, minute: minutes % 60, second: 0, of: Date()) ?? Date()
-    }
-
-    private static func minutes(from date: Date) -> Int {
-        let parts = Calendar.current.dateComponents([.hour, .minute], from: date)
-        return (parts.hour ?? 0) * 60 + (parts.minute ?? 0)
     }
 }

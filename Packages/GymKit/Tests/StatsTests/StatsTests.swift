@@ -502,3 +502,30 @@ struct VolumeComparisonTests {
         #expect(comparison?.muscles.count == 1)
     }
 }
+
+@Suite("Odrađene vježbe")
+struct DoneExercisesTests {
+
+    @Test("Samo vježbe iz završenih treninga, bez ponavljanja i abecedno")
+    func list() throws {
+        let context = try makeContext()
+        let engine = WorkoutEngine(context: context)
+        let finished = try engine.startSession(name: "A", now: base)
+        let squatSet = try engine.addExercise(squat, inputType: .weightReps, to: finished, now: base).orderedSets[0]
+        squatSet.weightKg = 100
+        squatSet.reps = 5
+        try engine.completeSet(squatSet, defaultRestSeconds: 0, now: base)
+        let benchSet = try engine.addExercise(bench, inputType: .weightReps, to: finished, now: base).orderedSets[0]
+        benchSet.weightKg = 80
+        benchSet.reps = 5
+        try engine.completeSet(benchSet, defaultRestSeconds: 0, now: base)
+        try engine.finishSession(finished, now: base + 3600)
+
+        let active = try engine.startSession(name: "B", now: base + day)
+        try engine.addExercise(ExerciseRef(catalogId: "row", name: "Veslanje"), inputType: .weightReps, to: active, now: base + day)
+
+        let done = try DoneExercises.fetch(in: context)
+        #expect(done.map(\.name) == ["Čučanj", "Potisak s klupe"])
+        #expect(done.first?.ref?.key == squat.key)
+    }
+}

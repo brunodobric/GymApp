@@ -140,15 +140,19 @@ struct ActiveWorkoutCard: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var restFinished = false
     @State private var confirmedCount = 0
+    /// Završene serije prošlog izvođenja vježbe sljedeće serije. Učitavaju se jednom po vježbi,
+    /// a ne pri svakom iscrtavanju kartice (iscrtava se pri svakoj izmjeni treninga).
+    @State private var previous: (exerciseID: UUID, values: [SetValues])?
 
     var body: some View {
         let engine = WorkoutEngine(context: context)
         let status = liveStatus(engine)
         let next = engine.nextSet(in: session)
         let values = next.flatMap { set in
-            set.exercise.map { LiveSetEditor.values(of: set, inputType: $0.inputType, unit: unit) }
+            set.exercise.map { LiveSetEditor.values(of: set, inputType: $0.inputType, unit: unit).map(\.activityValue) }
         } ?? []
         let rest = restFinished ? nil : status.rest
+        let nextExercise = next?.exercise
 
         VStack(spacing: 12) {
             header(status)
@@ -184,6 +188,7 @@ struct ActiveWorkoutCard: View {
         .sensoryFeedback(.success, trigger: confirmedCount)
         .animation(.default, value: restFinished)
         .task(id: status.rest?.endsAt) { await watchRestEnd(status.rest) }
+        .task(id: nextExercise?.id) { loadPrevious(of: nextExercise) }
     }
 
     /// Promjena bilo gdje (ekran treninga, sat, Live Activity) dira `lastActivityAt`, pa se kartica osvježi.
@@ -194,10 +199,17 @@ struct ActiveWorkoutCard: View {
 
     /// Ista serija u prethodnom treningu, u dva reda ("30 kg" / "12 ×").
     private func previousText(_ set: SetLog) -> String? {
-        guard let exercise = set.exercise else { return nil }
-        let last = try? GymQueries(context: context).lastPerformance(of: exercise.exercise)
-        let previous = last?.orderedSets.filter(\.isCompleted).map(\.values) ?? []
-        return LiveSetEditor.previousText(of: set, inputType: exercise.inputType, previous: previous, unit: unit)
+        guard let exercise = set.exercise, let previous, previous.exerciseID == exercise.id else { return nil }
+        return LiveSetEditor.previousText(of: set, inputType: exercise.inputType, previous: previous.values, unit: unit)
+    }
+
+    private func loadPrevious(of exercise: SessionExercise?) {
+        guard let exercise else {
+            previous = nil
+            return
+        }
+        let values = (try? GymQueries(context: context).previousSetValues(of: exercise.exercise)) ?? []
+        previous = (exercise.id, values)
     }
 
     /// Trajanje lijevo, naziv vježbe u sredini, broj serije desno. Trening koji vodi sat ima ikonu sata.
@@ -243,7 +255,7 @@ struct ActiveWorkoutCard: View {
     }
 
     /// Prošli trening, vrijednosti i kvačica u jednom redu, a uz veliki tekst jedno ispod drugoga.
-    private func setRow(setID: UUID, values: [LiveSetValue], previous: String?, canConfirm: Bool, rest: RestTimer?) -> some View {
+    private func setRow(setID: UUID, values: [RestTimerActivityAttributes.SetValue], previous: String?, canConfirm: Bool, rest: RestTimer?) -> some View {
         Group {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(spacing: 10) {
@@ -289,10 +301,10 @@ struct ActiveWorkoutCard: View {
         }
     }
 
-    private func steppers(setID: UUID, values: [LiveSetValue]) -> some View {
+    private func steppers(setID: UUID, values: [RestTimerActivityAttributes.SetValue]) -> some View {
         ForEach(values, id: \.field) { value in
             SetValueStepper(value: value) { steps in
-                Task { await LiveActivityActions.adjustSet(id: setID.uuidString, field: value.field.rawValue, steps: steps) }
+                Task { await LiveActivityActions.adjustSet(id: setID.uuidString, field: value.field, steps: steps) }
             }
         }
     }
@@ -344,17 +356,19 @@ struct ActiveWorkoutCard: View {
 }
 
 /// Pozadina kartice kao traka odmora: obojeni dio se s desna na lijevo smanjuje kako odmor teče.
+/// Iscrtava se jednom u sekundi, a između dva iscrtavanja traka klizi linearnom animacijom.
 private struct RestDrainBackground: View {
     let rest: RestTimer
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 0.1)) { context in
+        TimelineView(.periodic(from: .now, by: 1)) { context in
             let total = max(rest.endsAt.timeIntervalSince(rest.startedAt), 1)
             let fraction = min(max(rest.endsAt.timeIntervalSince(context.date) / total, 0), 1)
             GeometryReader { proxy in
                 Rectangle()
                     .fill(.tint.opacity(0.25))
                     .frame(width: proxy.size.width * fraction)
+                    .animation(.linear(duration: 1), value: fraction)
             }
         }
         .accessibilityHidden(true)
@@ -363,18 +377,18 @@ private struct RestDrainBackground: View {
 
 /// Vrijednost serije između gumba − i +. Jedan dodir je jedan korak, isti kao u Live Activityju.
 private struct SetValueStepper: View {
-    let value: LiveSetValue
+    let value: RestTimerActivityAttributes.SetValue
     let onStep: (Int) -> Void
 
     var body: some View {
         HStack(spacing: 4) {
             Button { onStep(-1) } label: {
                 StepSymbol(systemName: "minus")
-                    .accessibilityLabel(decreaseLabel)
+                    .accessibilityLabel(value.decreaseLabel)
             }
             .disabled(!value.canDecrease)
 
-            valueText
+            value.valueText
                 .font(.title3.bold().monospacedDigit())
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -383,46 +397,13 @@ private struct SetValueStepper: View {
 
             Button { onStep(1) } label: {
                 StepSymbol(systemName: "plus")
-                    .accessibilityLabel(increaseLabel)
+                    .accessibilityLabel(value.increaseLabel)
             }
             .disabled(!value.canIncrease)
         }
         .buttonStyle(.plain)
         .padding(3)
         .background(Color.primary.opacity(0.08), in: .rect(cornerRadius: 12))
-    }
-
-    @ViewBuilder
-    private var valueText: some View {
-        if value.field == .reps {
-            if let reps = Int(value.text) {
-                Text("\(reps) pon.")
-            } else {
-                Text("– pon.")
-            }
-        } else if value.unitSymbol.isEmpty {
-            Text(verbatim: value.text)
-        } else {
-            Text(verbatim: "\(value.text) \(value.unitSymbol)")
-        }
-    }
-
-    private var decreaseLabel: Text {
-        switch value.field {
-        case .reps: Text("Smanji ponavljanja")
-        case .duration: Text("Skrati trajanje")
-        case .distance: Text("Smanji udaljenost")
-        case .weight, .extraWeight: Text("Smanji težinu")
-        }
-    }
-
-    private var increaseLabel: Text {
-        switch value.field {
-        case .reps: Text("Povećaj ponavljanja")
-        case .duration: Text("Produlji trajanje")
-        case .distance: Text("Povećaj udaljenost")
-        case .weight, .extraWeight: Text("Povećaj težinu")
-        }
     }
 }
 

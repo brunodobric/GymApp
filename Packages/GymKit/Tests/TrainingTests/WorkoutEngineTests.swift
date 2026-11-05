@@ -36,6 +36,19 @@ private func finishedWorkout(
 @Suite("Tijek treninga")
 struct WorkoutEngineTests {
 
+    @Test("Prethodne vrijednosti su završene serije zadnjeg treninga s tom vježbom")
+    func previousSetValues() throws {
+        let (engine, context) = try makeEngine()
+        let queries = GymQueries(context: context)
+        #expect(try queries.previousSetValues(of: bench).isEmpty)
+        try finishedWorkout(engine, at: base, sets: [(60, 10)])
+        try finishedWorkout(engine, at: base + 86_400, sets: [(70, 8), (75, 6)])
+        let values = try queries.previousSetValues(of: bench)
+        #expect(values.map(\.weightKg) == [70, 75])
+        #expect(values.map(\.reps) == [8, 6])
+        #expect(try queries.previousSetValues(of: row).isEmpty)
+    }
+
     @Test("Samo jedan aktivan trening istovremeno")
     func singleActive() throws {
         let (engine, _) = try makeEngine()

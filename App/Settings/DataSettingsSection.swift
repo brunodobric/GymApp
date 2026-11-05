@@ -199,22 +199,34 @@ private struct DataSettingsActions {
 
     func importFile(_ result: Result<URL, Error>) {
         guard case .success(let url) = result else { return }
-        let scoped = url.startAccessingSecurityScopedResource()
-        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+        Task { await importFile(at: url) }
+    }
+
+    /// Čitanje i uvoz idu izvan glavne niti (uvoz u zasebnom kontekstu), da velika datoteka ne zamrzne
+    /// aplikaciju. Spremljene promjene glavni kontekst preuzima sam.
+    private func importFile(at url: URL) async {
+        let container = context.container
+        let isJSON = url.pathExtension.lowercased() == "json"
         do {
-            let data = try Data(contentsOf: url)
+            let data = try await Task.detached(priority: .userInitiated) { try readImportFile(at: url) }.value
             let outcome: BackupImportResult
-            if url.pathExtension.lowercased() == "json" {
-                outcome = try JSONBackup.importBackup(data, into: context)
+            if isJSON {
+                outcome = try await Task.detached(priority: .userInitiated) {
+                    try JSONBackup.importBackup(data, into: ModelContext(container))
+                }.value
             } else {
                 let text = String(decoding: data, as: UTF8.self)
                 if ForeignWorkoutsCSV.matches(text) {
                     try previewForeign(text)
                     return
                 }
-                outcome = try CSVBackup.importAny(text, into: context)
+                outcome = try await Task.detached(priority: .userInitiated) {
+                    try CSVBackup.importAny(text, into: ModelContext(container))
+                }.value
             }
             show("Uvoz je gotov.", String(localized: "Dodano: \(outcome.added). Preskočeno (već postoje): \(outcome.skipped)."))
+        } catch ImportFileError.tooLarge {
+            show("Uvoz nije uspio.", String(localized: "Datoteka je prevelika. Najveća veličina je 50 MB."))
         } catch BackupError.newerVersion {
             show("Uvoz nije uspio.", String(localized: "Datoteka je iz novije verzije aplikacije."))
         } catch BackupError.invalidCSV(let line) {
@@ -279,4 +291,23 @@ private struct DataSettingsActions {
             show("Brisanje nije uspjelo.", String(localized: "Pokušaj ponovno."))
         }
     }
+}
+
+/// Najveća datoteka za uvoz. Sigurnosna kopija i višegodišnja povijest su daleko manje,
+/// a puno veća datoteka mogla bi zbog memorije srušiti aplikaciju.
+private enum DataSettingsActionsLimits {
+    static let maximumImportBytes = 50 * 1024 * 1024
+}
+
+private enum ImportFileError: Error {
+    case tooLarge
+}
+
+/// Čita odabranu datoteku (s pristupom izvan sandboxa) i odbija preveliku.
+private func readImportFile(at url: URL) throws -> Data {
+    let scoped = url.startAccessingSecurityScopedResource()
+    defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+    let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+    guard size <= DataSettingsActionsLimits.maximumImportBytes else { throw ImportFileError.tooLarge }
+    return try Data(contentsOf: url)
 }

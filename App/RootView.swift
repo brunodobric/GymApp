@@ -76,17 +76,11 @@ struct RootView: View {
             set: { if !$0 { NotificationRouter.shared.openScheduleId = nil } }
         )) {
             if let schedule = notificationSchedule {
-                NavigationStack {
-                    UpcomingWorkoutScreen(schedule: schedule)
-                        .toolbar {
-                            ToolbarItem(placement: .confirmationAction) {
-                                Button("Gotovo") { NotificationRouter.shared.openScheduleId = nil }
-                            }
-                        }
-                }
+                UpcomingWorkoutSheet(schedule: schedule) { NotificationRouter.shared.openScheduleId = nil }
             }
         }
         .task {
+            PendingTemplateFromSession.discardLeftover(context: context)
             ReminderScheduler.refresh(context: context)
             PhoneWatchSync.shared.refreshContext()
             await HealthService.shared.importNewData(context: context)

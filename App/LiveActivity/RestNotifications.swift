@@ -2,11 +2,11 @@ import Foundation
 import UserNotifications
 
 /// Lokalna obavijest o kraju odmora. Kad se zakazuje, odlučuje `RestNotificationPolicy` (GymKit).
-/// iOS je ne prikazuje dok je aplikacija otvorena (tada rest timer sam svira zvuk), pa stiže kad je iPhone
-/// zaključan ili je aplikacija u pozadini.
+/// Stiže kad je iPhone zaključan ili je aplikacija u pozadini. Dok je aplikacija otvorena, `NotificationRouter`
+/// je prikazuje samo kad ekran treninga nije otvoren, jer ekran treninga sam svira zvuk.
 @MainActor
 enum RestNotifications {
-    private static let identifier = "rest-timer-end"
+    static let identifier = "rest-timer-end"
     /// Raste sa svakom izmjenom, da zakazivanje koje čeka dopuštenje ne vrati obavijest koju je novija izmjena maknula.
     private static var generation = 0
 
@@ -41,4 +41,17 @@ enum RestNotifications {
         generation += 1
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
     }
+}
+
+/// Je li ekran aktivnog treninga na ekranu. Dok jest, on sam javlja kraj odmora (zvuk i vibracija),
+/// pa se obavijest u prvom planu ne prikazuje. Brojač, jer se ekran može otvoriti s više mjesta.
+@MainActor
+enum WorkoutScreenPresence {
+    private static var count = 0
+
+    static var isVisible: Bool { count > 0 }
+
+    static func appeared() { count += 1 }
+
+    static func disappeared() { count = max(0, count - 1) }
 }

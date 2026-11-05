@@ -5,7 +5,7 @@ import Foundation
 /// (i kad je aplikacija u pozadini), pa se serija upisuje u bazu kao da je označena na ekranu treninga.
 ///
 /// Datoteka je i u widget extensionu jer ga gumb treba. Tamo `LiveActivityActions` ne radi ništa
-/// (vidi `Widgets/LiveActivityActions.swift`), a u aplikaciji upisuje seriju (`App/Workout/LiveActivityActions.swift`).
+/// (vidi `Widgets/LiveActivityActions.swift`), a u aplikaciji upisuje seriju (`App/LiveActivity/LiveActivityActions.swift`).
 struct CompleteSetIntent: LiveActivityIntent {
     static let title: LocalizedStringResource = "Potvrdi seriju"
     static let description = IntentDescription("Označava sljedeću seriju aktivnog treninga završenom.")

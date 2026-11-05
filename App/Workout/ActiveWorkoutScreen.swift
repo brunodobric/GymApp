@@ -140,12 +140,10 @@ struct ActiveWorkoutScreen: View {
             } message: {
                 Text("Trening bez ijedne završene serije ne može se spremiti.")
             }
-            .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-                Button("U redu") {}
-            } message: {
-                Text(errorText ?? "")
-            }
+            .errorAlert($errorText)
         }
+        .onAppear { WorkoutScreenPresence.appeared() }
+        .onDisappear { WorkoutScreenPresence.disappeared() }
         .task {
             // Trening je u međuvremenu završen (npr. na satu): nema se što nastaviti.
             if session.state != .active {
@@ -377,8 +375,7 @@ struct ActiveWorkoutScreen: View {
     private func reloadPrevious() {
         let queries = GymQueries(context: context)
         for exercise in session.orderedExercises where previousSets[exercise.id] == nil {
-            let last = try? queries.lastPerformance(of: exercise.exercise)
-            previousSets[exercise.id] = last?.orderedSets.filter(\.isCompleted).map(\.values) ?? []
+            previousSets[exercise.id] = (try? queries.previousSetValues(of: exercise.exercise)) ?? []
         }
     }
 }
@@ -449,7 +446,6 @@ private struct RemovedExercisesSheet: View {
     }
 }
 
-/// Omot da se sažetak može koristiti kao `item` lista.
 /// Radnja s trake "Poništi" pri dnu ekrana.
 private enum UndoAction {
     case exercise(SessionExercise)
@@ -471,6 +467,7 @@ private enum UndoAction {
     }
 }
 
+/// Omot da se sažetak može koristiti kao `item` lista.
 private struct SummaryBox: Identifiable, Equatable {
     let id = UUID()
     let summary: WorkoutSummary

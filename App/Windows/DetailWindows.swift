@@ -58,7 +58,7 @@ struct SessionWindow: View {
     var body: some View {
         NavigationStack {
             if let session = sessions.first ?? healthWorkouts.first?.makeSession() {
-                SessionDetailScreen(session: session, unit: UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms)
+                SessionDetailScreen(session: session, unit: UserSettings.weightUnit(in: settingsList))
             } else {
                 ContentUnavailableView("Trening nije pronađen", systemImage: "clock")
             }

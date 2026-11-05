@@ -1,6 +1,7 @@
 import Models
 import SwiftData
 import SwiftUI
+import Units
 
 /// Uređivač kardio treninga: vrsta, zagrijavanje, blokovi intervala i hlađenje.
 /// Kardio trening se pokreće na satu u aplikaciji Workout, a kad je u rasporedu, Apolon ga tamo zakazuje.

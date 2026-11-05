@@ -13,15 +13,13 @@ struct ExercisePickerSheet: View {
     @Query(sort: \CustomExercise.name) private var customExercises: [CustomExercise]
     @State private var filter = ExerciseFilter()
 
-    private var results: [ExerciseSummary] {
-        ExerciseSearch.apply(filter, to: catalogStore.summaries + customExercises.map(\.summary), labels: .app)
-    }
-
     var body: some View {
+        // Pretraga se računa jednom po iscrtavanju (oko 800 vježbi).
+        let results = catalogStore.search(filter, custom: customExercises)
         NavigationStack {
             List(results) { summary in
                 Button {
-                    onPick(summary, inputType(of: summary))
+                    onPick(summary, catalogStore.inputType(of: summary, custom: customExercises))
                     dismiss()
                 } label: {
                     VStack(alignment: .leading, spacing: 2) {
@@ -44,13 +42,6 @@ struct ExercisePickerSheet: View {
                     Button("Odustani") { dismiss() }
                 }
             }
-        }
-    }
-
-    private func inputType(of summary: ExerciseSummary) -> ExerciseInputType {
-        switch summary.source {
-        case .catalog(let id): catalogStore.catalog?.exercise(withID: id)?.inputType ?? .weightReps
-        case .custom(let id): customExercises.first { $0.id == id }?.inputType ?? .weightReps
         }
     }
 }

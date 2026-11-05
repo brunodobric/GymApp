@@ -154,6 +154,15 @@ struct ForeignWorkoutsCSVTests {
         #expect(throws: BackupError.invalidCSV(line: 3)) { try ForeignWorkoutsCSV.parse(unknownColumn) }
     }
 
+    @Test("Beskonačna ili ogromna vrijednost se odbija umjesto da sruši uvoz", arguments: [
+        "#;KG;REPS\n1;inf;10\n", "#;KG;REPS\n1;nan;10\n", "#;MINS\n1;inf\n", "#;SECS\n1;nan\n",
+        "#;MINS\n1;99999999999999:30\n", "#;KM\n1;inf\n",
+    ])
+    func nonFiniteValues(_ table: String) {
+        let text = "\"Push · Day 1\";\"2026-11-02 4:27 pm\";\"53 min\"\n\"1. Bench Press · Barbell\"\n" + table
+        #expect(throws: BackupError.invalidCSV(line: 4)) { try ForeignWorkoutsCSV.parse(text) }
+    }
+
     @Test("Prepoznaje format, a vlastiti CSV ne")
     func detection() throws {
         #expect(ForeignWorkoutsCSV.matches(try fixture()))

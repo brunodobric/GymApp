@@ -106,21 +106,6 @@ struct TemplateEngineTests {
         try engine.removeSet(exercise.orderedSets[0])
         #expect(exercise.orderedSets.map(\.orderIndex) == [0, 1, 2])
     }
-
-    @Test("Kopija je neovisna o originalu")
-    func duplicate() throws {
-        let context = try makeContext()
-        let engine = TemplateEngine(context: context)
-        let original = try template("T", in: context, exercises: [squat, bench])
-        let list = original.orderedExercises
-        try engine.makeSuperset(list, in: original)
-        let copy = try engine.duplicate(original, name: "T 2")
-        #expect(copy.orderedExercises.count == 2)
-        let copyGroup = copy.orderedExercises[0].supersetGroupId
-        #expect(copyGroup != nil && copyGroup != list[0].supersetGroupId)
-        try engine.removeExercise(copy.orderedExercises[0])
-        #expect(original.orderedExercises.count == 2)
-    }
 }
 
 @Suite("Pokretanje iz predloška")
@@ -255,6 +240,61 @@ struct ScheduleProgressTests {
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
         try engine.unskip(skip, in: schedule)
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+    }
+
+    @Test("Preskočeni treninzi tekućeg ciklusa imaju naziv i mogu se vratiti")
+    func skippedWorkoutsList() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, _) = try abcSchedule(in: context, cycles: nil)
+        #expect(try engine.skippedWorkouts(of: schedule).isEmpty)
+        try engine.skipNextWorkout(of: schedule)
+        let skipped = try engine.skippedWorkouts(of: schedule)
+        #expect(skipped.map(\.templateName) == ["A"])
+        try engine.unskip(skipped[0].change, in: schedule)
+        #expect(try engine.skippedWorkouts(of: schedule).isEmpty)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "A")
+    }
+
+    @Test("Ponovno pokretanje briše izmjene starog prolaza")
+    func restartClearsOverrides() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, _) = try abcSchedule(in: context, cycles: 1)
+        try engine.skipNextWorkout(of: schedule)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+        try engine.restart(schedule)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "A")
+        #expect(try context.fetch(FetchDescriptor<CycleOverride>()).isEmpty)
+    }
+
+    @Test("Izmjene prošlih ciklusa se brišu kad počne novi ciklus")
+    func prunesPastCycles() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, _) = try abcSchedule(in: context, cycles: nil)
+        try engine.skipNextWorkout(of: schedule)
+        #expect(try context.fetch(FetchDescriptor<CycleOverride>()).count == 1)
+        try engine.skipNextWorkout(of: schedule)
+        try engine.skipNextWorkout(of: schedule)
+        #expect(schedule.currentCycle == 2)
+        #expect(try context.fetch(FetchDescriptor<CycleOverride>()).isEmpty)
+    }
+
+    @Test("Brisanje rasporeda briše i njegove izmjene, a izmjene drugog rasporeda ostaju")
+    func deleteScheduleWithOverrides() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, templates) = try abcSchedule(in: context, cycles: nil)
+        let other = try engine.createSchedule(name: "Drugi", cycleCount: nil)
+        try engine.addWorkout(templates[0], to: other)
+        try engine.addWorkout(templates[1], to: other)
+        try engine.skipNextWorkout(of: schedule)
+        try engine.skipNextWorkout(of: other)
+        try engine.delete(schedule)
+        let left = try context.fetch(FetchDescriptor<CycleOverride>())
+        #expect(left.map(\.scheduleId) == [Optional(other.id)])
+        #expect(try context.fetch(FetchDescriptor<Schedule>()).map(\.id) == [other.id])
     }
 
     @Test("Preskakanje svih preostalih treninga otvara sljedeći ciklus")

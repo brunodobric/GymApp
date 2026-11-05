@@ -92,6 +92,14 @@ public struct ScheduleEngine {
         try append(kind: .restDay, templateId: nil, to: schedule)
     }
 
+    /// Briše raspored zajedno s njegovim izmjenama ciklusa. Izmjene nemaju vezu na raspored,
+    /// pa bi inače ostale u bazi (i u iCloudu) zauvijek.
+    public func delete(_ schedule: Schedule) throws {
+        try deleteOverrides(of: schedule) { _ in true }
+        context.delete(schedule)
+        try context.save()
+    }
+
     public func removeItem(_ item: ScheduleItem) throws {
         let schedule = item.schedule
         let removedIndex = schedule?.orderedItems.firstIndex { $0.id == item.id }
@@ -111,10 +119,7 @@ public struct ScheduleEngine {
     public func moveItems(in schedule: Schedule, from source: IndexSet, to destination: Int) throws {
         var ordered = schedule.orderedItems
         let currentId = currentItem(of: schedule)?.id
-        let moving = source.sorted().map { ordered[$0] }
-        let target = destination - source.filter { $0 < destination }.count
-        for index in source.sorted(by: >) { ordered.remove(at: index) }
-        ordered.insert(contentsOf: moving, at: min(max(target, 0), ordered.count))
+        ordered.moveElements(fromOffsets: source, toOffset: destination)
         for (index, item) in ordered.enumerated() { item.orderIndex = index }
         // Pozicija prati stavku na kojoj je raspored stao.
         if let currentId, let index = ordered.firstIndex(where: { $0.id == currentId }) {
@@ -125,6 +130,8 @@ public struct ScheduleEngine {
 
     /// Pokreće raspored ispočetka (prvi ciklus, prva stavka).
     public func restart(_ schedule: Schedule) throws {
+        // Izmjene starog prolaza (preskakanja, zamjene) inače bi vrijedile i za novi ciklus 1.
+        try deleteOverrides(of: schedule) { _ in true }
         schedule.currentCycle = 1
         schedule.currentPosition = 0
         schedule.isActive = true
@@ -226,6 +233,16 @@ public struct ScheduleEngine {
         return change
     }
 
+    /// Preskočeni treninzi tekućeg ciklusa, redom kao u nizu, s nazivom treninga.
+    public func skippedWorkouts(of schedule: Schedule) throws -> [SkippedWorkout] {
+        let skips = try overrides(of: schedule, cycle: schedule.currentCycle).filter { $0.kind == .skipWorkout }
+        return try schedule.orderedItems.compactMap { item in
+            guard let change = skips.first(where: { $0.scheduleItemId == item.id }) else { return nil }
+            let name = try item.workoutTemplateId.flatMap { try template(withID: $0) }?.name
+            return SkippedWorkout(change: change, templateName: name ?? "")
+        }
+    }
+
     /// Vraća preskočeni trening. Moguće samo dok je ciklus još tekući.
     public func unskip(_ change: CycleOverride, in schedule: Schedule) throws {
         guard change.kind == .skipWorkout, change.cycleNumber == schedule.currentCycle else { return }
@@ -292,9 +309,20 @@ public struct ScheduleEngine {
     }
 
     public func overrides(of schedule: Schedule, cycle: Int) throws -> [CycleOverride] {
-        let id = schedule.id
-        return try context.fetch(FetchDescriptor<CycleOverride>())
-            .filter { $0.scheduleId == id && $0.cycleNumber == cycle }
+        let id: UUID? = schedule.id
+        let descriptor = FetchDescriptor<CycleOverride>(
+            predicate: #Predicate { $0.scheduleId == id && $0.cycleNumber == cycle }
+        )
+        return try context.fetch(descriptor)
+    }
+
+    /// Briše izmjene rasporeda koje zadovoljavaju uvjet (bez spremanja).
+    private func deleteOverrides(of schedule: Schedule, where shouldDelete: (CycleOverride) -> Bool) throws {
+        let id: UUID? = schedule.id
+        let descriptor = FetchDescriptor<CycleOverride>(predicate: #Predicate { $0.scheduleId == id })
+        for change in try context.fetch(descriptor) where shouldDelete(change) {
+            context.delete(change)
+        }
     }
 
     // MARK: Pomoćno
@@ -326,6 +354,9 @@ public struct ScheduleEngine {
             }
             schedule.currentCycle += 1
             schedule.currentPosition = 0
+            // Izmjene prošlih ciklusa više ništa ne mijenjaju, a inače bi se gomilale zauvijek.
+            let current = schedule.currentCycle
+            try deleteOverrides(of: schedule) { $0.cycleNumber < current }
             try context.save()
         }
     }
@@ -357,4 +388,12 @@ public struct ScheduleEngine {
         descriptor.fetchLimit = 1
         return try context.fetch(descriptor).first
     }
+}
+
+/// Preskočeni trening tekućeg ciklusa, koji se može vratiti (`ScheduleEngine.unskip`).
+public struct SkippedWorkout: Identifiable {
+    public let change: CycleOverride
+    public let templateName: String
+
+    public var id: UUID { change.id }
 }

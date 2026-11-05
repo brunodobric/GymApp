@@ -50,39 +50,6 @@ public struct TemplateEngine {
         return template
     }
 
-    /// Kopija predloška s novim id-evima (i novim grupama supersetova).
-    @discardableResult
-    public func duplicate(_ template: WorkoutTemplate, name: String) throws -> WorkoutTemplate {
-        let copy = WorkoutTemplate(name: name, kind: template.kind)
-        copy.details = template.details
-        copy.cardioPlanRaw = template.cardioPlanRaw
-        context.insert(copy)
-        var groups: [UUID: UUID] = [:]
-        for exercise in template.orderedExercises {
-            let newExercise = TemplateExercise(
-                orderIndex: exercise.orderIndex, exercise: exercise.exercise, inputType: exercise.inputType
-            )
-            newExercise.restSeconds = exercise.restSeconds
-            newExercise.notes = exercise.notes
-            if let group = exercise.supersetGroupId {
-                if groups[group] == nil { groups[group] = UUID() }
-                newExercise.supersetGroupId = groups[group]
-            }
-            context.insert(newExercise)
-            newExercise.template = copy
-            for set in exercise.orderedSets {
-                let newSet = TemplateSet(
-                    orderIndex: set.orderIndex, kind: set.kind,
-                    targetWeightKg: set.targetWeightKg, targetReps: set.targetReps
-                )
-                context.insert(newSet)
-                newSet.exercise = newExercise
-            }
-        }
-        try context.save()
-        return copy
-    }
-
     /// Brisanje predloška ne dira odrađene treninge (oni su neovisna kopija) ni stavke rasporeda.
     public func delete(_ template: WorkoutTemplate) throws {
         context.delete(template)
@@ -152,10 +119,7 @@ public struct TemplateEngine {
     /// Premješta vježbe kao SwiftUI `move(fromOffsets:toOffset:)`, koji ovdje nije dostupan.
     public func moveExercises(in template: WorkoutTemplate, from source: IndexSet, to destination: Int) throws {
         var ordered = template.orderedExercises
-        let moving = source.sorted().map { ordered[$0] }
-        let target = destination - source.filter { $0 < destination }.count
-        for index in source.sorted(by: >) { ordered.remove(at: index) }
-        ordered.insert(contentsOf: moving, at: min(max(target, 0), ordered.count))
+        ordered.moveElements(fromOffsets: source, toOffset: destination)
         for (index, exercise) in ordered.enumerated() { exercise.orderIndex = index }
         try context.save()
     }

@@ -97,3 +97,11 @@ public enum SmartDefaults {
         )
     }
 }
+
+extension GymQueries {
+    /// Završene serije zadnjeg izvođenja vježbe: prethodne vrijednosti u retku serije, u kartici treninga
+    /// i u Live Activityju te izvor smart defaultsa. Prazno kad vježba još nije rađena.
+    public func previousSetValues(of exercise: ExerciseRef) throws -> [SetValues] {
+        try lastPerformance(of: exercise)?.orderedSets.filter(\.isCompleted).map(\.values) ?? []
+    }
+}

@@ -227,11 +227,7 @@ struct DashboardEditor: View {
                     Button("Gotovo") { dismiss() }
                 }
             }
-            .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-                Button("U redu") {}
-            } message: {
-                Text(errorText ?? "")
-            }
+            .errorAlert($errorText)
         }
     }
 

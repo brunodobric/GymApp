@@ -18,6 +18,11 @@ enum PlanningDrag {
 }
 
 extension CatalogStore {
+    /// Službene i vlastite vježbe koje prolaze filter (pretraga i filteri), za sve popise vježbi.
+    func search(_ filter: ExerciseFilter, custom: [CustomExercise]) -> [ExerciseSummary] {
+        ExerciseSearch.apply(filter, to: summaries + custom.map(\.summary), labels: .app)
+    }
+
     /// Način unosa vježbe iz popisa (službene iz kataloga, vlastite iz baze).
     func inputType(of summary: ExerciseSummary, custom: [CustomExercise]) -> ExerciseInputType {
         switch summary.source {
@@ -36,6 +41,19 @@ extension CatalogStore {
 }
 
 extension View {
+    /// Prečac ⌘ + `key` koji radi bez obzira na to je li gumb s istom radnjom na ekranu. `List` gradi retke
+    /// lijeno, pa prečac na gumbu pri dnu dugog popisa ne radi dok korisnik ne skrolira do njega.
+    /// Gumb je nevidljiv, a naziv se vidi u popisu prečaca (držanje tipke ⌘ na iPadu).
+    func commandShortcut(_ title: LocalizedStringKey, key: KeyEquivalent, action: @escaping () -> Void) -> some View {
+        background {
+            Button(title, action: action)
+                .keyboardShortcut(key, modifiers: .command)
+                .opacity(0)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+        }
+    }
+
     /// Bočna ploča uređivača: na iPadu (regular širina) inspector uz sadržaj, a na iPhoneu obični list.
     ///
     /// U compact širini se `.inspector` uopće ne primjenjuje. Inače njegov sadržaj ostaje ugrađen u uređivač
@@ -126,11 +144,9 @@ struct ExerciseCatalogPanel: View {
     /// Odabrani id-evi sažetaka, redom odabira.
     @State private var selected: [String] = []
 
-    private var results: [ExerciseSummary] {
-        ExerciseSearch.apply(filter, to: catalogStore.summaries + customExercises.map(\.summary), labels: .app)
-    }
-
     var body: some View {
+        // Pretraga se računa jednom po iscrtavanju (oko 800 vježbi).
+        let results = catalogStore.search(filter, custom: customExercises)
         NavigationStack {
             List(results) { summary in
                 SelectableRow(isSelected: selected.contains(summary.id), toggle: { toggle(summary) }) {

@@ -12,7 +12,6 @@ struct HistoryScreen: View {
     @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }) private var ownSessions: [Session]
     /// Kardio iz Zdravlja je u lokalnoj bazi (ne sinkronizira se), a u povijesti stoji uz vlastite treninge.
     @Query private var healthWorkouts: [HealthWorkout]
-    private var sessions: [Session] { Session.merged(ownSessions, health: healthWorkouts) }
     @Query private var settingsList: [UserSettings]
 
     @State private var filter = HistoryFilter()
@@ -22,22 +21,31 @@ struct HistoryScreen: View {
     /// Odabrani trening u popisu (id, da obrisani trening ne ostane odabran).
     @State private var selectedId: UUID?
 
-    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
-    private var visible: [Session] { filter.apply(to: sessions) }
+    private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
 
-    /// S kalendarom: treninzi prikazanog mjeseca ili odabranog dana.
-    private var listed: [Session] {
-        showsCalendar ? filter.apply(to: sessions, month: month, day: selectedDay) : visible
+    /// Popis za jedno iscrtavanje. `Session.merged` za svaki trening iz Zdravlja stvara novi objekt,
+    /// pa se računa jednom po iscrtavanju, a ne u svakom dijelu ekrana posebno.
+    private struct Lists {
+        /// Svi treninzi, od najnovijeg.
+        let all: [Session]
+        /// Treninzi koji prolaze filter.
+        let visible: [Session]
+        /// S kalendarom: treninzi prikazanog mjeseca ili odabranog dana.
+        let listed: [Session]
     }
 
-    private var selectedSession: Session? {
-        guard let selectedId else { return nil }
-        return sessions.first { $0.id == selectedId }
+    private func makeLists() -> Lists {
+        let all = Session.merged(ownSessions, health: healthWorkouts)
+        let visible = filter.apply(to: all)
+        let listed = showsCalendar ? filter.apply(to: all, month: month, day: selectedDay) : visible
+        return Lists(all: all, visible: visible, listed: listed)
     }
 
     var body: some View {
+        let lists = makeLists()
+        let selectedSession = selectedId.flatMap { id in lists.all.first { $0.id == id } }
         NavigationSplitView {
-            sessionList
+            sessionList(lists)
                 .navigationSplitViewColumnWidth(min: 320, ideal: 380, max: 460)
         } detail: {
             NavigationStack {
@@ -54,13 +62,16 @@ struct HistoryScreen: View {
             }
         }
         // Obrisan trening (npr. iz detalja) više nije odabran, pa se na iPhoneu vraća popis.
-        .onChange(of: sessions.map(\.id)) { _, ids in
+        .onChange(of: lists.all.map(\.id)) { _, ids in
             if let selectedId, !ids.contains(selectedId) { self.selectedId = nil }
         }
     }
 
-    private var sessionList: some View {
-        List(selection: $selectedId) {
+    private func sessionList(_ lists: Lists) -> some View {
+        let visible = lists.visible
+        let listed = lists.listed
+        let sessions = lists.all
+        return List(selection: $selectedId) {
             if showsCalendar {
                 Section {
                     CalendarMonthView(

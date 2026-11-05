@@ -46,11 +46,7 @@ struct UpcomingWorkoutScreen: View {
         .fullScreenCover(item: $presentedSession) { session in
             ActiveWorkoutScreen(session: session)
         }
-        .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-            Button("U redu") {}
-        } message: {
-            Text(errorText ?? "")
-        }
+        .errorAlert($errorText)
     }
 
     @ViewBuilder
@@ -253,6 +249,23 @@ private struct CardioWatchSection: View {
         Task {
             failed = !(await CardioWorkoutScheduler.shared.scheduleNow(planned))
             isScheduling = false
+        }
+    }
+}
+
+/// Sljedeći trening u listu (dodir na podsjetnik, kardio s Početne), s gumbom Gotovo.
+struct UpcomingWorkoutSheet: View {
+    let schedule: Schedule
+    let onDone: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            UpcomingWorkoutScreen(schedule: schedule)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Gotovo", action: onDone)
+                    }
+                }
         }
     }
 }

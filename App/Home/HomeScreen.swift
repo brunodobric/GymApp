@@ -5,9 +5,8 @@ import SwiftUI
 import Training
 import Units
 
-// Privremeni ekrani za fazu 0. Svaki se zamjenjuje u fazi koja ga gradi.
-// Naslovi su kratki (ispod 15 znakova) i nisu naziv aplikacije, prema HIG-u.
-
+/// Početna: kartica za početak ili nastavak treninga i kartice koje korisnik složi.
+/// Naslov je kratak (ispod 15 znakova) i nije naziv aplikacije, prema HIG-u.
 struct HomeScreen: View {
     /// Zahtjev iz tipkovničkog prečaca: pokretanje treninga ili Postavke.
     @Binding var request: HomeRequest?
@@ -16,9 +15,9 @@ struct HomeScreen: View {
     @Query(filter: #Predicate<Session> { $0.stateRaw == "active" }, sort: \Session.startedAt, order: .reverse)
     private var activeSessions: [Session]
 
-    @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }, sort: \Session.startedAt, order: .reverse)
-    private var finishedSessions: [Session]
-    @Query(sort: \HealthWorkout.startedAt, order: .reverse) private var healthWorkouts: [HealthWorkout]
+    /// Za karticu zadnjeg treninga treba samo najnoviji trening i najnoviji trening iz Zdravlja, ne cijela povijest.
+    @Query(HomeScreen.latestFinished) private var finishedSessions: [Session]
+    @Query(HomeScreen.latestHealthWorkout) private var healthWorkouts: [HealthWorkout]
     @Query(sort: \DashboardCard.orderIndex) private var dashboardCards: [DashboardCard]
     @Query private var settingsList: [UserSettings]
     @Query private var schedules: [Schedule]
@@ -31,21 +30,38 @@ struct HomeScreen: View {
     @State private var cardioSchedule: Schedule?
     @State private var errorText: String?
     @State private var checkedRecovery = false
-    /// Kartica zadnjeg treninga je jednom stavljena na Početnu (prije je bila stalno prikazana).
+    /// Prazna Početna je jednom dobila karticu zadnjeg treninga.
     @AppStorage("dashboard.lastWorkoutSeeded") private var lastWorkoutSeeded = false
     @State private var recovery: RecoveryPrompt?
     #if DEBUG
     @State private var showsPrototypes = false
     #endif
 
+    private static var latestFinished: FetchDescriptor<Session> {
+        var descriptor = FetchDescriptor<Session>(
+            predicate: #Predicate { $0.stateRaw == "finished" },
+            sortBy: [SortDescriptor(\.startedAt, order: .reverse)]
+        )
+        descriptor.fetchLimit = 1
+        return descriptor
+    }
+
+    private static var latestHealthWorkout: FetchDescriptor<HealthWorkout> {
+        var descriptor = FetchDescriptor<HealthWorkout>(sortBy: [SortDescriptor(\.startedAt, order: .reverse)])
+        descriptor.fetchLimit = 1
+        return descriptor
+    }
+
     var body: some View {
+        // Sljedeći treninzi se računaju jednom po iscrtavanju (dohvat rasporeda i izmjena ciklusa).
+        let upcoming = upcomingWorkouts
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    startSection
+                    startSection(upcoming)
                     ForEach(visibleCards) { card in
                         if let kind = card.kind {
-                            cardView(kind)
+                            cardView(kind, upcoming: upcoming)
                         }
                     }
                     Button("Uredi kartice", systemImage: "square.grid.2x2") { showsCardEditor = true }
@@ -78,14 +94,7 @@ struct HomeScreen: View {
                 SettingsScreen()
             }
             .sheet(item: $cardioSchedule) { schedule in
-                NavigationStack {
-                    UpcomingWorkoutScreen(schedule: schedule)
-                        .toolbar {
-                            ToolbarItem(placement: .confirmationAction) {
-                                Button("Gotovo") { cardioSchedule = nil }
-                            }
-                        }
-                }
+                UpcomingWorkoutSheet(schedule: schedule) { cardioSchedule = nil }
             }
             .sheet(isPresented: $showsCardEditor) {
                 DashboardEditor()
@@ -96,8 +105,11 @@ struct HomeScreen: View {
                     .navigationTransition(.zoom(sourceID: Self.workoutTransitionID, in: workoutTransition))
             }
             .task {
-                seedLastWorkoutCard()
                 checkRecovery()
+            }
+            // Uz sinkronizaciju se čeka prvi uvoz s iClouda: na novom uređaju kartice tek stižu s drugih uređaja.
+            .task(id: SyncMonitor.shared.tracker.lastImport) {
+                seedLastWorkoutCard()
             }
             // `initial`: pri hladnom pokretanju iz Live Activityja zahtjev stigne prije nego što se Početna prikaže.
             .onChange(of: request, initial: true) { _, newValue in
@@ -121,11 +133,7 @@ struct HomeScreen: View {
                     Text("Trening je ostao otvoren. Možeš ga nastaviti, završiti ili odbaciti.")
                 }
             }
-            .alert("Greška", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
-                Button("U redu") {}
-            } message: {
-                Text(errorText ?? "")
-            }
+            .errorAlert($errorText)
             #if DEBUG
             .sheet(isPresented: $showsPrototypes) {
                 PrototypesView()
@@ -134,9 +142,9 @@ struct HomeScreen: View {
         }
     }
 
-    private var unit: WeightUnit { UserSettings.preferred(in: settingsList)?.weightUnit ?? .kilograms }
+    private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
     private var lastSession: Session? {
-        Session.merged(Array(finishedSessions.prefix(1)), health: Array(healthWorkouts.prefix(1))).first
+        Session.merged(finishedSessions, health: healthWorkouts).first
     }
 
     private var visibleCards: [DashboardCard] {
@@ -145,27 +153,27 @@ struct HomeScreen: View {
     }
 
     @ViewBuilder
-    private func cardView(_ kind: DashboardCardKind) -> some View {
+    private func cardView(_ kind: DashboardCardKind, upcoming: [PlannedWorkout]) -> some View {
         switch kind {
         case .lastWorkout:
             if let last = lastSession {
                 LastWorkoutCard(session: last, unit: unit)
             }
         case .plateCalculator: PlateCalculatorCard(unit: unit)
-        case .nextWorkout: NextWorkoutCard(planned: upcomingWorkouts)
+        case .nextWorkout: NextWorkoutCard(planned: upcoming)
         case .weeklyVolume: WeeklyVolumeCard(unit: unit)
         }
     }
 
     /// Kartica na vrhu: trening u tijeku sažet u karticu (kao Live Activity) ili početak novog (iz rasporeda ili praznog).
     /// Ista je izvor zoom prijelaza, pa se ekran treninga otvara iz nje i povlačenjem dolje sažima natrag u nju.
-    private var startSection: some View {
+    private func startSection(_ upcoming: [PlannedWorkout]) -> some View {
         Group {
             if let active = activeSessions.first {
                 ActiveWorkoutCard(session: active, unit: unit) { presentedSession = active }
             } else {
                 StartWorkoutCard(
-                    planned: upcomingWorkouts,
+                    planned: upcoming,
                     onStart: { planned in
                         if planned.template.kind == .cardio {
                             cardioSchedule = planned.schedule
@@ -219,10 +227,10 @@ struct HomeScreen: View {
         }
     }
 
-    /// Zadnji trening je prije bio stalno na Početnoj. Sad je kartica koja se može ukloniti,
-    /// pa se jednom po uređaju dodaje na vrh da ga postojeći i novi korisnici i dalje vide.
+    /// Prazna Početna dobiva karticu zadnjeg treninga (jednom po uređaju).
     private func seedLastWorkoutCard() {
         guard !lastWorkoutSeeded else { return }
+        if AppServices.isSyncRunning && SyncMonitor.shared.tracker.lastImport == nil { return }
         do {
             try DashboardLayout(context: context).seedLastWorkout()
             lastWorkoutSeeded = true
@@ -298,95 +306,4 @@ private struct RecoveryPrompt: Identifiable {
     let session: Session
     let isStale: Bool
     var id: UUID { session.id }
-}
-
-/// Postavke treninga: jedinice, zadana pauza, RPE ili RIR, zvuk kraja odmora i rekordi.
-struct TrainingSettingsSection: View {
-    @Bindable var settings: UserSettings
-
-    var body: some View {
-        Section {
-            Picker("Jedinice", selection: $settings.weightUnit) {
-                Text("Kilogrami").tag(WeightUnit.kilograms)
-                Text("Funte").tag(WeightUnit.pounds)
-            }
-            Stepper(value: $settings.defaultRestSeconds, in: 15...600, step: 15) {
-                LabeledContent("Zadana pauza") {
-                    Text(Duration.seconds(settings.defaultRestSeconds), format: .time(pattern: .minuteSecond))
-                }
-            }
-            Picker("Napor", selection: $settings.effortScale) {
-                Text("RPE").tag(EffortScale.rpe)
-                Text("RIR").tag(EffortScale.rir)
-            }
-            Toggle("Zvuk kraja odmora", isOn: $settings.restEndSoundEnabled)
-        }
-        Section("Rekordi") {
-            Toggle("Rekordi (PR)", isOn: $settings.prEnabled)
-            if settings.prEnabled {
-                ForEach(PRSettingOption.allCases) { option in
-                    Toggle(option.title, isOn: option.binding(for: settings))
-                        .padding(.leading)
-                }
-            }
-        }
-    }
-}
-
-/// Izvor i licenca crteža tijela za heatmap.
-struct MuscleMapLicenseScreen: View {
-    private var licenseText: String {
-        let url = Bundle.main.resourceURL?.appendingPathComponent("BodyMap/LICENSE-MuscleMap.txt")
-        let raw = url.flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? "MIT License"
-        // Tvrdi prijelomi unutar odlomaka se spajaju da tekst teče po širini ekrana; prazni redovi
-        // i stavke koje počinju s "- " ostaju zasebni odlomci.
-        var paragraphs: [String] = []
-        var current = ""
-        for line in raw.split(separator: "\n", omittingEmptySubsequences: false) {
-            let text = line.trimmingCharacters(in: .whitespaces)
-            if text.isEmpty || text.hasPrefix("- ") {
-                if !current.isEmpty { paragraphs.append(current) }
-                current = text
-            } else {
-                current += current.isEmpty ? text : " " + text
-            }
-        }
-        if !current.isEmpty { paragraphs.append(current) }
-        return paragraphs.joined(separator: "\n\n")
-    }
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Crteži tijela u heatmapu preuzeti su iz projekta MuscleMap (MIT licenca).")
-                Link("github.com/Jsplice/MuscleMap", destination: URL(string: "https://github.com/Jsplice/MuscleMap")!)
-                Divider()
-                Text(licenseText).font(.footnote).foregroundStyle(.secondary)
-            }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .navigationTitle("MuscleMap")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-/// Atribucija kataloga vježbi: izvor i licenca (Unlicense, javno vlasništvo).
-struct ExerciseCatalogLicenseScreen: View {
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Vježbe, upute i fotografije preuzete su iz projekta free-exercise-db (Unlicense).")
-                Link("github.com/yuhonas/free-exercise-db", destination: URL(string: "https://github.com/yuhonas/free-exercise-db")!)
-                Divider()
-                Text("Unlicense stavlja djelo u javno vlasništvo: slobodno se smije koristiti, mijenjati i dijeliti, bez uvjeta.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .navigationTitle("free-exercise-db")
-        .navigationBarTitleDisplayMode(.inline)
-    }
 }

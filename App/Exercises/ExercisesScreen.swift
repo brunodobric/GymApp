@@ -15,13 +15,11 @@ struct ExercisesScreen: View {
     @State private var showsFilters = false
     @State private var showsNewExercise = false
 
-    private var results: [ExerciseSummary] {
-        ExerciseSearch.apply(filter, to: catalogStore.summaries + customExercises.map(\.summary), labels: .app)
-    }
-
     var body: some View {
+        // Pretraga se računa jednom po iscrtavanju (oko 800 vježbi).
+        let results = catalogStore.search(filter, custom: customExercises)
         NavigationStack {
-            content
+            content(results)
                 .navigationTitle("Vježbe")
                 .navigationDestination(for: ExerciseSummary.self) { summary in
                     ExerciseDetailScreen(summary: summary)
@@ -51,7 +49,7 @@ struct ExercisesScreen: View {
     }
 
     @ViewBuilder
-    private var content: some View {
+    private func content(_ results: [ExerciseSummary]) -> some View {
         if let errorText = catalogStore.errorText {
             ContentUnavailableView(
                 "Katalog nije dostupan",
@@ -69,7 +67,7 @@ struct ExercisesScreen: View {
                 ContentUnavailableView.search(text: filter.query)
             }
         } else if sizeClass == .regular {
-            grid
+            grid(results)
         } else {
             List(results) { summary in
                 NavigationLink(value: summary) {
@@ -80,7 +78,7 @@ struct ExercisesScreen: View {
         }
     }
 
-    private var grid: some View {
+    private func grid(_ results: [ExerciseSummary]) -> some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 170), spacing: 16, alignment: .top)], spacing: 16) {
                 ForEach(results) { summary in

@@ -1298,6 +1298,16 @@
         }
       }
     },
+    "Datoteka je prevelika. Najveća veličina je 50 MB." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The file is too large. The maximum size is 50 MB."
+          }
+        }
+      }
+    },
     "Datoteka nije spremljena." : {
       "localizations" : {
         "en" : {
@@ -4484,6 +4494,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A skipped workout doesn't count in this cycle. You can undo it in the schedule editor while the cycle is in progress."
+          }
+        }
+      }
+    },
+    "Preskočeno: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skipped: %@"
           }
         }
       }

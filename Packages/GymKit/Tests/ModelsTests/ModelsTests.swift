@@ -353,18 +353,12 @@ struct DashboardLayoutTests {
         #expect(try kinds(layout) == [.plateCalculator, .nextWorkout, .weeklyVolume])
     }
 
-    @Test("Zadnji trening se jednom stavlja na vrh i može se ukloniti")
-    func seedsLastWorkoutOnTop() throws {
+    @Test("Uklonjena kartica zadnjeg treninga se ne vraća kad Početna već ima kartice")
+    func doesNotSeedOverExistingCards() throws {
         let layout = DashboardLayout(context: try makeContext())
         try layout.add(.nextWorkout)
         try layout.add(.weeklyVolume)
-        #expect(try layout.seedLastWorkout() != nil)
-        #expect(try kinds(layout) == [.lastWorkout, .nextWorkout, .weeklyVolume])
-        #expect(try layout.cards().map(\.orderIndex) == [0, 1, 2])
         #expect(try layout.seedLastWorkout() == nil)
-        #expect(try layout.allCards().count == 3)
-
-        try layout.remove(try layout.cards()[0])
         #expect(try kinds(layout) == [.nextWorkout, .weeklyVolume])
         #expect(try layout.availableKinds() == [.lastWorkout, .plateCalculator])
     }
@@ -372,8 +366,10 @@ struct DashboardLayoutTests {
     @Test("Zadnji trening na praznoj Početnoj")
     func seedsLastWorkoutOnEmpty() throws {
         let layout = DashboardLayout(context: try makeContext())
-        try layout.seedLastWorkout()
+        #expect(try layout.seedLastWorkout() != nil)
         #expect(try kinds(layout) == [.lastWorkout])
+        #expect(try layout.seedLastWorkout() == nil)
+        #expect(try layout.allCards().count == 1)
     }
 
     @Test("Nepoznata vrsta se ne prikazuje, ali ostaje u bazi")
@@ -436,5 +432,33 @@ struct OnboardingTests {
         try OnboardingApplier(context: context).skip()
         let settings = try GymQueries(context: context).settings()
         #expect(settings.onboardingCompleted && settings.goal == nil && settings.weightUnit == .kilograms)
+    }
+}
+
+@Suite("Premještanje elemenata")
+struct OrderingTests {
+
+    @Test("Isto kao onMove u SwiftUI-ju: naprijed, natrag i više elemenata")
+    func moves() {
+        var forward = ["a", "b", "c", "d"]
+        forward.moveElements(fromOffsets: IndexSet(integer: 0), toOffset: 3)
+        #expect(forward == ["b", "c", "a", "d"])
+
+        var backward = ["a", "b", "c", "d"]
+        backward.moveElements(fromOffsets: IndexSet(integer: 3), toOffset: 0)
+        #expect(backward == ["d", "a", "b", "c"])
+
+        var several = ["a", "b", "c", "d", "e"]
+        several.moveElements(fromOffsets: IndexSet([0, 2]), toOffset: 5)
+        #expect(several == ["b", "d", "e", "a", "c"])
+    }
+
+    @Test("Nepostojeći indeks se preskače, a odredište se ograničava")
+    func invalidOffsets() {
+        var list = [1, 2, 3]
+        list.moveElements(fromOffsets: IndexSet([7]), toOffset: 0)
+        #expect(list == [1, 2, 3])
+        list.moveElements(fromOffsets: IndexSet(integer: 0), toOffset: 99)
+        #expect(list == [2, 3, 1])
     }
 }
