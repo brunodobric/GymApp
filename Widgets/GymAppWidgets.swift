@@ -94,6 +94,9 @@ private enum RestState {
 
 // MARK: Zaključani zaslon
 
+/// Raspored na zaključanom zaslonu. Visina je ograničena na 160 pt, pa je sve u četiri dijela:
+/// trajanje treninga, traka odmora preko cijele širine, puni naziv vježbe s kvačicom te težina i ponavljanja
+/// jedno ispod drugog. Sljedeća vježba ovdje ne stane; vidi se u proširenom Dynamic Islandu.
 private struct LockScreenView: View {
     let state: RestTimerActivityAttributes.ContentState
     let workoutName: String
@@ -101,22 +104,166 @@ private struct LockScreenView: View {
 
     var body: some View {
         let rest = RestState(state: state, isStale: isStale)
-        // Visina Live Activityja na zaključanom zaslonu ograničena je na 160 pt, pa su razmaci zbijeni.
-        VStack(alignment: .leading, spacing: 8) {
-            WorkoutHeader(workoutName: workoutName, startedAt: state.workoutStartedAt)
-                .font(.subheadline)
-            HStack(alignment: .top) {
-                ExerciseLabel(state: state, showsNextExercise: true)
-                Spacer(minLength: 12)
-                RestCountdown(rest: rest)
-                    .font(.title.bold().monospacedDigit())
-                    .multilineTextAlignment(.trailing)
+        // 20 (gornji red) + 28 (odmor) + 78 (vrijednosti) + razmaci i rubovi = oko 154 pt.
+        VStack(alignment: .leading, spacing: 6) {
+            LockScreenHeader(state: state, workoutName: workoutName)
+            RestBar(rest: rest)
+            if let setID = state.nextSetID, let name = state.exerciseName, !state.setValues.isEmpty {
+                HStack(alignment: .top, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(name)
+                            .font(.headline)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.75)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 0)
+                        ConfirmSetButton(state: state, isCompact: false)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+                    VStack(spacing: 6) {
+                        ForEach(state.setValues, id: \.field) { value in
+                            LargeSetValueStepper(setID: setID, value: value)
+                        }
+                    }
+                    .frame(width: 178)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+            } else {
+                ExerciseLabel(state: state)
+                NextExerciseLabel(state: state)
             }
-            RestProgress(rest: rest)
-            NextSetRow(state: state)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 14)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+    }
+}
+
+/// Gornji red: trajanje treninga (sustav ga sam odbrojava prema gore), naziv treninga i broj serije.
+private struct LockScreenHeader: View {
+    let state: RestTimerActivityAttributes.ContentState
+    let workoutName: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            if let startedAt = state.workoutStartedAt {
+                Image(systemName: "stopwatch")
+                    .foregroundStyle(.secondary)
+                Text(startedAt, style: .timer)
+                    .monospacedDigit()
+                    .fontWeight(.semibold)
+                    // Tekst koji odbrojava inače zauzme svu širinu.
+                    .frame(maxWidth: 64, alignment: .leading)
+                    .accessibilityLabel(Text("Trajanje treninga"))
+            }
+            Text(verbatim: workoutName)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+            Spacer(minLength: 6)
+            if state.exerciseName != nil {
+                Text("Serija \(state.setNumber) od \(state.setCount)")
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+        }
+        .font(.subheadline)
+    }
+}
+
+/// Odmor u jednoj traci preko cijele širine: traka se prazni kako vrijeme teče (kao na ekranu treninga),
+/// a preostalo vrijeme piše u njoj. Bez odmora trake nema.
+private struct RestBar: View {
+    let rest: RestState
+
+    private static let height: CGFloat = 28
+
+    var body: some View {
+        switch rest {
+        case let .running(start, end):
+            ZStack {
+                // Sustavska traka s vremenskim intervalom teče sama, bez ažuriranja Live Activityja.
+                ProgressView(timerInterval: start...end, countsDown: true) {
+                    EmptyView()
+                } currentValueLabel: {
+                    EmptyView()
+                }
+                .tint(Color.accentColor.opacity(0.7))
+                .scaleEffect(x: 1, y: Self.height / 4, anchor: .center)
+                HStack(spacing: 6) {
+                    Image(systemName: "timer")
+                    Text("Odmor")
+                    Spacer(minLength: 6)
+                    Text(timerInterval: start...end, countsDown: true)
+                        .monospacedDigit()
+                        .multilineTextAlignment(.trailing)
+                        .frame(maxWidth: 70, alignment: .trailing)
+                        .accessibilityLabel(Text("Preostali odmor"))
+                }
+                .font(.subheadline.bold())
+                .padding(.horizontal, 10)
+            }
+            .frame(height: Self.height)
+            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+        case .finished:
+            HStack(spacing: 6) {
+                Image(systemName: "checkmark.circle.fill")
+                Text("Odmor gotov")
+                Spacer(minLength: 0)
+            }
+            .font(.subheadline.bold())
+            .padding(.horizontal, 10)
+            .frame(height: Self.height)
+            .background(Color.accentColor.opacity(0.25), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+        case .none:
+            EmptyView()
+        }
+    }
+}
+
+/// Težina ili ponavljanja u zaobljenom kvadratu, s velikim gumbima − i + sa strane.
+private struct LargeSetValueStepper: View {
+    let setID: String
+    let value: RestTimerActivityAttributes.SetValue
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Button(intent: AdjustSetValueIntent(setID: setID, field: value.field, steps: -1)) {
+                StepperSymbol(systemName: "minus")
+                    .accessibilityLabel(value.decreaseLabel)
+            }
+            .buttonStyle(.plain)
+            .disabled(!value.canDecrease)
+            .opacity(value.canDecrease ? 1 : 0.4)
+
+            value.valueText
+                .font(.title3.bold().monospacedDigit())
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+                .contentTransition(.numericText())
+                .frame(maxWidth: .infinity)
+
+            Button(intent: AdjustSetValueIntent(setID: setID, field: value.field, steps: 1)) {
+                StepperSymbol(systemName: "plus")
+                    .accessibilityLabel(value.increaseLabel)
+            }
+            .buttonStyle(.plain)
+            .disabled(!value.canIncrease)
+            .opacity(value.canIncrease ? 1 : 0.4)
+        }
+        .padding(3)
+        .background(Color.primary.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
+
+private struct StepperSymbol: View {
+    let systemName: String
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.body.bold())
+            .foregroundStyle(Color.accentColor)
+            .frame(width: 40, height: 30)
+            .background(Color.accentColor.opacity(0.22), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
     }
 }
 
@@ -148,8 +295,6 @@ private struct WorkoutHeader: View {
 
 private struct ExerciseLabel: View {
     let state: RestTimerActivityAttributes.ContentState
-    /// Na zaključanom zaslonu sljedeća vježba ide uz broj serije, jer donji red zauzimaju vrijednosti serije.
-    var showsNextExercise = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -157,13 +302,7 @@ private struct ExerciseLabel: View {
                 Text(name)
                     .font(.headline)
                     .lineLimit(1)
-                Group {
-                    if showsNextExercise, !state.setValues.isEmpty, let next = state.nextExerciseName {
-                        Text("\(Text("Serija \(state.setNumber) od \(state.setCount)")) · \(Text("Sljedeće: \(next)"))")
-                    } else {
-                        Text("Serija \(state.setNumber) od \(state.setCount)")
-                    }
-                }
+                Text("Serija \(state.setNumber) od \(state.setCount)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
@@ -260,11 +399,11 @@ private struct SetValueStepper: View {
         HStack(spacing: 6) {
             Button(intent: AdjustSetValueIntent(setID: setID, field: value.field, steps: -1)) {
                 Image(systemName: "minus")
-                    .accessibilityLabel(decreaseLabel)
+                    .accessibilityLabel(value.decreaseLabel)
             }
             .disabled(!value.canDecrease)
 
-            valueText
+            value.valueText
                 .font(.headline.monospacedDigit())
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -272,7 +411,7 @@ private struct SetValueStepper: View {
 
             Button(intent: AdjustSetValueIntent(setID: setID, field: value.field, steps: 1)) {
                 Image(systemName: "plus")
-                    .accessibilityLabel(increaseLabel)
+                    .accessibilityLabel(value.increaseLabel)
             }
             .disabled(!value.canIncrease)
         }
@@ -281,24 +420,27 @@ private struct SetValueStepper: View {
         .controlSize(.small)
         .tint(.accentColor)
     }
+}
 
+/// Tekst vrijednosti i opisi gumba za VoiceOver, zajednički za Dynamic Island i zaključani zaslon.
+private extension RestTimerActivityAttributes.SetValue {
     @ViewBuilder
-    private var valueText: some View {
-        if value.field == "reps" {
-            if let reps = Int(value.text) {
+    var valueText: some View {
+        if field == "reps" {
+            if let reps = Int(text) {
                 Text("\(reps) pon.")
             } else {
                 Text("– pon.")
             }
-        } else if value.unitSymbol.isEmpty {
-            Text(verbatim: value.text)
+        } else if unitSymbol.isEmpty {
+            Text(verbatim: text)
         } else {
-            Text(verbatim: "\(value.text) \(value.unitSymbol)")
+            Text(verbatim: "\(text) \(unitSymbol)")
         }
     }
 
-    private var decreaseLabel: Text {
-        switch value.field {
+    var decreaseLabel: Text {
+        switch field {
         case "reps": Text("Smanji ponavljanja")
         case "duration": Text("Skrati trajanje")
         case "distance": Text("Smanji udaljenost")
@@ -306,8 +448,8 @@ private struct SetValueStepper: View {
         }
     }
 
-    private var increaseLabel: Text {
-        switch value.field {
+    var increaseLabel: Text {
+        switch field {
         case "reps": Text("Povećaj ponavljanja")
         case "duration": Text("Produlji trajanje")
         case "distance": Text("Povećaj udaljenost")
@@ -317,7 +459,8 @@ private struct SetValueStepper: View {
 }
 
 /// Kvačica za sljedeću seriju. Bez upisanih vrijednosti nema gumba: vrijednosti se upisuju s + ili u aplikaciji.
-/// Uz vrijednosti serije gumb je samo kvačica u krugu, da sve stane u jedan red.
+/// U Dynamic Islandu je uz vrijednosti serije samo kvačica u krugu, da sve stane u jedan red.
+/// Inače je široki gumb sa zaobljenim kutovima.
 private struct ConfirmSetButton: View {
     let state: RestTimerActivityAttributes.ContentState
     let isCompact: Bool
@@ -336,11 +479,16 @@ private struct ConfirmSetButton: View {
                 .tint(.accentColor)
             } else {
                 Button(intent: CompleteSetIntent(setID: setID)) {
+                    // Vlastita pozadina umjesto `.borderedProminent`: točna visina, da sve stane u 160 pt.
                     Label("Potvrdi seriju", systemImage: "checkmark")
                         .font(.subheadline.bold())
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity, minHeight: 32)
+                        .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.accentColor)
+                .buttonStyle(.plain)
             }
         }
     }
