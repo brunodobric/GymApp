@@ -69,8 +69,6 @@ struct HomeScreen: View {
                         .padding(.top, 4)
                 }
                 .padding()
-                // Zaobljeni SF Pro za naslove i brojeve na karticama.
-                .fontDesign(.rounded)
                 .frame(maxWidth: 700)
                 .frame(maxWidth: .infinity)
             }

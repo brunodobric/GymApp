@@ -168,6 +168,7 @@ private struct SessionRow: View {
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(session.name)
+                    .font(.itemTitle)
                 Text(session.startedAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)

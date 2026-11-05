@@ -40,7 +40,7 @@ struct WatchHomeView: View {
     private func planLink(_ plan: PlannedWorkoutPayload, subtitle: String?) -> some View {
         NavigationLink(value: plan) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(plan.name).font(.headline)
+                Text(plan.name).font(.itemTitle)
                 if let subtitle {
                     Text(subtitle).font(.footnote).foregroundStyle(.secondary)
                 }
@@ -69,7 +69,7 @@ struct WatchPlanView: View {
 
             ForEach(Array(plan.exercises.enumerated()), id: \.offset) { _, exercise in
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(exercise.exercise.name).font(.headline)
+                    Text(exercise.exercise.name).font(.itemTitle)
                     Text("Serije: \(exercise.sets.count)").font(.footnote).foregroundStyle(.secondary)
                 }
             }

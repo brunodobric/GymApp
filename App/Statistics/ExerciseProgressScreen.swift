@@ -127,6 +127,7 @@ struct ExerciseProgressScreen: View {
                         Spacer()
                         VStack(alignment: .trailing) {
                             Text(WeightFormatter(unit: unit).string(fromKilograms: point.bestWeightKg) + " × \(point.bestReps)")
+                                .font(.rowValue)
                             if let oneRepMax = point.estimatedOneRepMaxKg {
                                 Text("1RM ≈ \(WeightFormatter(unit: unit).string(fromKilograms: oneRepMax))")
                                     .font(.caption).foregroundStyle(.secondary)

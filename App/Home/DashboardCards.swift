@@ -35,7 +35,7 @@ struct HomeCard<Content: View>: View {
         VStack(alignment: .leading, spacing: 10) {
             // Naslov kartice je u boji svoje ikone (akcent iz Postavki).
             Label(title, systemImage: symbol)
-                .font(.subheadline.bold())
+                .font(.cardHeading)
                 .textCase(.uppercase)
                 .foregroundStyle(.tint)
             content
@@ -63,7 +63,7 @@ struct LastWorkoutCard: View {
         } label: {
             HomeCard(title: "Zadnji trening", symbol: session.kind.symbol) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(session.name).font(.title3.bold()).foregroundStyle(.primary)
+                    Text(session.name).font(.cardTitle).foregroundStyle(.primary)
                     Text(session.startedAt.formatted(date: .complete, time: .shortened))
                         .font(.subheadline).foregroundStyle(.secondary)
                     HStack {
@@ -112,7 +112,7 @@ struct NextWorkoutCard: View {
                 } label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(workout.template.name).font(.title3.bold()).foregroundStyle(.primary)
+                            Text(workout.template.name).font(.cardTitle).foregroundStyle(.primary)
                             Text(workout.schedule.name).font(.subheadline).foregroundStyle(.secondary)
                             Text(exercisesText(workout))
                                 .font(.subheadline).foregroundStyle(.secondary)
@@ -157,7 +157,7 @@ struct WeeklyVolumeCard: View {
 
     var body: some View {
         HomeCard(title: DashboardCardKind.weeklyVolume.title, symbol: DashboardCardKind.weeklyVolume.symbol) {
-            Text(text(thisWeekKg)).font(.title2.bold())
+            Text(text(thisWeekKg)).font(.metric)
             Text("Prošli tjedan: \(text(lastWeekKg))")
                 .font(.subheadline).foregroundStyle(.secondary)
         }

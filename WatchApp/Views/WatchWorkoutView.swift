@@ -54,7 +54,7 @@ struct WatchSetView: View {
     private func content(exercise: ExerciseSnapshot, set: SetSnapshot) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(exercise.exercise.name)
-                .font(.headline)
+                .font(.itemTitle)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
             Text(setLabel(exercise: exercise, set: set))
@@ -90,7 +90,7 @@ struct WatchSetView: View {
         ScrollView {
             VStack(spacing: 8) {
                 if let exercise = store.currentExercise {
-                    Text(exercise.exercise.name).font(.headline).multilineTextAlignment(.center)
+                    Text(exercise.exercise.name).font(.itemTitle).multilineTextAlignment(.center)
                 }
                 Text(store.showsFinishPrompt ? "Sve serije su gotove" : "Vježba je gotova")
                     .font(.footnote)

@@ -122,13 +122,12 @@ struct StatisticsCard<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title).font(.headline)
+            Text(title).font(.itemTitle)
             content
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.card))
-        .fontDesign(.rounded)
     }
 }
 
@@ -438,7 +437,7 @@ struct RecordRow: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
-            Text(RecordFormat.value(entry.record, unit: unit)).font(.headline)
+            Text(RecordFormat.value(entry.record, unit: unit)).font(.rowValue)
         }
         .accessibilityElement(children: .combine)
     }

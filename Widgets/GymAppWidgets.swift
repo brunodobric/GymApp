@@ -34,7 +34,7 @@ struct RestTimerLiveActivity: Widget {
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     RestCountdown(rest: rest)
-                        .font(.title2.bold().monospacedDigit())
+                        .font(.metric)
                         .multilineTextAlignment(.trailing)
                         .padding(.trailing, 4)
                 }
@@ -169,7 +169,7 @@ private struct LockScreenHeader: View {
                     Text("Sve serije su gotove")
                 }
             }
-            .font(.headline)
+            .font(.itemTitle)
             .multilineTextAlignment(.center)
             .lineLimit(2)
             .minimumScaleFactor(0.8)
@@ -187,7 +187,7 @@ private struct LockScreenHeader: View {
             .minimumScaleFactor(0.8)
             .frame(width: Self.sideWidth, alignment: .trailing)
         }
-        .font(.footnote.weight(.light))
+        .font(.footnote)
         .foregroundStyle(.secondary)
     }
 }
@@ -202,7 +202,7 @@ private struct PreviousSetLabel: View {
                 Image(systemName: "clock.arrow.circlepath")
                     .font(.caption)
                 Text(verbatim: text)
-                    .font(.subheadline.weight(.medium).monospacedDigit())
+                    .font(.rowValueSmall)
                     .lineLimit(2)
                     .minimumScaleFactor(0.7)
             }
@@ -227,7 +227,7 @@ private struct ConfirmOrRest: View {
         VStack(spacing: 4) {
             if case let .running(start, end) = rest {
                 Text(timerInterval: start...end, countsDown: true)
-                    .font(.headline.monospacedDigit())
+                    .font(.itemTitle.monospacedDigit())
                     .multilineTextAlignment(.center)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
@@ -293,7 +293,7 @@ private struct LargeSetValueStepper: View {
             .opacity(value.canDecrease ? 1 : 0.4)
 
             value.valueText
-                .font(.title3.bold().monospacedDigit())
+                .font(.metricSmall)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
                 .contentTransition(.numericText())
@@ -335,6 +335,7 @@ private struct WorkoutHeader: View {
         HStack(spacing: 8) {
             Label(workoutName, systemImage: "dumbbell.fill")
                 .fontWeight(.semibold)
+                .fontDesign(.rounded)
                 .lineLimit(1)
             Spacer(minLength: 8)
             if let startedAt {
@@ -357,7 +358,7 @@ private struct ExerciseLabel: View {
         VStack(alignment: .leading, spacing: 2) {
             if let name = state.exerciseName {
                 Text(name)
-                    .font(.headline)
+                    .font(.itemTitle)
                     .lineLimit(1)
                 Text("Serija \(state.setNumber) od \(state.setCount)")
                 .font(.subheadline)
@@ -365,7 +366,7 @@ private struct ExerciseLabel: View {
                 .lineLimit(1)
             } else {
                 Text("Sve serije su gotove")
-                    .font(.headline)
+                    .font(.itemTitle)
                 Text("\(state.completedSets) od \(state.totalSets) serija")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -403,7 +404,7 @@ private struct RestCountdown: View {
                 .accessibilityLabel(Text("Preostali odmor"))
         case .finished:
             Text("Odmor gotov")
-                .font(.headline)
+                .font(.itemTitle)
         case .none:
             EmptyView()
         }
@@ -461,7 +462,7 @@ private struct SetValueStepper: View {
             .disabled(!value.canDecrease)
 
             value.valueText
-                .font(.headline.monospacedDigit())
+                .font(.itemTitle.monospacedDigit())
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
                 .contentTransition(.numericText())
@@ -524,11 +525,13 @@ private struct CompactTrailing: View {
         case let .running(start, end):
             Text(timerInterval: start...end, countsDown: true)
                 .monospacedDigit()
+                .fontDesign(.rounded)
                 .frame(maxWidth: 44)
         default:
             if state.exerciseName != nil {
                 Text("\(state.setNumber)/\(state.setCount)")
                     .monospacedDigit()
+                    .fontDesign(.rounded)
                     .accessibilityLabel(Text("Serija \(state.setNumber) od \(state.setCount)"))
             } else {
                 Image(systemName: "checkmark")

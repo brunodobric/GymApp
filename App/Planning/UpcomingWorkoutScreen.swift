@@ -61,7 +61,7 @@ struct UpcomingWorkoutScreen: View {
     @ViewBuilder
     private func cardioContent(for planned: PlannedWorkout) -> some View {
         Section {
-            Text(planned.template.name).font(.headline)
+            Text(planned.template.name).font(.itemTitle)
             Text("\(schedule.name), ciklus \(planned.cycle)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -90,7 +90,7 @@ struct UpcomingWorkoutScreen: View {
     @ViewBuilder
     private func strengthContent(for planned: PlannedWorkout) -> some View {
         Section {
-            Text(planned.template.name).font(.headline)
+            Text(planned.template.name).font(.itemTitle)
             Text("\(schedule.name), ciklus \(planned.cycle)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
