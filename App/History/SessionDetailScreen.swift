@@ -1,11 +1,14 @@
 import Catalog
 import Models
+import Planning
 import SwiftData
 import SwiftUI
 import Stats
+import Training
 import Units
 
-/// Detalji odrađenog treninga: sve vježbe, sve serije po vježbi i bilješke na dnu. Trening se može obrisati.
+/// Detalji odrađenog treninga: sve vježbe, sve serije po vježbi i bilješke na dnu. Trening se može obrisati,
+/// urediti ili poslužiti kao početak novog treninga (predloška) s istim vježbama i serijama.
 struct SessionDetailScreen: View {
     let session: Session
     let unit: WeightUnit
@@ -14,6 +17,10 @@ struct SessionDetailScreen: View {
     @Environment(\.dismiss) private var dismiss
     @State private var confirmsDelete = false
     @State private var errorText: String?
+    @State private var editDraft: SessionEditDraft?
+    @State private var newTemplate: WorkoutTemplate?
+    /// Predložak koji se briše tek kad se list zatvori, da uređivač ne prikazuje obrisan objekt.
+    @State private var discardedTemplate: WorkoutTemplate?
 
     /// Kalorije i puls su u lokalnoj bazi podataka iz Zdravlja.
     private var health: HealthLocalStore { HealthLocalStore(context: context) }
@@ -62,6 +69,23 @@ struct SessionDetailScreen: View {
             ToolbarItem(placement: .destructiveAction) {
                 Button("Obriši", systemImage: "trash", role: .destructive) { confirmsDelete = true }
             }
+            // Trening iz Zdravlja nema svoje serije: ne uređuje se ovdje.
+            if !session.isImportedFromWorkoutsApp && session.modelContext != nil {
+                ToolbarItem(placement: .primaryAction) {
+                    Menu("Više", systemImage: "ellipsis.circle") {
+                        Button("Uredi trening", systemImage: "pencil") { startEditing() }
+                        Button("Novi trening iz ovog", systemImage: "plus.square.on.square") { createTemplate() }
+                            .disabled(session.orderedExercises.isEmpty)
+                    }
+                }
+            }
+        }
+        .sheet(item: $editDraft) { draft in
+            SessionEditorScreen(session: draft.session, editor: SessionEditor(context: draft.context))
+                .environment(\.modelContext, draft.context)
+        }
+        .sheet(item: $newTemplate, onDismiss: discardTemplateIfNeeded) { template in
+            NewTemplateFromSessionSheet(template: template) { discardedTemplate = template }
         }
         .confirmationDialog("Obrisati trening?", isPresented: $confirmsDelete, titleVisibility: .visible) {
             Button("Obriši trening", role: .destructive) { delete() }
@@ -83,6 +107,28 @@ struct SessionDetailScreen: View {
         return (working.firstIndex { $0.id == set.id } ?? fallback) + 1
     }
 
+    private func startEditing() {
+        guard let draft = SessionEditDraft(of: session, in: context.container) else {
+            errorText = String(localized: "Trening se ne može urediti.")
+            return
+        }
+        editDraft = draft
+    }
+
+    private func createTemplate() {
+        do {
+            newTemplate = try TemplateEngine(context: context).createTemplate(from: session)
+        } catch {
+            errorText = String(localized: "Trening se nije mogao stvoriti.")
+        }
+    }
+
+    private func discardTemplateIfNeeded() {
+        guard let template = discardedTemplate else { return }
+        discardedTemplate = nil
+        try? TemplateEngine(context: context).delete(template)
+    }
+
     private func delete() {
         do {
             try HistoryQueries(context: context).delete(session)
@@ -90,6 +136,34 @@ struct SessionDetailScreen: View {
         } catch {
             errorText = String(localized: "Trening se nije mogao obrisati.")
         }
+    }
+}
+
+/// Novi trening (predložak) stvoren iz odrađenog treninga, otvoren u uređivaču. Već je spremljen,
+/// pa "Odustani" briše predložak (nakon zatvaranja lista), a "Spremi" ga zadržava u Rasporedima pod Treninzima.
+private struct NewTemplateFromSessionSheet: View {
+    let template: WorkoutTemplate
+    let onCancel: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            TemplateEditorScreen(template: template)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Odustani") {
+                            onCancel()
+                            dismiss()
+                        }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Spremi") { dismiss() }
+                    }
+                }
+        }
+        // Povlačenje lista ne smije ostaviti nejasno je li trening spremljen.
+        .interactiveDismissDisabled()
     }
 }
 
