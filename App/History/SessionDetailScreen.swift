@@ -68,6 +68,7 @@ struct SessionDetailScreen: View {
         .toolbar {
             ToolbarItem(placement: .destructiveAction) {
                 Button("Obriši", systemImage: "trash", role: .destructive) { confirmsDelete = true }
+                    .tint(.red)
             }
             // Trening iz Zdravlja nema svoje serije: ne uređuje se ovdje.
             if !session.isImportedFromWorkoutsApp && session.modelContext != nil {

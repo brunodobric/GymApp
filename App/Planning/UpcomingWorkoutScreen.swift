@@ -115,6 +115,7 @@ struct UpcomingWorkoutScreen: View {
                 }
                 .swipeActions {
                     Button("Izbaci", systemImage: "minus.circle", role: .destructive) { remove(exercise, from: planned) }
+                        .tint(.red)
                     Button("Zamijeni", systemImage: "arrow.left.arrow.right") { replacing = exercise }
                         .tint(.indigo)
                 }
