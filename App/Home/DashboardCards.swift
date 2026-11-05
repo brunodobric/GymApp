@@ -92,6 +92,7 @@ struct PlateCalculatorCard: View {
     }
 }
 
+/// Sljedeći trening svakog aktivnog rasporeda. Dodir na trening otvara njegov pregled.
 struct NextWorkoutCard: View {
     let planned: [PlannedWorkout]
 
@@ -101,13 +102,27 @@ struct NextWorkoutCard: View {
                 Text("Nema aktivnog rasporeda. Raspored složiš u tabu Rasporedi.")
                     .font(.subheadline).foregroundStyle(.secondary)
             }
+            // Dodir otvara pregled sljedećeg treninga, isto kao u tabu Rasporedi.
             ForEach(planned, id: \.item.id) { workout in
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(workout.template.name).font(.title3.bold())
-                    Text(workout.schedule.name).font(.subheadline).foregroundStyle(.secondary)
-                    Text(exercisesText(workout))
-                        .font(.subheadline).foregroundStyle(.secondary)
+                NavigationLink {
+                    UpcomingWorkoutScreen(schedule: workout.schedule)
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(workout.template.name).font(.title3.bold()).foregroundStyle(.primary)
+                            Text(workout.schedule.name).font(.subheadline).foregroundStyle(.secondary)
+                            Text(exercisesText(workout))
+                                .font(.subheadline).foregroundStyle(.secondary)
+                        }
+                        Spacer(minLength: 8)
+                        Image(systemName: "chevron.right")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                            .accessibilityHidden(true)
+                    }
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
             }
         }
     }
