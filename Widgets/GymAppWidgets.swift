@@ -214,26 +214,34 @@ private struct PreviousSetLabel: View {
     }
 }
 
-/// Desno: za vrijeme odmora odbrojavanje, inače velika zelena kvačica (kao na ekranu treninga).
-/// Kad odmor istekne, sadržaj zastari (`staleDate`) i sustav ga iscrta ponovno, pa se kvačica vraća sama.
+/// Desno: velika zelena kvačica (kao na ekranu treninga), a za vrijeme odmora iznad nje odbrojavanje.
+///
+/// Kvačica je tu i za vrijeme odmora jer Live Activity ne može sama sebe promijeniti točno kad odmor istekne:
+/// bez aplikacije u prvom planu (ili poslužitelja za push) sustav je iscrta ponovno tek kad mu odgovara, pa bi
+/// do tada stajalo "0:00" bez gumba. Kad je iscrta ponovno (`staleDate`), ostaje samo velika kvačica.
 private struct ConfirmOrRest: View {
     let state: RestTimerActivityAttributes.ContentState
     let rest: RestState
 
     var body: some View {
-        if case let .running(start, end) = rest {
-            Text(timerInterval: start...end, countsDown: true)
-                .font(.title2.bold().monospacedDigit())
-                .multilineTextAlignment(.center)
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .accessibilityLabel(Text("Preostali odmor"))
-        } else if let setID = state.nextSetID, state.canConfirm {
-            Button(intent: CompleteSetIntent(setID: setID)) {
-                GreenCheckmark()
+        VStack(spacing: 4) {
+            if case let .running(start, end) = rest {
+                Text(timerInterval: start...end, countsDown: true)
+                    .font(.headline.monospacedDigit())
+                    .multilineTextAlignment(.center)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityLabel(Text("Preostali odmor"))
             }
-            .buttonStyle(.plain)
+            if let setID = state.nextSetID, state.canConfirm {
+                Button(intent: CompleteSetIntent(setID: setID)) {
+                    GreenCheckmark()
+                }
+                .buttonStyle(.plain)
+            } else {
+                Spacer(minLength: 0)
+            }
         }
     }
 }
