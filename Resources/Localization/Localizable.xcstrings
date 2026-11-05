@@ -4158,6 +4158,16 @@
         }
       }
     },
+    "Pomažu: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assisting: %@"
+          }
+        }
+      }
+    },
     "Ponavljanja" : {
       "localizations" : {
         "en" : {
@@ -5748,12 +5758,12 @@
         }
       }
     },
-    "Tamnije: glavni mišići. Svjetlije: pomoćni mišići." : {
+    "Tamnija boja znači više serija. Pomoćna serija broji se kao pola." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Darker: primary muscles. Lighter: secondary muscles."
+            "value" : "Darker color means more sets. An assisting set counts as half."
           }
         }
       }

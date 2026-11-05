@@ -408,31 +408,59 @@ struct SessionRegionsTests {
         let session = try addSession(context, at: base, lifts: [Lift(ref: bench, sets: [Work(weight: 80, reps: 5)])])
         let regions = SessionRegions.worked(in: session, info: infoProvider)
         #expect(regions["chest"]?.intensity == 1)
-        #expect(regions["triceps"]?.intensity == SessionRegions.secondaryIntensity)
+        #expect(regions["triceps"]?.intensity == SessionRegions.secondaryWeight)
         #expect(regions["quads"] == nil)
     }
 
-    @Test("Primarna regija druge vježbe nadjača sekundarnu, a warm-up i nezavršene serije se ne broje")
-    func primaryWinsAndWarmupIgnored() throws {
+    @Test("Intenzitet raste s brojem serija, a pomoćne serije broje se upola")
+    func intensityBySets() throws {
         let context = try makeContext()
         let session = try addSession(context, at: base, lifts: [
-            Lift(ref: bench, sets: [Work(weight: 80, reps: 5)]),
-            Lift(ref: squat, sets: [Work(weight: 100, reps: 5, kind: .warmUp)])
+            Lift(ref: bench, sets: [Work(weight: 80, reps: 5), Work(weight: 80, reps: 5)]),
+            Lift(ref: squat, sets: [
+                Work(weight: 100, reps: 5), Work(weight: 100, reps: 5),
+                Work(weight: 100, reps: 5), Work(weight: 100, reps: 5)
+            ])
         ])
-        let first = SessionRegions.worked(in: session, info: infoProvider)
-        #expect(first["quads"] == nil && first["glutes"] == nil)
+        let sets = SessionRegions.sets(in: session, info: infoProvider)
+        #expect(sets.map(\.region) == ["quads", "chest", "glutes", "triceps"])
+        #expect(sets.first == RegionSets(region: "quads", primarySets: 4, volumeKg: 2000))
+        #expect(sets.last == RegionSets(region: "triceps", secondarySets: 2, volumeKg: 400))
 
-        let curl = ExerciseRef(catalogId: "squat", name: "Čučanj")
-        let both = try addSession(context, at: base, lifts: [
-            Lift(ref: bench, sets: [Work(weight: 80, reps: 5)]),
-            Lift(ref: curl, sets: [Work(weight: 100, reps: 5)])
+        let heatmap = SessionRegions.heatmap(sets)
+        #expect(heatmap["quads"]?.intensity == 1)
+        #expect(heatmap["chest"]?.intensity == 0.5)
+        #expect(heatmap["glutes"]?.intensity == 0.5)
+        #expect(heatmap["triceps"]?.intensity == 0.25)
+    }
+
+    @Test("Serije iste regije iz više vježbi se zbrajaju, glavne i pomoćne odvojeno")
+    func setsAddUpAcrossExercises() throws {
+        let context = try makeContext()
+        let session = try addSession(context, at: base, lifts: [
+            Lift(ref: bench, sets: [Work(weight: 80, reps: 5), Work(weight: 80, reps: 5)]),
+            Lift(ref: squat, sets: [Work(weight: 100, reps: 5)])
         ])
-        let regions = SessionRegions.worked(in: both, info: { key in
+        let sets = SessionRegions.sets(in: session, info: { key in
             key == "c:squat"
-                ? ExerciseInfo(primaryRegions: ["triceps"])
+                ? ExerciseInfo(primaryRegions: ["triceps"], secondaryRegions: ["chest", "triceps"])
                 : infoProvider(key)
         })
-        #expect(regions["triceps"]?.intensity == 1)
+        #expect(sets.first { $0.region == "chest" }?.primarySets == 2)
+        #expect(sets.first { $0.region == "chest" }?.secondarySets == 1)
+        // Regija koja je u vježbi i glavna i pomoćna broji se samo kao glavna.
+        #expect(sets.first { $0.region == "triceps" }?.primarySets == 1)
+        #expect(sets.first { $0.region == "triceps" }?.secondarySets == 2)
+    }
+
+    @Test("Warm-up i nezavršene vježbe se ne broje, a trening bez serija nema heatmap")
+    func warmupIgnored() throws {
+        let context = try makeContext()
+        let session = try addSession(context, at: base, lifts: [
+            Lift(ref: squat, sets: [Work(weight: 100, reps: 5, kind: .warmUp)])
+        ])
+        #expect(SessionRegions.sets(in: session, info: infoProvider).isEmpty)
+        #expect(SessionRegions.worked(in: session, info: infoProvider).isEmpty)
     }
 }
 

@@ -7,7 +7,7 @@ import Stats
 import Training
 import Units
 
-/// Detalji odrađenog treninga: sve vježbe, sve serije po vježbi i bilješke na dnu. Trening se može obrisati,
+/// Detalji odrađenog treninga: sve vježbe, sve serije po vježbi, bilješke i na dnu mapa mišića. Trening se može obrisati,
 /// urediti ili poslužiti kao početak novog treninga (predloška) s istim vježbama i serijama.
 struct SessionDetailScreen: View {
     let session: Session
@@ -62,6 +62,8 @@ struct SessionDetailScreen: View {
                     Text(session.notes)
                 }
             }
+            // Mapa mišića je na dnu, ispod serija i bilješki.
+            SessionMusclesSection(session: session)
         }
         .navigationTitle(session.name)
         .navigationBarTitleDisplayMode(.inline)
