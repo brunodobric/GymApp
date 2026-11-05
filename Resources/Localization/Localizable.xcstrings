@@ -6058,16 +6058,6 @@
         }
       }
     },
-    "Trening je u tijeku" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Workout in progress"
-          }
-        }
-      }
-    },
     "Trening nije pronađen" : {
       "localizations" : {
         "en" : {
@@ -6194,6 +6184,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "iPhone is leading the workout"
+          }
+        }
+      }
+    },
+    "Trening vodi sat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout led by Apple Watch"
           }
         }
       }

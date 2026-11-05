@@ -121,9 +121,13 @@ private struct CardRowButtonStyle: ButtonStyle {
     }
 }
 
-/// Trening u tijeku sažet u karticu na Početnoj, s istim sadržajem kao Live Activity: vježba i serija,
-/// odbrojavanje odmora, vrijednosti sljedeće serije s gumbima − i + te kvačica za potvrdu.
+/// Trening u tijeku sažet u karticu na Početnoj, s istim rasporedom kao Live Activity:
+/// * gore lijevo trajanje treninga, u sredini naziv vježbe, desno broj serije (npr. "2/3");
+/// * ispod lijevo ista serija u prethodnom treningu, u sredini težina i ponavljanja s − i +,
+///   desno velika zelena kvačica, a za vrijeme odmora umjesto nje odbrojavanje;
+/// * cijela pozadina je traka odmora koja se prazni kako odmor teče.
 ///
+/// Za razliku od Live Activityja, aplikacija zna točan trenutak kraja odmora, pa kvačica iskoči odmah na 0:00.
 /// Gumbi rade isto što i gumbi u Live Activityju (`LiveActivityActions`), pa se promjena sprema, šalje satu
 /// i prikazuje na zaključanom zaslonu. Dodir izvan gumba otvara cijeli ekran treninga, a povlačenje tog ekrana
 /// prema dolje sažima ga natrag u karticu (zoom prijelaz u `HomeScreen`).
@@ -133,38 +137,44 @@ struct ActiveWorkoutCard: View {
     let onOpen: () -> Void
 
     @Environment(\.modelContext) private var context
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var restFinished = false
     @State private var confirmedCount = 0
 
     var body: some View {
         let engine = WorkoutEngine(context: context)
         let status = liveStatus(engine)
-        let values = engine.nextSet(in: session).flatMap { set in
+        let next = engine.nextSet(in: session)
+        let values = next.flatMap { set in
             set.exercise.map { LiveSetEditor.values(of: set, inputType: $0.inputType, unit: unit) }
         } ?? []
+        let rest = restFinished ? nil : status.rest
 
-        VStack(alignment: .leading, spacing: 12) {
-            header
-            HStack(alignment: .top) {
-                exerciseLabel(status)
-                Spacer(minLength: 12)
-                restCountdown(status.rest)
-                    .font(.title.bold().monospacedDigit())
-                    .multilineTextAlignment(.trailing)
-            }
-            if let rest = status.rest, !restFinished {
-                ProgressView(timerInterval: rest.startedAt...rest.endsAt, countsDown: true) {
-                    EmptyView()
-                } currentValueLabel: {
-                    EmptyView()
-                }
-            }
+        VStack(spacing: 12) {
+            header(status)
             if let setID = status.nextSetID, !values.isEmpty {
-                setRow(setID: setID, values: values, canConfirm: status.canConfirmNextSet)
+                setRow(setID: setID, values: values, previous: next.flatMap(previousText), canConfirm: status.canConfirmNextSet, rest: rest)
+            } else {
+                Group {
+                    if status.totalSets > 0 {
+                        Text("\(status.completedSets) od \(status.totalSets) serija")
+                    } else {
+                        Text("Dodaj vježbu")
+                    }
+                }
+                .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity)
         .padding()
+        .background {
+            if let rest {
+                RestDrainBackground(rest: rest)
+                    .clipShape(.rect(cornerRadius: 16))
+            }
+        }
         .workoutCardBackground()
         .contentShape(.rect(cornerRadius: 16))
         .onTapGesture(perform: onOpen)
@@ -172,6 +182,7 @@ struct ActiveWorkoutCard: View {
         .accessibilityAction(named: Text("Nastavi trening"), onOpen)
         .accessibilityIdentifier("home.activeWorkout")
         .sensoryFeedback(.success, trigger: confirmedCount)
+        .animation(.default, value: restFinished)
         .task(id: status.rest?.endsAt) { await watchRestEnd(status.rest) }
     }
 
@@ -181,83 +192,100 @@ struct ActiveWorkoutCard: View {
         return engine.liveStatus(of: session)
     }
 
-    /// Trening koji vodi sat ima ikonu sata, kao natpis na ekranu treninga.
-    private var symbol: String {
-        session.controllingDevice == .watch ? "applewatch" : "figure.strengthtraining.traditional"
+    /// Ista serija u prethodnom treningu, u dva reda ("30 kg" / "12 ×").
+    private func previousText(_ set: SetLog) -> String? {
+        guard let exercise = set.exercise else { return nil }
+        let last = try? GymQueries(context: context).lastPerformance(of: exercise.exercise)
+        let previous = last?.orderedSets.filter(\.isCompleted).map(\.values) ?? []
+        return LiveSetEditor.previousText(of: set, inputType: exercise.inputType, previous: previous, unit: unit)
     }
 
-    private var header: some View {
-        HStack {
-            Label("Trening je u tijeku", systemImage: symbol)
-                .font(.headline)
-            Spacer(minLength: 8)
-            Text(session.startedAt, style: .timer)
-                .font(.subheadline.monospacedDigit())
-                .foregroundStyle(.secondary)
-                .accessibilityLabel(Text("Trajanje treninga"))
-            Image(systemName: "arrow.up.left.and.arrow.down.right")
-                .font(.footnote.bold())
-                .foregroundStyle(.tertiary)
-                .accessibilityHidden(true)
-        }
-    }
-
-    @ViewBuilder
-    private func exerciseLabel(_ status: LiveWorkoutStatus) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            if let name = status.currentExerciseName {
-                Text(name)
-                    .font(.title3.bold())
-                    .lineLimit(2)
-                Text("Serija \(status.setNumber) od \(status.setCount)")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                if let next = status.nextExerciseName {
-                    Text("Sljedeće: \(next)")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
+    /// Trajanje lijevo, naziv vježbe u sredini, broj serije desno. Trening koji vodi sat ima ikonu sata.
+    private func header(_ status: LiveWorkoutStatus) -> some View {
+        HStack(alignment: .center, spacing: 8) {
+            HStack(spacing: 4) {
+                if session.controllingDevice == .watch {
+                    Image(systemName: "applewatch")
+                        .accessibilityLabel(Text("Trening vodi sat"))
                 }
-            } else if status.totalSets > 0 {
-                Text("Sve serije su gotove")
-                    .font(.title3.bold())
-                Text("\(status.completedSets) od \(status.totalSets) serija")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                Text(session.startedAt, style: .timer)
+                    .monospacedDigit()
+                    .accessibilityLabel(Text("Trajanje treninga"))
+            }
+            .frame(minWidth: 64, alignment: .leading)
+
+            Group {
+                if let name = status.currentExerciseName {
+                    Text(name)
+                } else if status.totalSets > 0 {
+                    Text("Sve serije su gotove")
+                } else {
+                    Text(session.name)
+                }
+            }
+            .font(.headline)
+            .multilineTextAlignment(.center)
+            .lineLimit(2)
+            .frame(maxWidth: .infinity)
+
+            Group {
+                if status.currentExerciseName != nil {
+                    Text("\(status.setNumber)/\(status.setCount)")
+                        .accessibilityLabel(Text("Serija \(status.setNumber) od \(status.setCount)"))
+                } else {
+                    Text(verbatim: "")
+                }
+            }
+            .frame(minWidth: 64, alignment: .trailing)
+        }
+        .font(.footnote.weight(.light))
+        .foregroundStyle(.secondary)
+    }
+
+    /// Prošli trening, vrijednosti i kvačica u jednom redu, a uz veliki tekst jedno ispod drugoga.
+    private func setRow(setID: UUID, values: [LiveSetValue], previous: String?, canConfirm: Bool, rest: RestTimer?) -> some View {
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(spacing: 10) {
+                    steppers(setID: setID, values: values)
+                    HStack {
+                        previousLabel(previous)
+                        Spacer(minLength: 8)
+                        confirmOrRest(setID: setID, canConfirm: canConfirm, rest: rest)
+                            .frame(width: 88, height: 64)
+                    }
+                }
             } else {
-                Text(session.name)
-                    .font(.title3.bold())
-                Text("Dodaj vježbu")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 10) {
+                    previousLabel(previous)
+                        .frame(width: 70, alignment: .leading)
+                    VStack(spacing: 6) {
+                        steppers(setID: setID, values: values)
+                    }
+                    .frame(maxWidth: .infinity)
+                    confirmOrRest(setID: setID, canConfirm: canConfirm, rest: rest)
+                        .frame(width: 68)
+                        .frame(maxHeight: .infinity)
+                }
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
 
     @ViewBuilder
-    private func restCountdown(_ rest: RestTimer?) -> some View {
-        if let rest {
-            if restFinished {
-                Text("Odmor gotov").font(.headline)
-            } else {
-                Text(timerInterval: rest.startedAt...rest.endsAt, countsDown: true)
-                    .accessibilityLabel(Text("Preostali odmor"))
+    private func previousLabel(_ text: String?) -> some View {
+        if let text {
+            VStack(alignment: .leading, spacing: 2) {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.caption)
+                Text(verbatim: text)
+                    .font(.subheadline.weight(.medium).monospacedDigit())
             }
-        }
-    }
-
-    /// Vrijednosti serije i kvačica u jednom redu, a uz veliki tekst jedna ispod druge.
-    private func setRow(setID: UUID, values: [LiveSetValue], canConfirm: Bool) -> some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 12) {
-                steppers(setID: setID, values: values)
-                Spacer(minLength: 0)
-                confirmButton(setID: setID, canConfirm: canConfirm)
-            }
-            VStack(alignment: .leading, spacing: 10) {
-                steppers(setID: setID, values: values)
-                confirmButton(setID: setID, canConfirm: canConfirm)
-            }
+            .foregroundStyle(.secondary)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text("Prošli put \(text)"))
+        } else {
+            Color.clear
         }
     }
 
@@ -269,25 +297,39 @@ struct ActiveWorkoutCard: View {
         }
     }
 
-    /// Kao u Live Activityju: bez upisanih vrijednosti nema kvačice, vrijednosti se upisuju s + ili na ekranu treninga.
+    /// Za vrijeme odmora odbrojavanje, a čim istekne velika zelena kvačica (kao na ekranu treninga).
+    /// Bez upisanih vrijednosti nema kvačice: vrijednosti se upisuju s + ili na ekranu treninga.
     @ViewBuilder
-    private func confirmButton(setID: UUID, canConfirm: Bool) -> some View {
-        if canConfirm {
+    private func confirmOrRest(setID: UUID, canConfirm: Bool, rest: RestTimer?) -> some View {
+        if let rest {
+            Text(timerInterval: rest.startedAt...rest.endsAt, countsDown: true)
+                .font(.title2.bold().monospacedDigit())
+                .multilineTextAlignment(.center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityLabel(Text("Preostali odmor"))
+                .transition(.opacity)
+        } else if canConfirm {
             Button {
                 confirmedCount += 1
                 Task { await LiveActivityActions.completeSet(id: setID.uuidString) }
             } label: {
-                Label("Potvrdi seriju", systemImage: "checkmark")
-                    .labelStyle(.iconOnly)
-                    .font(.title3.bold())
-                    .padding(6)
+                Image(systemName: "checkmark")
+                    .font(.title.weight(.bold))
+                    .foregroundStyle(Color.green)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(minHeight: 52)
+                    .background(Color.green.opacity(0.14), in: .rect(cornerRadius: 14))
+                    .contentShape(.rect)
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.circle)
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("Potvrdi seriju"))
+            .transition(.scale.combined(with: .opacity))
         }
     }
 
-    /// Kad odmor istekne, umjesto odbrojavanja piše "Odmor gotov" (kao u Live Activityju).
+    /// Kad odmor istekne, odbrojavanje i obojena pozadina nestaju, a pojavi se kvačica.
     private func watchRestEnd(_ rest: RestTimer?) async {
         guard let rest else {
             restFinished = false
@@ -301,32 +343,53 @@ struct ActiveWorkoutCard: View {
     }
 }
 
+/// Pozadina kartice kao traka odmora: obojeni dio se s desna na lijevo smanjuje kako odmor teče.
+private struct RestDrainBackground: View {
+    let rest: RestTimer
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 0.1)) { context in
+            let total = max(rest.endsAt.timeIntervalSince(rest.startedAt), 1)
+            let fraction = min(max(rest.endsAt.timeIntervalSince(context.date) / total, 0), 1)
+            GeometryReader { proxy in
+                Rectangle()
+                    .fill(.tint.opacity(0.25))
+                    .frame(width: proxy.size.width * fraction)
+            }
+        }
+        .accessibilityHidden(true)
+    }
+}
+
 /// Vrijednost serije između gumba − i +. Jedan dodir je jedan korak, isti kao u Live Activityju.
 private struct SetValueStepper: View {
     let value: LiveSetValue
     let onStep: (Int) -> Void
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 4) {
             Button { onStep(-1) } label: {
-                Image(systemName: "minus")
+                StepSymbol(systemName: "minus")
                     .accessibilityLabel(decreaseLabel)
             }
             .disabled(!value.canDecrease)
 
             valueText
-                .font(.headline.monospacedDigit())
+                .font(.title3.bold().monospacedDigit())
                 .lineLimit(1)
+                .minimumScaleFactor(0.7)
                 .contentTransition(.numericText())
+                .frame(maxWidth: .infinity)
 
             Button { onStep(1) } label: {
-                Image(systemName: "plus")
+                StepSymbol(systemName: "plus")
                     .accessibilityLabel(increaseLabel)
             }
             .disabled(!value.canIncrease)
         }
-        .buttonStyle(.bordered)
-        .buttonBorderShape(.circle)
+        .buttonStyle(.plain)
+        .padding(3)
+        .background(Color.primary.opacity(0.08), in: .rect(cornerRadius: 12))
     }
 
     @ViewBuilder
@@ -360,5 +423,21 @@ private struct SetValueStepper: View {
         case .distance: Text("Povećaj udaljenost")
         case .weight, .extraWeight: Text("Povećaj težinu")
         }
+    }
+}
+
+/// Gumb − ili + u zaobljenom kvadratu, isti kao u Live Activityju.
+private struct StepSymbol: View {
+    let systemName: String
+    @Environment(\.isEnabled) private var isEnabled
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.body.bold())
+            .foregroundStyle(.tint)
+            .frame(width: 42, height: 34)
+            .background(.tint.opacity(0.18), in: .rect(cornerRadius: 9))
+            .opacity(isEnabled ? 1 : 0.4)
+            .contentShape(.rect)
     }
 }
