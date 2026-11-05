@@ -182,7 +182,8 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Klik na trening otvara detalje:
      * Sve vježbe
      * Sve serije po vježbi
-     * Bilješke na dnu
+     * Bilješke
+     * Na dnu mapa mišića (tijelo sprijeda i straga) obojena prema broju završenih radnih serija po mišiću, uz popis glavnih mišića s brojem serija. Serija u kojoj mišić samo pomaže broji se kao pola. Isti prikaz ima sažetak nakon treninga. Trening bez serija (npr. uvezen iz Zdravlja) nema mapu.
    * Moguće je izbrisati trening.
    * U detaljima gore desno, uz brisanje, izbornik s dvije opcije:
      * **Uredi trening:** naknadno mijenjanje naziva, početka i kraja, vježbi, serija i bilješki. Izmjene se spremaju tek na "Spremi", a "Odustani" ih odbacuje. Kao kod završetka treninga, serije bez kvačice i vježbe bez završene serije se ne spremaju. Izmjene se ne prenose u Zdravlje.

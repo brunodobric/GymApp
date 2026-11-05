@@ -13,11 +13,6 @@ struct WorkoutSummarySheet: View {
     let onClose: () -> Void
 
     @Environment(\.modelContext) private var context
-    @Environment(CatalogStore.self) private var catalogStore
-    @Query private var customExercises: [CustomExercise]
-    @Query private var settingsList: [UserSettings]
-    private var bodyMapFemale: Bool { UserSettings.preferred(in: settingsList)?.bodyMapFemale ?? false }
-    @State private var bodyMapSelection: String?
     @State private var notes: String
     @State private var heartRateText: String
 
@@ -34,17 +29,6 @@ struct WorkoutSummarySheet: View {
         session.orderedExercises.contains { $0.inputType == .durationDistance || $0.inputType == .duration }
     }
 
-    /// Regije koje je ovaj trening opteretio (primarne jače, sekundarne slabije).
-    private var workedRegions: [String: RegionLoad] {
-        let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
-        return SessionRegions.worked(in: session, info: info)
-    }
-
-    private var workedRegionNames: String {
-        workedRegions.filter { $0.value.intensity >= 1 }.keys.sorted()
-            .map { BodyRegion.title($0) }.joined(separator: ", ")
-    }
-
     var body: some View {
         NavigationStack {
             Form {
@@ -56,20 +40,7 @@ struct WorkoutSummarySheet: View {
                         LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
                     }
                 }
-                if !workedRegions.isEmpty {
-                    Section("Mišići u ovom treningu") {
-                        HStack(alignment: .top, spacing: 8) {
-                            BodyFigureView(female: bodyMapFemale, back: false, heatmap: workedRegions, selected: $bodyMapSelection)
-                            BodyFigureView(female: bodyMapFemale, back: true, heatmap: workedRegions, selected: $bodyMapSelection)
-                        }
-                        .frame(maxHeight: 300)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(Text("Prikaz tijela. Rađeno: \(workedRegionNames)"))
-                        Text(workedRegionNames).font(.subheadline)
-                        Text("Tamnije: glavni mišići. Svjetlije: pomoćni mišići.")
-                            .font(.footnote).foregroundStyle(.secondary)
-                    }
-                }
+                SessionMusclesSection(session: session)
                 Section("Osobni rekordi") {
                     if summary.records.isEmpty {
                         Text("Danas nema novih rekorda.")
