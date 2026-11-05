@@ -4,7 +4,9 @@ import SwiftUI
 import Training
 import Units
 
-/// Jedan redak serije: oznaka, veliki brojevi s prošlim putem ispod njih i velika kvačica desno.
+/// Jedan redak tablice serija: oznaka, prošli put (i napor ispod njega), polja u stupcima i velika kvačica desno.
+/// Stupci su iste širine u svim retcima i u zaglavlju (`SetTableHeader`), pa su brojevi poravnati.
+/// Kod najvećih veličina teksta redak prelazi u okomiti raspored bez stupaca.
 /// Završena serija se zasivi, a kvačica ostaje zelena.
 /// Polja drže vlastiti tekst. Izmjena ide u model (i u bazu) kad korisnik potvrdi kotačić ili tipka u polje.
 /// Težina i ponavljanja se biraju kotačićem (`WheelInputField`), trajanje i udaljenost tipkovnicom.
@@ -35,7 +37,7 @@ struct SetRow: View {
     @State private var syncedTexts: [Field: String] = [:]
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.colorSchemeContrast) private var contrast
-    @ScaledMetric(relativeTo: .title2) private var completeButtonWidth: CGFloat = 64
+    private var metrics = SetTableMetrics()
 
     init(
         set: SetLog, inputType: ExerciseInputType, position: Int, previousText: String?, suggestion: SetValues?,
@@ -108,7 +110,7 @@ struct SetRow: View {
         self.set.rpe != nil || isHighlighted || !set.isCompleted
     }
 
-    /// Lijevi dio retka: oznaka, veliki brojevi i ispod njih prošli put i napor.
+    /// Lijevi dio retka: oznaka, prošli put s naporom ispod i polja u stupcima.
     @ViewBuilder
     private var content: some View {
         if dynamicTypeSize.isAccessibilitySize {
@@ -120,13 +122,15 @@ struct SetRow: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         } else {
-            HStack(spacing: 10) {
+            HStack(spacing: metrics.columnSpacing) {
                 kindBadge
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 6) { fields }
-                    infoLine
+                    .frame(width: metrics.badge)
+                VStack(alignment: .leading, spacing: 4) {
+                    previousValue
+                    if showsEffort { effortMenu }
                 }
-                Spacer(minLength: 0)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                tableFields
             }
         }
     }
@@ -174,11 +178,7 @@ struct SetRow: View {
     private var fields: some View {
         switch inputType {
         case .weightReps:
-            WheelInputField.weight(
-                "Težina", hint: unit.symbol, text: $weightText, unit: unit, fallback: weightFallback,
-                longPress: ("Kalkulator ploča", { showsPlates = true })
-            )
-            .onChange(of: weightText) { _, new in userChanged(.weight, new, apply: applyWeight) }
+            mainWeightField
             timesSign
             repsField
         case .bodyweight:
@@ -192,10 +192,10 @@ struct SetRow: View {
             timesSign
             repsField
         case .duration:
-            field("Trajanje", "m:ss", $duration, key: .duration, keyboard: .numbersAndPunctuation) { applyDuration() }
+            durationField
         case .durationDistance:
-            field("Trajanje", "m:ss", $duration, key: .duration, keyboard: .numbersAndPunctuation) { applyDuration() }
-            field("Udaljenost", "km", $distance, key: .distance) { applyDistance() }
+            durationField
+            distanceField
         }
     }
 
@@ -343,6 +343,62 @@ struct SetRow: View {
     }
 }
 
+// MARK: Stupci tablice
+
+extension SetRow {
+    /// Prošli put u svom stupcu tablice, bez ikone (stupac ima naslov u zaglavlju).
+    @ViewBuilder
+    private var previousValue: some View {
+        if let previousText {
+            Text(verbatim: previousText)
+                .font(.subheadline.weight(.medium).monospacedDigit())
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .accessibilityLabel(Text("Prošli put \(previousText)"))
+        }
+    }
+
+    /// Polja u stupcima fiksne širine, bez znaka × (stupci imaju naslove u zaglavlju).
+    @ViewBuilder
+    private var tableFields: some View {
+        switch inputType {
+        case .weightReps:
+            mainWeightField.environment(\.setFieldWidth, metrics.wideField)
+            repsField.environment(\.setFieldWidth, metrics.narrowField)
+        case .bodyweight:
+            repsField.environment(\.setFieldWidth, metrics.narrowField)
+        case .weightedBodyweight:
+            weightField("Dodatna težina", "+\(unit.symbol)").environment(\.setFieldWidth, metrics.wideField)
+            repsField.environment(\.setFieldWidth, metrics.narrowField)
+        case .assisted:
+            weightField("Pomoć", "−\(unit.symbol)").environment(\.setFieldWidth, metrics.wideField)
+            repsField.environment(\.setFieldWidth, metrics.narrowField)
+        case .duration:
+            durationField.environment(\.setFieldWidth, metrics.wideField)
+        case .durationDistance:
+            durationField.environment(\.setFieldWidth, metrics.wideField)
+            distanceField.environment(\.setFieldWidth, metrics.wideField)
+        }
+    }
+
+    private var mainWeightField: some View {
+        WheelInputField.weight(
+            "Težina", hint: unit.symbol, text: $weightText, unit: unit, fallback: weightFallback,
+            longPress: ("Kalkulator ploča", { showsPlates = true })
+        )
+        .onChange(of: weightText) { _, new in userChanged(.weight, new, apply: applyWeight) }
+    }
+
+    private var durationField: some View {
+        field("Trajanje", "m:ss", $duration, key: .duration, keyboard: .numbersAndPunctuation) { applyDuration() }
+    }
+
+    private var distanceField: some View {
+        field("Udaljenost", "km", $distance, key: .distance) { applyDistance() }
+    }
+}
+
 // MARK: Kotačić za težinu i ponavljanja
 
 extension SetRow {
@@ -386,7 +442,7 @@ extension SetRow {
             Image(systemName: "checkmark")
                 .font(.title2.weight(.bold))
                 .foregroundStyle(set.isCompleted ? Color.white : Color.green)
-                .frame(minWidth: completeButtonWidth, maxHeight: .infinity)
+                .frame(minWidth: metrics.check, maxHeight: .infinity)
                 .frame(minHeight: 52)
                 .background(
                     set.isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(Color.green.opacity(0.14)),
@@ -402,5 +458,69 @@ extension SetRow {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(set.isCompleted ? Text("Poništi završetak serije") : Text("Označi seriju završenom"))
+    }
+}
+
+// MARK: Zaglavlje tablice
+
+/// Naslovi stupaca iznad serija vježbe, iste širine kao stupci u `SetRow`.
+/// Kod najvećih veličina teksta retci nemaju stupce, pa se zaglavlje ne prikazuje.
+struct SetTableHeader: View {
+    let inputType: ExerciseInputType
+    let unit: WeightUnit
+    /// U uređivaču odrađenog treninga nema prošlog puta, pa stupac ostaje bez naslova.
+    var showsPrevious = true
+
+    private var metrics = SetTableMetrics()
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    init(inputType: ExerciseInputType, unit: WeightUnit, showsPrevious: Bool = true) {
+        self.inputType = inputType
+        self.unit = unit
+        self.showsPrevious = showsPrevious
+    }
+
+    var body: some View {
+        if !dynamicTypeSize.isAccessibilitySize {
+            HStack(spacing: 12) {
+                HStack(spacing: metrics.columnSpacing) {
+                    Text("Ser.")
+                        .frame(width: metrics.badge)
+                    Group {
+                        if showsPrevious { Text("Prošli put") } else { Color.clear.frame(height: 1) }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
+                        column.title
+                            .frame(width: column.width)
+                    }
+                }
+                Color.clear.frame(width: metrics.check, height: 1)
+            }
+            .font(.caption.bold())
+            .textCase(.uppercase)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+            .accessibilityHidden(true)
+        }
+    }
+
+    private var columns: [(title: Text, width: CGFloat)] {
+        let reps = (title: Text("Pon."), width: metrics.narrowField)
+        switch inputType {
+        case .weightReps:
+            return [(Text(verbatim: unit.symbol), metrics.wideField), reps]
+        case .bodyweight:
+            return [reps]
+        case .weightedBodyweight:
+            return [(Text(verbatim: "+\(unit.symbol)"), metrics.wideField), reps]
+        case .assisted:
+            return [(Text(verbatim: "−\(unit.symbol)"), metrics.wideField), reps]
+        case .duration:
+            return [(Text("Vrijeme"), metrics.wideField)]
+        case .durationDistance:
+            return [(Text("Vrijeme"), metrics.wideField), (Text(verbatim: "km"), metrics.wideField)]
+        }
     }
 }

@@ -29,6 +29,9 @@ struct ExerciseCard: View {
         header
             .padding(.vertical, 6)
         if isOpen && !isEditing {
+            if !exercise.orderedSets.isEmpty {
+                SetTableHeader(inputType: exercise.inputType, unit: unit)
+            }
             ForEach(rows, id: \.set.id) { row in
                 SetRow(
                     set: row.set, inputType: exercise.inputType, position: row.position,

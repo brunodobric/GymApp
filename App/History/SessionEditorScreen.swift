@@ -128,6 +128,9 @@ struct SessionEditorScreen: View {
     @ViewBuilder
     private func exerciseRows(_ exercise: SessionExercise) -> some View {
         let sets = exercise.orderedSets.filter { !$0.isDeleted }
+        if !sets.isEmpty {
+            SetTableHeader(inputType: exercise.inputType, unit: unit, showsPrevious: false)
+        }
         ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
             SetRow(
                 set: set, inputType: exercise.inputType, position: position(of: index, in: sets),

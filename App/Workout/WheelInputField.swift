@@ -22,12 +22,14 @@ struct WheelInputField: View {
     var showsUnit = false
 
     @State private var isPresented = false
+    /// U tablici serija jedinica piše u zaglavlju stupca, pa se uz broj ne ponavlja.
+    @Environment(\.setFieldWidth) private var columnWidth
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 3) {
             Text(verbatim: text.isEmpty ? hint : text)
                 .foregroundStyle(text.isEmpty ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary))
-            if showsUnit && !text.isEmpty {
+            if showsUnit && columnWidth == nil && !text.isEmpty {
                 Text(verbatim: hint)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
