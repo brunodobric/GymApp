@@ -35,13 +35,8 @@ struct ScheduleEditorScreen: View {
         }
         .navigationTitle(schedule.name.isEmpty ? String(localized: "Raspored") : schedule.name)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Treninzi", systemImage: "sidebar.trailing") { showsTemplates.toggle() }
-                    .keyboardShortcut("k", modifiers: .command)
-            }
-            ToolbarItem(placement: .primaryAction) { EditButton() }
-        }
+        // Ploča s treninzima otvara se samo gumbom Odaberi više treninga (i ⌘K), a zatvara gumbom Zatvori.
+        .toolbar { EditButton() }
         .planningPanel(isPresented: $showsTemplates, minWidth: 280, idealWidth: 320, maxWidth: 420) {
             TemplateListPanel(isPresented: $showsTemplates) { insert($0, at: nil) }
         }
@@ -126,6 +121,7 @@ struct ScheduleEditorScreen: View {
                     Button("Novi trening", systemImage: "dumbbell") { addNewWorkout() }
                 }
                 Button("Odaberi više treninga", systemImage: "checklist") { showsTemplates = true }
+                    .keyboardShortcut("k", modifiers: .command)
                     // Puštena na gumb (i u praznom nizu) stavka ide na kraj.
                     .dropDestination(for: String.self) { payloads, _ in
                         let dropped = droppedTemplates(payloads)

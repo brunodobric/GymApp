@@ -7,8 +7,9 @@ import Units
 
 /// Uređivač treninga (predloška): vježbe, redoslijed, supersetovi, ciljane serije i pauze.
 ///
-/// Vježbe se dodaju iz kataloga u bočnoj ploči (inspector): na iPadu stoji uz popis, pa se vježbe mogu
-/// odabrati više odjednom ili povući na željeno mjesto u popisu. Na iPhoneu se ploča otvara kao list.
+/// Vježbe se dodaju iz kataloga u bočnoj ploči (inspector), koja se otvara gumbom Dodaj vježbe: na iPadu
+/// stoji uz popis, pa se vježbe mogu odabrati više odjednom ili povući na željeno mjesto u popisu. Na iPhoneu
+/// se ploča otvara kao list.
 struct TemplateEditorScreen: View {
     @Bindable var template: WorkoutTemplate
 
@@ -42,6 +43,7 @@ struct TemplateEditorScreen: View {
                     add(catalogStore.choices(from: payloads, custom: customExercises), at: index)
                 }
                 Button("Dodaj vježbe", systemImage: "plus") { showsCatalog = true }
+                    .keyboardShortcut("k", modifiers: .command)
                     // Puštena na gumb (i u praznom treningu) vježba ide na kraj.
                     .dropDestination(for: String.self) { payloads, _ in
                         let choices = catalogStore.choices(from: payloads, custom: customExercises)
@@ -52,13 +54,8 @@ struct TemplateEditorScreen: View {
         }
         .navigationTitle(template.name.isEmpty ? String(localized: "Trening") : template.name)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Katalog", systemImage: "sidebar.trailing") { showsCatalog.toggle() }
-                    .keyboardShortcut("k", modifiers: .command)
-            }
-            ToolbarItem(placement: .primaryAction) { EditButton() }
-        }
+        // Katalog se otvara samo gumbom Dodaj vježbe (i ⌘K), a zatvara gumbom Zatvori u ploči.
+        .toolbar { EditButton() }
         .navigationDestination(for: TemplateExercise.self) { TemplateExerciseEditor(exercise: $0) }
         .planningPanel(isPresented: $showsCatalog, minWidth: 300, idealWidth: 360, maxWidth: 480) {
             ExerciseCatalogPanel(isPresented: $showsCatalog) { add($0, at: nil) }
