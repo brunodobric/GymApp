@@ -1,9 +1,11 @@
 import ActivityKit
+import Connectivity
 import Foundation
 import Models
 import OSLog
 import SwiftData
 import Training
+import Units
 
 /// Sve što aktivni trening pokazuje izvan aplikacije (specifikacija, odjeljak 6): Live Activity na zaključanom
 /// zaslonu i u Dynamic Islandu te obavijest o kraju odmora.
@@ -51,7 +53,7 @@ final class WorkoutLiveUpdates {
 
         scheduleRestNotification(session: session, status: status, settings: settings)
         if let session, let status {
-            await show(session: session, status: status)
+            await show(session: session, status: status, unit: settings?.weightUnit ?? .kilograms)
         } else {
             await endAll()
         }
@@ -83,9 +85,9 @@ final class WorkoutLiveUpdates {
 
     // MARK: Live Activity
 
-    private func show(session: Session, status: LiveWorkoutStatus) async {
+    private func show(session: Session, status: LiveWorkoutStatus, unit: WeightUnit) async {
         let sessionID = session.id.uuidString
-        let state = Self.contentState(session: session, status: status)
+        let state = Self.contentState(session: session, status: status, setValues: setValues(in: session, unit: unit))
         let now = Date()
         // Kad odmor istekne, sadržaj zastari i widget umjesto odbrojavanja piše da je odmor gotov.
         let staleDate = status.rest.flatMap { $0.endsAt > now ? $0.endsAt : nil }
@@ -126,7 +128,25 @@ final class WorkoutLiveUpdates {
         }
     }
 
-    private static func contentState(session: Session, status: LiveWorkoutStatus) -> RestTimerActivityAttributes.ContentState {
+    /// Vrijednosti serije koju gumb potvrđuje, formatirane za widget (koji ne ovisi o GymKitu).
+    private func setValues(in session: Session, unit: WeightUnit) -> [RestTimerActivityAttributes.SetValue] {
+        guard let set = WorkoutEngine(context: context).nextSet(in: session), let exercise = set.exercise else { return [] }
+        return LiveSetEditor.values(of: set, inputType: exercise.inputType, unit: unit).map { value in
+            RestTimerActivityAttributes.SetValue(
+                field: value.field.rawValue,
+                text: value.text,
+                unitSymbol: value.unitSymbol,
+                canDecrease: value.canDecrease,
+                canIncrease: value.canIncrease
+            )
+        }
+    }
+
+    private static func contentState(
+        session: Session,
+        status: LiveWorkoutStatus,
+        setValues: [RestTimerActivityAttributes.SetValue]
+    ) -> RestTimerActivityAttributes.ContentState {
         RestTimerActivityAttributes.ContentState(
             exerciseName: status.currentExerciseName,
             nextExerciseName: status.nextExerciseName,
@@ -135,6 +155,7 @@ final class WorkoutLiveUpdates {
             completedSets: status.completedSets,
             totalSets: status.totalSets,
             nextSetID: status.nextSetID?.uuidString,
+            setValues: setValues,
             canConfirm: status.canConfirmNextSet,
             restStartedAt: status.rest?.startedAt,
             restEndsAt: status.rest?.endsAt,

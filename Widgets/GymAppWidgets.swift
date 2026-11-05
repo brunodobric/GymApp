@@ -34,12 +34,14 @@ struct RestTimerLiveActivity: Widget {
                         .padding(.trailing, 4)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 8) {
                         RestProgress(rest: rest)
-                        HStack {
-                            NextExerciseLabel(state: state)
-                            Spacer()
-                            ConfirmSetButton(state: state)
+                        NextSetRow(state: state)
+                        if !state.setValues.isEmpty, let next = state.nextExerciseName {
+                            Text("Sljedeće: \(next)")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
                         }
                     }
                     .padding(.horizontal, 4)
@@ -95,18 +97,14 @@ private struct LockScreenView: View {
         let rest = RestState(state: state, isStale: isStale)
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top) {
-                ExerciseLabel(state: state)
+                ExerciseLabel(state: state, showsNextExercise: true)
                 Spacer(minLength: 12)
                 RestCountdown(rest: rest)
                     .font(.title.bold().monospacedDigit())
                     .multilineTextAlignment(.trailing)
             }
             RestProgress(rest: rest)
-            HStack(alignment: .center) {
-                NextExerciseLabel(state: state)
-                Spacer(minLength: 12)
-                ConfirmSetButton(state: state)
-            }
+            NextSetRow(state: state)
         }
         .padding()
     }
@@ -116,6 +114,8 @@ private struct LockScreenView: View {
 
 private struct ExerciseLabel: View {
     let state: RestTimerActivityAttributes.ContentState
+    /// Na zaključanom zaslonu sljedeća vježba ide uz broj serije, jer donji red zauzimaju vrijednosti serije.
+    var showsNextExercise = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -123,9 +123,16 @@ private struct ExerciseLabel: View {
                 Text(name)
                     .font(.headline)
                     .lineLimit(1)
-                Text("Serija \(state.setNumber) od \(state.setCount)")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                Group {
+                    if showsNextExercise, !state.setValues.isEmpty, let next = state.nextExerciseName {
+                        Text("\(Text("Serija \(state.setNumber) od \(state.setCount)")) · \(Text("Sljedeće: \(next)"))")
+                    } else {
+                        Text("Serija \(state.setNumber) od \(state.setCount)")
+                    }
+                }
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
             } else {
                 Text("Sve serije su gotove")
                     .font(.headline)
@@ -188,18 +195,119 @@ private struct RestProgress: View {
     }
 }
 
-/// Kvačica za sljedeću seriju. Bez upisanih vrijednosti nema gumba: dodir na Live Activity otvara aplikaciju.
-private struct ConfirmSetButton: View {
+/// Donji red: vrijednosti sljedeće serije s gumbima − i + te kvačica koja je potvrđuje.
+/// Kad serije nema (sve je gotovo), umjesto vrijednosti piše stanje treninga.
+private struct NextSetRow: View {
     let state: RestTimerActivityAttributes.ContentState
 
     var body: some View {
-        if let setID = state.nextSetID, state.canConfirm {
-            Button(intent: CompleteSetIntent(setID: setID)) {
-                Label("Potvrdi seriju", systemImage: "checkmark")
-                    .font(.subheadline.bold())
+        HStack(alignment: .center, spacing: 12) {
+            if let setID = state.nextSetID, !state.setValues.isEmpty {
+                ForEach(state.setValues, id: \.field) { value in
+                    SetValueStepper(setID: setID, value: value)
+                }
+                Spacer(minLength: 0)
+                ConfirmSetButton(state: state, isCompact: true)
+            } else {
+                NextExerciseLabel(state: state)
+                Spacer(minLength: 12)
+                ConfirmSetButton(state: state, isCompact: false)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(.accentColor)
+        }
+    }
+}
+
+/// Vrijednost serije između gumba − i +. Jedan dodir je jedan korak (kao klik Digital Crowna na satu).
+private struct SetValueStepper: View {
+    let setID: String
+    let value: RestTimerActivityAttributes.SetValue
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Button(intent: AdjustSetValueIntent(setID: setID, field: value.field, steps: -1)) {
+                Image(systemName: "minus")
+                    .accessibilityLabel(decreaseLabel)
+            }
+            .disabled(!value.canDecrease)
+
+            valueText
+                .font(.headline.monospacedDigit())
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .contentTransition(.numericText())
+
+            Button(intent: AdjustSetValueIntent(setID: setID, field: value.field, steps: 1)) {
+                Image(systemName: "plus")
+                    .accessibilityLabel(increaseLabel)
+            }
+            .disabled(!value.canIncrease)
+        }
+        .buttonStyle(.bordered)
+        .buttonBorderShape(.circle)
+        .controlSize(.small)
+        .tint(.accentColor)
+    }
+
+    @ViewBuilder
+    private var valueText: some View {
+        if value.field == "reps" {
+            if let reps = Int(value.text) {
+                Text("\(reps) pon.")
+            } else {
+                Text("– pon.")
+            }
+        } else if value.unitSymbol.isEmpty {
+            Text(verbatim: value.text)
+        } else {
+            Text(verbatim: "\(value.text) \(value.unitSymbol)")
+        }
+    }
+
+    private var decreaseLabel: Text {
+        switch value.field {
+        case "reps": Text("Smanji ponavljanja")
+        case "duration": Text("Skrati trajanje")
+        case "distance": Text("Smanji udaljenost")
+        default: Text("Smanji težinu")
+        }
+    }
+
+    private var increaseLabel: Text {
+        switch value.field {
+        case "reps": Text("Povećaj ponavljanja")
+        case "duration": Text("Produlji trajanje")
+        case "distance": Text("Povećaj udaljenost")
+        default: Text("Povećaj težinu")
+        }
+    }
+}
+
+/// Kvačica za sljedeću seriju. Bez upisanih vrijednosti nema gumba: vrijednosti se upisuju s + ili u aplikaciji.
+/// Uz vrijednosti serije gumb je samo kvačica u krugu, da sve stane u jedan red.
+private struct ConfirmSetButton: View {
+    let state: RestTimerActivityAttributes.ContentState
+    let isCompact: Bool
+
+    var body: some View {
+        if let setID = state.nextSetID, state.canConfirm {
+            if isCompact {
+                Button(intent: CompleteSetIntent(setID: setID)) {
+                    Label("Potvrdi seriju", systemImage: "checkmark")
+                        .labelStyle(.iconOnly)
+                        .font(.headline.bold())
+                        .padding(4)
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.circle)
+                .tint(.accentColor)
+            } else {
+                Button(intent: CompleteSetIntent(setID: setID)) {
+                    Label("Potvrdi seriju", systemImage: "checkmark")
+                        .font(.subheadline.bold())
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
+            }
         }
     }
 }

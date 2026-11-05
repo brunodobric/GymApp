@@ -5,6 +5,18 @@ import Foundation
 /// Dijele ih aplikacija (pokreće, ažurira i gasi) i widget extension (prikazuje).
 /// Widget ne ovisi o GymKitu, pa su ovdje samo jednostavne vrijednosti koje aplikacija složi.
 struct RestTimerActivityAttributes: ActivityAttributes {
+    /// Jedna vrijednost sljedeće serije (težina, ponavljanja, trajanje ili udaljenost), već formatirana.
+    struct SetValue: Codable, Hashable {
+        /// `WatchSetField.rawValue`, šalje se natrag u `AdjustSetValueIntent`.
+        var field: String
+        /// Broj bez jedinice, npr. "82,5", "8", "1:30". "–" kad nije upisan.
+        var text: String
+        /// "kg", "lbs" ili "m". Prazno za ponavljanja i trajanje.
+        var unitSymbol: String
+        var canDecrease: Bool
+        var canIncrease: Bool
+    }
+
     struct ContentState: Codable, Hashable {
         /// Vježba sljedeće serije. `nil` kad su sve serije završene.
         var exerciseName: String?
@@ -16,6 +28,8 @@ struct RestTimerActivityAttributes: ActivityAttributes {
         var totalSets: Int
         /// Serija koju potvrđuje gumb (UUID kao tekst). `nil` kad nema što potvrditi.
         var nextSetID: String?
+        /// Vrijednosti serije koju gumb potvrđuje, s gumbima − i +. Prazno kad nema sljedeće serije.
+        var setValues: [SetValue]
         /// Serija ima sve vrijednosti. Bez njih gumb se ne prikazuje, a dodir otvara aplikaciju.
         var canConfirm: Bool
         /// Odmor u tijeku. `nil` kad odmora nema.
