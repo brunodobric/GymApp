@@ -88,7 +88,7 @@ struct SessionDetailScreen: View {
         .sheet(item: $newTemplate, onDismiss: discardTemplateIfNeeded) { template in
             NewTemplateFromSessionSheet(template: template) { discardedTemplate = template }
         }
-        .confirmationDialog("Obrisati trening?", isPresented: $confirmsDelete, titleVisibility: .visible) {
+        .alert("Obrisati trening?", isPresented: $confirmsDelete) {
             Button("Obriši trening", role: .destructive) { delete() }
             Button("Odustani", role: .cancel) {}
         } message: {
