@@ -137,10 +137,15 @@ public struct SessionEditor {
     /// Osvježava trening u kontekstu koji ga već drži (npr. glavni kontekst detalja treninga) nakon spremanja
     /// uređivača. Kontekst inače i dalje prikazuje stare vrijednosti, iako su izmjene u bazi, sve dok se
     /// trening ponovno ne dohvati. Dohvaćaju se trening, njegove vježbe i serije, da se osvježe svi objekti.
+    /// Upiti su po id-u, bez lanaca relacija: `exercise?.session?.id` neke verzije Core Date ne znaju prevesti u SQL.
     public static func refresh(sessionId id: UUID, in context: ModelContext) {
-        _ = try? context.fetch(FetchDescriptor<Session>(predicate: #Predicate { $0.id == id }))
-        _ = try? context.fetch(FetchDescriptor<SessionExercise>(predicate: #Predicate { $0.session?.id == id }))
-        _ = try? context.fetch(FetchDescriptor<SetLog>(predicate: #Predicate { $0.exercise?.session?.id == id }))
+        let sessions = (try? context.fetch(FetchDescriptor<Session>(predicate: #Predicate { $0.id == id }))) ?? []
+        let exerciseIds = sessions.flatMap { $0.exercises ?? [] }.map(\.id)
+        let exercises = (try? context.fetch(FetchDescriptor<SessionExercise>(
+            predicate: #Predicate { exerciseIds.contains($0.id) }
+        ))) ?? []
+        let setIds = exercises.flatMap { $0.sets ?? [] }.map(\.id)
+        _ = try? context.fetch(FetchDescriptor<SetLog>(predicate: #Predicate { setIds.contains($0.id) }))
     }
 
     /// Serija dodana naknadno dobiva trenutak kraja treninga (kao da je odrađena prije njega).
