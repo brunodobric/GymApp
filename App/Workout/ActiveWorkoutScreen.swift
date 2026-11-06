@@ -14,9 +14,12 @@ struct ActiveWorkoutScreen: View {
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(CatalogStore.self) private var catalogStore
 
     // Postavke iz upita, a ne zapamćeni objekt: nakon sinkronizacije duplikat postavki može biti obrisan.
     @Query private var settingsList: [UserSettings]
+    /// Za fotografije vlastitih vježbi u sličicama.
+    @Query private var customExercises: [CustomExercise]
     private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
     @State private var previousSets: [UUID: [SetValues]] = [:]
     @State private var openExerciseID: UUID?
@@ -177,6 +180,7 @@ struct ActiveWorkoutScreen: View {
     private func card(for exercise: SessionExercise) -> some View {
         ExerciseCard(
             exercise: exercise,
+            thumbnail: catalogStore.thumbnail(for: exercise.exercise.source, customExercises: customExercises),
             isOpen: isOpen(exercise),
             isEditing: editMode.isEditing,
             highlightedSetID: highlightedSetID(for: exercise),

@@ -71,7 +71,7 @@ struct ExercisesScreen: View {
         } else {
             List(results) { summary in
                 NavigationLink(value: summary) {
-                    ExerciseRow(summary: summary)
+                    ExerciseRow(summary: summary, thumbnail: thumbnail(for: summary))
                 }
                 .openInWindowMenu(DetailWindow.exercise, value: summary.id)
             }
@@ -95,13 +95,7 @@ struct ExercisesScreen: View {
     }
 
     private func thumbnail(for summary: ExerciseSummary) -> ExerciseThumbnail.Source? {
-        switch summary.source {
-        case .catalog:
-            return catalogStore.thumbnail(for: summary)
-        case .custom(let id):
-            guard let data = customExercises.first(where: { $0.id == id })?.imageData else { return nil }
-            return .data(key: id.uuidString, data)
-        }
+        catalogStore.thumbnail(for: summary.source, customExercises: customExercises)
     }
 }
 
@@ -143,8 +137,16 @@ private struct ExerciseGridCell: View {
 
 private struct ExerciseRow: View {
     let summary: ExerciseSummary
+    let thumbnail: ExerciseThumbnail.Source?
 
     var body: some View {
+        HStack(spacing: 12) {
+            ExerciseRowThumbnail(source: thumbnail)
+            texts
+        }
+    }
+
+    private var texts: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(summary.name)
             HStack(spacing: 4) {
