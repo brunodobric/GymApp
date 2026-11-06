@@ -23,6 +23,8 @@ struct ExerciseCard: View {
     let onRemove: () -> Void
     let onSuperset: () -> Void
     let onLeaveSuperset: () -> Void
+    /// Otvara stranicu vježbe (animacija i upute). Nil kad vježba nije u katalogu ni među vlastitima.
+    let onShowInfo: (() -> Void)?
 
     /// Svaki dio je svoj redak u listi (sekcija vježbe), da se serija može obrisati povlačenjem ulijevo.
     var body: some View {
@@ -76,6 +78,13 @@ struct ExerciseCard: View {
             }
             .buttonStyle(.plain)
             .accessibilityHint(Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu"))
+
+            if !isEditing, let onShowInfo {
+                Button("Upute za vježbu", systemImage: "info.circle", action: onShowInfo)
+                    .labelStyle(.iconOnly)
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel(Text("Upute: \(exercise.exerciseName)"))
+            }
 
             if !isEditing {
                 Menu("Više", systemImage: "ellipsis.circle") {

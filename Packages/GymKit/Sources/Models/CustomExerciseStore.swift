@@ -26,6 +26,16 @@ extension ExerciseSummary {
     }
 }
 
+extension ExerciseRef {
+    /// Vježba na koju referenca upućuje, za otvaranje stranice s uputama.
+    /// Nil kad referenca nema ni katalog ni vlastitu vježbu (samo naziv).
+    public var source: ExerciseSummary.Source? {
+        if let catalogId { return .catalog(id: catalogId) }
+        if let customExerciseId { return .custom(id: customExerciseId) }
+        return nil
+    }
+}
+
 public enum CustomExerciseStore {
 
     public enum RemovalResult: Equatable, Sendable {

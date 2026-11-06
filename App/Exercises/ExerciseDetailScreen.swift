@@ -4,14 +4,27 @@ import SwiftData
 import SwiftUI
 
 /// Pronalazi vježbu za odabrani redak: službenu u katalogu ili vlastitu u bazi.
+///
+/// Iz aktivnog treninga se otvara samo za čitanje (`allowsRemoving: false`): vlastita vježba se tamo
+/// može urediti (npr. dopisati opis), ali ne i ukloniti.
 struct ExerciseDetailScreen: View {
-    let summary: ExerciseSummary
+    let source: ExerciseSummary.Source
+    var allowsRemoving = true
 
     @Environment(CatalogStore.self) private var catalogStore
     @Query private var customExercises: [CustomExercise]
 
+    init(summary: ExerciseSummary) {
+        self.source = summary.source
+    }
+
+    init(source: ExerciseSummary.Source, allowsRemoving: Bool = true) {
+        self.source = source
+        self.allowsRemoving = allowsRemoving
+    }
+
     var body: some View {
-        switch summary.source {
+        switch source {
         case .catalog(let id):
             if let exercise = catalogStore.catalog?.exercise(withID: id) {
                 CatalogExerciseDetail(exercise: exercise)
@@ -20,7 +33,7 @@ struct ExerciseDetailScreen: View {
             }
         case .custom(let id):
             if let exercise = customExercises.first(where: { $0.id == id }) {
-                CustomExerciseDetail(exercise: exercise)
+                CustomExerciseDetail(exercise: exercise, allowsRemoving: allowsRemoving)
             } else {
                 missing
             }
@@ -102,6 +115,7 @@ private struct CatalogExerciseDetail: View {
 
 private struct CustomExerciseDetail: View {
     let exercise: CustomExercise
+    let allowsRemoving: Bool
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -133,6 +147,13 @@ private struct CustomExerciseDetail: View {
 
             if !exercise.details.isEmpty {
                 Section("Opis") { Text(exercise.details) }
+            } else if exercise.imageData == nil {
+                // Vlastita vježba bez slike i opisa: stranica ne ostaje prazna, nego kaže kako je dopuniti.
+                Section {
+                    Button("Dodaj opis i sliku", systemImage: "square.and.pencil") { showsEditor = true }
+                } footer: {
+                    Text("Ovo je tvoja vježba, pa nema animaciju iz kataloga.")
+                }
             }
 
             Section("Detalji") {
@@ -152,11 +173,15 @@ private struct CustomExerciseDetail: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Menu("Više", systemImage: "ellipsis.circle") {
-                    Button("Uredi", systemImage: "pencil") { showsEditor = true }
-                    Button("Ukloni", systemImage: "trash", role: .destructive) {
-                        showsRemoveConfirmation = true
+                if allowsRemoving {
+                    Menu("Više", systemImage: "ellipsis.circle") {
+                        Button("Uredi", systemImage: "pencil") { showsEditor = true }
+                        Button("Ukloni", systemImage: "trash", role: .destructive) {
+                            showsRemoveConfirmation = true
+                        }
                     }
+                } else {
+                    Button("Uredi") { showsEditor = true }
                 }
             }
         }

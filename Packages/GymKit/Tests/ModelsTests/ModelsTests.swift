@@ -311,6 +311,17 @@ struct CustomExerciseTests {
         #expect(summary.ref.customExerciseId == exercise.id)
         #expect(summary.ref.key == "u:\(exercise.id.uuidString)")
     }
+
+    @Test("Referenca vodi na vježbu iz kataloga ili na vlastitu vježbu")
+    func refSource() {
+        let id = UUID()
+        #expect(ExerciseRef(catalogId: "bench-press", name: "Bench").source == .catalog(id: "bench-press"))
+        #expect(ExerciseRef(customExerciseId: id, name: "Moja").source == .custom(id: id))
+        #expect(ExerciseRef(catalogId: nil, customExerciseId: nil, name: "Uvezena").source == nil)
+
+        let exercise = CustomExercise(name: "Povlačenje užeta")
+        #expect(exercise.summary.ref.source == exercise.summary.source)
+    }
 }
 
 @Suite("Kartice na Početnoj")
