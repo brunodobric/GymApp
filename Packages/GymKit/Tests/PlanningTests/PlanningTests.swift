@@ -574,7 +574,7 @@ struct ProgramTests {
         #expect(push.orderedExercises.count == 5)
         #expect(push.orderedExercises[0].orderedSets.count == 4)
         #expect(push.orderedExercises[0].orderedSets.allSatisfy { $0.targetReps == 6 })
-        #expect(push.orderedExercises[0].exerciseName == "Vježba Barbell_Bench_Press_-_Medium_Grip")
+        #expect(push.orderedExercises[0].exerciseName == "Vježba barbell-bench-press")
     }
 
     @Test("Nazivi rasporeda i treninga na jeziku sučelja")

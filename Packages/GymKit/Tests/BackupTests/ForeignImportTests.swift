@@ -289,7 +289,7 @@ struct ForeignWorkoutImportTests {
         #expect(again.alreadyImported == 53)
         #expect(try ForeignWorkoutImport.apply(again, into: context) == BackupImportResult(added: 0, skipped: 53))
         #expect(try context.fetchCount(FetchDescriptor<Session>()) == 53)
-        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 1)
+        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 2)
 
         // Novija datoteka s jednim novim treningom na vrhu dodaje samo njega, i to u drugoj vremenskoj zoni.
         let newer = """
@@ -305,7 +305,7 @@ struct ForeignWorkoutImportTests {
         #expect(update.exercises.map(\.target.isNewCustom) == [false], "postojeća vlastita vježba se ponovno koristi")
         try ForeignWorkoutImport.apply(update, into: context)
         #expect(try context.fetchCount(FetchDescriptor<Session>()) == 54)
-        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 1)
+        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 2)
     }
 
     @Test("Trening koji se u datoteci ponavlja uvozi se jednom")
@@ -336,8 +336,9 @@ struct ForeignWorkoutImportTests {
         )
         let rows = try #require(preview.exercises.first { $0.sourceName == "Rows with Wide Neutral Grip" })
         #expect(rows.target == .existingCustom(id: mine.id, name: "rows with wide neutral grip"))
-        #expect(preview.newCustomCount == 0)
+        // Druga vježba bez para u katalogu (Skull Crushers with Rope) je i dalje nova.
+        #expect(preview.newCustomCount == 1)
         try ForeignWorkoutImport.apply(preview, into: context)
-        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 1)
+        #expect(try context.fetchCount(FetchDescriptor<CustomExercise>()) == 2)
     }
 }
