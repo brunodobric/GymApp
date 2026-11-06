@@ -14,6 +14,7 @@ struct ActiveWorkoutScreen: View {
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(CatalogStore.self) private var catalogStore
 
     // Postavke iz upita, a ne zapamćeni objekt: nakon sinkronizacije duplikat postavki može biti obrisan.
@@ -41,6 +42,9 @@ struct ActiveWorkoutScreen: View {
     @State private var lastUndo: UndoAction?
     @State private var errorText: String?
     @State private var completedCount = 0
+    /// Broj završenih serija koje je ekran već vidio. Serija potvrđena izvan ekrana (Live Activity, sat)
+    /// poveća stvarni broj, pa ekran prijeđe na sljedeću vježbu kao da je kvačica pritisnuta ovdje.
+    @State private var seenCompletedSets: Int?
     @State private var errorCount = 0
     /// Trening se zatvara s ovog ekrana (a ne sa sata).
     @State private var isClosingHere = false
@@ -50,6 +54,7 @@ struct ActiveWorkoutScreen: View {
     private var visible: [SessionExercise] { session.orderedExercises.filter { !$0.isRemoved } }
     /// Trening vodi sat: ovdje se zrcali, a izmjene idu na sat.
     private var isLedByWatch: Bool { session.controllingDevice == .watch }
+    private var completedSetCount: Int { visible.reduce(0) { $0 + $1.orderedSets.filter(\.isCompleted).count } }
 
     var body: some View {
         NavigationStack {
@@ -91,6 +96,11 @@ struct ActiveWorkoutScreen: View {
             .onChange(of: session.lastActivityAt) {
                 if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
                 WorkoutLiveUpdates.shared.refresh()
+            }
+            .onChange(of: completedSetCount) { syncCompletedSets() }
+            .onChange(of: scenePhase) { _, phase in
+                // Promjena iz Live Activityja dok je aplikacija u pozadini provjerava se i pri povratku.
+                if phase == .active { syncCompletedSets() }
             }
             .onChange(of: session.stateRaw) {
                 // Trening je završen ili odbačen na satu: ekran se zatvara.
@@ -166,6 +176,7 @@ struct ActiveWorkoutScreen: View {
             if openExerciseID == nil {
                 openExerciseID = visible.first { $0.orderedSets.contains { !$0.isCompleted } }?.id ?? visible.first?.id
             }
+            if seenCompletedSets == nil { seenCompletedSets = completedSetCount }
             // Timer koji je istekao dok je aplikacija bila ugašena ne prikazuje se (trening na satu čisti sat).
             if !isLedByWatch, let timer = engine.restTimer(of: session), timer.isExpired(at: Date()) {
                 try? engine.cancelRest(of: session)
@@ -289,7 +300,7 @@ struct ActiveWorkoutScreen: View {
             }
             try engine.completeSet(set, defaultRestSeconds: settings?.defaultRestSeconds ?? 90)
             completedCount += 1
-            advance(after: exercise)
+            syncCompletedSets()
         } catch WorkoutError.setIncomplete {
             errorCount += 1
             errorText = String(localized: "Upiši sve vrijednosti serije prije označavanja.")
@@ -298,15 +309,27 @@ struct ActiveWorkoutScreen: View {
         }
     }
 
-    /// Kad je vježba (ili superset) gotova, otvara se prva nekompletirana vježba, a kad je sve gotovo nudi se završetak.
-    private func advance(after exercise: SessionExercise) {
+    /// Nova završena serija, bilo s ovog ekrana, iz Live Activityja ili sa sata: kad je otvorena vježba
+    /// (ili superset) gotova, otvara se prva nekompletirana vježba, a kad je sve gotovo nudi se završetak.
+    private func syncCompletedSets() {
+        let count = completedSetCount
+        defer { seenCompletedSets = count }
+        guard let seen = seenCompletedSets, WorkoutFlow.hasNewCompletion(completedCount: count, lastSeen: seen) else { return }
+        // Sve vježbe zatvorene: gleda se vježba zadnje završene serije.
+        guard let exercise = visible.first(where: { $0.id == openExerciseID }) ?? lastCompletedExercise() else { return }
         let groupDone = engine.group(of: exercise).allSatisfy { $0.orderedSets.allSatisfy(\.isCompleted) }
-        guard groupDone else { return }
         let flags = visible.map { $0.orderedSets.allSatisfy(\.isCompleted) }
-        if let index = WorkoutFlow.firstIncompleteExercise(isFullyCompleted: flags) {
-            openExerciseID = visible[index].id
-        } else {
-            showsFinishPrompt = true
+        switch WorkoutFlow.advance(openGroupDone: groupDone, isFullyCompleted: flags) {
+        case .stay: break
+        case .open(let index): openExerciseID = visible[index].id
+        case .finished: showsFinishPrompt = true
+        }
+    }
+
+    private func lastCompletedExercise() -> SessionExercise? {
+        visible.max { lhs, rhs in
+            (lhs.orderedSets.compactMap(\.completedAt).max() ?? .distantPast)
+                < (rhs.orderedSets.compactMap(\.completedAt).max() ?? .distantPast)
         }
     }
 

@@ -276,6 +276,22 @@ struct RestTests {
         #expect(WorkoutFlow.firstIncompleteExercise(isFullyCompleted: [true, true]) == nil)
     }
 
+    @Test("Nakon zadnje serije vježbe otvara se sljedeća, i kad je serija potvrđena u Live Activityju")
+    func advanceAfterCompletion() {
+        #expect(WorkoutFlow.advance(openGroupDone: false, isFullyCompleted: [false, false]) == .stay)
+        #expect(WorkoutFlow.advance(openGroupDone: true, isFullyCompleted: [true, false, false]) == .open(1))
+        // Preskočena vježba iznad otvorene ima prednost.
+        #expect(WorkoutFlow.advance(openGroupDone: true, isFullyCompleted: [false, true, false]) == .open(0))
+        #expect(WorkoutFlow.advance(openGroupDone: true, isFullyCompleted: [true, true]) == .finished)
+    }
+
+    @Test("Nova završena serija od zadnjeg pogleda")
+    func newCompletion() {
+        #expect(WorkoutFlow.hasNewCompletion(completedCount: 4, lastSeen: 3))
+        #expect(!WorkoutFlow.hasNewCompletion(completedCount: 3, lastSeen: 3))
+        #expect(!WorkoutFlow.hasNewCompletion(completedCount: 2, lastSeen: 3))
+    }
+
     @Test("Zaboravljeni trening nakon 6 sati bez aktivnosti")
     func stale() {
         let lastSet = start.addingTimeInterval(600)
