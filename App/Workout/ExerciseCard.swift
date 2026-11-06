@@ -32,15 +32,12 @@ struct ExerciseCard: View {
     var body: some View {
         header
             .padding(.vertical, 6)
-            // Crta ispod zaglavlja ide cijelom širinom kartice, i ispod sličice: redak nema vodoravni uvlak,
-            // nego zaglavlje samo dobiva razmak od ruba, a crta počinje i završava na rubovima retka.
-            .padding(.horizontal, Self.rowInset)
-            .listRowInsets(EdgeInsets(top: 15, leading: 0, bottom: 15, trailing: 0))
-            .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
-            .alignmentGuide(.listRowSeparatorTrailing) { $0[.trailing] }
+            .fullWidthSeparatorRow(vertical: Self.rowVerticalInset)
         if isOpen && !isEditing {
             if !exercise.orderedSets.isEmpty {
+                // Naslovi stupaca su niži redak od serija: samo mali razmak iznad i ispod.
                 SetTableHeader(inputType: exercise.inputType, unit: unit)
+                    .fullWidthSeparatorRow(vertical: 6)
             }
             ForEach(rows, id: \.set.id) { row in
                 SetRow(
@@ -50,6 +47,7 @@ struct ExerciseCard: View {
                     effortScale: effortScale, onEdit: onEdit, onToggleComplete: { onToggleComplete(row.set) },
                     onChangeKind: { onChangeKind(row.set, $0) }, onDelete: { onDeleteSet(row.set) }
                 )
+                .fullWidthSeparatorRow(vertical: Self.rowVerticalInset)
                 // Akcent boja cijele aplikacije (.tint u RootView) inače oboji i ovaj gumb, pa je crvena izričita.
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button("Obriši", systemImage: "trash", role: .destructive) { onDeleteSet(row.set) }
@@ -63,17 +61,18 @@ struct ExerciseCard: View {
             }
             .font(.subheadline)
             .buttonStyle(.borderless)
+            // Redak s gumbima je niži od serija.
+            .fullWidthSeparatorRow(vertical: 8)
         }
     }
 
-    /// Sličica i naziv otvaraju stranicu vježbe (animacija i upute), a strelica desno otvara i zatvara serije.
-    /// Vježba koje nema u katalogu ni među vlastitima nema stranicu, pa naziv tada otvara i zatvara serije.
-    /// Vodoravni uvlak retka u grupiranoj listi (isti kao zadani uvlak ostalih redaka).
-    private static let rowInset: CGFloat = 16
+    /// Okomiti uvlak zaglavlja i redaka serija, isti kao zadani uvlak retka u grupiranoj listi.
+    private static let rowVerticalInset: CGFloat = 15
 
+    /// Sličica i naziv otvaraju i zatvaraju serije, a stranica vježbe (animacija i upute) je u izborniku s tri točkice.
     private var header: some View {
         HStack {
-            Button(action: onShowInfo ?? onToggleOpen) {
+            Button(action: onToggleOpen) {
                 HStack(spacing: 12) {
                     ExerciseRowThumbnail(source: thumbnail)
                     titles
@@ -82,25 +81,14 @@ struct ExerciseCard: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityHint(onShowInfo == nil ? Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu") : Text("Upute za vježbu"))
-
-            if !isEditing {
-                Button(action: onToggleOpen) {
-                    Label {
-                        Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu")
-                    } icon: {
-                        Image(systemName: "chevron.down")
-                            .rotationEffect(.degrees(isOpen ? 180 : 0))
-                    }
-                    .headerIcon()
-                    .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.borderless)
-                .animation(.easeInOut(duration: 0.2), value: isOpen)
-            }
+            .accessibilityHint(Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu"))
 
             if !isEditing {
                 Menu {
+                    if let onShowInfo {
+                        Button("Prikaži vježbu", systemImage: "info.circle", action: onShowInfo)
+                        Divider()
+                    }
                     Button("Superset", systemImage: "rectangle.stack", action: onSuperset)
                     if exercise.supersetGroupId != nil {
                         Button("Izbaci iz superseta", systemImage: "rectangle.stack.badge.minus", action: onLeaveSuperset)
@@ -183,6 +171,17 @@ struct ExerciseCard: View {
             let km = values.distanceMeters.map { NumberInput.format($0 / 1000) + " km" }
             return [time, km].compactMap { $0 }.joined(separator: " · ")
         }
+    }
+}
+
+private extension View {
+    /// Redak vježbe bez vodoravnog uvlaka liste, s vlastitim razmakom od ruba: crta ispod retka
+    /// tako ide cijelom širinom kartice, od ruba do ruba.
+    func fullWidthSeparatorRow(vertical: CGFloat) -> some View {
+        padding(.horizontal, 16)
+            .listRowInsets(EdgeInsets(top: vertical, leading: 0, bottom: vertical, trailing: 0))
+            .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+            .alignmentGuide(.listRowSeparatorTrailing) { $0[.trailing] }
     }
 }
 

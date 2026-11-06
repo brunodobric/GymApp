@@ -82,6 +82,10 @@ struct ActiveWorkoutScreen: View {
                     Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
                 }
             }
+            // Manji razmak među vježbama, kao među karticama na početnom ekranu.
+            .listSectionSpacing(16)
+            // Retci zaglavlja tablice i gumba niži su od zadane najmanje visine retka.
+            .environment(\.defaultMinListRowHeight, 32)
             .environment(\.editMode, $editMode)
             .navigationTitle(session.name)
             .navigationBarTitleDisplayMode(.inline)

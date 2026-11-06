@@ -4688,6 +4688,16 @@
         }
       }
     },
+    "Prikaži vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show exercise"
+          }
+        }
+      }
+    },
     "Primarni" : {
       "localizations" : {
         "en" : {
