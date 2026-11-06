@@ -258,8 +258,6 @@ def main() -> int:
     private.mkdir(parents=True, exist_ok=True)
     texts = {raw["slug"]: texts_for(raw, hr_texts.get(raw["slug"])) for raw in metadata}
     (private / "texts.json").write_text(json.dumps(texts, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    for licence in sorted(package.glob("*/LICENSE.txt"))[:1]:
-        shutil.copyfile(licence, private / "LICENSE.txt")
 
     if args.media:
         if shutil.which("ffmpeg") is None:
