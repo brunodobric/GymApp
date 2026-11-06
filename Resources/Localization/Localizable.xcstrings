@@ -2558,16 +2558,6 @@
         }
       }
     },
-    "MoveKit" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MoveKit"
-          }
-        }
-      }
-    },
     "MuscleMap" : {
       "localizations" : {
         "en" : {
@@ -4404,16 +4394,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Home"
-          }
-        }
-      }
-    },
-    "Početni položaj" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start position"
           }
         }
       }
@@ -7614,16 +7594,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Finish workout?"
-          }
-        }
-      }
-    },
-    "Završni položaj" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "End position"
           }
         }
       }
