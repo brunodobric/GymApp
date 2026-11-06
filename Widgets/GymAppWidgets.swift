@@ -54,23 +54,12 @@ struct RestTimerLiveActivity: Widget {
                     .environment(\.activityAccent, state.accentColor)
                 }
             } compactLeading: {
-                Image(systemName: "dumbbell.fill")
-                    .accessibilityLabel(Text("Trening"))
+                // Za vrijeme odmora krug koji se prazni, uz odbrojavanje desno: vidi se kako odmor curi.
+                RestRingOrIcon(rest: rest, accent: state.accentColor)
             } compactTrailing: {
                 CompactTrailing(state: state, rest: rest)
             } minimal: {
-                if case let .running(start, end) = rest {
-                    ProgressView(timerInterval: start...end, countsDown: true) {
-                        EmptyView()
-                    } currentValueLabel: {
-                        Image(systemName: "timer")
-                    }
-                    .progressViewStyle(.circular)
-                    .tint(state.accentColor)
-                } else {
-                    Image(systemName: "dumbbell.fill")
-                        .accessibilityLabel(Text("Trening"))
-                }
+                RestRingOrIcon(rest: rest, accent: state.accentColor)
             }
             .widgetURL(LiveActivityLink.activeWorkout)
             .keylineTint(state.accentColor)
@@ -554,6 +543,28 @@ private struct ConfirmSetButton: View {
     }
 }
 
+/// Krug odmora koji se prazni (sustav ga sam pomiče), a bez odmora ikona treninga.
+private struct RestRingOrIcon: View {
+    let rest: RestState
+    let accent: Color
+
+    var body: some View {
+        if case let .running(start, end) = rest {
+            ProgressView(timerInterval: start...end, countsDown: true) {
+                EmptyView()
+            } currentValueLabel: {
+                Image(systemName: "timer")
+            }
+            .progressViewStyle(.circular)
+            .tint(accent)
+            .accessibilityLabel(Text("Preostali odmor"))
+        } else {
+            Image(systemName: "dumbbell.fill")
+                .accessibilityLabel(Text("Trening"))
+        }
+    }
+}
+
 private struct CompactTrailing: View {
     let state: RestTimerActivityAttributes.ContentState
     let rest: RestState
@@ -564,6 +575,7 @@ private struct CompactTrailing: View {
             Text(timerInterval: start...end, countsDown: true)
                 .monospacedDigit()
                 .fontDesign(.rounded)
+                .foregroundStyle(state.accentColor)
                 .frame(maxWidth: 44)
         default:
             if state.exerciseName != nil {

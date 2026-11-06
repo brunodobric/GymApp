@@ -7,6 +7,23 @@
     "CFBundleName" : {
       "shouldTranslate" : false
     },
+    "NSAlarmKitUsageDescription" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apolon signals the end of rest with an alarm, shown in the Dynamic Island and on the Lock Screen."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apolon na kraju odmora javlja alarm, koji se vidi u Dynamic Islandu i na zaključanom zaslonu."
+          }
+        }
+      }
+    },
     "NSHealthShareUsageDescription" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {

@@ -184,4 +184,16 @@ struct LiveStatusTests {
         )
         #expect(fire == start.addingTimeInterval(100))
     }
+
+    @Test("Kraj odmora kao alarm samo kad je odabran, dostupan i aplikacija nije otvorena")
+    func restEndAlertChoice() {
+        let end = start.addingTimeInterval(90)
+        #expect(RestEndAlert.choose(fireDate: end, prefersAlarm: true, isAlarmAvailable: true, isAppActive: false) == .alarm(end))
+        // Aplikacija je otvorena: ekran treninga javlja sam, obavijest u prvom planu se utišava.
+        #expect(RestEndAlert.choose(fireDate: end, prefersAlarm: true, isAlarmAvailable: true, isAppActive: true) == .notification(end))
+        // Alarm isključen u postavkama, ili ga sustav ne nudi (stariji iOS, bez dopuštenja).
+        #expect(RestEndAlert.choose(fireDate: end, prefersAlarm: false, isAlarmAvailable: true, isAppActive: false) == .notification(end))
+        #expect(RestEndAlert.choose(fireDate: end, prefersAlarm: true, isAlarmAvailable: false, isAppActive: false) == .notification(end))
+        #expect(RestEndAlert.choose(fireDate: nil, prefersAlarm: true, isAlarmAvailable: true, isAppActive: false) == .none)
+    }
 }

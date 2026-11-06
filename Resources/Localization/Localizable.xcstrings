@@ -2238,6 +2238,16 @@
         }
       }
     },
+    "Kao alarm, kraj odmora izvan aplikacije iskoči u Dynamic Islandu, a na zaključanom zaslonu preko cijelog zaslona. Zvoni i u tihom načinu rada, a gasi se gumbom. Kad je zvuk kraja odmora isključen, stiže obična obavijest." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As an alarm, the end of rest pops up in the Dynamic Island when you're outside the app, and full screen on the Lock Screen. It rings even in silent mode and is turned off with a button. When the rest end sound is off, a regular notification arrives instead."
+          }
+        }
+      }
+    },
     "Kao radnju dodaj Postavi Fokus i odaberi Fitness." : {
       "localizations" : {
         "en" : {
@@ -2444,6 +2454,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "End of rest"
+          }
+        }
+      }
+    },
+    "Kraj odmora kao alarm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End of rest as alarm"
           }
         }
       }

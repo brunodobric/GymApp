@@ -88,6 +88,8 @@ struct RootView: View {
         .onChange(of: scenePhase) { _, phase in
             // Satu se šalju svježi treninzi i postavke, i kad korisnik izađe iz aplikacije nakon izmjena.
             if phase != .inactive { PhoneWatchSync.shared.refreshContext() }
+            // Izvan aplikacije kraj odmora može biti alarm u Dynamic Islandu, pa se zakazuje iznova.
+            if phase == .background { WorkoutLiveUpdates.shared.appDidEnterBackground() }
             guard phase == .active else { return }
             ReminderScheduler.refresh(context: context)
             // Trening započet na satu dok je iPhone bio zaključan dobiva Live Activity tek sad:

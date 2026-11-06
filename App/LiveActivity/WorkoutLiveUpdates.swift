@@ -5,10 +5,11 @@ import Models
 import OSLog
 import SwiftData
 import Training
+import UIKit
 import Units
 
 /// Sve što aktivni trening pokazuje izvan aplikacije (specifikacija, odjeljak 6): Live Activity na zaključanom
-/// zaslonu i u Dynamic Islandu te obavijest o kraju odmora.
+/// zaslonu i u Dynamic Islandu te obavijest ili alarm o kraju odmora.
 ///
 /// Stanje se uvijek slaže iznova iz baze (aktivni trening), pa je svejedno odakle je promjena došla:
 /// s ekrana treninga, sa sata, iz gumba u Live Activityju ili iz povratka u aplikaciju.
@@ -26,6 +27,8 @@ final class WorkoutLiveUpdates {
     /// pa se povijest vježbe ne čita iznova pri svakom osvježavanju.
     private var previousSessionID: UUID?
     private var previousByExercise: [String: [SetValues]] = [:]
+    /// Vrijeme koje sustav daje za zakazivanje kraja odmora nakon odlaska u pozadinu.
+    private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
 
     /// Odgoda osvježavanja nakon zadnje izmjene.
     private static let debounce: Duration = .milliseconds(400)
@@ -47,6 +50,29 @@ final class WorkoutLiveUpdates {
 
     /// Kao `refresh()`, ali odmah i čeka da Live Activity bude ažurirana (za radnje koje sustav izvodi u pozadini).
     func refreshAndWait() async {
+        await refreshNow()
+    }
+
+    /// Aplikacija odlazi u pozadinu: kraj odmora se odmah zakazuje iznova (sada možda kao alarm), dok sustav
+    /// aplikaciji još daje vremena.
+    func appDidEnterBackground() {
+        endBackgroundTask()
+        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "RestEndAlert") { [weak self] in
+            MainActor.assumeIsolated { self?.endBackgroundTask() }
+        }
+        Task { [weak self] in
+            await self?.refreshNow()
+            self?.endBackgroundTask()
+        }
+    }
+
+    private func endBackgroundTask() {
+        guard backgroundTaskID != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(backgroundTaskID)
+        backgroundTaskID = .invalid
+    }
+
+    private func refreshNow() async {
         pendingRefresh?.cancel()
         pendingRefresh = nil
         await enqueue().value
@@ -69,7 +95,7 @@ final class WorkoutLiveUpdates {
         let settings = session != nil ? try? queries.settings() : nil
         let status = session.map { WorkoutEngine(context: context).liveStatus(of: $0) }
 
-        scheduleRestNotification(session: session, status: status, settings: settings)
+        await scheduleRestEnd(session: session, status: status, settings: settings)
         if let session, let status {
             await show(session: session, status: status, settings: settings)
         } else {
@@ -79,7 +105,9 @@ final class WorkoutLiveUpdates {
 
     // MARK: Obavijest o kraju odmora
 
-    private func scheduleRestNotification(session: Session?, status: LiveWorkoutStatus?, settings: UserSettings?) {
+    /// Kraj odmora javlja obavijest ili, ako je uključeno i aplikacija nije otvorena, alarm u Dynamic Islandu.
+    /// Zakazuje se samo jedno od dvoje, a drugo se uklanja.
+    private func scheduleRestEnd(session: Session?, status: LiveWorkoutStatus?, settings: UserSettings?) async {
         let fireDate = RestNotificationPolicy.fireDate(
             restEndsAt: status?.rest?.endsAt,
             controllingDevice: session?.controllingDevice ?? .phone,
@@ -88,11 +116,32 @@ final class WorkoutLiveUpdates {
             watchAlertsRest: session?.healthRecordedByWatch ?? false,
             now: Date()
         )
+        let isAppActive = UIApplication.shared.applicationState == .active
+        if isAppActive, session != nil {
+            // Upit za dopuštenje može se prikazati samo dok je aplikacija otvorena, pa se traži već na početku
+            // treninga. Ne čeka se odgovor: dok je aplikacija otvorena ionako vrijedi obavijest.
+            RestAlarm.requestAuthorizationIfNeeded()
+        }
+        let alert = RestEndAlert.choose(
+            fireDate: fireDate,
+            // Alarm uvijek zvoni, pa uz isključen zvuk kraja odmora ostaje tiha obavijest.
+            prefersAlarm: RestAlarm.isPreferred && (settings?.restEndSoundEnabled ?? true),
+            isAlarmAvailable: RestAlarm.isAvailable,
+            isAppActive: isAppActive
+        )
+        var notificationDate: Date?
+        var alarmDate: Date?
+        switch alert {
+        case .none: break
+        case let .notification(date): notificationDate = date
+        case let .alarm(date): alarmDate = date
+        }
         RestNotifications.schedule(
-            at: fireDate,
+            at: notificationDate,
             body: Self.notificationBody(for: status),
             soundEnabled: settings?.restEndSoundEnabled ?? true
         )
+        await RestAlarm.schedule(at: alarmDate, accent: settings?.effectiveLiveActivityAccent.rawValue)
     }
 
     private static func notificationBody(for status: LiveWorkoutStatus?) -> String {

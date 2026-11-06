@@ -12,7 +12,10 @@ extension RestTimerActivityAttributes.ContentState {
         }
     }
 
-    var accentColor: Color {
+    var accentColor: Color { Self.accentColor(accent) }
+
+    /// Boja za `AccentChoice.rawValue`. Treba je i alarm kraja odmora, koji nema stanje Live Activityja.
+    static func accentColor(_ accent: String?) -> Color {
         switch accent {
         case "green": .green
         case "orange": .orange
