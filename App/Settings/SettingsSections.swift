@@ -224,7 +224,8 @@ struct NotificationSettingsSection: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Obavijest o kraju odmora stiže kad je iPhone zaključan ili je trening sažet u karticu, i prolazi kroz Fokus. Dopuštenje se traži kad prvi put zatreba.")
                 if RestAlarm.isSupported {
-                    Text("Kao alarm, kraj odmora izvan aplikacije iskoči u Dynamic Islandu, a na zaključanom zaslonu preko cijelog zaslona. Zvoni i u tihom načinu rada, a gasi se gumbom. Kad je zvuk kraja odmora isključen, stiže obična obavijest.")
+                    Text("Kao alarm, kraj odmora izvan aplikacije iskoči u Dynamic Islandu, a na zaključanom zaslonu preko cijelog zaslona.")
+                    Text("Alarm zvoni i u tihom načinu rada, a gasi se gumbom. Kad je zvuk kraja odmora isključen, stiže obična obavijest.")
                 }
             }
         }
