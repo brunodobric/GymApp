@@ -55,6 +55,22 @@ class ConvertTests(unittest.TestCase):
         self.assertTrue(result["instructions"]["en"])
         self.assertEqual(result["inputType"], "duration")
 
+    def test_muscle_overrides_keep_source_category(self):
+        result = bc.convert(raw(
+            id="Barbell_Deadlift", primaryMuscles=["lower back"],
+            secondaryMuscles=["calves", "glutes", "hamstrings"],
+        ), MAPPING, {})
+        self.assertEqual(result["category"], "back")
+        self.assertEqual(result["primaryMuscles"], ["glutes", "hamstrings", "lower back"])
+        self.assertEqual(result["primaryRegions"], ["glutes", "hamstrings", "lowerBack"])
+        self.assertNotIn("calves", result["secondaryRegions"])
+
+    def test_every_override_uses_known_muscles(self):
+        for exercise_id, override in MAPPING["muscleOverrides"].items():
+            self.assertTrue(override["primary"], exercise_id)
+            for muscle in override["primary"] + override["secondary"]:
+                self.assertIn(muscle, MAPPING["muscles"], exercise_id)
+
     def test_expert_level_becomes_advanced(self):
         self.assertEqual(bc.convert(raw(level="expert"), MAPPING, {})["level"], "advanced")
 

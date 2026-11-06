@@ -184,7 +184,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
      * Sve vježbe
      * Sve serije po vježbi
      * Bilješke
-     * Na dnu mapa mišića (tijelo sprijeda i straga) obojena prema broju završenih radnih serija po mišiću, uz popis glavnih mišića s brojem serija. Serija u kojoj mišić samo pomaže broji se kao pola. Isti prikaz ima sažetak nakon treninga. Trening bez serija (npr. uvezen iz Zdravlja) nema mapu.
+     * Na dnu mapa mišića (tijelo sprijeda i straga) obojena prema broju tvrdih serija po mišiću, uz popis mišića s brojem serija. Skala je fiksna (1 do 2, 3 do 5, 6 do 9, 10 i više serija), pa lagan trening ostaje svijetao. Pravila brojanja su u odjeljku "Tvrde serije" niže. Isti prikaz ima sažetak nakon treninga. Trening bez serija (npr. uvezen iz Zdravlja) nema mapu.
    * Moguće je izbrisati trening.
    * U detaljima gore desno, uz brisanje, izbornik s dvije opcije:
      * **Uredi trening:** naknadno mijenjanje naziva, početka i kraja, vježbi, serija i bilješki. Izmjene se spremaju tek na "Spremi", a "Odustani" ih odbacuje. Kao kod završetka treninga, serije bez kvačice i vježbe bez završene serije se ne spremaju. Izmjene se ne prenose u Zdravlje.
@@ -241,7 +241,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 4. **Povijest i Napredak:**
    * Prethodni rezultati uvijek vidljivi u sučelju unosa.
    * Estimacija 1RM (Epley / Brzycki).
-   * Tjedni volumen po mišićnoj grupi.
+   * Tjedne tvrde serije po mišićnoj grupi (vidi "Tvrde serije").
    * Grafovi napretka (težina, volumen, PRs) — posebno optimizirani za veći ekran iPada.
 5. **Gotovi programi i predlošci (Rasporedi):**
    * Full Body (3 dana), Upper / Lower (4 dana), Push / Pull / Legs (3–6 dana).
@@ -268,7 +268,10 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 * **Grafovi i vizualizacije:** Napredak težine, volumena, frekvencije.
 * **Body measurements** s grafovima.
 * **PR lista** s filterima i datumima.
-* **Muscle heatmap** koji prikazuje frekvenciju i volumen rada.
+* **Muscle heatmap** koji prikazuje prosjek tvrdih serija tjedno po mišiću u zadnjih 30 dana, 90 dana ili godinu dana, na fiksnoj skali s legendom: ispod 5, 5 do 9, 10 do 20 (zona za rast) i iznad 20 serija. Ispod mape su glavni mišići s manje od 5 serija tjedno, a dodir mišića pokazuje serije tjedno, treninge tjedno i zadnji trening.
+* **Serije po mišiću tjedno:** prosjek zadnja 4 ili 12 tjedana, s označenom zonom 10 do 20 serija. Usporedba ovog i prošlog tjedna je u serijama.
+* **Trend snage po mišiću:** prosječna promjena najbolje procjene 1RM glavnih vježbi mišića (zadnja 4 tjedna prema 4 tjedna prije), iz serija do 12 ponavljanja.
+* **Tvrde serije:** mjera volumena po mišiću za mapu i grafove. Broji se završena radna serija; serija s upisanim RPE-om ispod 6 (RIR 5 i više) ne broji se, a serija bez RPE-a broji se uvijek. Mišić kojem je vježba glavna dobiva cijelu seriju, a mišić koji pomaže pola. Vježbe s vlastitom težinom broje se jednako. Tonaža (kg × ponavljanja) ostaje za napredak pojedine vježbe i karticu tjednog volumena na Početnoj, jer nije usporediva između mišića različite veličine. Izvori: Schoenfeld i sur. 2017 (doza i odgovor), Pelland i sur. (frakcijsko brojanje pomoćnih serija), Robinson i sur. 2024 (blizina otkaza).
 
 ---
 

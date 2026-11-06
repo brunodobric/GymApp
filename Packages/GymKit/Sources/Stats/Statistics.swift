@@ -33,9 +33,17 @@ public struct ExercisePoint: Equatable, Sendable {
     public let volumeKg: Double
 }
 
+/// Opterećenje jedne regije u razdoblju grafa.
 public struct MuscleLoad: Equatable, Sendable {
+    /// Tonaža vježbi kojima je regija glavni mišić.
     public var volumeKg: Double
-    public var sets: Int
+    /// Tvrde serije, pomoćne upola (`EffectiveSets`).
+    public var sets: Double
+
+    public init(volumeKg: Double = 0, sets: Double = 0) {
+        self.volumeKg = volumeKg
+        self.sets = sets
+    }
 }
 
 public enum BucketSize: Sendable {
@@ -43,11 +51,22 @@ public enum BucketSize: Sendable {
     case month
 }
 
+/// Jedan tjedan ili mjesec: serije po regiji tijela i ukupna tonaža.
 public struct VolumeBucket: Equatable, Sendable {
     public let start: Date
-    public var loads: [Muscle: MuscleLoad]
+    /// Ključ je regija tijela (`BodyRegion.all`).
+    public var loads: [String: MuscleLoad]
+    /// Ukupna tonaža razdoblja; svaka serija broji se jednom, bez obzira na broj regija vježbe.
+    public var totalVolumeKg: Double
+    /// Ukupan broj tvrdih serija; svaka serija broji se jednom.
+    public var totalSets: Int
 
-    public var totalVolumeKg: Double { loads.values.reduce(0) { $0 + $1.volumeKg } }
+    public init(start: Date, loads: [String: MuscleLoad] = [:], totalVolumeKg: Double = 0, totalSets: Int = 0) {
+        self.start = start
+        self.loads = loads
+        self.totalVolumeKg = totalVolumeKg
+        self.totalSets = totalSets
+    }
 }
 
 public struct FrequencyPoint: Equatable, Sendable {
@@ -63,11 +82,44 @@ public struct RecordEntry: Equatable, Sendable {
 }
 
 public struct RegionLoad: Equatable, Sendable {
-    /// Broj treninga koji su opteretili regiju.
+    /// Broj treninga u kojima je regija dobila barem jednu cijelu seriju (glavnu ili dvije pomoćne).
     public var sessions: Int
     public var volumeKg: Double
-    /// Relativno opterećenje 0...1 prema najopterećenijoj regiji (za boju heatmapa).
+    /// Tvrde serije u razdoblju, pomoćne upola.
+    public var sets: Double
+    /// Prosjek tvrdih serija tjedno u razdoblju.
+    public var weeklySets: Double
+    /// Prosjek treninga tjedno (prema `sessions`).
+    public var sessionsPerWeek: Double
+    public var lastTrained: Date?
+    /// Boja heatmapa 0...1 na fiksnoj skali (`LoadScale`).
     public var intensity: Double
+
+    public init(
+        sessions: Int = 0, volumeKg: Double = 0, sets: Double = 0, weeklySets: Double = 0,
+        sessionsPerWeek: Double = 0, lastTrained: Date? = nil, intensity: Double = 0
+    ) {
+        self.sessions = sessions
+        self.volumeKg = volumeKg
+        self.sets = sets
+        self.weeklySets = weeklySets
+        self.sessionsPerWeek = sessionsPerWeek
+        self.lastTrained = lastTrained
+        self.intensity = intensity
+    }
+
+    /// Razina na tjednoj skali (`LoadScale.weeklyLevel`).
+    public var weeklyLevel: Int { LoadScale.weeklyLevel(weeklySets) }
+}
+
+/// Promjena snage jedne regije: prosjek promjene najbolje procjene 1RM njenih glavnih vježbi
+/// između zadnjih i prethodnih nekoliko tjedana.
+public struct StrengthTrend: Equatable, Sendable {
+    public let region: String
+    /// Relativna promjena (0,05 = +5 %).
+    public let change: Double
+    /// Broj vježbi koje su rađene u oba razdoblja.
+    public let exercises: Int
 }
 
 /// Statistika nad završenim treninzima. Računaju se samo završene radne serije; warm-up se nikad ne broji.
@@ -115,9 +167,9 @@ public struct StatisticsEngine {
         return points.sorted { $0.date < $1.date }
     }
 
-    // MARK: Volumen po mišićnoj skupini
+    // MARK: Serije po mišićnoj skupini
 
-    /// Volumen i broj radnih serija po primarnom mišiću, za `count` tjedana ili mjeseci koji završavaju
+    /// Tvrde serije i tonaža po regiji tijela, za `count` tjedana ili mjeseci koji završavaju
     /// onim koji sadrži `now` (od najstarijeg prema najnovijem).
     public func volumeBuckets(
         size: BucketSize, count: Int, endingAt now: Date = Date(), calendar: Calendar = .current,
@@ -126,22 +178,26 @@ public struct StatisticsEngine {
         let starts = bucketStarts(size: size, count: count, now: now, calendar: calendar)
         guard let first = starts.first, let last = starts.last,
               let end = interval(of: size, containing: last, calendar: calendar)?.end else { return [] }
-        var buckets = Dictionary(uniqueKeysWithValues: starts.map { ($0, VolumeBucket(start: $0, loads: [:])) })
+        var buckets = Dictionary(uniqueKeysWithValues: starts.map { ($0, VolumeBucket(start: $0)) })
 
         for session in try GymQueries(context: context).finishedSessions(from: first, to: end) {
             guard let start = interval(of: size, containing: session.startedAt, calendar: calendar)?.start,
-                  buckets[start] != nil else { continue }
+                  var bucket = buckets[start] else { continue }
             for exercise in session.orderedExercises where !exercise.isRemoved {
-                guard let muscles = info(exercise.exerciseKey)?.primary, !muscles.isEmpty else { continue }
-                let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values).filter { $0.kind == .working }
+                guard let details = info(exercise.exerciseKey) else { continue }
+                let sets = EffectiveSets.hardSets(of: exercise)
+                guard !sets.isEmpty else { continue }
                 let volume = sets.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
-                for muscle in muscles {
-                    var load = buckets[start]?.loads[muscle] ?? MuscleLoad(volumeKg: 0, sets: 0)
-                    load.volumeKg += volume
-                    load.sets += sets.count
-                    buckets[start]?.loads[muscle] = load
+                bucket.totalVolumeKg += volume
+                bucket.totalSets += sets.count
+                for (region, share) in EffectiveSets.regionCounts(hardSets: sets.count, info: details) {
+                    var load = bucket.loads[region] ?? MuscleLoad()
+                    load.sets += share.weighted
+                    if share.primary > 0 { load.volumeKg += volume }
+                    bucket.loads[region] = load
                 }
             }
+            buckets[start] = bucket
         }
         return starts.compactMap { buckets[$0] }
     }
@@ -197,32 +253,106 @@ public struct StatisticsEngine {
 
     // MARK: Body heatmap
 
-    /// Opterećenje po regiji tijela u razdoblju. Primarne regije računaju puni volumen, sekundarne pola.
+    /// Opterećenje po regiji tijela u razdoblju: tvrde serije (pomoćne upola), prosjek serija tjedno i
+    /// učestalost. Boja je na fiksnoj tjednoj skali (`LoadScale.weeklyLevel`), ne relativna.
+    /// Ako je prvi trening u aplikaciji kasnije od `start`, tjedni se prosjek računa od tog treninga,
+    /// da novi korisnik ne dobije razvodnjen prosjek.
     public func heatmap(from start: Date, until end: Date, info: ExerciseInfoProvider) throws -> [String: RegionLoad] {
         var result: [String: RegionLoad] = [:]
         for session in try GymQueries(context: context).finishedSessions(from: start, to: end) {
-            var touched = Set<String>()
+            var shares: [String: RegionShare] = [:]
+            var volumes: [String: Double] = [:]
             for exercise in session.orderedExercises where !exercise.isRemoved {
                 guard let details = info(exercise.exerciseKey) else { continue }
-                let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values).filter { $0.kind == .working }
+                let sets = EffectiveSets.hardSets(of: exercise)
                 guard !sets.isEmpty else { continue }
                 let volume = sets.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
-                for (regions, weight) in [(details.primaryRegions, 1.0), (details.secondaryRegions, 0.5)] {
-                    for region in regions {
-                        var load = result[region] ?? RegionLoad(sessions: 0, volumeKg: 0, intensity: 0)
-                        load.volumeKg += volume * weight
-                        if touched.insert(region).inserted { load.sessions += 1 }
-                        result[region] = load
-                    }
+                for (region, share) in EffectiveSets.regionCounts(hardSets: sets.count, info: details) {
+                    var total = shares[region] ?? RegionShare(primary: 0, secondary: 0)
+                    total.primary += share.primary
+                    total.secondary += share.secondary
+                    shares[region] = total
+                    volumes[region, default: 0] += share.primary > 0 ? volume : volume * EffectiveSets.secondaryWeight
+                }
+            }
+            for (region, share) in shares {
+                var load = result[region] ?? RegionLoad()
+                load.sets += share.weighted
+                load.volumeKg += volumes[region] ?? 0
+                if share.weighted >= 1 {
+                    load.sessions += 1
+                    load.lastTrained = max(load.lastTrained ?? .distantPast, session.startedAt)
+                }
+                result[region] = load
+            }
+        }
+        let weeks = try weeksCovered(from: start, until: end)
+        for (region, load) in result {
+            result[region]?.weeklySets = load.sets / weeks
+            result[region]?.sessionsPerWeek = Double(load.sessions) / weeks
+            result[region]?.intensity = LoadScale.intensity(level: LoadScale.weeklyLevel(load.sets / weeks))
+        }
+        return result
+    }
+
+    /// Broj tjedana razdoblja za prosjek, najmanje 1. Počinje najranije s prvim treningom u aplikaciji.
+    func weeksCovered(from start: Date, until end: Date) throws -> Double {
+        let finished = SessionState.finished.rawValue
+        var descriptor = FetchDescriptor<Session>(
+            predicate: #Predicate { $0.stateRaw == finished },
+            sortBy: [SortDescriptor(\.startedAt)]
+        )
+        descriptor.fetchLimit = 1
+        let first = try context.fetch(descriptor).first?.startedAt ?? start
+        let from = max(start, first)
+        return max(1, end.timeIntervalSince(from) / (7 * 24 * 3600))
+    }
+
+    // MARK: Trend snage
+
+    /// Promjena snage po regiji: za svaku vježbu s težinom uspoređuje se najbolja procjena 1RM iz zadnjih
+    /// `weeks` tjedana s najboljom iz `weeks` tjedana prije toga. Regija dobiva prosjek promjena vježbi kojima je
+    /// glavni mišić. Broje se tvrde serije do 12 ponavljanja, jer je procjena 1RM iznad toga nepouzdana.
+    /// Regije bez vježbe u oba razdoblja nisu u popisu. Poredak: od najvećeg rasta.
+    public func strengthTrends(
+        weeks: Int = 4, endingAt now: Date = Date(), info: ExerciseInfoProvider,
+        formula: SetMetrics.OneRepMaxFormula = .epley
+    ) throws -> [StrengthTrend] {
+        let span = Double(weeks) * 7 * 24 * 3600
+        let split = now.addingTimeInterval(-span)
+        let from = split.addingTimeInterval(-span)
+        var recent: [String: Double] = [:]
+        var previous: [String: Double] = [:]
+        var regionsByExercise: [String: [String]] = [:]
+        for session in try GymQueries(context: context).finishedSessions(from: from, to: now) {
+            for exercise in session.orderedExercises where exercise.inputType == .weightReps {
+                guard let details = info(exercise.exerciseKey), !details.primaryRegions.isEmpty else { continue }
+                let best = EffectiveSets.hardSets(of: exercise)
+                    .filter { ($0.reps ?? 0) <= 12 }
+                    .compactMap { SetMetrics.estimatedOneRepMax(weightKg: $0.weightKg ?? 0, reps: $0.reps ?? 0, formula: formula) }
+                    .max()
+                guard let best else { continue }
+                let key = exercise.exerciseKey
+                regionsByExercise[key] = details.primaryRegions
+                if session.startedAt >= split {
+                    recent[key] = max(recent[key] ?? 0, best)
+                } else {
+                    previous[key] = max(previous[key] ?? 0, best)
                 }
             }
         }
-        let peak = result.values.map(\.sessions).max() ?? 0
-        guard peak > 0 else { return result }
-        for (region, load) in result {
-            result[region]?.intensity = Double(load.sessions) / Double(peak)
+        var changes: [String: [Double]] = [:]
+        for (key, latest) in recent {
+            guard let before = previous[key], before > 0 else { continue }
+            for region in regionsByExercise[key] ?? [] {
+                changes[region, default: []].append(latest / before - 1)
+            }
         }
-        return result
+        return changes
+            .map { region, values in
+                StrengthTrend(region: region, change: values.reduce(0, +) / Double(values.count), exercises: values.count)
+            }
+            .sorted { $0.change != $1.change ? $0.change > $1.change : $0.region < $1.region }
     }
 
     // MARK: Pomoćno

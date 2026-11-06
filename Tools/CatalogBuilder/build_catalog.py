@@ -72,6 +72,12 @@ def convert(raw: dict, mapping: dict, hr: dict) -> dict:
     if lead is None:
         raise BuildError(f"{exercise_id}: nema mapiranja za mišić '{primary[0]}'")
 
+    # Ispravke mišića iz mapping.json. Kategorija i vrsta pokreta i dalje slijede prvi mišić iz izvora.
+    override = mapping.get("muscleOverrides", {}).get(exercise_id)
+    if override:
+        primary = override["primary"]
+        secondary = override["secondary"]
+
     is_cardio = raw["category"] == "cardio"
     category = "cardio" if is_cardio else lead["category"]
     category = mapping["categoryOverrides"].get(exercise_id, category)

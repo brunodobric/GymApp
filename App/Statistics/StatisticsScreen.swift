@@ -18,11 +18,13 @@ struct StatisticsScreen: View {
     @Query private var customExercises: [CustomExercise]
     @Query private var settingsList: [UserSettings]
 
-    @State private var period: BucketSize = .week
+    @State private var setsWeeks = 4
     @State private var heatmapDays = 30
+    @State private var weeklySets: [String: RegionLoad] = [:]
     @State private var buckets: [VolumeBucket] = []
     @State private var frequency: [FrequencyPoint] = []
     @State private var heatmap: [String: RegionLoad] = [:]
+    @State private var trends: [StrengthTrend] = []
     @State private var records: [RecordEntry] = []
 
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
@@ -33,7 +35,7 @@ struct StatisticsScreen: View {
 
     private struct LoadKey: Equatable {
         var sessionCount: Int
-        var period: BucketSize
+        var setsWeeks: Int
         var heatmapDays: Int
         var customCount: Int
     }
@@ -55,10 +57,11 @@ struct StatisticsScreen: View {
                 }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)], spacing: 16) {
                     if sessionCount > 0 {
-                        VolumeCard(period: $period, buckets: buckets, unit: unit)
-                        ComparisonCard(comparison: VolumeComparison(buckets: buckets), period: period, unit: unit)
-                        FrequencyCard(points: frequency)
+                        SetsCard(weeks: $setsWeeks, loads: weeklySets)
+                        ComparisonCard(comparison: VolumeComparison(buckets: buckets))
                         HeatmapCard(days: $heatmapDays, heatmap: heatmap, female: UserSettings.preferred(in: settingsList)?.bodyMapFemale ?? false)
+                        StrengthTrendCard(trends: trends)
+                        FrequencyCard(points: frequency)
                         RecordsCard(records: records, unit: unit)
                     }
                     ProgressCard()
@@ -69,7 +72,7 @@ struct StatisticsScreen: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Statistika")
             .task(id: LoadKey(
-                sessionCount: sessionCount, period: period, heatmapDays: heatmapDays, customCount: customExercises.count
+                sessionCount: sessionCount, setsWeeks: setsWeeks, heatmapDays: heatmapDays, customCount: customExercises.count
             )) { load() }
             // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
             .task(id: RecordsKey(sessionCount: sessionCount, kinds: trackedKinds)) { loadRecords() }
@@ -83,11 +86,15 @@ struct StatisticsScreen: View {
     private func compute() {
         let engine = StatisticsEngine(context: context)
         let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
-        buckets = (try? engine.volumeBuckets(size: period, count: period == .week ? 8 : 6, info: info)) ?? []
-        frequency = (try? engine.frequency(weeks: 12)) ?? []
         let now = Date()
+        let end = now.addingTimeInterval(1)
+        let setsStart = Calendar.current.date(byAdding: .day, value: -7 * setsWeeks, to: now) ?? now
+        weeklySets = (try? engine.heatmap(from: setsStart, until: end, info: info)) ?? [:]
+        buckets = (try? engine.volumeBuckets(size: .week, count: 2, info: info)) ?? []
+        frequency = (try? engine.frequency(weeks: 12)) ?? []
         let start = Calendar.current.date(byAdding: .day, value: -heatmapDays, to: now) ?? now
-        heatmap = (try? engine.heatmap(from: start, until: now.addingTimeInterval(1), info: info)) ?? [:]
+        heatmap = (try? engine.heatmap(from: start, until: end, info: info)) ?? [:]
+        trends = (try? engine.strengthTrends(weeks: 4, endingAt: end, info: info)) ?? []
     }
 
     private func loadRecords() {
@@ -131,106 +138,78 @@ struct StatisticsCard<Content: View>: View {
     }
 }
 
-// MARK: - Volumen po mišićima
+// MARK: - Serije po mišićima
 
-private struct VolumeCard: View {
-    @Binding var period: BucketSize
-    let buckets: [VolumeBucket]
-    let unit: WeightUnit
+/// Prosjek tvrdih serija tjedno po mišiću, s označenom zonom 10 do 20 serija.
+private struct SetsCard: View {
+    @Binding var weeks: Int
+    let loads: [String: RegionLoad]
 
-    /// Stupac grafa. Id je stabilan (razdoblje i mišić), da graf ne crta sve iznova pri svakom iscrtavanju.
+    /// Redak grafa. Id je regija, da graf ne crta sve iznova pri svakom iscrtavanju.
     private struct Entry: Identifiable {
-        let start: Date
+        let region: String
         let name: String
-        let volume: Double
-        var id: String { "\(start.timeIntervalSinceReferenceDate)|\(name)" }
+        let sets: Double
+        var id: String { region }
     }
 
-    /// Pet najopterećenijih mišića posebno, ostali zajedno.
+    /// Glavni mišići uvijek (i s nula serija, da se vidi što zaostaje), ostali samo ako imaju serija.
     private var entries: [Entry] {
-        var totals: [Muscle: Double] = [:]
-        for bucket in buckets {
-            for (muscle, load) in bucket.loads { totals[muscle, default: 0] += load.volumeKg }
-        }
-        let top = totals.sorted { $0.value > $1.value }.prefix(5).map(\.key)
-        let other = String(localized: "Ostalo")
-        var result: [Entry] = []
-        for bucket in buckets {
-            var rest = 0.0
-            for (muscle, load) in bucket.loads {
-                if top.contains(muscle) {
-                    result.append(Entry(
-                        start: bucket.start, name: String(localized: muscle.title),
-                        volume: WeightConversion.value(fromKilograms: load.volumeKg, in: unit)
-                    ))
-                } else {
-                    rest += load.volumeKg
-                }
-            }
-            if rest > 0 {
-                result.append(Entry(
-                    start: bucket.start, name: other, volume: WeightConversion.value(fromKilograms: rest, in: unit)
-                ))
-            }
-        }
-        return result
+        BodyRegion.all
+            .filter { BodyRegion.major.contains($0) || (loads[$0]?.weeklySets ?? 0) > 0 }
+            .map { Entry(region: $0, name: BodyRegion.title($0), sets: loads[$0]?.weeklySets ?? 0) }
+            .sorted { $0.sets != $1.sets ? $0.sets > $1.sets : $0.region < $1.region }
     }
 
     var body: some View {
-        StatisticsCard(title: "Volumen po mišićima") {
-            Picker("Razdoblje", selection: $period) {
-                Text("Tjedni").tag(BucketSize.week)
-                Text("Mjeseci").tag(BucketSize.month)
+        StatisticsCard(title: "Serije po mišiću tjedno") {
+            Picker("Razdoblje", selection: $weeks) {
+                Text("4 tjedna").tag(4)
+                Text("12 tjedana").tag(12)
             }
             .pickerStyle(.segmented)
-            if entries.isEmpty {
-                Text("Nema podataka za ovo razdoblje.").foregroundStyle(.secondary)
-            } else {
-                Chart(entries) { entry in
-                    BarMark(
-                        x: .value("Razdoblje", entry.start, unit: period == .week ? .weekOfYear : .month),
-                        y: .value("Volumen (\(unit.symbol))", entry.volume)
-                    )
-                    .foregroundStyle(by: .value("Mišić", entry.name))
+            let rows = entries
+            Chart {
+                RectangleMark(xStart: .value("Serije tjedno", 10.0), xEnd: .value("Serije tjedno", 20.0))
+                    .foregroundStyle(Color.secondary.opacity(0.15))
+                ForEach(rows) { entry in
+                    BarMark(x: .value("Serije tjedno", entry.sets), y: .value("Mišić", entry.name))
+                        .foregroundStyle(BodyRegion.color(entry.region))
                 }
-                .chartHeight(220, regular: 320)
-                .accessibilityLabel(Text("Graf volumena po mišićnim skupinama"))
             }
+            .chartXScale(domain: 0.0...max(22.0, (rows.map(\.sets).max() ?? 0) + 2))
+            .frame(height: CGFloat(rows.count) * 26 + 30)
+            .accessibilityLabel(Text("Graf tvrdih serija tjedno po mišićima"))
+            Text("Siva zona je 10 do 20 tvrdih serija tjedno, raspon u kojem istraživanja nalaze najbolji rast mišića. Serija u kojoj mišić pomaže broji se kao pola.")
+                .font(.footnote).foregroundStyle(.secondary)
         }
     }
 }
 
-// MARK: - Usporedba s prethodnim razdobljem
+// MARK: - Usporedba s prethodnim tjednom
 
 private struct ComparisonCard: View {
     let comparison: VolumeComparison?
-    let period: BucketSize
-    let unit: WeightUnit
 
     /// Stupac grafa. Id je stabilan (mišić i razdoblje), da graf ne crta sve iznova pri svakom iscrtavanju.
     private struct Entry: Identifiable {
         let muscle: String
         let series: String
-        let volume: Double
+        let sets: Double
         var id: String { "\(muscle)|\(series)" }
     }
 
-    private var currentTitle: String {
-        period == .week ? String(localized: "Ovaj tjedan") : String(localized: "Ovaj mjesec")
-    }
+    private var currentTitle: String { String(localized: "Ovaj tjedan") }
+    private var previousTitle: String { String(localized: "Prošli tjedan") }
 
-    private var previousTitle: String {
-        period == .week ? String(localized: "Prošli tjedan") : String(localized: "Prošli mjesec")
-    }
-
-    /// Šest mišića s najvećim volumenom, svaki s dva stupca (ovo i prethodno razdoblje).
+    /// Šest mišića s najviše serija, svaki s dva stupca (ovaj i prošli tjedan).
     private var entries: [Entry] {
         guard let comparison else { return [] }
         return comparison.muscles.prefix(6).flatMap { item in
-            let name = String(localized: item.muscle.title)
+            let name = BodyRegion.title(item.region)
             return [
-                Entry(muscle: name, series: previousTitle, volume: WeightConversion.value(fromKilograms: item.previousKg, in: unit)),
-                Entry(muscle: name, series: currentTitle, volume: WeightConversion.value(fromKilograms: item.currentKg, in: unit)),
+                Entry(muscle: name, series: previousTitle, sets: item.previousSets),
+                Entry(muscle: name, series: currentTitle, sets: item.currentSets),
             ]
         }
     }
@@ -244,14 +223,14 @@ private struct ComparisonCard: View {
                 Chart(entries) { entry in
                     BarMark(
                         x: .value("Mišić", entry.muscle),
-                        y: .value("Volumen (\(unit.symbol))", entry.volume)
+                        y: .value("Tvrde serije", entry.sets)
                     )
                     .foregroundStyle(by: .value("Razdoblje", entry.series))
                     .position(by: .value("Razdoblje", entry.series))
                 }
                 .chartForegroundStyleScale([previousTitle: Color.secondary.opacity(0.5), currentTitle: Color.accentColor])
                 .chartHeight(220, regular: 320)
-                .accessibilityLabel(Text("Graf usporedbe volumena po mišićima s prethodnim razdobljem"))
+                .accessibilityLabel(Text("Graf usporedbe serija po mišićima s prošlim tjednom"))
             } else {
                 Text("Usporedba se pojavi kad u ovom ili prethodnom razdoblju postoji trening.")
                     .foregroundStyle(.secondary)
@@ -259,18 +238,41 @@ private struct ComparisonCard: View {
         }
     }
 
-    /// Npr. "Ovaj tjedan dosad: 12.300 kg, 8 % više nego prošli tjedan."
+    /// Npr. "Ovaj tjedan dosad: 38 tvrdih serija. 8 % više nego prošli tjedan."
     private func summary(_ comparison: VolumeComparison) -> String {
-        let formatter = WeightFormatter(unit: unit)
-        let current = formatter.string(fromKilograms: comparison.currentKg)
-        guard let change = comparison.change else {
-            return String(localized: "\(currentTitle) dosad: \(current).")
-        }
+        let current = String(localized: "Ovaj tjedan dosad: \(comparison.currentSets) tvrdih serija.")
+        guard let change = comparison.change else { return current }
         let percent = abs(change).formatted(.percent.precision(.fractionLength(0)))
-        if change >= 0 {
-            return String(localized: "\(currentTitle) dosad: \(current), \(percent) više nego \(previousTitle.lowercased()).")
+        let difference = change >= 0
+            ? String(localized: "\(percent) više nego prošli tjedan.")
+            : String(localized: "\(percent) manje nego prošli tjedan.")
+        return current + " " + difference
+    }
+}
+
+// MARK: - Trend snage
+
+/// Promjena najbolje procjene 1RM po mišiću: zadnja 4 tjedna prema 4 tjedna prije toga.
+private struct StrengthTrendCard: View {
+    let trends: [StrengthTrend]
+
+    var body: some View {
+        StatisticsCard(title: "Trend snage po mišićima") {
+            if trends.isEmpty {
+                Text("Trend se pojavi kad istu vježbu s težinom radiš i u zadnja 4 tjedna i u 4 tjedna prije toga.")
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("Najbolja procjena 1RM glavnih vježbi u zadnja 4 tjedna prema 4 tjedna prije.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+                ForEach(trends.prefix(8), id: \.region) { trend in
+                    LabeledContent(BodyRegion.title(trend.region)) {
+                        Text(trend.change.formatted(.percent.precision(.fractionLength(0...1)).sign(strategy: .always(includingZero: false))))
+                            .monospacedDigit()
+                            .foregroundStyle(trend.change >= 0.005 ? Color.green : trend.change <= -0.005 ? Color.red : Color.secondary)
+                    }
+                }
+            }
         }
-        return String(localized: "\(currentTitle) dosad: \(current), \(percent) manje nego \(previousTitle.lowercased()).")
     }
 }
 
@@ -311,8 +313,9 @@ private struct HeatmapCard: View {
     let female: Bool
     @State private var selected: String?
 
-    private var top: [(region: String, load: RegionLoad)] {
-        heatmap.sorted { $0.value.intensity > $1.value.intensity }.prefix(3).map { ($0.key, $0.value) }
+    /// Glavni mišići s manje od 5 tvrdih serija tjedno.
+    private var lagging: [String] {
+        BodyRegion.major.filter { (heatmap[$0]?.weeklySets ?? 0) < 5 }
     }
 
     var body: some View {
@@ -329,24 +332,71 @@ private struct HeatmapCard: View {
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text("Prikaz tijela s opterećenjem. \(summary)"))
+            HeatmapLegend()
             Text(caption).font(.subheadline)
-            Text("Tamnija boja znači veće opterećenje. Dodirni dio tijela za broj treninga.")
+            if let selected, let detail = detail(selected) {
+                Text(detail).font(.subheadline).foregroundStyle(.secondary)
+            }
+            Text("Boja pokazuje prosjek tvrdih serija tjedno. Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji. Dodirni dio tijela za detalje.")
                 .font(.footnote).foregroundStyle(.secondary)
         }
     }
 
+    private func weekly(_ value: Double) -> String {
+        value.formatted(.number.precision(.fractionLength(0...1)))
+    }
+
     private var summary: String {
-        if top.isEmpty { return String(localized: "Nema podataka.") }
-        return top.map { "\(BodyRegion.title($0.region)): \($0.load.sessions)" }.joined(separator: ", ")
+        if heatmap.isEmpty { return String(localized: "Nema podataka.") }
+        return heatmap
+            .sorted { $0.value.weeklySets > $1.value.weeklySets }
+            .prefix(3)
+            .map { String(localized: "\(BodyRegion.title($0.key)): \(weekly($0.value.weeklySets)) serija tjedno") }
+            .formatted(.list(type: .and))
     }
 
     private var caption: String {
         if let selected {
-            let sessions = heatmap[selected]?.sessions ?? 0
-            return String(localized: "\(BodyRegion.title(selected)): \(sessions) treninga")
+            return String(localized: "\(BodyRegion.title(selected)): \(weekly(heatmap[selected]?.weeklySets ?? 0)) serija tjedno")
         }
-        if top.isEmpty { return String(localized: "U ovom razdoblju još nema treninga.") }
-        return String(localized: "Najopterećenije") + ": " + top.map { BodyRegion.title($0.region) }.joined(separator: ", ")
+        if heatmap.isEmpty { return String(localized: "U ovom razdoblju još nema treninga.") }
+        if lagging.isEmpty { return String(localized: "Svi glavni mišići imaju barem 5 tvrdih serija tjedno.") }
+        let names = lagging.map { BodyRegion.title($0) }.formatted(.list(type: .and))
+        return String(localized: "Ispod 5 serija tjedno: \(names)")
+    }
+
+    /// Učestalost i zadnji trening odabranog mišića.
+    private func detail(_ region: String) -> String? {
+        guard let load = heatmap[region] else { return nil }
+        let frequency = String(localized: "Treninga tjedno: \(weekly(load.sessionsPerWeek))")
+        guard let last = load.lastTrained else { return frequency }
+        let relative = last.formatted(.relative(presentation: .named))
+        return frequency + " · " + String(localized: "Zadnji put: \(relative)")
+    }
+}
+
+/// Legenda fiksne skale heatmapa (`LoadScale.weeklyLevel`): četiri razine boje.
+private struct HeatmapLegend: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Tvrde serije tjedno").font(.caption).foregroundStyle(.secondary)
+            HStack(spacing: 10) {
+                swatch(level: 1, Text("Ispod 5"))
+                swatch(level: 2, Text("5 do 9"))
+                swatch(level: 3, Text("10 do 20"))
+                swatch(level: 4, Text("Iznad 20"))
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private func swatch(level: Int, _ label: Text) -> some View {
+        HStack(spacing: 4) {
+            RoundedRectangle(cornerRadius: 3)
+                .fill(BodyFigureView.fill(intensity: LoadScale.intensity(level: level)))
+                .frame(width: 14, height: 14)
+            label.font(.caption)
+        }
     }
 }
 

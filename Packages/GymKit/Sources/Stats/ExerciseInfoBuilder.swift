@@ -10,6 +10,12 @@ public enum BodyRegion {
         "traps", "upperBack", "lats", "triceps", "lowerBack", "glutes", "hamstrings", "calves"
     ]
 
+    /// Glavne mišićne skupine za koje statistika javlja da zaostaju (ispod 5 tvrdih serija tjedno).
+    /// Manje regije (podlaktice, trapez, donja leđa, bedra sa strane) dobivaju dovoljno rada iz drugih vježbi.
+    public static let major: [String] = [
+        "chest", "shoulders", "biceps", "triceps", "upperBack", "lats", "quads", "hamstrings", "glutes", "calves"
+    ]
+
     /// Skupina mišića koja ima svoju boju u sučelju (čipovi, graf mišića). Bliske regije dijele boju,
     /// da paleta ostane mala: sva leđa su jedna boja, sve noge osim gluteusa druga.
     public enum ColorGroup: CaseIterable, Sendable {

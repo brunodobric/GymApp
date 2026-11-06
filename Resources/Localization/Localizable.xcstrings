@@ -4,36 +4,6 @@
     "" : {
       "shouldTranslate" : false
     },
-    "%@ dosad: %@, %@ manje nego %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ so far: %2$@, %3$@ less than %4$@."
-          }
-        }
-      }
-    },
-    "%@ dosad: %@, %@ više nego %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ so far: %2$@, %3$@ more than %4$@."
-          }
-        }
-      }
-    },
-    "%@ dosad: %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ so far: %2$@."
-          }
-        }
-      }
-    },
     "%@ kg" : {
       "localizations" : {
         "en" : {
@@ -132,72 +102,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@, cycle %2$lld"
-          }
-        }
-      }
-    },
-    "%@: %lld treninga" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@: %#@workouts@"
-          },
-          "substitutions" : {
-            "workouts" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg workout"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg workouts"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@: %#@workouts@"
-          },
-          "substitutions" : {
-            "workouts" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "few" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg treninga"
-                    }
-                  },
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg trening"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg treninga"
-                    }
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -1864,26 +1768,6 @@
         }
       }
     },
-    "Graf usporedbe volumena po mišićima s prethodnim razdobljem" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chart comparing volume per muscle with the previous period"
-          }
-        }
-      }
-    },
-    "Graf volumena po mišićnim skupinama" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chart of volume by muscle group"
-          }
-        }
-      }
-    },
     "Greška" : {
       "localizations" : {
         "en" : {
@@ -2614,16 +2498,6 @@
         }
       }
     },
-    "Mjeseci" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Months"
-          }
-        }
-      }
-    },
     "Mjesto" : {
       "localizations" : {
         "en" : {
@@ -2730,16 +2604,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Newest first"
-          }
-        }
-      }
-    },
-    "Najopterećenije" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Most loaded"
           }
         }
       }
@@ -3080,16 +2944,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No cards. Add some below."
-          }
-        }
-      }
-    },
-    "Nema podataka za ovo razdoblje." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No data for this period."
           }
         }
       }
@@ -3844,16 +3698,6 @@
         }
       }
     },
-    "Ovaj mjesec" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This month"
-          }
-        }
-      }
-    },
     "Ovaj tjedan" : {
       "localizations" : {
         "en" : {
@@ -4240,16 +4084,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Assistance"
-          }
-        }
-      }
-    },
-    "Pomažu: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Assisting: %@"
           }
         }
       }
@@ -4860,16 +4694,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Checking iCloud…"
-          }
-        }
-      }
-    },
-    "Prošli mjesec" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last month"
           }
         }
       }
@@ -5874,26 +5698,6 @@
         }
       }
     },
-    "Tamnija boja znači veće opterećenje. Dodirni dio tijela za broj treninga." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A darker color means a higher load. Tap a body part to see the number of workouts."
-          }
-        }
-      }
-    },
-    "Tamnija boja znači više serija. Pomoćna serija broji se kao pola." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Darker color means more sets. An assisting set counts as half."
-          }
-        }
-      }
-    },
     "Tema" : {
       "localizations" : {
         "en" : {
@@ -5990,16 +5794,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Week"
-          }
-        }
-      }
-    },
-    "Tjedni" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weeks"
           }
         }
       }
@@ -7144,26 +6938,6 @@
         }
       }
     },
-    "Volumen (%@)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volume (%@)"
-          }
-        }
-      }
-    },
-    "Volumen po mišićima" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volume by muscle"
-          }
-        }
-      }
-    },
     "Vožnja bicikla" : {
       "localizations" : {
         "en" : {
@@ -8120,6 +7894,312 @@
     },
     "−10 s" : {
       "shouldTranslate" : false
+    },
+    "Pomaže" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assists"
+          }
+        }
+      }
+    },
+    "Broj je broj tvrdih serija. Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji. Boja: 1–2, 3–5, 6–9 i 10 ili više serija." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The number is the count of hard sets. A set where the muscle only assists counts as half, and a set with RPE below 6 is not counted. Colour: 1–2, 3–5, 6–9 and 10 or more sets."
+          }
+        }
+      }
+    },
+    "Serije po mišiću tjedno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly sets per muscle"
+          }
+        }
+      }
+    },
+    "4 tjedna" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4 weeks"
+          }
+        }
+      }
+    },
+    "12 tjedana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 weeks"
+          }
+        }
+      }
+    },
+    "Serije tjedno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets per week"
+          }
+        }
+      }
+    },
+    "Graf tvrdih serija tjedno po mišićima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of weekly hard sets per muscle"
+          }
+        }
+      }
+    },
+    "Siva zona je 10 do 20 tvrdih serija tjedno, raspon u kojem istraživanja nalaze najbolji rast mišića. Serija u kojoj mišić pomaže broji se kao pola." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The grey zone is 10 to 20 hard sets per week, the range where research finds the best muscle growth. A set where the muscle only assists counts as half."
+          }
+        }
+      }
+    },
+    "Tvrde serije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard sets"
+          }
+        }
+      }
+    },
+    "Graf usporedbe serija po mišićima s prošlim tjednom" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart comparing sets per muscle with last week"
+          }
+        }
+      }
+    },
+    "%@ više nego prošli tjedan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ more than last week."
+          }
+        }
+      }
+    },
+    "%@ manje nego prošli tjedan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ less than last week."
+          }
+        }
+      }
+    },
+    "Trend snage po mišićima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strength trend by muscle"
+          }
+        }
+      }
+    },
+    "Trend se pojavi kad istu vježbu s težinom radiš i u zadnja 4 tjedna i u 4 tjedna prije toga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The trend appears when you do the same weighted exercise in the last 4 weeks and in the 4 weeks before that."
+          }
+        }
+      }
+    },
+    "Najbolja procjena 1RM glavnih vježbi u zadnja 4 tjedna prema 4 tjedna prije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best estimated 1RM of the main exercises in the last 4 weeks compared with the 4 weeks before."
+          }
+        }
+      }
+    },
+    "Boja pokazuje prosjek tvrdih serija tjedno. Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji. Dodirni dio tijela za detalje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colour shows the average hard sets per week. A set where the muscle only assists counts as half, and a set with RPE below 6 is not counted. Tap a body part for details."
+          }
+        }
+      }
+    },
+    "%@: %@ serija tjedno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %2$@ sets per week"
+          }
+        }
+      }
+    },
+    "Svi glavni mišići imaju barem 5 tvrdih serija tjedno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All major muscles have at least 5 hard sets per week."
+          }
+        }
+      }
+    },
+    "Ispod 5 serija tjedno: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Under 5 sets per week: %@"
+          }
+        }
+      }
+    },
+    "Treninga tjedno: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts per week: %@"
+          }
+        }
+      }
+    },
+    "Zadnji put: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last trained: %@"
+          }
+        }
+      }
+    },
+    "Tvrde serije tjedno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard sets per week"
+          }
+        }
+      }
+    },
+    "Ispod 5" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Under 5"
+          }
+        }
+      }
+    },
+    "5 do 9" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 to 9"
+          }
+        }
+      }
+    },
+    "10 do 20" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10 to 20"
+          }
+        }
+      }
+    },
+    "Iznad 20" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Over 20"
+          }
+        }
+      }
+    },
+    "Ovaj tjedan dosad: %lld tvrdih serija." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "This week so far: %lld hard set."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "This week so far: %lld hard sets."
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ovaj tjedan dosad: %lld tvrde serije."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ovaj tjedan dosad: %lld tvrda serija."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ovaj tjedan dosad: %lld tvrdih serija."
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
