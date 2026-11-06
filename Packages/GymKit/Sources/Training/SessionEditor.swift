@@ -134,6 +134,15 @@ public struct SessionEditor {
         try context.save()
     }
 
+    /// Osvježava trening u kontekstu koji ga već drži (npr. glavni kontekst detalja treninga) nakon spremanja
+    /// uređivača. Kontekst inače i dalje prikazuje stare vrijednosti, iako su izmjene u bazi, sve dok se
+    /// trening ponovno ne dohvati. Dohvaćaju se trening, njegove vježbe i serije, da se osvježe svi objekti.
+    public static func refresh(sessionId id: UUID, in context: ModelContext) {
+        _ = try? context.fetch(FetchDescriptor<Session>(predicate: #Predicate { $0.id == id }))
+        _ = try? context.fetch(FetchDescriptor<SessionExercise>(predicate: #Predicate { $0.session?.id == id }))
+        _ = try? context.fetch(FetchDescriptor<SetLog>(predicate: #Predicate { $0.exercise?.session?.id == id }))
+    }
+
     /// Serija dodana naknadno dobiva trenutak kraja treninga (kao da je odrađena prije njega).
     private func completionDate(of exercise: SessionExercise, now: Date) -> Date {
         exercise.session?.endedAt ?? now

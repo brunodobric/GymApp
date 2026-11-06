@@ -162,4 +162,30 @@ struct SessionEditorTests {
         let saved = try fetchSession(session.id, in: reader)
         #expect(saved.endedAt == saved.startedAt)
     }
+
+    @Test("Kontekst koji već drži trening nakon osvježavanja prikazuje spremljene izmjene")
+    @MainActor
+    func refreshesHoldingContext() throws {
+        let (container, session) = try finishedSession()
+        // Glavni kontekst drži trening kao detalji treninga dok je uređivač otvoren.
+        let held = try fetchSession(session.id, in: container.mainContext)
+        #expect(held.orderedExercises[0].orderedSets.map(\.reps) == [8, 6])
+
+        let (editor, copy) = try editingCopy(of: session, in: container)
+        copy.name = "Push A"
+        copy.notes = "Lagano"
+        copy.orderedExercises[0].orderedSets[1].reps = 3
+        let rowing = editor.addExercise(row, inputType: .weightReps, to: copy)
+        rowing.orderedSets[0].weightKg = 50
+        rowing.orderedSets[0].reps = 10
+        try editor.toggleCompleted(rowing.orderedSets[0])
+        try editor.save(copy)
+
+        SessionEditor.refresh(sessionId: session.id, in: container.mainContext)
+        #expect(held.name == "Push A")
+        #expect(held.notes == "Lagano")
+        #expect(held.orderedExercises.map(\.exerciseName) == ["Potisak s klupe", "Veslanje"])
+        #expect(held.orderedExercises[0].orderedSets.map(\.reps) == [8, 3])
+        #expect(held.orderedExercises[1].orderedSets.map(\.reps) == [10])
+    }
 }
