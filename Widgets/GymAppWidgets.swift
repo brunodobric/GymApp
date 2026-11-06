@@ -19,6 +19,7 @@ struct RestTimerLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: RestTimerActivityAttributes.self) { context in
             LockScreenView(state: context.state, isStale: context.isStale)
+                .lockScreenAppearance(context.state)
                 .widgetURL(LiveActivityLink.activeWorkout)
         } dynamicIsland: { context in
             let state = context.state
@@ -50,6 +51,7 @@ struct RestTimerLiveActivity: Widget {
                         }
                     }
                     .padding(.horizontal, 4)
+                    .environment(\.activityAccent, state.accentColor)
                 }
             } compactLeading: {
                 Image(systemName: "dumbbell.fill")
@@ -64,13 +66,39 @@ struct RestTimerLiveActivity: Widget {
                         Image(systemName: "timer")
                     }
                     .progressViewStyle(.circular)
+                    .tint(state.accentColor)
                 } else {
                     Image(systemName: "dumbbell.fill")
                         .accessibilityLabel(Text("Trening"))
                 }
             }
             .widgetURL(LiveActivityLink.activeWorkout)
-            .keylineTint(.accentColor)
+            .keylineTint(state.accentColor)
+        }
+    }
+}
+
+// MARK: Tema
+
+private extension View {
+    /// Na zaključanom zaslonu: vlastita pozadina i shema boja kad tema nije "Sustav".
+    /// Dynamic Island je uvijek crn, pa se ondje primjenjuje samo naglasna boja.
+    @ViewBuilder
+    func lockScreenAppearance(_ state: RestTimerActivityAttributes.ContentState) -> some View {
+        let accented = environment(\.activityAccent, state.accentColor)
+        switch state.colorScheme {
+        case .some(.light):
+            accented
+                .environment(\.colorScheme, .light)
+                .activityBackgroundTint(Color.white.opacity(0.9))
+                .activitySystemActionForegroundColor(.black)
+        case .some(.dark):
+            accented
+                .environment(\.colorScheme, .dark)
+                .activityBackgroundTint(Color.black.opacity(0.8))
+                .activitySystemActionForegroundColor(.white)
+        default:
+            accented
         }
     }
 }
@@ -263,6 +291,8 @@ private struct GreenCheckmark: View {
 private struct RestBackground: View {
     let rest: RestState
 
+    @Environment(\.activityAccent) private var accent
+
     var body: some View {
         if case let .running(start, end) = rest {
             ProgressView(timerInterval: start...end, countsDown: true) {
@@ -270,7 +300,7 @@ private struct RestBackground: View {
             } currentValueLabel: {
                 EmptyView()
             }
-            .tint(Color.accentColor.opacity(0.35))
+            .tint(accent.opacity(0.35))
             .scaleEffect(x: 1, y: 60, anchor: .center)
             .accessibilityHidden(true)
         }
@@ -315,12 +345,14 @@ private struct LargeSetValueStepper: View {
 private struct StepperSymbol: View {
     let systemName: String
 
+    @Environment(\.activityAccent) private var accent
+
     var body: some View {
         Image(systemName: systemName)
             .font(.body.bold())
-            .foregroundStyle(Color.accentColor)
+            .foregroundStyle(accent)
             .frame(width: 38, height: 30)
-            .background(Color.accentColor.opacity(0.22), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+            .background(accent.opacity(0.22), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
     }
 }
 
@@ -414,6 +446,8 @@ private struct RestCountdown: View {
 private struct RestProgress: View {
     let rest: RestState
 
+    @Environment(\.activityAccent) private var accent
+
     var body: some View {
         if case let .running(start, end) = rest {
             ProgressView(timerInterval: start...end, countsDown: true) {
@@ -421,7 +455,7 @@ private struct RestProgress: View {
             } currentValueLabel: {
                 EmptyView()
             }
-            .tint(.accentColor)
+            .tint(accent)
         }
     }
 }
@@ -453,6 +487,8 @@ private struct SetValueStepper: View {
     let setID: String
     let value: RestTimerActivityAttributes.SetValue
 
+    @Environment(\.activityAccent) private var accent
+
     var body: some View {
         HStack(spacing: 6) {
             Button(intent: AdjustSetValueIntent(setID: setID, field: value.field, steps: -1)) {
@@ -476,7 +512,7 @@ private struct SetValueStepper: View {
         .buttonStyle(.bordered)
         .buttonBorderShape(.circle)
         .controlSize(.small)
-        .tint(.accentColor)
+        .tint(accent)
     }
 }
 
@@ -486,6 +522,8 @@ private struct SetValueStepper: View {
 private struct ConfirmSetButton: View {
     let state: RestTimerActivityAttributes.ContentState
     let isCompact: Bool
+
+    @Environment(\.activityAccent) private var accent
 
     var body: some View {
         if let setID = state.nextSetID, state.canConfirm {
@@ -508,7 +546,7 @@ private struct ConfirmSetButton: View {
                         .minimumScaleFactor(0.8)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, minHeight: 32)
-                        .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .background(accent, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
             }

@@ -71,7 +71,7 @@ final class WorkoutLiveUpdates {
 
         scheduleRestNotification(session: session, status: status, settings: settings)
         if let session, let status {
-            await show(session: session, status: status, unit: settings?.weightUnit ?? .kilograms)
+            await show(session: session, status: status, settings: settings)
         } else {
             await endAll()
         }
@@ -104,9 +104,13 @@ final class WorkoutLiveUpdates {
 
     // MARK: Live Activity
 
-    private func show(session: Session, status: LiveWorkoutStatus, unit: WeightUnit) async {
+    private func show(session: Session, status: LiveWorkoutStatus, settings: UserSettings?) async {
         let sessionID = session.id.uuidString
-        let state = Self.contentState(session: session, status: status, next: nextSetDetails(in: session, unit: unit))
+        let unit = settings?.weightUnit ?? .kilograms
+        var state = Self.contentState(session: session, status: status, next: nextSetDetails(in: session, unit: unit))
+        // Tema i boja idu u stanje, pa se promjena u postavkama vidi već pri sljedećem ažuriranju.
+        state.theme = settings?.effectiveLiveActivityTheme.rawValue
+        state.accent = settings?.effectiveLiveActivityAccent.rawValue
         let now = Date()
         // Kad odmor istekne, sadržaj zastari i widget umjesto odbrojavanja piše da je odmor gotov.
         let staleDate = status.rest.flatMap { $0.endsAt > now ? $0.endsAt : nil }

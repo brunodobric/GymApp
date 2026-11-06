@@ -158,6 +158,34 @@ struct ModelsTests {
         #expect(try queries.settings().id == settings.id)
     }
 
+    @Test("Live Activity prati temu i boju aplikacije dok se ne isključi")
+    func liveActivityAppearance() throws {
+        let context = try makeContext()
+        let settings = try GymQueries(context: context).settings()
+        #expect(settings.liveActivityFollowsApp)
+        settings.theme = .light
+        settings.accent = .green
+        #expect(settings.effectiveLiveActivityTheme == .light)
+        #expect(settings.effectiveLiveActivityAccent == .green)
+
+        // Isključivanje kreće od aplikacijinih vrijednosti, pa se Live Activity ne mijenja.
+        settings.setLiveActivityFollowsApp(false)
+        #expect(settings.liveActivityTheme == .light)
+        #expect(settings.liveActivityAccent == .green)
+
+        settings.liveActivityTheme = .dark
+        settings.liveActivityAccent = .orange
+        settings.theme = .system
+        #expect(settings.effectiveLiveActivityTheme == .dark)
+        #expect(settings.effectiveLiveActivityAccent == .orange)
+
+        // Ponovno uključivanje vraća aplikacijine, a vlastite ostaju zapamćene.
+        settings.setLiveActivityFollowsApp(true)
+        #expect(settings.effectiveLiveActivityTheme == .system)
+        #expect(settings.effectiveLiveActivityAccent == .green)
+        #expect(settings.liveActivityAccent == .orange)
+    }
+
     @Test("Težina se u bazi čuva u kilogramima")
     func weightStoredInKilograms() throws {
         let context = try makeContext()

@@ -132,6 +132,9 @@ public extension UserSettings {
             (restNotificationEnabled, defaults.restNotificationEnabled),
             (startsWatchWorkout, defaults.startsWatchWorkout),
             (bodyMapFemale, defaults.bodyMapFemale),
+            (liveActivityFollowsApp, defaults.liveActivityFollowsApp),
+            (liveActivityThemeRaw, defaults.liveActivityThemeRaw),
+            (liveActivityAccentRaw, defaults.liveActivityAccentRaw),
         ]
         return pairs.filter { $0.0 != $0.1 }.count
     }

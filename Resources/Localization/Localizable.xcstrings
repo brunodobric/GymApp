@@ -2478,6 +2478,16 @@
         }
       }
     },
+    "Live Activity" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity"
+          }
+        }
+      }
+    },
     "Ljubičasta" : {
       "localizations" : {
         "en" : {
@@ -4418,6 +4428,16 @@
         }
       }
     },
+    "Prati aplikaciju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Match app"
+          }
+        }
+      }
+    },
     "Pravila privatnosti" : {
       "localizations" : {
         "en" : {
@@ -5844,6 +5864,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Theme"
+          }
+        }
+      }
+    },
+    "Tema vrijedi za zaključani zaslon. Dynamic Island je uvijek crn, pa se ondje mijenja samo boja." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The theme applies to the Lock Screen. The Dynamic Island is always black, so only the color changes there."
           }
         }
       }

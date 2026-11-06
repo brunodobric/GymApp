@@ -90,6 +90,38 @@ struct AppearanceSettingsSection: View {
                 Text("Žensko").tag(true)
             }
         }
+        LiveActivityAppearanceSection(settings: settings)
+    }
+}
+
+/// Tema i naglasna boja Live Activityja: prate aplikaciju ili su vlastite.
+private struct LiveActivityAppearanceSection: View {
+    @Bindable var settings: UserSettings
+
+    private var followsApp: Binding<Bool> {
+        Binding(
+            get: { settings.liveActivityFollowsApp },
+            set: { settings.setLiveActivityFollowsApp($0) }
+        )
+    }
+
+    var body: some View {
+        Section {
+            Toggle("Prati aplikaciju", isOn: followsApp)
+            if !settings.liveActivityFollowsApp {
+                Picker("Tema", selection: $settings.liveActivityTheme) {
+                    ForEach(AppTheme.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                AccentPicker(selection: $settings.liveActivityAccent)
+            }
+        } header: {
+            Text("Live Activity")
+        } footer: {
+            Text("Tema vrijedi za zaključani zaslon. Dynamic Island je uvijek crn, pa se ondje mijenja samo boja.")
+        }
+        // Promjena se odmah vidi u Live Activityju ako je trening u tijeku.
+        .onChange(of: settings.effectiveLiveActivityTheme) { WorkoutLiveUpdates.shared.refresh() }
+        .onChange(of: settings.effectiveLiveActivityAccent) { WorkoutLiveUpdates.shared.refresh() }
     }
 }
 

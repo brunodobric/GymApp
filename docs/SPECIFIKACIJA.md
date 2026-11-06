@@ -158,6 +158,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 
 * **Tema:** Svijetlo / Tamno / Automatski (prema sustavu).
 * **Accent boja:** Korisnik može birati accent boju aplikacije.
+* **Live Activity:** prema zadanom prati temu i accent boju aplikacije. Kad se "Prati aplikaciju" isključi, bira vlastitu temu i boju (kreću od aplikacijinih). Tema vrijedi za zaključani zaslon; Dynamic Island je uvijek crn, pa se ondje mijenja samo boja.
 * **Jedinice:** kg / lbs.
 * **Default rest timer:** Podešavanje zadanog vremena (default 90s).
 * **PR postavke:** Uključivanje/isključivanje i odabir tipova PR-ova.
@@ -506,7 +507,7 @@ Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening**
 * **PersonalRecord:** izvedeni podatak, računa se iz `SetLog` zapisa i može se u svakom trenutku ponovno izračunati. Sprema se u predmemoriju radi brzine, ali nije izvor istine.
 * **BodyMeasurement:** `id`, vrsta (težina, visina, struk, prsa, ruka, noga, custom), vrijednost u metričkim jedinicama, datum, izvor (ručno / HealthKit).
 * **DashboardCard:** vrsta kartice, `orderIndex`, postavke kartice.
-* **UserSettings:** jedan zapis: jedinice, zadana pauza, tema, accent boja, RPE/RIR, PR postavke, zvuk kraja odmora, dostupne ploče i težine šipke.
+* **UserSettings:** jedan zapis: jedinice, zadana pauza, tema, accent boja, tema i boja Live Activityja, RPE/RIR, PR postavke, zvuk kraja odmora, dostupne ploče i težine šipke.
 
 ### Pravila
 * Svi identifikatori su UUID. Svi modeli poštuju ograničenja iz odjeljka 5 (opcionalna polja, bez `unique`, `orderIndex` za redoslijed).
