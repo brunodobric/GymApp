@@ -28,6 +28,9 @@ extension GymSchemaV1 {
         public var workoutPlanId: UUID?
         public var distanceMeters: Double?
         public var averageHeartRate: Double?
+        /// Trening vodi iPhone, a sat je za njega pokrenuo sesiju u Zdravlju (puls, kalorije). Tada trening u
+        /// Zdravlje sprema sat, a iPhone ne, da u Zdravlju ne bude dvaput.
+        public var healthRecordedByWatch: Bool = false
         /// Rest timer se sprema kao trenutak početka i završetka (ne kao preostale sekunde), pa se nakon
         /// oporavka ispravno nastavlja ili je već istekao. nil znači da timer nije aktivan.
         public var restTimerStartedAt: Date?

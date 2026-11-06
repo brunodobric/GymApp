@@ -46,6 +46,9 @@ struct WorkoutEventTests {
                 .setNotes("Bilješka"),
                 .finish(at: base.addingTimeInterval(3600)),
                 .discard,
+                .healthRecordingStarted,
+                .healthRecorded(workoutId: UUID(), activeEnergyKilocalories: 310, averageHeartRate: 128),
+                .healthRecorded(workoutId: nil, activeEnergyKilocalories: nil, averageHeartRate: nil),
             ]),
         ]
         for kind in kinds {

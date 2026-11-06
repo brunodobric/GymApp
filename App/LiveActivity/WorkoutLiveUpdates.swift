@@ -83,8 +83,9 @@ final class WorkoutLiveUpdates {
         let fireDate = RestNotificationPolicy.fireDate(
             restEndsAt: status?.rest?.endsAt,
             controllingDevice: session?.controllingDevice ?? .phone,
-            notificationsEnabled: settings?.notificationsEnabled ?? true,
+            notificationsEnabled: settings?.restNotificationEnabled ?? true,
             isSessionActive: session != nil,
+            watchAlertsRest: session?.healthRecordedByWatch ?? false,
             now: Date()
         )
         RestNotifications.schedule(

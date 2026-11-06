@@ -42,8 +42,10 @@ final class WorkoutSessionManager: NSObject {
     }
 
     /// Pokreće sesiju treninga snage. `sessionID` ide u metapodatke, pa iPhone prepoznaje trening u Zdravlju.
-    func start(sessionID: UUID, at date: Date) async {
-        guard HKHealthStore.isHealthDataAvailable(), session == nil else { return }
+    /// Vraća je li sesija pokrenuta.
+    @discardableResult
+    func start(sessionID: UUID, at date: Date) async -> Bool {
+        guard HKHealthStore.isHealthDataAvailable(), session == nil else { return false }
         await requestAuthorization()
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .traditionalStrengthTraining
@@ -62,7 +64,9 @@ final class WorkoutSessionManager: NSObject {
         } catch {
             logger.error("Pokretanje treninga: \(error.localizedDescription)")
             reset()
+            return false
         }
+        return true
     }
 
     /// Nakon rušenja ili gašenja aplikacije usred treninga sustav je ponovno pokreće i vraća sesiju.

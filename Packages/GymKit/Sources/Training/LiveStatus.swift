@@ -91,7 +91,8 @@ extension WorkoutEngine {
 
 /// Kad iPhone zakazuje lokalnu obavijest o kraju odmora (specifikacija, odjeljak 6, "Notifikacije").
 ///
-/// Samo za trening koji vodi iPhone: kad ga vodi sat, kraj odmora javlja sat haptikom. iOS obavijest ne prikazuje
+/// Samo za trening koji vodi iPhone: kad ga vodi sat, kraj odmora javlja sat haptikom. Isto vrijedi kad sat za trening
+/// s iPhonea drži sesiju u Zdravlju (`watchAlertsRest`), jer bi inače na zapešću zavibriralo dvaput. iOS obavijest ne prikazuje
 /// dok je aplikacija otvorena (tada zvuk i haptiku daje sama aplikacija), pa stiže kad je iPhone zaključan.
 /// Svaka promjena timera (+10 / −10, preskakanje) zakazuje obavijest iznova za novi trenutak.
 public enum RestNotificationPolicy {
@@ -103,9 +104,10 @@ public enum RestNotificationPolicy {
         controllingDevice: DeviceRole,
         notificationsEnabled: Bool,
         isSessionActive: Bool,
+        watchAlertsRest: Bool = false,
         now: Date
     ) -> Date? {
-        guard notificationsEnabled, isSessionActive, controllingDevice == .phone, let restEndsAt,
+        guard notificationsEnabled, isSessionActive, controllingDevice == .phone, !watchAlertsRest, let restEndsAt,
               restEndsAt.timeIntervalSince(now) > minimumLeadSeconds else { return nil }
         return restEndsAt
     }

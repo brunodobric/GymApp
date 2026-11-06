@@ -384,7 +384,7 @@ Korisnik gradi planove na tri razine:
 ### Rest timer i notifikacije
 Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, i to samo kad je potrebna:
 * **Aplikacija otvorena na iPhoneu:** zvuk i haptika iz same aplikacije, bez notifikacije.
-* **iPhone zaključan ili aplikacija u pozadini, trening na iPhoneu:** pri pokretanju timera zakazuje se lokalna notifikacija za trenutak isteka (zvuk ako je uključen u Postavkama, razina "time-sensitive"). Ako korisnik promijeni timer (+10/−10) ili ga prekine, notifikacija se premješta ili otkazuje.
+* **iPhone zaključan ili aplikacija u pozadini, trening na iPhoneu:** pri pokretanju timera zakazuje se lokalna notifikacija za trenutak isteka (zvuk ako je uključen u Postavkama, razina "time-sensitive", za koju aplikacija ima entitlement `com.apple.developer.usernotifications.time-sensitive`, pa obavijest prolazi kroz Fokus). Obavijest ima svoj prekidač u Postavkama, odvojen od podsjetnika rasporeda. Ako korisnik promijeni timer (+10/−10) ili ga prekine, notifikacija se premješta ili otkazuje.
 * **Trening se vodi na Watchu:** haptika na satu, a na iPhoneu nema notifikacije kraja odmora (samo Live Activity).
 * Aplikacija ne drži audio sesiju aktivnom u pozadini samo radi timera.
 * Na iPhoneu može biti aktivna **Live Activity** koja prikazuje:
@@ -414,6 +414,7 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 * Osnovni pregled aktivnog treninga i prethodnih serija.
 * Sinkronizacija s iPhone aplikacijom u realnom vremenu (vidi niže).
 * Watch aplikacija može voditi trening i kad iPhone nije u blizini. Podaci se spremaju na satu i šalju na iPhone kad se veza uspostavi.
+* **Trening pokrenut na iPhoneu pokreće i sat** (`HKHealthStore.startWatchApp`), ako je sat uparen i u Postavkama je uključeno "Pokreni trening i na satu" (zadano uključeno). Trening i dalje vodi iPhone, a sat za njega drži `HKWorkoutSession`: mjeri puls i kalorije, ostaje otvoren dok je zapešće spušteno i vibrira na kraju odmora. Na kraju sat sprema trening u Zdravlje i šalje iPhoneu UUID, kalorije i puls (`WorkoutCommand.healthRecorded`), a iPhone tada svoj zapis u Zdravlje ne radi (`Session.healthRecordedByWatch`). Kraj odmora tada javlja sat, pa iPhone ne zakazuje obavijest. Ako sat ne pokrene sesiju (npr. nema dozvole za Zdravlje), iPhone sprema trening i javlja kraj odmora kao i prije.
 * **Za kardio/trčanje:** planovi zakazani preko WorkoutKit pojavljuju se u native Workouts aplikaciji, gdje ih korisnik pokreće.
 * **Complications:** Prikaz sljedećeg treninga. Podržano na svim Watch face-ovima gdje je moguće.
 

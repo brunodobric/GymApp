@@ -22,24 +22,35 @@ enum AppServices {
 
     /// Korisnička baza i način na koji je otvorena. Uključivanje i isključivanje sinkronizacije
     /// vrijedi od sljedećeg pokretanja, jer se otvorena baza ne može sigurno zamijeniti dok je ekrani koriste.
-    private static let store: (container: ModelContainer, isSyncRunning: Bool, syncStartFailed: Bool) = {
+    private struct Store {
+        var container: ModelContainer
+        var isSyncRunning = false
+        var syncStartFailed = false
+        /// Baza na uređaju se nije otvorila (npr. nakon neuspjele migracije): radi se s praznom bazom u memoriji,
+        /// a aplikacija prikazuje `StoreFailureScreen` umjesto da se sruši pri svakom pokretanju.
+        var openError: String?
+    }
+
+    private static let store: Store = {
         #if DEBUG
-        if ScreenshotMode.isActive { return (ScreenshotMode.makeContainer(), false, false) }
+        if ScreenshotMode.isActive { return Store(container: ScreenshotMode.makeContainer()) }
         #endif
         if SyncPreferences().usesCloudKit(isSupported: isCloudSyncSupported) {
             do {
                 let container = try GymPersistence.makeUserContainer(
                     storage: .cloudKit(containerIdentifier: cloudContainerIdentifier)
                 )
-                return (container, true, false)
+                return Store(container: container, isSyncRunning: true)
             } catch {
                 // Bez iClouda aplikacija i dalje radi, samo na uređaju. Postavke prikazuju da sinkronizacija nije pokrenuta.
                 Logger(subsystem: "com.brunodobric.gymapp", category: "Sync")
                     .error("CloudKit baza se nije otvorila, nastavlja se lokalno: \(String(describing: error))")
-                return (openLocal(), false, true)
+                var local = openLocal()
+                local.syncStartFailed = true
+                return local
             }
         }
-        return (openLocal(), false, false)
+        return openLocal()
     }()
 
     static var container: ModelContainer { store.container }
@@ -47,13 +58,21 @@ enum AppServices {
     static var isSyncRunning: Bool { store.isSyncRunning }
     /// Je li otvaranje s CloudKitom pokušano i nije uspjelo.
     static var syncStartFailed: Bool { store.syncStartFailed }
+    /// Opis greške ako se baza na uređaju nije otvorila (vidi `Store.openError`).
+    static var storeOpenError: String? { store.openError }
 
-    private static func openLocal() -> ModelContainer {
+    private static func openLocal() -> Store {
         do {
-            return try GymPersistence.makeUserContainer(storage: .local)
+            return Store(container: try GymPersistence.makeUserContainer(storage: .local))
         } catch {
-            // Bez baze aplikacija ne može raditi, a tihi nastavak bi sakrio problem.
-            fatalError("Korisnička baza se nije mogla otvoriti: \(error)")
+            Logger(subsystem: "com.brunodobric.gymapp", category: "Store")
+                .fault("Korisnička baza se nije mogla otvoriti: \(String(describing: error))")
+            do {
+                return Store(container: try GymPersistence.makeUserContainer(storage: .inMemory), openError: String(describing: error))
+            } catch {
+                // Ni prazna baza u memoriji: aplikacija ne može raditi.
+                fatalError("Korisnička baza se nije mogla otvoriti: \(error)")
+            }
         }
     }
 
@@ -63,6 +82,9 @@ enum AppServices {
     static func start() {
         guard !isStarted else { return }
         isStarted = true
+        // Bez baze na uređaju ništa se ne pokreće: poruke sa sata i podaci iz Zdravlja ostaju u redu čekanja
+        // dok se baza ne otvori, umjesto da završe u privremenoj bazi u memoriji.
+        guard storeOpenError == nil else { return }
         #if DEBUG
         if ScreenshotMode.isActive { ScreenshotMode.populate(container) }
         #endif

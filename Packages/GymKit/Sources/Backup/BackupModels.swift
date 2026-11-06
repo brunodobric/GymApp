@@ -61,6 +61,8 @@ struct SettingsDTO: Codable {
     var notificationsEnabled: Bool
     /// Opcionalno da se mogu učitati kopije napravljene prije dodavanja ovog polja.
     var bodyMapFemale: Bool?
+    var restNotificationEnabled: Bool?
+    var startsWatchWorkout: Bool?
 
     init(_ model: UserSettings) {
         id = model.id
@@ -82,6 +84,8 @@ struct SettingsDTO: Codable {
         wantsHealthKit = model.wantsHealthKit
         notificationsEnabled = model.notificationsEnabled
         bodyMapFemale = model.bodyMapFemale
+        restNotificationEnabled = model.restNotificationEnabled
+        startsWatchWorkout = model.startsWatchWorkout
     }
 
     func apply(to model: UserSettings) {
@@ -104,6 +108,8 @@ struct SettingsDTO: Codable {
         model.wantsHealthKit = wantsHealthKit
         model.notificationsEnabled = notificationsEnabled
         model.bodyMapFemale = bodyMapFemale ?? false
+        model.restNotificationEnabled = restNotificationEnabled ?? true
+        model.startsWatchWorkout = startsWatchWorkout ?? true
     }
 }
 

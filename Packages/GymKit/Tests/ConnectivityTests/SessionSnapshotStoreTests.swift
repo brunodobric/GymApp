@@ -123,6 +123,61 @@ struct SessionSnapshotStoreTests {
         #expect(session.lastActivityAt == base.addingTimeInterval(31))
         #expect(try context.fetch(FetchDescriptor<SetLog>()).count == WorkoutEngine.defaultWorkingSets)
     }
+
+    @Test("Izvještaj sata o Zdravlju vrijedi i za završen trening s iPhonea")
+    func watchHealthReport() throws {
+        let context = try makeContext()
+        let engine = WorkoutEngine(context: context)
+        let session = try engine.startSession(name: "Push", now: base)
+        let store = SessionSnapshotStore(context: context)
+
+        // Obične naredbe ovdje se ne primjenjuju.
+        #expect(try store.applyWatchHealth([.setNotes("x")], toSessionWithID: session.id) == false)
+        #expect(session.healthRecordedByWatch == false)
+
+        #expect(try store.applyWatchHealth([.healthRecordingStarted], toSessionWithID: session.id))
+        #expect(session.healthRecordedByWatch)
+
+        session.state = .finished
+        let workoutId = UUID()
+        let report = WorkoutCommand.healthRecorded(workoutId: workoutId, activeEnergyKilocalories: 310, averageHeartRate: 128)
+        #expect(try store.applyWatchHealth([report], toSessionWithID: session.id))
+        #expect(session.healthKitWorkoutId == workoutId)
+        let local = HealthLocalStore(context: context)
+        #expect(local.activeEnergy(of: session) == 310)
+        #expect(local.averageHeartRate(of: session) == 128)
+        #expect(store.snapshot(of: session).averageHeartRate == 128)
+
+        // Ponovljeni izvještaj s drugim UUID-om ne mijenja vezu.
+        try store.applyWatchHealth(
+            [.healthRecorded(workoutId: UUID(), activeEnergyKilocalories: nil, averageHeartRate: nil)], toSessionWithID: session.id
+        )
+        #expect(session.healthKitWorkoutId == workoutId)
+    }
+
+    @Test("Izvještaj o Zdravlju ne dira trening koji vodi sat ni odbačen trening")
+    func watchHealthReportIgnored() throws {
+        let context = try makeContext()
+        let store = SessionSnapshotStore(context: context)
+        try store.apply(sampleSnapshot(device: .watch))
+        let watchLed = try #require(try context.fetch(FetchDescriptor<Session>()).first)
+        #expect(try store.applyWatchHealth([.healthRecordingStarted], toSessionWithID: watchLed.id) == false)
+        #expect(watchLed.healthRecordedByWatch == false)
+        #expect(try store.applyWatchHealth([.healthRecordingStarted], toSessionWithID: UUID()) == false)
+    }
+
+    @Test("Naredbe sa satom za Zdravlje ne nastaju iz razlike snimki, a na snimku upisuju puls")
+    func healthCommandsInDiff() {
+        let snapshot = sampleSnapshot(device: .phone)
+        var edited = snapshot
+        edited.averageHeartRate = 140
+        #expect(SnapshotDiff.commands(from: snapshot, to: edited).contains { $0.isHealthReport } == false)
+        let merged = SnapshotDiff.apply(
+            [.healthRecorded(workoutId: nil, activeEnergyKilocalories: 0, averageHeartRate: 140)], to: snapshot, at: base
+        )
+        #expect(merged.averageHeartRate == 140)
+        #expect(merged.activeEnergyKilocalories == snapshot.activeEnergyKilocalories)
+    }
 }
 
 @Suite("Kontekst za sat")

@@ -1,3 +1,4 @@
+import HealthKit
 import SwiftUI
 import WatchKit
 
@@ -24,6 +25,14 @@ final class WatchAppDelegate: NSObject, WKApplicationDelegate {
     func handleActiveWorkoutRecovery() {
         Task { @MainActor in
             WatchWorkoutStore.shared.health.recover()
+        }
+    }
+
+    /// iPhone je pokrenuo trening i zatražio sesiju na satu (`HKHealthStore.startWatchApp`): sat mjeri puls
+    /// i kalorije, ostaje otvoren i na kraju sprema trening u Zdravlje.
+    func handle(_ workoutConfiguration: HKWorkoutConfiguration) {
+        Task { @MainActor in
+            WatchWorkoutStore.shared.phoneRequestedHealthSession()
         }
     }
 }

@@ -25,9 +25,10 @@ struct WatchControlsView: View {
                     Text(active.startedAt, style: .timer)
                         .font(.system(.title, design: .rounded, weight: .semibold).monospacedDigit())
                         .foregroundStyle(.yellow)
-                    if store.isController {
+                    if store.showsHealthMetrics {
                         metrics
-                    } else {
+                    }
+                    if !store.isController {
                         Label("Trening vodi iPhone", systemImage: "iphone")
                             .font(.footnote)
                             .foregroundStyle(.secondary)

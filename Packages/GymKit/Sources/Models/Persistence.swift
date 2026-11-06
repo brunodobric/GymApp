@@ -1,3 +1,4 @@
+import Foundation
 import SwiftData
 
 /// Izrada `ModelContainera`: korisnička baza (sinkronizira se) i lokalna baza podataka iz Zdravlja
@@ -45,6 +46,39 @@ public enum GymPersistence {
             healthStoreName, schema: healthSchema, isStoredInMemoryOnly: inMemory, cloudKitDatabase: .none
         )
         return try ModelContainer(for: fullSchema, configurations: [user, health])
+    }
+}
+
+// MARK: - Baza koja se ne može otvoriti
+
+public extension GymPersistence {
+    /// Gdje su datoteke korisničke baze i baze podataka iz Zdravlja (isto pravilo kao `makeUserContainer`).
+    static var storeURLs: [URL] {
+        [ModelConfiguration(userStoreName).url, ModelConfiguration(healthStoreName).url]
+    }
+
+    /// Premješta datoteke baza (SQLite s `-shm` i `-wal` te mapa vanjskih podataka) u novu mapu pokraj njih,
+    /// da se aplikacija pri sljedećem pokretanju otvori s praznom bazom, a stari podaci ostanu za oporavak.
+    /// S iCloudom se podaci zatim ponovno preuzmu. Vraća mapu u koju su datoteke premještene.
+    @discardableResult
+    static func moveStoresAside(_ storeURLs: [URL], now: Date = Date(), fileManager: FileManager = .default) throws -> URL {
+        guard let directory = storeURLs.first?.deletingLastPathComponent() else {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        let destination = directory.appending(
+            path: "Neotvorena baza \(Int(now.timeIntervalSince1970))", directoryHint: .isDirectory
+        )
+        try fileManager.createDirectory(at: destination, withIntermediateDirectories: true)
+        for store in storeURLs {
+            let name = store.lastPathComponent
+            let support = "." + store.deletingPathExtension().lastPathComponent + "_SUPPORT"
+            for fileName in [name, name + "-shm", name + "-wal", support] {
+                let source = store.deletingLastPathComponent().appending(path: fileName)
+                guard fileManager.fileExists(atPath: source.path(percentEncoded: false)) else { continue }
+                try fileManager.moveItem(at: source, to: destination.appending(path: fileName))
+            }
+        }
+        return destination
     }
 }
 

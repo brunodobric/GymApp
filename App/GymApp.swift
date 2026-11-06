@@ -14,8 +14,12 @@ struct GymApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environment(catalogStore)
+            if AppServices.storeOpenError != nil {
+                StoreFailureScreen()
+            } else {
+                RootView()
+                    .environment(catalogStore)
+            }
         }
         .modelContainer(AppServices.container)
         .commands { AppCommands() }

@@ -80,6 +80,24 @@ final class HealthService {
         }
     }
 
+    // MARK: Trening na satu
+
+    /// Budi aplikaciju na satu i traži od nje sesiju treninga snage (`WatchAppDelegate.handle`).
+    /// Ako sat nije u blizini ili nema aplikaciju, ništa se ne događa i trening ide samo na iPhoneu.
+    func startWatchWorkout() {
+        guard isAvailable else { return }
+        let configuration = HKWorkoutConfiguration()
+        configuration.activityType = .traditionalStrengthTraining
+        configuration.locationType = .indoor
+        Task {
+            do {
+                try await store.startWatchApp(toHandle: configuration)
+            } catch {
+                logger.info("Trening na satu nije pokrenut: \(error.localizedDescription)")
+            }
+        }
+    }
+
     // MARK: Uvoz
 
     /// Uvozi nove kardio treninge, težinu i visinu. Prvi put ide unatrag `HealthImportWindow`,

@@ -75,7 +75,12 @@ extension GymSchemaV1 {
         public var onboardingCompleted: Bool = false
         /// Povezivanje s Apple Zdravljem: odgovor iz onboardinga, mijenja se u Postavkama.
         public var wantsHealthKit: Bool = false
+        /// Podsjetnici rasporeda.
         public var notificationsEnabled: Bool = true
+        /// Obavijest o kraju odmora kad je iPhone zaključan ili je trening sažet u karticu.
+        public var restNotificationEnabled: Bool = true
+        /// Trening pokrenut na iPhoneu pokreće i trening na satu (puls, kalorije, aplikacija ostaje otvorena).
+        public var startsWatchWorkout: Bool = true
         /// Tijelo koje se crta na prikazu mišića (statistika, sažetak treninga).
         public var bodyMapFemale: Bool = false
 

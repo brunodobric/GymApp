@@ -14,6 +14,8 @@ import WatchKit
 ///   sprema u datoteku i šalje iPhoneu kao snimka. Završni zapis ide zajamčenim kanalom, pa stigne
 ///   i kad je iPhone dio vremena izvan dosega.
 /// * Trening koji vodi iPhone ovdje se zrcali: izmjene se odmah prikazuju i šalju iPhoneu kao naredbe.
+///   Ako je iPhone pokrenuo i sat (`phoneRequestedHealthSession`), sat za njega drži sesiju u Zdravlju:
+///   mjeri puls i kalorije, ostaje otvoren i na kraju sprema trening u Zdravlje.
 @MainActor
 @Observable
 final class WatchWorkoutStore {
@@ -38,6 +40,8 @@ final class WatchWorkoutStore {
     /// Sve serije su završene: nudi se završetak treninga.
     var showsFinishPrompt = false
     var errorText: String?
+    /// Trening koji vodi iPhone za koji sat drži sesiju u Zdravlju.
+    private(set) var mirrorHealthSessionID: UUID?
 
     let health = WorkoutSessionManager()
 
@@ -48,11 +52,23 @@ final class WatchWorkoutStore {
     @ObservationIgnored private var pendingSend: Task<Void, Never>?
     @ObservationIgnored private var restTask: Task<Void, Never>?
     @ObservationIgnored private var isFinishing = false
+    /// iPhone je zatražio sesiju u Zdravlju, a snimka njegovog treninga još nije stigla.
+    @ObservationIgnored private var mirrorHealthRequestedAt: Date?
+    /// Zatvaranje sesije u Zdravlju koje je u tijeku: novi trening na satu čeka da završi.
+    @ObservationIgnored private var mirrorHealthEnding: Task<Void, Never>?
+    @ObservationIgnored private var mirrorHealthFallback: Task<Void, Never>?
+
+    /// Koliko dugo vrijedi zahtjev iPhonea dok se čeka snimka treninga.
+    private static let mirrorRequestLifetime: TimeInterval = 120
+    /// Koliko se čeka završni zapis s iPhonea nakon što iPhone javi da trening više nije aktivan.
+    private static let mirrorFallbackDelay: Duration = .seconds(5 * 60)
 
     private init() {}
 
     var unit: WeightUnit { context.weightUnit }
     var isController: Bool { active?.controllingDevice == .watch }
+    /// Puls i kalorije prikazuju se kad sat drži sesiju u Zdravlju (vodi trening ili ga je pokrenuo iPhone).
+    var showsHealthMetrics: Bool { isController || (mirrorHealthSessionID != nil && mirrorHealthSessionID == active?.id) }
 
     // MARK: Pokretanje aplikacije
 
@@ -68,7 +84,9 @@ final class WatchWorkoutStore {
             if isController { publish(active, reliably: true) }
             clearActive()
         }
-        if isController { health.recover() }
+        if isController || mirrorHealthSessionID != nil { health.recover() }
+        // Sesija za trening s iPhonea koji je u međuvremenu završio: čeka se završni zapis, ali ne zauvijek.
+        if let id = mirrorHealthSessionID, active?.id != id { scheduleMirrorHealthFallback(sessionID: id) }
         selectCurrentExercise()
         scheduleRestAlert()
     }
@@ -84,7 +102,14 @@ final class WatchWorkoutStore {
         currentExerciseID = snapshot.visibleExercises.first?.id
         persist()
         publish(snapshot, reliably: true)
-        Task { await health.start(sessionID: snapshot.id, at: snapshot.startedAt) }
+        // Sesija za prethodni trening s iPhonea koja još čeka završni zapis zatvara se odmah.
+        if let previous = mirrorHealthSessionID { endMirrorHealth(sessionID: previous, finishedAt: Date()) }
+        let ending = mirrorHealthEnding
+        Task {
+            // Sesija za prethodni trening s iPhonea mora se zatvoriti prije nove.
+            await ending?.value
+            await health.start(sessionID: snapshot.id, at: snapshot.startedAt)
+        }
     }
 
     /// Serija koja je na redu u prikazanoj vježbi (u supersetu može biti iz druge vježbe grupe).
@@ -210,6 +235,7 @@ final class WatchWorkoutStore {
         } else {
             sendCommands(from: mirrorBase ?? active, to: engine.snapshot)
             showSummary(of: engine.snapshot, volume: engine.totalVolumeKg)
+            endMirrorHealth(sessionID: active.id, finishedAt: engine.snapshot.endedAt ?? Date())
             clearActive()
         }
         return true
@@ -224,6 +250,7 @@ final class WatchWorkoutStore {
             publish(engine.snapshot, reliably: true)
         } else {
             transport.sendReliably(WorkoutEvent(sessionID: active.id, origin: .watch, kind: .commands([.discard])))
+            endMirrorHealth(sessionID: active.id, finishedAt: nil)
         }
         clearActive()
     }
@@ -359,8 +386,10 @@ final class WatchWorkoutStore {
         }
         if let snapshot = payload.session {
             applyPhoneSnapshot(snapshot)
-        } else if payload.watchContext != nil, active?.controllingDevice == .phone {
-            // iPhone više nema aktivan trening: zrcaljeni trening se zatvara.
+        } else if payload.watchContext != nil, let active, active.controllingDevice == .phone {
+            // iPhone više nema aktivan trening: zrcaljeni trening se zatvara. Sesija u Zdravlju čeka završni
+            // zapis (zajamčeni kanal), jer se iz konteksta ne vidi je li trening završen ili odbačen.
+            if mirrorHealthSessionID == active.id { scheduleMirrorHealthFallback(sessionID: active.id) }
             clearActive()
         }
     }
@@ -375,6 +404,10 @@ final class WatchWorkoutStore {
     /// Snimka treninga koji vodi iPhone. Trening koji vodi sat ima prednost i ne prepisuje se.
     private func applyPhoneSnapshot(_ snapshot: SessionSnapshot) {
         guard snapshot.controllingDevice == .phone else { return }
+        if snapshot.state != .active {
+            let finishedAt: Date? = snapshot.state == .finished ? (snapshot.endedAt ?? Date()) : nil
+            endMirrorHealth(sessionID: snapshot.id, finishedAt: finishedAt)
+        }
         if let active, active.controllingDevice == .watch { return }
         if snapshot.state != .active {
             if active?.id == snapshot.id { clearActive() }
@@ -387,10 +420,13 @@ final class WatchWorkoutStore {
         persist()
         selectCurrentExercise()
         scheduleRestAlert()
+        startMirrorHealthIfNeeded()
     }
+}
 
-    // MARK: Pauza
+// MARK: - Pauza i spremanje
 
+extension WatchWorkoutStore {
     /// Haptika na kraju odmora. Dok traje sesija treninga, aplikacija radi i sa spuštenim zapešćem.
     private func scheduleRestAlert() {
         restTask?.cancel()
@@ -421,7 +457,9 @@ final class WatchWorkoutStore {
     private func persist() {
         ComplicationState.update(context: context, active: active, restTimer: restTimer)
         do {
-            try WatchStateFile.save(WatchStateFile.State(context: context, active: active, mirrorBase: mirrorBase))
+            try WatchStateFile.save(WatchStateFile.State(
+                context: context, active: active, mirrorBase: mirrorBase, mirrorHealthSessionID: mirrorHealthSessionID
+            ))
         } catch {
             logger.error("Spremanje stanja: \(error.localizedDescription)")
         }
@@ -432,5 +470,93 @@ final class WatchWorkoutStore {
         context = state.context
         active = state.active
         mirrorBase = state.mirrorBase
+        mirrorHealthSessionID = state.mirrorHealthSessionID
+    }
+}
+
+// MARK: - Zdravlje za trening s iPhonea
+
+extension WatchWorkoutStore {
+    /// iPhone je pokrenuo trening i probudio sat (`WatchAppDelegate.handle`). Sesija se pokreće čim je
+    /// poznat trening (snimka može stići prije ili poslije zahtjeva).
+    func phoneRequestedHealthSession() {
+        mirrorHealthRequestedAt = Date()
+        startMirrorHealthIfNeeded()
+    }
+
+    private func startMirrorHealthIfNeeded() {
+        guard let requestedAt = mirrorHealthRequestedAt else { return }
+        // Stari zahtjev ne smije pokrenuti sesiju za neki kasniji trening.
+        guard Date().timeIntervalSince(requestedAt) < Self.mirrorRequestLifetime else {
+            mirrorHealthRequestedAt = nil
+            return
+        }
+        guard let active, active.controllingDevice == .phone, active.state == .active,
+              mirrorHealthSessionID == nil, !health.isRunning else { return }
+        mirrorHealthRequestedAt = nil
+        let id = active.id
+        let startedAt = active.startedAt
+        mirrorHealthSessionID = id
+        persist()
+        let ending = mirrorHealthEnding
+        Task {
+            await ending?.value
+            guard await health.start(sessionID: id, at: startedAt) else {
+                // Bez dozvole za Zdravlje trening ide dalje bez pulsa, a iPhone sam sprema trening.
+                if mirrorHealthSessionID == id {
+                    mirrorHealthSessionID = nil
+                    persist()
+                }
+                return
+            }
+            guard mirrorHealthSessionID == id else {
+                // Trening je završen ili odbačen dok se sesija pokretala.
+                health.discard()
+                return
+            }
+            transport.sendReliably(WorkoutEvent(sessionID: id, origin: .watch, kind: .commands([.healthRecordingStarted])))
+        }
+    }
+
+    /// Zatvara sesiju u Zdravlju za trening koji vodi iPhone. Završen trening sprema se u Zdravlje (ako je
+    /// to uključeno) i iPhone dobiva UUID, kalorije i puls; odbačen se odbacuje.
+    private func endMirrorHealth(sessionID: UUID, finishedAt: Date?) {
+        guard mirrorHealthSessionID == sessionID else { return }
+        mirrorHealthSessionID = nil
+        mirrorHealthFallback?.cancel()
+        mirrorHealthFallback = nil
+        persist()
+        guard let finishedAt else {
+            health.discard()
+            return
+        }
+        let save = context.savesToHealth
+        let previous = mirrorHealthEnding
+        mirrorHealthEnding = Task { [weak self] in
+            await previous?.value
+            guard let self else { return }
+            let result = await health.end(at: finishedAt, save: save, timeout: .seconds(10))
+            let report = WorkoutCommand.healthRecorded(
+                workoutId: result.workoutId, activeEnergyKilocalories: result.activeEnergyKilocalories,
+                averageHeartRate: result.averageHeartRate
+            )
+            transport.sendReliably(WorkoutEvent(sessionID: sessionID, origin: .watch, kind: .commands([report])))
+            if summary != nil {
+                summary?.activeEnergyKilocalories = summary?.activeEnergyKilocalories ?? result.activeEnergyKilocalories
+                summary?.averageHeartRate = summary?.averageHeartRate ?? result.averageHeartRate
+            }
+        }
+    }
+
+    /// Završni zapis s iPhonea stiže zajamčenim kanalom, ali iPhone može ostati izvan dosega. Da sesija
+    /// u Zdravlju ne radi satima, nakon čekanja se zatvara kao završen trening (trening je stvarno odrađen;
+    /// rijetko odbačen trening tada ostaje u Zdravlju).
+    private func scheduleMirrorHealthFallback(sessionID: UUID) {
+        mirrorHealthFallback?.cancel()
+        mirrorHealthFallback = Task { [weak self] in
+            try? await Task.sleep(for: Self.mirrorFallbackDelay)
+            guard !Task.isCancelled, let self else { return }
+            endMirrorHealth(sessionID: sessionID, finishedAt: Date())
+        }
     }
 }

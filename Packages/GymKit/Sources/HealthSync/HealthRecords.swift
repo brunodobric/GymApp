@@ -107,10 +107,12 @@ public struct HealthWorkoutExport: Sendable, Equatable {
     public var end: Date
 
     /// Spremaju se samo završeni treninzi koje je vodio iPhone, koji još nisu u Zdravlju i nisu iz njega uvezeni.
-    /// Trening koji vodi sat sprema sam sat (`HKWorkoutSession`, faza 8).
+    /// Trening koji vodi sat sprema sam sat (`HKWorkoutSession`, faza 8), a isto i trening s iPhonea
+    /// za koji je sat pokrenuo sesiju u Zdravlju (`Session.healthRecordedByWatch`).
     public static func make(for session: Session) -> HealthWorkoutExport? {
         guard session.state == .finished,
               session.controllingDevice == .phone,
+              !session.healthRecordedByWatch,
               session.healthKitWorkoutId == nil,
               !session.isImportedFromWorkoutsApp,
               let end = session.endedAt, end > session.startedAt

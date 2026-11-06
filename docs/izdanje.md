@@ -26,6 +26,8 @@ Nakon obrade (10 do 30 minuta) build je u App Store Connect > TestFlight. Export
 - [ ] TestFlight > Internal Testing: grupa s Brunom. Build stiže odmah, bez reviewa.
 - [ ] Na svom iPhoneu, iPadu i satu proći ručne provjere: `docs/sinkronizacija.md` (provjera na uređajima), `docs/DIZAJN.md` (pristupačnost) i osnovni tijek: onboarding, trening s predloškom na iPhoneu, trening sa sata, Live Activity, sažetak, povijest, statistika, izvoz i uvoz.
 - [ ] Izmjeriti performanse prema `docs/performanse.md` i upisati rezultate.
+- [ ] Ažuriranje preko starog builda: instalirati prethodni build iz TestFlighta, unijeti treninge, pa ažurirati na novi. Aplikacija se mora otvoriti s istim podacima. Ako se baza ne otvori, aplikacija pokazuje ekran "Podaci se nisu otvorili" (`StoreFailureScreen`) umjesto da se ruši.
+- [ ] Prije prvog izdanja: zamrznuti `GymSchemaV1`, uključiti `GymMigrationPlan` u `GymPersistence.makeUserContainer` i dodati test koji otvara spremljenu bazu prethodne verzije (datoteka u `Packages/GymKit/Tests/ModelsTests/Fixtures`).
 
 ## 4. Javni TestFlight (korisnici iz teretane)
 

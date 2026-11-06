@@ -818,6 +818,16 @@
         }
       }
     },
+    "Apolon nije mogao otvoriti spremljene treninge na ovom uređaju. Ništa nije obrisano." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apolon couldn't open the workouts saved on this device. Nothing has been deleted."
+          }
+        }
+      }
+    },
     "Apple Watch" : {
       "localizations" : {
         "en" : {
@@ -1284,6 +1294,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Details"
+          }
+        }
+      }
+    },
+    "Detalji greške" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error details"
           }
         }
       }
@@ -2158,6 +2178,16 @@
         }
       }
     },
+    "Kad trening pokreneš na iPhoneu, Apple Watch mjeri puls i kalorije, ostaje otvoren tijekom treninga i vibrira na kraju odmora." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When you start a workout on iPhone, Apple Watch measures heart rate and calories, stays open during the workout and taps you when rest ends."
+          }
+        }
+      }
+    },
     "Kako je prošlo?" : {
       "localizations" : {
         "en" : {
@@ -2408,6 +2438,16 @@
         }
       }
     },
+    "Kraj odmora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End of rest"
+          }
+        }
+      }
+    },
     "Lagano trčanje 30 min" : {
       "localizations" : {
         "en" : {
@@ -2604,6 +2644,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Newest first"
+          }
+        }
+      }
+    },
+    "Najprije zatvori aplikaciju i otvori je ponovno. Ako se ovo ponavlja, provjeri ima li novije verzije u App Storeu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First, close the app and open it again. If this keeps happening, check the App Store for a newer version."
           }
         }
       }
@@ -3234,6 +3284,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "About"
+          }
+        }
+      }
+    },
+    "Obavijest o kraju odmora stiže kad je iPhone zaključan ili je trening sažet u karticu, i prolazi kroz Fokus. Dopuštenje se traži kad prvi put zatreba." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The end-of-rest notification arrives when iPhone is locked or the workout is collapsed into a card, and it breaks through Focus. Permission is requested the first time it's needed."
           }
         }
       }
@@ -3908,12 +3968,32 @@
         }
       }
     },
+    "Podaci se nisu mogli premjestiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The data couldn't be moved."
+          }
+        }
+      }
+    },
     "Podaci se nisu mogli pripremiti." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The data couldn't be prepared."
+          }
+        }
+      }
+    },
+    "Podaci se nisu otvorili" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your data couldn't be opened"
           }
         }
       }
@@ -3978,12 +4058,12 @@
         }
       }
     },
-    "Podsjetnici rasporeda i obavijest o kraju odmora kad je iPhone zaključan. Dopuštenje se traži kad prvi put zatrebaju." : {
+    "Podsjetnici rasporeda" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schedule reminders and the end-of-rest notification when iPhone is locked. Permission is requested the first time they're needed."
+            "value" : "Schedule reminders"
           }
         }
       }
@@ -4024,6 +4104,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start it on the watch in the Workout app, named “%@”."
+          }
+        }
+      }
+    },
+    "Pokreni trening i na satu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also start workout on Watch"
           }
         }
       }
@@ -4278,6 +4368,16 @@
         }
       }
     },
+    "Početi s praznom bazom?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start with empty data?"
+          }
+        }
+      }
+    },
     "Početna" : {
       "localizations" : {
         "en" : {
@@ -4304,6 +4404,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Beginner"
+          }
+        }
+      }
+    },
+    "Počni s praznom bazom" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start with empty data"
           }
         }
       }
@@ -4384,6 +4494,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Excessive disk writes"
+          }
+        }
+      }
+    },
+    "Premjesti stare podatke i počni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move old data and start"
           }
         }
       }
@@ -5528,6 +5648,26 @@
         }
       }
     },
+    "Stari podaci ostaju na uređaju u zasebnoj mapi. Treninzi iz iClouda ponovno se preuzimaju." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your old data stays on this device in a separate folder. Workouts from iCloud are downloaded again."
+          }
+        }
+      }
+    },
+    "Stari podaci su premješteni u mapu „%@”. Zatvori aplikaciju i otvori je ponovno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your old data was moved to the folder “%@”. Close the app and open it again."
+          }
+        }
+      }
+    },
     "Statistika" : {
       "localizations" : {
         "en" : {
@@ -6604,6 +6744,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import from file"
+          }
+        }
+      }
+    },
+    "Uvezi iz Zdravlja sada" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import from Health now"
           }
         }
       }

@@ -9,6 +9,8 @@ enum WatchStateFile {
         var context: WatchContextPayload
         var active: SessionSnapshot?
         var mirrorBase: SessionSnapshot?
+        /// Trening koji vodi iPhone za koji sat drži sesiju u Zdravlju. Opcionalno, pa se čita i starija datoteka.
+        var mirrorHealthSessionID: UUID?
     }
 
     private static var url: URL {
