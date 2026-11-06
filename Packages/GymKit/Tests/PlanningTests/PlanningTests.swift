@@ -574,7 +574,7 @@ struct ProgramTests {
         #expect(push.orderedExercises.count == 5)
         #expect(push.orderedExercises[0].orderedSets.count == 4)
         #expect(push.orderedExercises[0].orderedSets.allSatisfy { $0.targetReps == 6 })
-        #expect(push.orderedExercises[0].exerciseName == "Vježba Barbell_Bench_Press_-_Medium_Grip")
+        #expect(push.orderedExercises[0].exerciseName == "Vježba barbell-bench-press")
     }
 
     @Test("Nazivi rasporeda i treninga na jeziku sučelja")
@@ -595,7 +595,7 @@ struct ProgramTests {
         let program = try #require(ProgramLibrary.all.first { $0.id == "full-body-3" })
         try ProgramInstaller(context: context).install(program) { $0 }
         let templates = try context.fetch(FetchDescriptor<WorkoutTemplate>())
-        let plank = try #require(templates.flatMap(\.orderedExercises).first { $0.exerciseName == "Plank" })
+        let plank = try #require(templates.flatMap(\.orderedExercises).first { $0.exerciseName == "front-plank" })
         #expect(plank.inputType == .duration)
         #expect(plank.orderedSets.allSatisfy { $0.targetReps == nil })
     }

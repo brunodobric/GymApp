@@ -48,6 +48,11 @@ targets:
       - path: Resources/BodyMap
         type: folder
         buildPhase: resources
+      # MoveKit dodatak (upute, klipovi i posteri): MoveKit/... Licencirani sadržaj nije u repozitoriju,
+      # nego ga scripts/movekit.sh kopira s Maca (docs/movekit.md). U klonu bez paketa mapa ima samo .gitkeep.
+      - path: Resources/MoveKit
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: GymKit
         products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup, HealthSync, Diagnostics, Demo]

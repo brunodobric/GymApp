@@ -43,70 +43,70 @@ public enum ProgramLibrary {
     }
 
     private static let push = ProgramWorkout(key: "push", name: "Push", exercises: [
-        weighted("Barbell_Bench_Press_-_Medium_Grip", 4, 6),
-        weighted("Dumbbell_Shoulder_Press", 3, 8),
-        weighted("Incline_Dumbbell_Press", 3, 10),
-        weighted("Side_Lateral_Raise", 3, 15),
-        weighted("Triceps_Pushdown", 3, 12),
+        weighted("barbell-bench-press", 4, 6),
+        weighted("dumbbell-seated-overhead-press", 3, 8),
+        weighted("dumbbell-incline-bench-press", 3, 10),
+        weighted("dumbbell-lateral-raise", 3, 15),
+        weighted("cable-bar-pushdown", 3, 12),
     ])
 
     private static let pull = ProgramWorkout(key: "pull", name: "Pull", exercises: [
-        bodyweight("Pullups", 3, 8),
-        weighted("Bent_Over_Barbell_Row", 4, 8),
-        weighted("Seated_Cable_Rows", 3, 10),
-        weighted("Face_Pull", 3, 15),
-        weighted("Dumbbell_Bicep_Curl", 3, 10),
+        bodyweight("pull-ups", 3, 8),
+        weighted("barbell-bent-over-row", 4, 8),
+        weighted("machine-seated-cable-row", 3, 10),
+        weighted("machine-face-pulls", 3, 15),
+        weighted("dumbbell-curl", 3, 10),
     ])
 
     private static let legs = ProgramWorkout(key: "legs", name: "Noge", exercises: [
-        weighted("Barbell_Squat", 4, 6),
-        weighted("Romanian_Deadlift", 3, 8),
-        weighted("Leg_Press", 3, 10),
-        weighted("Lying_Leg_Curls", 3, 12),
-        weighted("Standing_Calf_Raises", 4, 12),
+        weighted("barbell-squat", 4, 6),
+        weighted("barbell-romanian-deadlift", 3, 8),
+        weighted("machine-leg-press", 3, 10),
+        weighted("lying-leg-curl", 3, 12),
+        weighted("standing-calf-raise-machine", 4, 12),
     ])
 
     private static let upper = ProgramWorkout(key: "upper", name: "Gornji dio tijela", exercises: [
-        weighted("Barbell_Bench_Press_-_Medium_Grip", 3, 8),
-        weighted("Bent_Over_Barbell_Row", 3, 8),
-        weighted("Dumbbell_Shoulder_Press", 3, 10),
-        weighted("Wide-Grip_Lat_Pulldown", 3, 10),
-        weighted("Dumbbell_Bicep_Curl", 2, 12),
-        weighted("Triceps_Pushdown", 2, 12),
+        weighted("barbell-bench-press", 3, 8),
+        weighted("barbell-bent-over-row", 3, 8),
+        weighted("dumbbell-seated-overhead-press", 3, 10),
+        weighted("wide-grip-lat-pulldown", 3, 10),
+        weighted("dumbbell-curl", 2, 12),
+        weighted("cable-bar-pushdown", 2, 12),
     ])
 
     private static let lower = ProgramWorkout(key: "lower", name: "Donji dio tijela", exercises: [
-        weighted("Barbell_Squat", 4, 6),
-        weighted("Romanian_Deadlift", 3, 8),
-        weighted("Dumbbell_Lunges", 3, 10),
-        weighted("Lying_Leg_Curls", 3, 12),
-        weighted("Standing_Calf_Raises", 3, 12),
-        weighted("Cable_Crunch", 3, 12),
+        weighted("barbell-squat", 4, 6),
+        weighted("barbell-romanian-deadlift", 3, 8),
+        weighted("dumbbell-alternating-forward-lunge", 3, 10),
+        weighted("lying-leg-curl", 3, 12),
+        weighted("standing-calf-raise-machine", 3, 12),
+        weighted("kneeling-cable-crunch", 3, 12),
     ])
 
     private static let fullBodyA = ProgramWorkout(key: "fullA", name: "Cijelo tijelo A", exercises: [
-        weighted("Barbell_Squat", 3, 5),
-        weighted("Barbell_Bench_Press_-_Medium_Grip", 3, 5),
-        weighted("Bent_Over_Barbell_Row", 3, 8),
-        weighted("Standing_Military_Press", 2, 8),
-        ProgramExercise(catalogId: "Plank", inputType: .duration, sets: 3, reps: nil),
+        weighted("barbell-squat", 3, 5),
+        weighted("barbell-bench-press", 3, 5),
+        weighted("barbell-bent-over-row", 3, 8),
+        weighted("barbell-overhead-press", 2, 8),
+        ProgramExercise(catalogId: "front-plank", inputType: .duration, sets: 3, reps: nil),
     ])
 
     private static let fullBodyB = ProgramWorkout(key: "fullB", name: "Cijelo tijelo B", exercises: [
-        weighted("Barbell_Deadlift", 3, 5),
-        weighted("Incline_Dumbbell_Press", 3, 8),
-        weighted("Wide-Grip_Lat_Pulldown", 3, 10),
-        weighted("Leg_Press", 3, 10),
-        weighted("Dumbbell_Bicep_Curl", 2, 12),
+        weighted("barbell-deadlift", 3, 5),
+        weighted("dumbbell-incline-bench-press", 3, 8),
+        weighted("wide-grip-lat-pulldown", 3, 10),
+        weighted("machine-leg-press", 3, 10),
+        weighted("dumbbell-curl", 2, 12),
     ])
 
     private static let fullBodyC = ProgramWorkout(key: "fullC", name: "Cijelo tijelo C", exercises: [
-        weighted("Goblet_Squat", 3, 10),
-        weighted("Dumbbell_Bench_Press", 3, 10),
-        weighted("Seated_Cable_Rows", 3, 10),
-        weighted("Side_Lateral_Raise", 3, 12),
-        weighted("Triceps_Pushdown", 2, 12),
-        bodyweight("Crunches", 3, 15),
+        weighted("kettlebell-goblet-squat", 3, 10),
+        weighted("dumbbell-bench-press", 3, 10),
+        weighted("machine-seated-cable-row", 3, 10),
+        weighted("dumbbell-lateral-raise", 3, 12),
+        weighted("cable-bar-pushdown", 2, 12),
+        bodyweight("crunches", 3, 15),
     ])
 
     private static func pushPullLegs(days: Int) -> Program {

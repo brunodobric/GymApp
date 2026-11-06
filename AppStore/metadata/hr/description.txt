@@ -15,7 +15,7 @@ RASPOREDI
 • Izmjena samo za trenutni ciklus, bez diranja plana
 
 KATALOG VJEŽBI
-• Više od 180 vježbi sa slikama i uputama na hrvatskom i engleskom
+• Gotovo 600 vježbi s animacijama i uputama korak po korak
 • Pretraga i filteri po mišićima, opremi i vrsti pokreta
 • Vlastite vježbe sa slikom
 

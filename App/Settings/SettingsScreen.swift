@@ -175,12 +175,8 @@ private struct AboutScreen: View {
                 LabeledContent("Verzija", value: version)
             }
             Section {
-                // Atribucija kataloga (specifikacija, odjeljak 10), iako je javno vlasništvo.
-                NavigationLink {
-                    ExerciseCatalogLicenseScreen()
-                } label: {
-                    LabeledContent("Katalog vježbi", value: "free-exercise-db")
-                }
+                // Klipovi i upute vježbi su iz MoveKit paketa (komercijalna licenca, navođenje nije obavezno).
+                LabeledContent("Katalog vježbi", value: "MoveKit")
                 // Atribucija crteža tijela (MIT licenca zahtijeva copyright napomenu i tekst licence).
                 NavigationLink {
                     MuscleMapLicenseScreen()

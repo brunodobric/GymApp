@@ -37,7 +37,7 @@ GymApp/
 │       ├── Units/          # kg/lbs, formatiranje
 │       └── DesignSystem/   # boje, tipografija, zajedničke komponente
 ├── Tools/
-│   └── CatalogBuilder/     # skripta: free-exercise-db + mapiranje + prijevodi → baza kataloga
+│   └── CatalogBuilder/     # skripta: MoveKit metapodaci + mapiranje + hr nazivi → katalog i privatni dodatak
 ├── Resources/
 │   ├── Catalog/            # mapping.json, prijevodi, odabrani set vježbi
 │   └── Localizable.xcstrings
@@ -111,7 +111,7 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 * Ekran kataloga: lista naziva, pretraga, filteri (kategorija, mišić, oprema, službene/vlastite).
 * Detalj vježbe: slika, upute, mišići, oprema.
 * Vlastite vježbe: kreiranje, uređivanje, slika, arhiviranje umjesto brisanja kad postoji povijest.
-* Atribucija free-exercise-db u "O aplikaciji".
+* Atribucija free-exercise-db u "O aplikaciji". (Studeni 2026: katalog je zamijenjen MoveKitom, vidi `docs/movekit.md`.)
 
 **Gotovo kad:** katalog se gradi skriptom bez ručnih koraka, pretraga je trenutna na cijelom setu, a vlastita vježba s povijesti ne može se izgubiti brisanjem.
 

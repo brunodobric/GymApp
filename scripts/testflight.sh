@@ -20,6 +20,9 @@ if [[ -z "$TEAM" ]]; then
     exit 1
 fi
 
+# Izdanje mora imati MoveKit klipove i upute (docs/movekit.md); bez njih bi katalog bio bez animacija.
+scripts/movekit.sh
+
 # Broj builda raste sa svakim commitom, pa je svaki upload jedinstven i vidi se iz kojeg je commita.
 BUILD=$(git rev-list --count HEAD)
 VERSION=$(sed -n 's/^ *MARKETING_VERSION: *"\(.*\)"/\1/p' project.yml)

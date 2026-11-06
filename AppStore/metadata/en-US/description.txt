@@ -15,7 +15,7 @@ SCHEDULES
 • Change just the current cycle without touching the plan
 
 EXERCISE CATALOG
-• Over 180 exercises with images and instructions in English and Croatian
+• Nearly 600 exercises with looping animations and step-by-step instructions
 • Search and filters by muscle, equipment and movement type
 • Your own exercises, with a photo
 

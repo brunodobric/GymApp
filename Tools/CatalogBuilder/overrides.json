@@ -1,0 +1,1775 @@
+{
+ "arnold-press": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "triceps"
+  ],
+  "equipment": "dumbbell"
+ },
+ "band-assisted-pull-up": {
+  "inputType": "assisted",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "middle back"
+  ],
+  "equipment": "other"
+ },
+ "barbell-bench-press": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-bent-over-row": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "lats",
+   "shoulders"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-clean-and-press": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "abdominals",
+   "calves",
+   "glutes",
+   "hamstrings",
+   "lower back",
+   "middle back",
+   "quadriceps",
+   "shoulders",
+   "traps",
+   "triceps"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-close-grip-bench-press": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [
+   "chest",
+   "shoulders"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [
+   "forearms"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-deadlift": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "glutes",
+   "hamstrings",
+   "lower back"
+  ],
+  "secondaryMuscles": [
+   "quadriceps",
+   "adductors",
+   "traps",
+   "forearms"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-drag-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [
+   "forearms"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-glute-bridge": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "hamstrings"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-hip-thrust": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "hamstrings"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-incline-bench-press": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-lunge": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "adductors"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-overhead-press": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "triceps"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-rack-pull": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "lower back",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "hamstrings",
+   "traps",
+   "forearms"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-romanian-deadlift": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "hamstrings",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "lower back"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-shrug": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "traps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "barbell"
+ },
+ "barbell-snatch": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "glutes",
+   "hamstrings",
+   "lower back",
+   "shoulders",
+   "traps",
+   "triceps"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-spinal-jefferson-curl": {
+  "inputType": "weightReps"
+ },
+ "barbell-squat": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "adductors",
+   "lower back"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-stiff-leg-deadlifts": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "hamstrings",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "lower back"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-upright-row": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "traps"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-walking-lunge": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "adductors"
+  ],
+  "equipment": "barbell"
+ },
+ "barbell-wrist-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "forearms"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "barbell"
+ },
+ "bench-dips": {
+  "inputType": "bodyweight",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [
+   "chest",
+   "shoulders"
+  ],
+  "equipment": "bodyweight"
+ },
+ "bicycle-crunches": {
+  "inputType": "bodyweight",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "bodyweight"
+ },
+ "bodyweight-box-squat": {
+  "inputType": "weightReps"
+ },
+ "bodyweight-donkey-calf-raise": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "calves"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "other"
+ },
+ "bodyweight-russian-twist": {
+  "inputType": "bodyweight",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [
+   "lower back"
+  ],
+  "equipment": "bodyweight"
+ },
+ "bodyweight-spinal-jefferson-curl": {
+  "inputType": "bodyweight"
+ },
+ "bodyweight-squat": {
+  "inputType": "bodyweight",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "glutes"
+  ],
+  "equipment": "bodyweight"
+ },
+ "cable-bar-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "cable"
+ },
+ "cable-bar-pushdown": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "cable"
+ },
+ "cable-chest-press": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "cable"
+ },
+ "cable-high-to-low-fly": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders"
+  ],
+  "equipment": "cable"
+ },
+ "cable-kickback": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "hamstrings"
+  ],
+  "equipment": "cable"
+ },
+ "cable-low-single-arm-lateral-raise": {
+  "inputType": "weightReps"
+ },
+ "cable-low-to-high-fly": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders"
+  ],
+  "equipment": "cable"
+ },
+ "cable-overhead-straight-bar-extensions": {
+  "inputType": "weightReps"
+ },
+ "cable-pull-through": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "hamstrings",
+   "lower back"
+  ],
+  "equipment": "cable"
+ },
+ "cable-rope-hammer-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "cable"
+ },
+ "cable-rope-overhead-tricep-extension": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "cable"
+ },
+ "cable-rope-pushdown": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "cable"
+ },
+ "cable-single-arm-neutral-grip-row": {
+  "inputType": "weightReps"
+ },
+ "cable-single-arm-rear-delt-row": {
+  "inputType": "weightReps"
+ },
+ "cable-wood-chopper": {
+  "inputType": "weightReps",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [
+   "shoulders"
+  ],
+  "equipment": "cable"
+ },
+ "captains-chair-knee-raise": {
+  "inputType": "bodyweight",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "other"
+ },
+ "chest-supported-t-bar-row": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "lats"
+  ],
+  "equipment": "machine"
+ },
+ "chin-ups": {
+  "inputType": "bodyweight",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "forearms",
+   "middle back"
+  ],
+  "equipment": "bodyweight"
+ },
+ "cossack-squat": {
+  "inputType": "bodyweight"
+ },
+ "crunches": {
+  "inputType": "bodyweight",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "bodyweight"
+ },
+ "dead-bug": {
+  "inputType": "bodyweight",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "bodyweight"
+ },
+ "decline-barbell-bench-press": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "barbell"
+ },
+ "decline-crunch": {
+  "inputType": "bodyweight",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "bodyweight"
+ },
+ "decline-push-up": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "other"
+ },
+ "dumbbell-alternating-forward-lunge": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "adductors"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-bench-press": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-bulgarian-split-squat": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "adductors"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-chest-fly": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-concentration-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [
+   "forearms"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-cossack-squat": {
+  "inputType": "weightReps"
+ },
+ "dumbbell-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [
+   "forearms"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-front-raise": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-halo": {
+  "inputType": "weightReps"
+ },
+ "dumbbell-hammer-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-incline-bench-press": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-incline-chest-fly": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-incline-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-incline-row": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "forearms",
+   "lats",
+   "shoulders"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-lateral-raise": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-pullover": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "lats",
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-rear-delt-fly": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-reverse-lunge": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "adductors"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-row-bilateral": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "lats",
+   "shoulders"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-seated-overhead-press": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "triceps"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-seated-overhead-tricep-extension": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-shrug": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "traps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-side-bend": {
+  "inputType": "weightReps",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-single-arm-row": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "lats",
+   "shoulders"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-single-leg-calf-raise": {
+  "inputType": "weightReps"
+ },
+ "dumbbell-situp": {
+  "inputType": "bodyweight"
+ },
+ "dumbbell-skullcrusher": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [
+   "chest",
+   "shoulders"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-spinal-jefferson-curl": {
+  "inputType": "weightReps"
+ },
+ "dumbbell-step-up-low": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "adductors"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-stiff-leg-deadlift": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "hamstrings",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "lower back"
+  ],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-tricep-kickback": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-turkish-get-up": {
+  "inputType": "weightReps"
+ },
+ "dumbbell-wrist-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "forearms"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "dumbbell-wrist-extension": {
+  "inputType": "weightReps"
+ },
+ "elbow-side-plank": {
+  "inputType": "duration",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [
+   "shoulders"
+  ],
+  "equipment": "bodyweight"
+ },
+ "elliptical": {
+  "inputType": "durationDistance",
+  "category": "cardio",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "calves",
+   "glutes",
+   "hamstrings"
+  ],
+  "equipment": "machine"
+ },
+ "ez-bar-preacher-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "barbell"
+ },
+ "ez-bar-skullcrusher": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [
+   "forearms"
+  ],
+  "equipment": "ezBar"
+ },
+ "front-plank": {
+  "inputType": "duration",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "bodyweight"
+ },
+ "front-squat": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "glutes",
+   "adductors",
+   "abdominals"
+  ],
+  "equipment": "barbell"
+ },
+ "glute-kickback-machine": {
+  "inputType": "bodyweight"
+ },
+ "good-mornings": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "hamstrings",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "lower back"
+  ],
+  "equipment": "barbell"
+ },
+ "hammer-strength-high-row": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "lats"
+  ],
+  "equipment": "machine"
+ },
+ "hang-clean": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "calves",
+   "forearms",
+   "glutes",
+   "hamstrings",
+   "lower back",
+   "shoulders",
+   "traps"
+  ],
+  "equipment": "barbell"
+ },
+ "hill-climb-repeats": {
+  "inputType": "durationDistance"
+ },
+ "incline-machine-chest-press": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "machine"
+ },
+ "incline-push-up": {
+  "inputType": "bodyweight",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "bodyweight"
+ },
+ "incline-treadmill-walk": {
+  "inputType": "durationDistance"
+ },
+ "indoor-cycling-spin": {
+  "inputType": "durationDistance",
+  "category": "cardio",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "calves",
+   "glutes",
+   "hamstrings"
+  ],
+  "equipment": "machine"
+ },
+ "inverted-row": {
+  "inputType": "bodyweight",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "lats"
+  ],
+  "equipment": "bodyweight"
+ },
+ "jump-rope": {
+  "inputType": "duration",
+  "category": "cardio",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "calves",
+   "hamstrings"
+  ],
+  "equipment": "other"
+ },
+ "kettlebell-goblet-squat": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "glutes",
+   "adductors"
+  ],
+  "equipment": "kettlebell"
+ },
+ "kettlebell-halo": {
+  "inputType": "weightReps"
+ },
+ "kettlebell-spinal-jefferson-curl": {
+  "inputType": "weightReps"
+ },
+ "kettlebell-turkish-get-up": {
+  "inputType": "weightReps"
+ },
+ "kneeling-cable-crunch": {
+  "inputType": "weightReps",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "cable"
+ },
+ "landmine-t-bar-rows": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "lats"
+  ],
+  "equipment": "barbell"
+ },
+ "lat-pulldown": {
+  "inputType": "weightReps"
+ },
+ "leg-press-calf-raise": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "calves"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "lunge-walking": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "adductors"
+  ],
+  "equipment": "other"
+ },
+ "lying-leg-curl": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "hamstrings"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "machine-45-degree-back-extension": {
+  "inputType": "bodyweight",
+  "category": "back",
+  "primaryMuscles": [
+   "lower back"
+  ],
+  "secondaryMuscles": [
+   "glutes",
+   "hamstrings"
+  ],
+  "equipment": "other"
+ },
+ "machine-cable-v-bar-push-downs": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "cable"
+ },
+ "machine-chest-press": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "machine"
+ },
+ "machine-crunch": {
+  "inputType": "weightReps",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "machine-dips": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [
+   "chest",
+   "shoulders"
+  ],
+  "equipment": "machine"
+ },
+ "machine-face-pulls": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "middle back"
+  ],
+  "equipment": "cable"
+ },
+ "machine-hack-squat": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "glutes",
+   "adductors"
+  ],
+  "equipment": "machine"
+ },
+ "machine-hip-abduction": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "abductors"
+  ],
+  "secondaryMuscles": [
+   "glutes"
+  ],
+  "equipment": "machine"
+ },
+ "machine-hip-adduction": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "adductors"
+  ],
+  "secondaryMuscles": [
+   "glutes",
+   "hamstrings"
+  ],
+  "equipment": "machine"
+ },
+ "machine-leg-extension": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "machine-leg-press": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "glutes",
+   "adductors"
+  ],
+  "equipment": "machine"
+ },
+ "machine-pec-fly": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "machine-preacher-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "machine-seated-cable-row": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "lats",
+   "shoulders"
+  ],
+  "equipment": "cable"
+ },
+ "machine-tricep-extension": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "man-maker": {
+  "inputType": "weightReps"
+ },
+ "mountain-climber": {
+  "inputType": "bodyweight",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [
+   "quadriceps",
+   "shoulders"
+  ],
+  "equipment": "bodyweight"
+ },
+ "narrow-pulldown": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "middle back",
+   "shoulders"
+  ],
+  "equipment": "cable"
+ },
+ "neutral-grip-lat-pulldown": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "middle back",
+   "shoulders"
+  ],
+  "equipment": "cable"
+ },
+ "nordic-hamstring-curl": {
+  "inputType": "weightReps"
+ },
+ "pallof-press": {
+  "inputType": "weightReps",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [
+   "chest",
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "cable"
+ },
+ "parralel-bar-dips": {
+  "inputType": "bodyweight",
+  "category": "arms",
+  "primaryMuscles": [
+   "triceps"
+  ],
+  "secondaryMuscles": [
+   "chest",
+   "shoulders"
+  ],
+  "equipment": "other"
+ },
+ "power-clean": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "hamstrings"
+  ],
+  "secondaryMuscles": [
+   "calves",
+   "forearms",
+   "glutes",
+   "lower back",
+   "middle back",
+   "quadriceps",
+   "shoulders",
+   "traps",
+   "triceps"
+  ],
+  "equipment": "barbell"
+ },
+ "pull-ups": {
+  "inputType": "bodyweight",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "middle back"
+  ],
+  "equipment": "bodyweight"
+ },
+ "push-up": {
+  "inputType": "bodyweight",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "bodyweight"
+ },
+ "reverse-crunch": {
+  "inputType": "bodyweight",
+  "category": "core",
+  "primaryMuscles": [
+   "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "bodyweight"
+ },
+ "reverse-grip-barbell-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [
+   "forearms"
+  ],
+  "equipment": "barbell"
+ },
+ "reverse-hyperextension": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "glutes",
+   "hamstrings"
+  ],
+  "secondaryMuscles": [
+   "lower back"
+  ],
+  "equipment": "machine"
+ },
+ "reverse-pec-deck": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "romanian-deadlift-hamstring-sweeps": {
+  "inputType": "bodyweight"
+ },
+ "rowing-machine-steady-state": {
+  "inputType": "durationDistance",
+  "category": "cardio",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "calves",
+   "glutes",
+   "hamstrings",
+   "lower back",
+   "middle back"
+  ],
+  "equipment": "machine"
+ },
+ "seated-barbell-military-press": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "chest",
+   "triceps"
+  ],
+  "equipment": "barbell"
+ },
+ "seated-calf-raise": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "calves"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "seated-dumbbell-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "dumbbell"
+ },
+ "seated-leg-curl": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "hamstrings"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "selectorized-overhead-press-machine": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "triceps"
+  ],
+  "equipment": "machine"
+ },
+ "side-plank-lateral-raise": {
+  "inputType": "weightReps"
+ },
+ "single-arm-lat-pulldown": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "middle back"
+  ],
+  "equipment": "cable"
+ },
+ "single-leg-glute-bridge": {
+  "inputType": "bodyweight",
+  "category": "legs",
+  "primaryMuscles": [
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "hamstrings"
+  ],
+  "equipment": "bodyweight"
+ },
+ "single-legged-romanian-deadlifts": {
+  "inputType": "weightReps"
+ },
+ "smith-machine-bench-press": {
+  "inputType": "weightReps",
+  "category": "chest",
+  "primaryMuscles": [
+   "chest"
+  ],
+  "secondaryMuscles": [
+   "shoulders",
+   "triceps"
+  ],
+  "equipment": "machine"
+ },
+ "smith-machine-calf-raise": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "calves"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "smith-machine-seated-overhead-press": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "triceps"
+  ],
+  "equipment": "machine"
+ },
+ "smith-machine-squat": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "adductors"
+  ],
+  "equipment": "machine"
+ },
+ "smith-machine-standing-shrugs": {
+  "inputType": "weightReps"
+ },
+ "squat-thrusts": {
+  "inputType": "bodyweight"
+ },
+ "stability-ball-leg-curl": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "hamstrings"
+  ],
+  "secondaryMuscles": [
+   "calves",
+   "glutes"
+  ],
+  "equipment": "other"
+ },
+ "stair-climber": {
+  "inputType": "durationDistance",
+  "category": "cardio",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "calves",
+   "glutes",
+   "hamstrings"
+  ],
+  "equipment": "machine"
+ },
+ "standing-calf-raise-machine": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "calves"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "machine"
+ },
+ "standing-dumbbell-overhead-press": {
+  "inputType": "weightReps",
+  "category": "shoulders",
+  "primaryMuscles": [
+   "shoulders"
+  ],
+  "secondaryMuscles": [
+   "triceps"
+  ],
+  "equipment": "dumbbell"
+ },
+ "steady-state-ride": {
+  "inputType": "durationDistance"
+ },
+ "straight-arm-lat-pulldown": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "cable"
+ },
+ "straight-arm-rope-pulldown-light": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [],
+  "equipment": "cable"
+ },
+ "sumo-deadlift": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "glutes",
+   "hamstrings"
+  ],
+  "secondaryMuscles": [
+   "adductors",
+   "quadriceps",
+   "lower back",
+   "traps"
+  ],
+  "equipment": "barbell"
+ },
+ "toes-to-bar": {
+  "inputType": "bodyweight"
+ },
+ "trail-run": {
+  "inputType": "durationDistance",
+  "category": "cardio",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "calves",
+   "glutes",
+   "hamstrings"
+  ],
+  "equipment": "bodyweight"
+ },
+ "trap-bar-deadlift": {
+  "inputType": "weightReps",
+  "category": "legs",
+  "primaryMuscles": [
+   "quadriceps",
+   "glutes"
+  ],
+  "secondaryMuscles": [
+   "hamstrings",
+   "lower back",
+   "traps"
+  ],
+  "equipment": "other"
+ },
+ "treadmill-run": {
+  "inputType": "durationDistance",
+  "category": "cardio",
+  "primaryMuscles": [
+   "quadriceps"
+  ],
+  "secondaryMuscles": [
+   "calves",
+   "glutes",
+   "hamstrings"
+  ],
+  "equipment": "machine"
+ },
+ "turkish-get-up": {
+  "inputType": "bodyweight"
+ },
+ "underhand-barbell-row": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "middle back"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "lats",
+   "shoulders"
+  ],
+  "equipment": "barbell"
+ },
+ "v-up": {
+  "inputType": "bodyweight"
+ },
+ "weighted-pull-ups": {
+  "inputType": "weightedBodyweight",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "middle back"
+  ],
+  "equipment": "other"
+ },
+ "wide-grip-lat-pulldown": {
+  "inputType": "weightReps",
+  "category": "back",
+  "primaryMuscles": [
+   "lats"
+  ],
+  "secondaryMuscles": [
+   "biceps",
+   "middle back",
+   "shoulders"
+  ],
+  "equipment": "cable"
+ },
+ "wrist-roller": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "forearms"
+  ],
+  "secondaryMuscles": [
+   "shoulders"
+  ],
+  "equipment": "other"
+ },
+ "zottman-curl": {
+  "inputType": "weightReps",
+  "category": "arms",
+  "primaryMuscles": [
+   "biceps"
+  ],
+  "secondaryMuscles": [
+   "forearms"
+  ],
+  "equipment": "dumbbell"
+ }
+}

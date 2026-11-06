@@ -29,7 +29,7 @@ Ključne riječi ne ponavljaju riječi iz naziva i podnaslova, jer ih App Store 
 * **Sign-in required:** ne (nema računa).
 * **Privatnost (App Privacy):** "Data Not Collected", odgovori su u `docs/PRAVNO_I_PRIVATNOST.md`.
 * **Export Compliance:** već riješeno u Info.plist (`ITSAppUsesNonExemptEncryption = NO`).
-* **Content Rights:** aplikacija ne prikazuje sadržaj trećih strana osim kataloga free-exercise-db (Unlicense) i crteža MuscleMap (MIT), za koje ima pravo.
+* **Content Rights:** aplikacija prikazuje sadržaj trećih strana samo iz MoveKit kataloga vježbi (komercijalna licenca, s pisanom potvrdom za isporuku u aplikaciji) i crteža MuscleMap (MIT), za koje ima pravo. Odgovor na pitanje o pravima: Yes, has rights.
 
 ## Dobna oznaka (Age Rating)
 

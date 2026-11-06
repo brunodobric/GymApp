@@ -11,15 +11,15 @@ Ovaj dokument sadrži ažuriranu i proširenu specifikaciju moderne iOS (Swift) 
 ## 1. Baza podataka i Katalog vježbi
 
 ### Primarni izvor podataka
-* **Izvor:** **free-exercise-db** (yuhonas/free-exercise-db na GitHubu).
-* **Licenciranje:** Public domain (Unlicense) — bez obaveza attributiona ili share-alike. Idealno za komercijalnu aplikaciju.
-* **Količina:** ~870 vježbi s slikama. Početni opseg može biti filtriran na 150–200 najkorisnijih, s mogućnošću proširenja na cijeli set.
-* **Vizualni sadržaj:** Statične slike vježbi (JPEG) + detaljne korak-po-korak instrukcije. Body heatmap (primarni i sekundarni mišići) za vizualni prikaz.
-* **Animacija vježbe:** na detalju vježbe dvije fotografije iz free-exercise-db (početni i završni položaj) u krug se pretapaju jedna u drugu, a gumb u kutu pauzira i nastavlja animaciju. Animacija stoji dok nije na ekranu ili je aplikacija u pozadini. Uz Smanji kretanje oba položaja stoje jedan do drugoga bez animacije. U mreži kataloga prikazuje se početni položaj. Everkinetic crteži iz faze 7a su izbačeni jer su pokrivali samo dio vježbi (92 od 181), pa prikaz nije bio ujednačen.
+* **Izvor:** **MoveKit** (movekit.com), paket "Complete Exercise Library": 582 vježbe, svaka s animiranim klipom, posterom i metapodacima (mišići, oprema, obrazac pokreta, razina, upute, česte greške).
+* **Licenciranje:** komercijalna licenca (MoveKit License Agreement v1.0). Klipove i tekstove smijemo ugraditi u aplikaciju, pretvoriti u drugi format i izrezati. Navođenje izvora nije obavezno. Sirove datoteke ne smiju biti javno dostupne, pa licencirani sadržaj nije u javnom repozitoriju (`docs/movekit.md`). Do studenog 2026 izvor je bio free-exercise-db (Unlicense).
+* **Količina:** svih 582 vježbi iz paketa.
+* **Vizualni sadržaj:** animirani klip u petlji i poster za svaku vježbu, korak-po-korak upute i česte greške. Body heatmap (primarni i sekundarni mišići) za vizualni prikaz.
+* **Animacija vježbe:** na detalju vježbe MoveKit klip se vrti u petlji bez zvuka, a gumb u kutu pauzira i nastavlja. Klip stoji dok nije na ekranu ili je aplikacija u pozadini i ne prekida glazbu koju korisnik sluša. Uz Smanji kretanje klip ne kreće sam: prikazuje se poster, a korisnik ga može pokrenuti gumbom. U mreži kataloga prikazuje se poster. Build bez MoveKit paketa (CI, klon repozitorija) nema klipove ni upute, pa detalj vježbe prikazuje samo mišiće i detalje.
 
 ### Kategorizacija i Strukturiranje
 * **Kategorije / Anatomija:** Prsa, Leđa, Ramena, Ruke, Noge, Core/Trbuh, Kardio.
-* **Mapiranje kategorija:** free-exercise-db koristi vlastite kategorije i nazive mišića (npr. `primaryMuscles: ["quadriceps"]`, `category: "strength"`). Izrađuje se ručna tablica mapiranja s njihovih vrijednosti na naše kategorije, mišićne skupine i regije body heatmapa. Tablica je dio repozitorija i koristi se pri izgradnji kataloga.
+* **Mapiranje kategorija:** MoveKit koristi vlastite nazive mišića, opreme i obrazaca pokreta (npr. `primaryMuscles: ["Quadriceps"]`, `movementPattern: ["Squat"]`). Ručna tablica `Tools/CatalogBuilder/mapping.json` prevodi ih na naše kategorije, mišićne skupine, opremu i regije body heatmapa, a `overrides.json` ispravlja pojedine vježbe. Obje su dio repozitorija i koriste se pri izgradnji kataloga.
 * **Mišićne skupine:** Primarni i sekundarni mišići s mapiranjem na body heatmap.
 * **Oprema:** Bučice, Šipka, Sprave/Kablovi, Vlastita težina (Bodyweight), Kettlebell, Trake, itd.
 * **Tipovi pokreta:** Push / Pull / Legs (izračunato na temelju primarnih mišića).
@@ -33,12 +33,13 @@ Ovaj dokument sadrži ažuriranu i proširenu specifikaciju moderne iOS (Swift) 
 
 ### Pohrana kataloga
 * Službeni katalog isporučuje se uz aplikaciju kao **datoteka samo za čitanje** (`catalog.json`, koju generira `Tools/CatalogBuilder`) i učitava se u memoriju. Nije u SwiftData bazi: nepromjenjiv je i malen, pa nema migracija ni sinkronizacije, a pretraga je trenutna. Ne sinkronizira se, jer bi se inače vježbe slale u iCloud svakog korisnika.
-* Slike vježbi isporučuju se u bundleu (ili kao On-Demand Resources ako veličina postane problem) i nikad ne idu u iCloud.
+* Klipovi i posteri isporučuju se u bundleu (HEVC 1280 px, oko 110 MB za sve vježbe; On-Demand Resources ako veličina postane problem) i nikad ne idu u iCloud. Javni dio kataloga (`Resources/Catalog/catalog.json`: nazivi, mišići, oprema, vrsta unosa) je u repozitoriju, a upute, česte greške i mediji dolaze iz privatnog MoveKit dodatka (`Resources/MoveKit/`, ne commita se).
 * Custom vježbe žive u korisničkoj bazi koja se sinkronizira.
-* Korisnički podaci na službenu vježbu pokazuju preko stabilnog tekstualnog identifikatora (`catalogId`, npr. id iz free-exercise-db), a ne preko relacije između baza. Tako ažuriranje kataloga u novoj verziji aplikacije ne lomi povijest.
+* Korisnički podaci na službenu vježbu pokazuju preko stabilnog tekstualnog identifikatora (`catalogId`, MoveKit slug, npr. `barbell-squat`), a ne preko relacije između baza. Tako ažuriranje kataloga u novoj verziji aplikacije ne lomi povijest.
+* **Prijelaz s free-exercise-db (katalog verzije 2):** `catalog.json` ima tablicu `legacyIds` (stari id → novi slug ili `null`, iz `Tools/CatalogBuilder/legacy-ids.json`). Katalog stari id prepoznaje pri traženju, a `CatalogIdMigration` u GymKitu pri pokretanju, nakon uvoza i nakon sinkronizacije prepisuje spremljene id-jeve u treninzima, predlošcima i izmjenama ciklusa. Vježba bez para u MoveKitu (8 od 187) postaje vlastita vježba istog naziva, pa povijest i rekordi ostaju.
 
 ### Lokalizacija kataloga (HR + EN)
-* free-exercise-db postoji samo na engleskom. Za HR verziju treba prevesti nazive, upute i oznake mišića i opreme.
+* MoveKit postoji samo na engleskom. Hrvatski nazivi svih 582 vježbi su u `Tools/CatalogBuilder/names-hr.json` (javno, naš prijevod naziva). Prijevod uputa i čestih grešaka je MoveKit tekst, pa ide u privatni `translations-hr.json` uz paket; dok ga nema, upute se prikazuju na engleskom uz napomenu.
 * Postupak: odabrani set vježbi (vidi "Količina") strojno se prevodi, a zatim ručno pregledava (osobito nazivi, jer se u teretanama često koriste engleski nazivi). Prijevodi se drže u String Catalogu ili u zasebnoj datoteci kataloga po jeziku.
 * Ako je vježba bez pregledanog prijevoda, prikazuje se engleski naziv.
 * Ovo je velik zasebni zadatak i treba ga planirati kao posebnu stavku rada, a ne kao dio programiranja.
@@ -174,7 +175,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
   * Export u CSV / JSON.
   * Import iz CSV-a (vlastiti backup — format koji app i exportira).
   * Import treninga iz CSV izvoza drugih aplikacija (vidi odjeljak 5).
-* **O aplikaciji:** verzija, atribucija free-exercise-db i MuscleMap, pravila privatnosti.
+* **O aplikaciji:** verzija, izvor kataloga (MoveKit), atribucija MuscleMap, pravila privatnosti.
 
 ### Opis tabova
 
@@ -484,7 +485,7 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening** (ono što je stvarno izvedeno) su odvojeni modeli. Odrađeni trening kopira potrebne podatke iz predloška pri pokretanju i nakon toga je neovisan. Zato privremene izmjene, zamjene vježbi i kasnije promjene predloška nikad ne mijenjaju povijest.
 
 ### Katalog (zasebna baza, ne sinkronizira se)
-* **CatalogExercise:** `catalogId` (id iz free-exercise-db), nazivi po jeziku, upute po jeziku, kategorija, primarni i sekundarni mišići, oprema, razina, mehanika (isolation/compound), tip pokreta (push/pull/legs), vrsta unosa (vidi tablicu u odjeljku 2), slike (dvije: početni i završni položaj, od kojih aplikacija radi animaciju).
+* **CatalogExercise:** `catalogId` (MoveKit slug), nazivi po jeziku, upute i česte greške po jeziku (iz privatnog dodatka), kategorija, primarni i sekundarni mišići, oprema, razina, mehanika (isolation/compound), tip pokreta (push/pull/legs), vrsta unosa (vidi tablicu u odjeljku 2), klip i poster (putanje u MoveKit dodatku).
 
 ### Korisnička baza (sinkronizira se)
 * **CustomExercise:** `id`, naziv, opis, kategorija, mišići, oprema, vrsta unosa, slika (opcionalno, kao `externalStorage`), `isArchived`.
@@ -519,7 +520,7 @@ Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening**
 ## 9. Prioriteti razvoja (MVP vs. Kasnije)
 
 ### MVP (preporučeni prvi release)
-* Katalog vježbi (free-exercise-db) sa slikama i instrukcijama.
+* Katalog vježbi (MoveKit) s animacijama i uputama.
 * Snaga logging s inline poviješću, smart defaults i rest timerom (optimiziran za iPhone).
 * Rasporedi (gotovi + vlastiti) — uključujući udobno slaganje na iPadu.
 * Plate Calculator (na Dashboardu i unutar treninga).

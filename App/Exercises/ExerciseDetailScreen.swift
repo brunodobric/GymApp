@@ -53,21 +53,24 @@ private struct CatalogExerciseDetail: View {
         let language = catalogStore.language
         let name = exercise.displayName(language: language)
         let steps = exercise.displayInstructions(language: language)
+        let mistakes = exercise.displayCommonMistakes(language: language)
 
         List {
-            switch exercise.illustration {
-            case let .animation(start, end):
-                Section {
-                    ExercisePhotoAnimationView(
-                        start: catalogStore.imageURL(start),
-                        end: catalogStore.imageURL(end),
-                        accessibilityText: name
-                    )
-                    .listRowInsets(EdgeInsets())
+            switch catalogStore.illustration(for: exercise) {
+            case let .video(path, poster):
+                if let video = catalogStore.mediaURL(path) {
+                    Section {
+                        ExerciseVideoView(
+                            video: video,
+                            poster: poster.flatMap { catalogStore.mediaURL($0) },
+                            accessibilityText: name
+                        )
+                        .listRowInsets(EdgeInsets())
+                    }
                 }
-            case let .photo(path):
-                Section {
-                    if let image = UIImage(contentsOfFile: catalogStore.imageURL(path).path) {
+            case let .poster(path):
+                if let url = catalogStore.mediaURL(path), let image = UIImage(contentsOfFile: url.path) {
+                    Section {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFit()
@@ -97,14 +100,26 @@ private struct CatalogExerciseDetail: View {
             }
 
             Section {
+                if steps.isEmpty {
+                    Text("Upute za ovu vježbu nisu dostupne.")
+                        .foregroundStyle(.secondary)
+                }
                 ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
                     Text("\(index + 1). \(step)")
                 }
             } header: {
                 Text("Upute")
             } footer: {
-                if exercise.instructions[language] == nil && language != "en" {
+                if !steps.isEmpty && exercise.instructions[language] == nil && language != "en" {
                     Text("Upute za ovu vježbu su zasad samo na engleskom.")
+                }
+            }
+
+            if !mistakes.isEmpty {
+                Section("Česte greške") {
+                    ForEach(Array(mistakes.enumerated()), id: \.offset) { _, mistake in
+                        Text(mistake)
+                    }
                 }
             }
         }

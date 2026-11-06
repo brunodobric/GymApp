@@ -21,3 +21,7 @@ Packages/GymKit/Package.resolved
 Config/Local.xcconfig
 Tools/CatalogBuilder/.cache/
 __pycache__/
+
+# MoveKit dodatak: licencirani klipovi, posteri i upute ne smiju u javni repozitorij (docs/movekit.md)
+Resources/MoveKit/*
+!Resources/MoveKit/.gitkeep

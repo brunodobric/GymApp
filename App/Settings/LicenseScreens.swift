@@ -24,23 +24,3 @@ struct MuscleMapLicenseScreen: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
-/// Atribucija kataloga vježbi: izvor i licenca (Unlicense, javno vlasništvo).
-struct ExerciseCatalogLicenseScreen: View {
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Vježbe, upute i fotografije preuzete su iz projekta free-exercise-db (Unlicense).")
-                Link("github.com/yuhonas/free-exercise-db", destination: URL(string: "https://github.com/yuhonas/free-exercise-db")!)
-                Divider()
-                Text("Unlicense stavlja djelo u javno vlasništvo: slobodno se smije koristiti, mijenjati i dijeliti, bez uvjeta.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .navigationTitle("free-exercise-db")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}

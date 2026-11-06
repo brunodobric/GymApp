@@ -154,51 +154,62 @@ struct CatalogDataTests {
         return (try ExerciseCatalog(data: data), directory)
     }
 
-    @Test("catalog.json se učitava i ima 150 do 200 vježbi")
+    @Test("catalog.json se učitava i ima sve MoveKit vježbe")
     func loads() throws {
         let (catalog, _) = try Self.loadBundledCatalog()
-        #expect((150...200).contains(catalog.exercises.count))
-        #expect(catalog.source.license == "Unlicense")
+        #expect(catalog.exercises.count == 582)
+        #expect(catalog.source.name == "MoveKit")
     }
 
-    @Test("Id-evi su jedinstveni, svaka vježba ima hrvatski naziv, upute i slike na disku")
+    @Test("Id-evi su jedinstveni, svaka vježba ima hrvatski naziv, mišić, klip i poster")
     func integrity() throws {
-        let (catalog, directory) = try Self.loadBundledCatalog()
+        let (catalog, _) = try Self.loadBundledCatalog()
         #expect(Set(catalog.exercises.map(\.id)).count == catalog.exercises.count)
         for exercise in catalog.exercises {
             #expect(exercise.name["en"] != nil, "\(exercise.id): nema engleskog naziva")
             #expect(exercise.name["hr"] != nil, "\(exercise.id): nema hrvatskog naziva")
-            #expect(!exercise.displayInstructions(language: "en").isEmpty, "\(exercise.id): nema uputa")
             #expect(!exercise.primaryMuscles.isEmpty, "\(exercise.id): nema primarnog mišića")
-            #expect(!exercise.images.isEmpty, "\(exercise.id): nema slika")
-            for image in exercise.images {
-                let exists = FileManager.default.fileExists(atPath: directory.appendingPathComponent(image).path)
-                #expect(exists, "\(exercise.id): nema datoteke \(image)")
-            }
+            #expect(!exercise.primaryRegions.isEmpty, "\(exercise.id): nema regije za mapu mišića")
+            #expect(exercise.video == "Media/\(exercise.id).mp4")
+            #expect(exercise.poster == "Media/\(exercise.id).jpg")
         }
     }
 
-    @Test("Svaka vježba ima animaciju od dviju fotografija")
-    func everyExerciseAnimates() throws {
+    @Test("Javni katalog ne sadrži MoveKit tekstove")
+    func noLicensedTexts() throws {
         let (catalog, _) = try Self.loadBundledCatalog()
         for exercise in catalog.exercises {
-            guard exercise.images.count == 2 else {
-                Issue.record("\(exercise.id): ima \(exercise.images.count) fotografija umjesto dvije")
-                continue
-            }
-            #expect(exercise.illustration == .animation(start: exercise.images[0], end: exercise.images[1]))
+            #expect(exercise.instructions.isEmpty, "\(exercise.id): upute ne smiju biti u javnom katalogu")
+            #expect(exercise.commonMistakes.isEmpty, "\(exercise.id): česte greške ne smiju biti u javnom katalogu")
         }
-        let squat = try #require(catalog.exercise(withID: "Barbell_Squat"))
-        #expect(squat.illustration == .animation(start: "Images/Barbell_Squat/0.jpg", end: "Images/Barbell_Squat/1.jpg"))
+    }
+
+    @Test("Svaki stari id upućuje na postojeću vježbu ili je izbačen")
+    func legacyIds() throws {
+        let (catalog, _) = try Self.loadBundledCatalog()
+        #expect(catalog.legacyIds.count == 187)
+        for (old, new) in catalog.legacyIds {
+            if let new {
+                #expect(catalog.exercise(withID: new) != nil, "\(old) -> \(new): nema vježbe")
+                #expect(catalog.resolve(old) == .renamed(new))
+            } else {
+                #expect(catalog.resolve(old) == .removed)
+            }
+        }
+        #expect(catalog.exercise(withID: "Barbell_Squat")?.id == "barbell-squat")
+        #expect(catalog.resolve("barbell-squat") == .current)
+        #expect(catalog.resolve("Ab_Roller") == .removed)
+        #expect(catalog.exercise(withID: "Ab_Roller") == nil)
+        #expect(catalog.resolve("ne-postoji") == .unknown)
     }
 
     @Test("Prikaz vraća engleski kad prijevoda nema")
     func languageFallback() throws {
         let (catalog, _) = try Self.loadBundledCatalog()
-        let exercise = try #require(catalog.exercise(withID: "Pushups"))
-        #expect(exercise.displayName(language: "en") == "Pushups")
+        let exercise = try #require(catalog.exercise(withID: "push-up"))
+        #expect(exercise.displayName(language: "en") == "Push Up")
         #expect(exercise.displayName(language: "hr") == "Sklekovi")
-        #expect(exercise.displayName(language: "de") == "Pushups")
+        #expect(exercise.displayName(language: "de") == "Push Up")
         #expect(exercise.inputType == .bodyweight)
         #expect(catalog.exercise(withID: "ne-postoji") == nil)
     }
@@ -210,8 +221,8 @@ struct CatalogDataTests {
         var filter = ExerciseFilter()
         filter.query = "cucanj"
         let result = ExerciseSearch.apply(filter, to: summaries)
-        #expect(result.contains { $0.id == "c:Barbell_Squat" })
+        #expect(result.contains { $0.id == "c:barbell-squat" })
         filter.query = "bench press"
-        #expect(ExerciseSearch.apply(filter, to: summaries).contains { $0.id == "c:Barbell_Bench_Press_-_Medium_Grip" })
+        #expect(ExerciseSearch.apply(filter, to: summaries).contains { $0.id == "c:barbell-bench-press" })
     }
 }
