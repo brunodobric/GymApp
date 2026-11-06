@@ -41,6 +41,11 @@ struct RestTimerActivityAttributes: ActivityAttributes {
         var workoutStartedAt: Date?
         /// Trening vodi Apple Watch.
         var isLedByWatch: Bool
+        /// Tema Live Activityja (`AppTheme.rawValue`): "light", "dark" ili "system".
+        /// Opcionalno da se dekodira i stanje starije verzije; `nil` znači da prati sustav.
+        var theme: String?
+        /// Naglasna boja (`AccentChoice.rawValue`). `nil` je zadana plava.
+        var accent: String?
     }
 
     var sessionID: String

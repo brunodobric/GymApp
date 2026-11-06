@@ -63,6 +63,9 @@ struct SettingsDTO: Codable {
     var bodyMapFemale: Bool?
     var restNotificationEnabled: Bool?
     var startsWatchWorkout: Bool?
+    var liveActivityFollowsApp: Bool?
+    var liveActivityThemeRaw: String?
+    var liveActivityAccentRaw: String?
 
     init(_ model: UserSettings) {
         id = model.id
@@ -86,6 +89,9 @@ struct SettingsDTO: Codable {
         bodyMapFemale = model.bodyMapFemale
         restNotificationEnabled = model.restNotificationEnabled
         startsWatchWorkout = model.startsWatchWorkout
+        liveActivityFollowsApp = model.liveActivityFollowsApp
+        liveActivityThemeRaw = model.liveActivityThemeRaw
+        liveActivityAccentRaw = model.liveActivityAccentRaw
     }
 
     func apply(to model: UserSettings) {
@@ -110,6 +116,9 @@ struct SettingsDTO: Codable {
         model.bodyMapFemale = bodyMapFemale ?? false
         model.restNotificationEnabled = restNotificationEnabled ?? true
         model.startsWatchWorkout = startsWatchWorkout ?? true
+        model.liveActivityFollowsApp = liveActivityFollowsApp ?? true
+        model.liveActivityThemeRaw = liveActivityThemeRaw ?? "system"
+        model.liveActivityAccentRaw = liveActivityAccentRaw ?? "blue"
     }
 }
 

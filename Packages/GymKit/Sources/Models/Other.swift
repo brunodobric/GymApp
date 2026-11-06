@@ -83,6 +83,10 @@ extension GymSchemaV1 {
         public var startsWatchWorkout: Bool = true
         /// Tijelo koje se crta na prikazu mišića (statistika, sažetak treninga).
         public var bodyMapFemale: Bool = false
+        /// Live Activity prati temu i naglasnu boju aplikacije. Kad ne prati, koristi vlastite ispod.
+        public var liveActivityFollowsApp: Bool = true
+        public var liveActivityThemeRaw: String = "system"
+        public var liveActivityAccentRaw: String = "blue"
 
         public init() {}
 
@@ -119,6 +123,37 @@ extension GymSchemaV1 {
         public var accent: AccentChoice {
             get { AccentChoice(rawValue: accentColorRaw) ?? .blue }
             set { accentColorRaw = newValue.rawValue }
+        }
+
+        public var liveActivityTheme: AppTheme {
+            get { AppTheme(rawValue: liveActivityThemeRaw) ?? .system }
+            set { liveActivityThemeRaw = newValue.rawValue }
+        }
+
+        public var liveActivityAccent: AccentChoice {
+            get { AccentChoice(rawValue: liveActivityAccentRaw) ?? .blue }
+            set { liveActivityAccentRaw = newValue.rawValue }
+        }
+
+        /// Tema koju Live Activity stvarno koristi: aplikacijina ili vlastita.
+        public var effectiveLiveActivityTheme: AppTheme {
+            liveActivityFollowsApp ? theme : liveActivityTheme
+        }
+
+        /// Naglasna boja koju Live Activity stvarno koristi: aplikacijina ili vlastita.
+        public var effectiveLiveActivityAccent: AccentChoice {
+            liveActivityFollowsApp ? accent : liveActivityAccent
+        }
+
+        /// Uključuje ili isključuje praćenje aplikacije. Kad se isključi, vlastita tema i boja kreću od
+        /// trenutnih aplikacijinih, da se Live Activity ne promijeni sama od sebe.
+        public func setLiveActivityFollowsApp(_ follows: Bool) {
+            guard follows != liveActivityFollowsApp else { return }
+            if !follows {
+                liveActivityTheme = theme
+                liveActivityAccent = accent
+            }
+            liveActivityFollowsApp = follows
         }
 
         public var availablePlatesKg: [Double] {

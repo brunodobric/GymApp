@@ -28,6 +28,9 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     settings.bodyMapFemale = true
     settings.restNotificationEnabled = false
     settings.startsWatchWorkout = false
+    settings.liveActivityFollowsApp = false
+    settings.liveActivityTheme = .light
+    settings.liveActivityAccent = .green
     settings.availablePlatesKg = [1.25, 2.5, 20]
 
     let custom = CustomExercise(name: "Moja \"vježba\", s zarezom")
@@ -144,6 +147,10 @@ struct JSONBackupTests {
         #expect(try GymQueries(context: target).settings().bodyMapFemale)
         #expect(try GymQueries(context: target).settings().restNotificationEnabled == false)
         #expect(try GymQueries(context: target).settings().startsWatchWorkout == false)
+        let restored = try GymQueries(context: target).settings()
+        #expect(restored.liveActivityFollowsApp == false)
+        #expect(restored.liveActivityTheme == .light)
+        #expect(restored.liveActivityAccent == .green)
         let measurements = try target.fetch(FetchDescriptor<BodyMeasurement>())
         #expect(measurements.contains { $0.healthKitSampleId == UUID(uuidString: "6F1C2B9E-0000-4000-8000-00000000BEEF") })
     }
