@@ -14,7 +14,7 @@ struct SetBadge: View {
         symbol
             .font(.rowValueSmall)
             .frame(minWidth: size, minHeight: size)
-            .background(kind == .warmUp ? Color.orange.opacity(0.25) : Color.secondary.opacity(0.15), in: .circle)
+            .opaqueFill(kind == .warmUp ? Color.orange.opacity(0.25) : Color.secondary.opacity(0.15), in: .circle)
             .accessibilityLabel(label)
     }
 
@@ -33,10 +33,12 @@ struct SetBadge: View {
 /// Okvir polja za unos u retku serije: velik, podebljan broj da se vrijednost vidi i iz daljine.
 /// Širina raste s Dynamic Typeom, da broj ne bude odrezan.
 /// U tablici serija polje ima fiksnu širinu stupca (`setFieldWidth`), da su brojevi poravnati u svim retcima.
+/// U tablici je polje visoko kao kvačica (`SetTableMetrics.rowHeight`), da je redak uredan.
 struct SetFieldFrame: ViewModifier {
     @ScaledMetric(relativeTo: .title2) private var minWidth: CGFloat = 60
     @ScaledMetric(relativeTo: .title2) private var maxWidth: CGFloat = 112
     @Environment(\.setFieldWidth) private var columnWidth
+    private var metrics = SetTableMetrics()
 
     func body(content: Content) -> some View {
         content
@@ -45,14 +47,22 @@ struct SetFieldFrame: ViewModifier {
             .frame(minWidth: columnWidth == nil ? minWidth : nil, maxWidth: columnWidth == nil ? maxWidth : nil)
             .padding(.horizontal, 6)
             .frame(width: columnWidth)
-            .padding(.vertical, 6)
-            .background(.quaternary, in: .rect(cornerRadius: CornerRadius.inner))
+            .padding(.vertical, columnWidth == nil ? 6 : 0)
+            .frame(minHeight: columnWidth == nil ? nil : metrics.rowHeight, maxHeight: columnWidth == nil ? nil : .infinity)
+            .opaqueFill(.quaternary, in: .rect(cornerRadius: CornerRadius.inner))
     }
 }
 
 extension View {
     func setFieldFrame() -> some View {
         modifier(SetFieldFrame())
+    }
+
+    /// Prozirna ispuna na neprozirnoj podlozi boje retka. Boja aktivne serije iza retka (`listRowBackground`)
+    /// tako ne prosijava kroz polja, oznaku i kvačicu, nego ostaje samo pozadina.
+    func opaqueFill(_ style: some ShapeStyle, in shape: some Shape) -> some View {
+        background(style, in: shape)
+            .background(Color(uiColor: .secondarySystemGroupedBackground), in: shape)
     }
 }
 
@@ -63,7 +73,11 @@ struct SetTableMetrics: DynamicProperty {
     @ScaledMetric(relativeTo: .title2) var wideField: CGFloat = 76
     @ScaledMetric(relativeTo: .title2) var narrowField: CGFloat = 52
     @ScaledMetric(relativeTo: .title2) var check: CGFloat = 56
+    /// Visina kvačice i polja u retku serije.
+    @ScaledMetric(relativeTo: .title2) var rowHeight: CGFloat = 52
     let columnSpacing: CGFloat = 6
+    /// Razmak stupca "Prošli put" od oznake serije, da broj serije i prošla vrijednost ne budu slijepljeni.
+    let previousInset: CGFloat = 12
 }
 
 private struct SetFieldWidthKey: EnvironmentKey {

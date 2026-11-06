@@ -146,7 +146,9 @@ public struct WorkoutEngine {
     @discardableResult
     public func addSet(to exercise: SessionExercise, kind: SetKind = .working, now: Date = Date()) throws -> SetLog {
         let previous = try previousSets(of: exercise.exercise, before: exercise.session)
-        let set = try appendSet(to: exercise, kind: kind, previous: previous)
+        // Zagrijavanje ide ispred prve neodrađene serije (ili na kraj kad su sve odrađene),
+        // jer se zagrijava prije serija koje tek slijede.
+        let set = try appendSet(to: exercise, kind: kind, previous: previous, beforeIncomplete: kind == .warmUp)
         if let session = exercise.session { try touch(session, now: now) }
         return set
     }
@@ -341,15 +343,25 @@ public struct WorkoutEngine {
     // MARK: Pomoćno
 
     @discardableResult
-    private func appendSet(to exercise: SessionExercise, kind: SetKind, previous: [SetValues]) throws -> SetLog {
-        let existing = exercise.orderedSets
-        let position = existing.filter { $0.kind == kind }.count
-        let set = SetLog(orderIndex: existing.count, kind: kind)
+    /// Dodaje seriju na kraj vježbe, ili ispred prve neodrađene serije kad je `beforeIncomplete` (zagrijavanje).
+    private func appendSet(
+        to exercise: SessionExercise, kind: SetKind, previous: [SetValues], beforeIncomplete: Bool = false
+    ) throws -> SetLog {
+        var existing = exercise.orderedSets
+        let insertIndex = beforeIncomplete
+            ? existing.firstIndex { !$0.isCompleted } ?? existing.count
+            : existing.count
+        let before = existing[..<insertIndex]
+        let position = before.filter { $0.kind == kind }.count
+        let set = SetLog(orderIndex: insertIndex, kind: kind)
         context.insert(set)
         set.exercise = exercise
+        existing.insert(set, at: insertIndex)
+        for (index, item) in existing.enumerated() { item.orderIndex = index }
 
         var defaults = SmartDefaults.defaults(forPosition: position, kind: kind, previous: previous)
-        if defaults == nil, let last = existing.last(where: { $0.kind == kind }) {
+        if defaults == nil, let last = before.last(where: { $0.kind == kind })
+            ?? existing.last(where: { $0.kind == kind && $0.id != set.id }) {
             // Bez povijesti nova serija preuzima vrijednosti prethodne serije iste vrste u ovom treningu.
             defaults = SmartDefaults.defaults(forPosition: 0, kind: kind, previous: [last.values])
         }

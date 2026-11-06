@@ -89,6 +89,35 @@ struct WorkoutEngineTests {
         #expect(added.orderIndex == 3)
     }
 
+    @Test("Zagrijavanje se dodaje ispred prve neodrađene serije, a radna serija na kraj")
+    func warmUpGoesBeforeFirstIncompleteSet() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "A", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        let first = exercise.orderedSets[0]
+        first.weightKg = 60
+        first.reps = 10
+        try engine.completeSet(first, defaultRestSeconds: 90, now: base)
+
+        let warmUp = try engine.addSet(to: exercise, kind: .warmUp, now: base)
+        #expect(exercise.orderedSets.map(\.kind) == [.working, .warmUp, .working, .working])
+        #expect(warmUp.orderIndex == 1)
+        #expect(exercise.orderedSets.map(\.orderIndex) == [0, 1, 2, 3])
+
+        let working = try engine.addSet(to: exercise, kind: .working, now: base)
+        #expect(working.orderIndex == 4)
+
+        // Kad su sve serije odrađene, zagrijavanje ide na kraj.
+        for set in exercise.orderedSets where !set.isCompleted {
+            set.weightKg = 40
+            set.reps = 10
+            try engine.completeSet(set, defaultRestSeconds: 90, now: base)
+        }
+        let last = try engine.addSet(to: exercise, kind: .warmUp, now: base)
+        #expect(last.orderIndex == 5)
+        #expect(exercise.orderedSets.last?.id == last.id)
+    }
+
     @Test("Označavanje serije traži sve vrijednosti i pokreće rest timer")
     func completeSetStartsRest() throws {
         let (engine, _) = try makeEngine()

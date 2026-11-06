@@ -80,21 +80,24 @@ struct ExerciseCard: View {
             .accessibilityHint(Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu"))
 
             if !isEditing, let onShowInfo {
-                Button("Upute za vježbu", systemImage: "info.circle", action: onShowInfo)
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.borderless)
-                    .accessibilityLabel(Text("Upute: \(exercise.exerciseName)"))
+                Button(action: onShowInfo) {
+                    Label("Upute za vježbu", systemImage: "info.circle").headerIcon()
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel(Text("Upute: \(exercise.exerciseName)"))
             }
 
             if !isEditing {
-                Menu("Više", systemImage: "ellipsis.circle") {
+                Menu {
                     Button("Superset", systemImage: "rectangle.stack", action: onSuperset)
                     if exercise.supersetGroupId != nil {
                         Button("Izbaci iz superseta", systemImage: "rectangle.stack.badge.minus", action: onLeaveSuperset)
                     }
                     Button("Izbaci vježbu", systemImage: "trash", role: .destructive, action: onRemove)
+                } label: {
+                    Label("Više", systemImage: "ellipsis.circle").headerIcon()
                 }
-                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
             }
         }
     }
@@ -150,5 +153,15 @@ struct ExerciseCard: View {
             let km = values.distanceMeters.map { NumberInput.format($0 / 1000) + " km" }
             return [time, km].compactMap { $0 }.joined(separator: " · ")
         }
+    }
+}
+
+private extension Label where Title == Text, Icon == Image {
+    /// Ikona u zaglavlju vježbe: veća sistemska ikona i dodirna površina od 44 × 44 pt (Apple HIG).
+    func headerIcon() -> some View {
+        labelStyle(.iconOnly)
+            .font(.title2)
+            .frame(minWidth: 44, minHeight: 44)
+            .contentShape(.rect)
     }
 }
