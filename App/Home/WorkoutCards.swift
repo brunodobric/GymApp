@@ -101,7 +101,10 @@ private struct StartRow<Title: View>: View {
 
 /// Pozadina kartice treninga: ista podloga kao ostale kartice, preko nje lagani poluprozirni sjaj u boji akcenta
 /// (jači gore lijevo, slabiji dolje desno) i tanki rub, da se kartica istakne među ostalima.
+/// Za vrijeme odmora traka odmora leži odmah na podlozi i sjaju, ispod ruba i svih elemenata kartice.
 private struct WorkoutCardBackground: ViewModifier {
+    var rest: RestTimer?
+
     @Environment(\.colorScheme) private var colorScheme
 
     func body(content: Content) -> some View {
@@ -119,6 +122,12 @@ private struct WorkoutCardBackground: ViewModifier {
                             .mask(LinearGradient(colors: [.white, .white.opacity(0.4)], startPoint: .topLeading, endPoint: .bottomTrailing))
                     }
                     .overlay {
+                        if let rest {
+                            RestDrainBackground(rest: rest)
+                                .clipShape(shape)
+                        }
+                    }
+                    .overlay {
                         shape.strokeBorder(.tint.opacity(0.3), lineWidth: 1)
                     }
             }
@@ -126,8 +135,8 @@ private struct WorkoutCardBackground: ViewModifier {
 }
 
 private extension View {
-    func workoutCardBackground() -> some View {
-        modifier(WorkoutCardBackground())
+    func workoutCardBackground(rest: RestTimer? = nil) -> some View {
+        modifier(WorkoutCardBackground(rest: rest))
     }
 }
 
@@ -191,13 +200,7 @@ struct ActiveWorkoutCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background {
-            if let rest {
-                RestDrainBackground(rest: rest)
-                    .clipShape(.rect(cornerRadius: CornerRadius.card))
-            }
-        }
-        .workoutCardBackground()
+        .workoutCardBackground(rest: rest)
         .contentShape(.rect(cornerRadius: CornerRadius.card))
         .onTapGesture(perform: onOpen)
         .accessibilityElement(children: .contain)
@@ -421,7 +424,13 @@ private struct SetValueStepper: View {
         }
         .buttonStyle(.plain)
         .padding(3)
-        .background(Color.primary.opacity(0.08), in: .rect(cornerRadius: CornerRadius.inner))
+        .background {
+            // Neprozirna podloga da traka odmora ne prosijava; boja je ista kao dosad na podlozi kartice bez trake.
+            let shape = RoundedRectangle(cornerRadius: CornerRadius.inner)
+            shape
+                .fill(Color(.secondarySystemGroupedBackground))
+                .overlay { shape.fill(Color.primary.opacity(0.08)) }
+        }
     }
 }
 
