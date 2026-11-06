@@ -32,8 +32,12 @@ struct ExerciseCard: View {
     var body: some View {
         header
             .padding(.vertical, 6)
-            // Crta ispod zaglavlja ide cijelom širinom retka, i ispod sličice.
+            // Crta ispod zaglavlja ide cijelom širinom kartice, i ispod sličice: redak nema vodoravni uvlak,
+            // nego zaglavlje samo dobiva razmak od ruba, a crta počinje i završava na rubovima retka.
+            .padding(.horizontal, Self.rowInset)
+            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
             .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+            .alignmentGuide(.listRowSeparatorTrailing) { $0[.trailing] }
         if isOpen && !isEditing {
             if !exercise.orderedSets.isEmpty {
                 SetTableHeader(inputType: exercise.inputType, unit: unit)
@@ -64,6 +68,9 @@ struct ExerciseCard: View {
 
     /// Sličica i naziv otvaraju stranicu vježbe (animacija i upute), a strelica desno otvara i zatvara serije.
     /// Vježba koje nema u katalogu ni među vlastitima nema stranicu, pa naziv tada otvara i zatvara serije.
+    /// Vodoravni uvlak retka u grupiranoj listi (isti kao zadani uvlak ostalih redaka).
+    private static let rowInset: CGFloat = 20
+
     private var header: some View {
         HStack {
             Button(action: onShowInfo ?? onToggleOpen) {
