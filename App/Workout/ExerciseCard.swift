@@ -32,6 +32,12 @@ struct ExerciseCard: View {
     var body: some View {
         header
             .padding(.vertical, 6)
+            // Crta ispod zaglavlja ide cijelom širinom kartice, i ispod sličice: redak nema vodoravni uvlak,
+            // nego zaglavlje samo dobiva razmak od ruba, a crta počinje i završava na rubovima retka.
+            .padding(.horizontal, Self.rowInset)
+            .listRowInsets(EdgeInsets(top: 15, leading: 0, bottom: 15, trailing: 0))
+            .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+            .alignmentGuide(.listRowSeparatorTrailing) { $0[.trailing] }
         if isOpen && !isEditing {
             if !exercise.orderedSets.isEmpty {
                 SetTableHeader(inputType: exercise.inputType, unit: unit)
@@ -60,9 +66,14 @@ struct ExerciseCard: View {
         }
     }
 
+    /// Sličica i naziv otvaraju stranicu vježbe (animacija i upute), a strelica desno otvara i zatvara serije.
+    /// Vježba koje nema u katalogu ni među vlastitima nema stranicu, pa naziv tada otvara i zatvara serije.
+    /// Vodoravni uvlak retka u grupiranoj listi (isti kao zadani uvlak ostalih redaka).
+    private static let rowInset: CGFloat = 16
+
     private var header: some View {
         HStack {
-            Button(action: onToggleOpen) {
+            Button(action: onShowInfo ?? onToggleOpen) {
                 HStack(spacing: 12) {
                     ExerciseRowThumbnail(source: thumbnail)
                     titles
@@ -71,14 +82,21 @@ struct ExerciseCard: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityHint(Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu"))
+            .accessibilityHint(onShowInfo == nil ? Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu") : Text("Upute za vježbu"))
 
-            if !isEditing, let onShowInfo {
-                Button(action: onShowInfo) {
-                    Label("Upute za vježbu", systemImage: "info.circle").headerIcon()
+            if !isEditing {
+                Button(action: onToggleOpen) {
+                    Label {
+                        Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu")
+                    } icon: {
+                        Image(systemName: "chevron.down")
+                            .rotationEffect(.degrees(isOpen ? 180 : 0))
+                    }
+                    .headerIcon()
+                    .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel(Text("Upute: \(exercise.exerciseName)"))
+                .animation(.easeInOut(duration: 0.2), value: isOpen)
             }
 
             if !isEditing {
@@ -89,7 +107,10 @@ struct ExerciseCard: View {
                     }
                     Button("Izbaci vježbu", systemImage: "trash", role: .destructive, action: onRemove)
                 } label: {
-                    Label("Više", systemImage: "ellipsis.circle").headerIcon()
+                    // Lagana siva ikona bez kruga, da se ne natječe s nazivom vježbe.
+                    Label("Više", systemImage: "ellipsis")
+                        .headerIcon()
+                        .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
             }
@@ -165,7 +186,7 @@ struct ExerciseCard: View {
     }
 }
 
-private extension Label where Title == Text, Icon == Image {
+private extension Label {
     /// Ikona u zaglavlju vježbe: veća sistemska ikona i dodirna površina od 44 × 44 pt (Apple HIG).
     func headerIcon() -> some View {
         labelStyle(.iconOnly)

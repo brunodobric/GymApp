@@ -6638,16 +6638,6 @@
         }
       }
     },
-    "Upute: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Instructions: %@"
-          }
-        }
-      }
-    },
     "Uredi" : {
       "localizations" : {
         "en" : {

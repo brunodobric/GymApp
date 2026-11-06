@@ -76,13 +76,7 @@ struct SetRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
-            content
-                // Završena serija se zasivi i priguši, osim kad korisnik traži jači kontrast.
-                .saturation(isDimmed ? 0 : 1)
-                .opacity(isDimmed ? 0.45 : 1)
-            completeButton
-        }
+        content
         // Kvačica se rasteže na visinu cijelog retka.
         .fixedSize(horizontal: false, vertical: true)
         .padding(.vertical, 6)
@@ -117,30 +111,46 @@ struct SetRow: View {
         self.set.rpe != nil || isHighlighted || !set.isCompleted
     }
 
-    /// Lijevi dio retka: oznaka, prošli put s naporom ispod i polja u stupcima.
+    /// Oznaka, prošli put s naporom ispod, polja u stupcima i kvačica.
+    /// Stupci su stalne širine, a razmaci među njima su jednaki (`columnGap`), kao i u `SetTableHeader`.
     @ViewBuilder
     private var content: some View {
         if dynamicTypeSize.isAccessibilitySize {
             // Kod najvećih veličina teksta svaki dio ide u svoj redak, da se ništa ne reže.
-            VStack(alignment: .leading, spacing: 8) {
-                kindBadge
-                HStack(spacing: 6) { fields }
-                infoLine
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        } else {
-            HStack(spacing: metrics.columnSpacing) {
-                kindBadge
-                    .frame(width: metrics.badge)
-                VStack(alignment: .leading, spacing: 4) {
-                    previousValue
-                    if showsEffort { effortMenu }
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 8) {
+                    kindBadge
+                    HStack(spacing: 6) { fields }
+                    infoLine
                 }
-                .padding(.leading, metrics.previousInset)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                tableFields
+                .dimmed(isDimmed)
+                completeButton
+            }
+        } else {
+            HStack(spacing: 0) {
+                Group {
+                    kindBadge
+                        .frame(width: metrics.badge)
+                    columnGap
+                    VStack(spacing: 4) {
+                        previousValue
+                        if showsEffort { effortMenu }
+                    }
+                    .frame(width: metrics.previous)
+                    columnGap
+                    tableFields
+                }
+                .dimmed(isDimmed)
+                columnGap
+                completeButton
             }
         }
+    }
+
+    /// Razmak među stupcima: svi razmaci u retku dijele preostalu širinu jednako.
+    private var columnGap: some View {
+        Spacer(minLength: metrics.minGap)
     }
 
     /// Prošli put i napor u jednom retku ispod brojeva.
@@ -351,6 +361,14 @@ struct SetRow: View {
     }
 }
 
+private extension View {
+    /// Završena serija se zasivi i priguši, osim kad korisnik traži jači kontrast.
+    func dimmed(_ isDimmed: Bool) -> some View {
+        saturation(isDimmed ? 0 : 1)
+            .opacity(isDimmed ? 0.45 : 1)
+    }
+}
+
 // MARK: Stupci tablice
 
 extension SetRow {
@@ -373,19 +391,23 @@ extension SetRow {
         switch inputType {
         case .weightReps:
             mainWeightField.environment(\.setFieldWidth, metrics.wideField)
+            columnGap
             repsField.environment(\.setFieldWidth, metrics.narrowField)
         case .bodyweight:
             repsField.environment(\.setFieldWidth, metrics.narrowField)
         case .weightedBodyweight:
             weightField("Dodatna težina", "+\(unit.symbol)").environment(\.setFieldWidth, metrics.wideField)
+            columnGap
             repsField.environment(\.setFieldWidth, metrics.narrowField)
         case .assisted:
             weightField("Pomoć", "−\(unit.symbol)").environment(\.setFieldWidth, metrics.wideField)
+            columnGap
             repsField.environment(\.setFieldWidth, metrics.narrowField)
         case .duration:
             durationField.environment(\.setFieldWidth, metrics.wideField)
         case .durationDistance:
             durationField.environment(\.setFieldWidth, metrics.wideField)
+            columnGap
             distanceField.environment(\.setFieldWidth, metrics.wideField)
         }
     }
@@ -490,20 +512,21 @@ struct SetTableHeader: View {
 
     var body: some View {
         if !dynamicTypeSize.isAccessibilitySize {
-            HStack(spacing: 12) {
-                HStack(spacing: metrics.columnSpacing) {
-                    Text("Ser.")
-                        .frame(width: metrics.badge)
-                    Group {
-                        if showsPrevious { Text("Prošli put") } else { Color.clear.frame(height: 1) }
-                    }
-                    .padding(.leading, metrics.previousInset)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
-                        column.title
-                            .frame(width: column.width)
-                    }
+            // Isti stupci i jednaki razmaci kao u retku serije (`SetRow.content`).
+            HStack(spacing: 0) {
+                Text("Ser.")
+                    .frame(width: metrics.badge)
+                gap
+                Group {
+                    if showsPrevious { Text("Prošli put") } else { Color.clear.frame(height: 1) }
                 }
+                .frame(width: metrics.previous)
+                ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
+                    gap
+                    column.title
+                        .frame(width: column.width)
+                }
+                gap
                 Color.clear.frame(width: metrics.check, height: 1)
             }
             .font(.eyebrow)
@@ -513,6 +536,10 @@ struct SetTableHeader: View {
             .minimumScaleFactor(0.8)
             .accessibilityHidden(true)
         }
+    }
+
+    private var gap: some View {
+        Spacer(minLength: metrics.minGap)
     }
 
     private var columns: [(title: Text, width: CGFloat)] {
