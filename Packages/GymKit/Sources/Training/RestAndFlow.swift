@@ -76,6 +76,29 @@ public enum WorkoutFlow {
     public static func firstIncompleteExercise(isFullyCompleted: [Bool]) -> Int? {
         isFullyCompleted.firstIndex(of: false)
     }
+
+    /// Što ekran treninga radi nakon što je serija označena završenom.
+    public enum Advance: Equatable, Sendable {
+        /// Otvorena vježba (ili superset) još ima serija: ostaje otvorena.
+        case stay
+        /// Otvara se vježba na ovom indeksu.
+        case open(Int)
+        /// Sve je završeno: nudi se "Završi trening / Dodaj vježbu".
+        case finished
+    }
+
+    /// Odluka nakon označene serije, bilo na ekranu, u Live Activityju ili na satu.
+    /// `openGroupDone` kaže jesu li sve serije otvorene vježbe (i njezina superseta) završene.
+    public static func advance(openGroupDone: Bool, isFullyCompleted: [Bool]) -> Advance {
+        guard openGroupDone else { return .stay }
+        return firstIncompleteExercise(isFullyCompleted: isFullyCompleted).map(Advance.open) ?? .finished
+    }
+
+    /// Je li od zadnjeg pogleda označena nova serija. Serija označena izvan ekrana (Live Activity, sat)
+    /// prepoznaje se po većem broju završenih serija; poništena ili obrisana serija ne pomiče ekran.
+    public static func hasNewCompletion(completedCount: Int, lastSeen: Int) -> Bool {
+        completedCount > lastSeen
+    }
 }
 
 public enum RecoveryAssessment {
