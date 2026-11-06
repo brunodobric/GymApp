@@ -54,6 +54,12 @@ public enum SessionRegions {
         }
     }
 
+    /// Popis ispod mape dijeli regije na glavne (barem jedna serija u kojoj su glavni mišić) i one koje samo
+    /// pomažu. Redoslijed iz `sets(in:info:)` ostaje unutar obje skupine.
+    public static func split(_ sets: [RegionSets]) -> (primary: [RegionSets], assisting: [RegionSets]) {
+        (sets.filter { $0.primarySets > 0 }, sets.filter { $0.primarySets == 0 })
+    }
+
     /// Heatmap treninga na fiksnoj skali: boja ovisi o broju serije regije, ne o najopterećenijoj regiji,
     /// pa lagan trening ostaje svijetao.
     public static func heatmap(_ sets: [RegionSets]) -> [String: RegionLoad] {

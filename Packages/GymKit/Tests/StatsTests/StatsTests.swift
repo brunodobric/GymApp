@@ -506,6 +506,21 @@ struct SessionRegionsTests {
         #expect(heatmap["triceps"]?.intensity == 0.25)
     }
 
+    @Test("Popis ispod mape: glavni mišići pa oni koji samo pomažu, redoslijed ostaje")
+    func splitPrimaryAndAssisting() {
+        let sets = [
+            RegionSets(region: "chest", primarySets: 9),
+            RegionSets(region: "triceps", primarySets: 4, secondarySets: 5),
+            RegionSets(region: "abs", secondarySets: 3),
+            RegionSets(region: "shoulders", primarySets: 3, secondarySets: 4),
+            RegionSets(region: "traps", secondarySets: 1)
+        ]
+        let split = SessionRegions.split(sets)
+        #expect(split.primary.map(\.region) == ["chest", "triceps", "shoulders"])
+        #expect(split.assisting.map(\.region) == ["abs", "traps"])
+        #expect(SessionRegions.split([]).primary.isEmpty)
+    }
+
     @Test("Serija s RPE ispod 6 se ne broji, s RPE 6 ili bez RPE-a se broji")
     func easySetsIgnored() throws {
         let context = try makeContext()

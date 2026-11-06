@@ -24,6 +24,16 @@
         }
       }
     },
+    "%@ serija, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sets, %2$@"
+          }
+        }
+      }
+    },
     "%@ · %@" : {
       "shouldTranslate" : false
     },
@@ -155,6 +165,52 @@
         }
       }
     },
+    "%lld glavne" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld primary"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld primary"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld glavne"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld glavna"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld glavnih"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld m" : {
       "localizations" : {
         "en" : {
@@ -203,6 +259,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld bpm"
+          }
+        }
+      }
+    },
+    "%lld pomoćne" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld assisting"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld assisting"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pomoćne"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pomoćna"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pomoćnih"
+                }
+              }
+            }
           }
         }
       }
@@ -1674,6 +1776,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pounds (lb)"
+          }
+        }
+      }
+    },
+    "Glavni mišići" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primary muscles"
           }
         }
       }
@@ -3828,6 +3940,16 @@
         }
       }
     },
+    "Označi mišić na prikazu tijela." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlights the muscle on the body map."
+          }
+        }
+      }
+    },
     "Označi seriju završenom" : {
       "localizations" : {
         "en" : {
@@ -4174,6 +4296,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Field"
+          }
+        }
+      }
+    },
+    "Pomažu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assisting"
           }
         }
       }
@@ -8025,22 +8157,12 @@
     "−10 s" : {
       "shouldTranslate" : false
     },
-    "Pomaže" : {
+    "Broj je broj tvrdih serija. Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji. Razina i boja: 1–2, 3–5, 6–9 i 10 ili više serija." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Assists"
-          }
-        }
-      }
-    },
-    "Broj je broj tvrdih serija. Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji. Boja: 1–2, 3–5, 6–9 i 10 ili više serija." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The number is the count of hard sets. A set where the muscle only assists counts as half, and a set with RPE below 6 is not counted. Colour: 1–2, 3–5, 6–9 and 10 or more sets."
+            "value" : "The number is the number of hard sets. A set in which the muscle assists counts as half, and a set with RPE below 6 does not count. Level and color: 1–2, 3–5, 6–9 and 10 or more sets."
           }
         }
       }
