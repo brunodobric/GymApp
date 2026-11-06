@@ -218,44 +218,6 @@ struct ActiveWorkoutScreen: View {
         )
     }
 
-    @ToolbarContentBuilder
-    private var toolbar: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button("Smanji", systemImage: "chevron.down") { dismiss() }
-        }
-        ToolbarItem(placement: .principal) {
-            Text(session.startedAt, style: .timer)
-                // Isti broj kao u retku liste: zaobljen, semibold, veličine naslova u traci.
-                .font(.rowValue)
-                .accessibilityLabel(Text("Trajanje treninga"))
-        }
-        if editMode.isEditing {
-            // Dok traje premještanje u kutu je samo kvačica koja ga završava,
-            // da se "Završi" ne bi pomiješao sa završetkom premještanja.
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Gotovo s redoslijedom", systemImage: "checkmark") {
-                    withAnimation { editMode = .inactive }
-                }
-            }
-        } else {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu("Više", systemImage: "ellipsis.circle") {
-                    Button("Promijeni redoslijed", systemImage: "arrow.up.arrow.down") {
-                        withAnimation { editMode = .active }
-                    }
-                    Button("Uklonjene vježbe (\(engine.removedExercises(in: session).count))", systemImage: "arrow.uturn.backward") {
-                        showsRemoved = true
-                    }
-                    .disabled(engine.removedExercises(in: session).isEmpty)
-                    Button("Odbaci trening", systemImage: "trash", role: .destructive) { showsDiscardConfirmation = true }
-                }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Završi") { showsFinishConfirmation = true }
-            }
-        }
-    }
-
     @ViewBuilder
     private var bottomBars: some View {
         VStack(spacing: 8) {
@@ -426,6 +388,47 @@ struct ActiveWorkoutScreen: View {
         let queries = GymQueries(context: context)
         for exercise in session.orderedExercises where previousSets[exercise.id] == nil {
             previousSets[exercise.id] = (try? queries.previousSetValues(of: exercise.exercise)) ?? []
+        }
+    }
+}
+
+// Traka je u ekstenziji da tijelo strukture ostane u granicama SwiftLinta.
+extension ActiveWorkoutScreen {
+    @ToolbarContentBuilder
+    private var toolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button("Smanji", systemImage: "chevron.down") { dismiss() }
+        }
+        ToolbarItem(placement: .principal) {
+            Text(session.startedAt, style: .timer)
+                // Isti broj kao u retku liste: zaobljen, semibold, veličine naslova u traci.
+                .font(.rowValue)
+                .accessibilityLabel(Text("Trajanje treninga"))
+        }
+        if editMode.isEditing {
+            // Dok traje premještanje u kutu je samo kvačica koja ga završava,
+            // da se "Završi" ne bi pomiješao sa završetkom premještanja.
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Gotovo s redoslijedom", systemImage: "checkmark") {
+                    withAnimation { editMode = .inactive }
+                }
+            }
+        } else {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu("Više", systemImage: "ellipsis.circle") {
+                    Button("Promijeni redoslijed", systemImage: "arrow.up.arrow.down") {
+                        withAnimation { editMode = .active }
+                    }
+                    Button("Uklonjene vježbe (\(engine.removedExercises(in: session).count))", systemImage: "arrow.uturn.backward") {
+                        showsRemoved = true
+                    }
+                    .disabled(engine.removedExercises(in: session).isEmpty)
+                    Button("Odbaci trening", systemImage: "trash", role: .destructive) { showsDiscardConfirmation = true }
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Završi") { showsFinishConfirmation = true }
+            }
         }
     }
 }
