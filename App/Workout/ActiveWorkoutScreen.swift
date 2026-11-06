@@ -229,20 +229,30 @@ struct ActiveWorkoutScreen: View {
                 .font(.rowValue)
                 .accessibilityLabel(Text("Trajanje treninga"))
         }
-        ToolbarItem(placement: .topBarTrailing) {
-            Menu("Više", systemImage: "ellipsis.circle") {
-                Button(editMode.isEditing ? "Gotovo s redoslijedom" : "Promijeni redoslijed", systemImage: "arrow.up.arrow.down") {
-                    withAnimation { editMode = editMode.isEditing ? .inactive : .active }
+        if editMode.isEditing {
+            // Dok traje premještanje u kutu je samo kvačica koja ga završava,
+            // da se "Završi" ne bi pomiješao sa završetkom premještanja.
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Gotovo s redoslijedom", systemImage: "checkmark") {
+                    withAnimation { editMode = .inactive }
                 }
-                Button("Uklonjene vježbe (\(engine.removedExercises(in: session).count))", systemImage: "arrow.uturn.backward") {
-                    showsRemoved = true
-                }
-                .disabled(engine.removedExercises(in: session).isEmpty)
-                Button("Odbaci trening", systemImage: "trash", role: .destructive) { showsDiscardConfirmation = true }
             }
-        }
-        ToolbarItem(placement: .confirmationAction) {
-            Button("Završi") { showsFinishConfirmation = true }
+        } else {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu("Više", systemImage: "ellipsis.circle") {
+                    Button("Promijeni redoslijed", systemImage: "arrow.up.arrow.down") {
+                        withAnimation { editMode = .active }
+                    }
+                    Button("Uklonjene vježbe (\(engine.removedExercises(in: session).count))", systemImage: "arrow.uturn.backward") {
+                        showsRemoved = true
+                    }
+                    .disabled(engine.removedExercises(in: session).isEmpty)
+                    Button("Odbaci trening", systemImage: "trash", role: .destructive) { showsDiscardConfirmation = true }
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Završi") { showsFinishConfirmation = true }
+            }
         }
     }
 
