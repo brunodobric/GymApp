@@ -25,18 +25,18 @@ public struct DemoDataGenerator {
 
     /// Početne težine (kg) za vježbe programa. Ostale počinju s 20 kg.
     static let startingWeights: [String: Double] = [
-        "Barbell_Bench_Press_-_Medium_Grip": 70,
-        "Bent_Over_Barbell_Row": 60,
-        "Dumbbell_Shoulder_Press": 20,
-        "Wide-Grip_Lat_Pulldown": 55,
-        "Dumbbell_Bicep_Curl": 12,
-        "Triceps_Pushdown": 25,
-        "Barbell_Squat": 90,
-        "Romanian_Deadlift": 80,
-        "Dumbbell_Lunges": 16,
-        "Lying_Leg_Curls": 35,
-        "Standing_Calf_Raises": 60,
-        "Cable_Crunch": 30,
+        "barbell-bench-press": 70,
+        "barbell-bent-over-row": 60,
+        "dumbbell-seated-overhead-press": 20,
+        "wide-grip-lat-pulldown": 55,
+        "dumbbell-curl": 12,
+        "cable-bar-pushdown": 25,
+        "barbell-squat": 90,
+        "barbell-romanian-deadlift": 80,
+        "dumbbell-alternating-forward-lunge": 16,
+        "lying-leg-curl": 35,
+        "standing-calf-raise-machine": 60,
+        "kneeling-cable-crunch": 30,
     ]
 
     /// - Parameters:

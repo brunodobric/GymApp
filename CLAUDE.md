@@ -13,6 +13,7 @@ iOS, iPadOS i watchOS aplikacija za bilježenje treninga. Swift + SwiftUI, Swift
 * `docs/performanse.md`: signposti, ciljevi i mjerenje performansi u Instrumentsu
 * `docs/izdanje.md`: TestFlight beta, greške iz bete i slanje na App Store review
 * `docs/lokalizacija.md`: String Catalog (hr i en), pisanje teksta u kodu i provjera prijevoda na CI-ju
+* `docs/movekit.md`: MoveKit katalog vježbi, licenca i što smije u javni repozitorij
 
 Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi tipova, funkcija i varijabli su na engleskom.
 
@@ -28,6 +29,8 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * `Shared/LiveActivity/`: kod koji dijele aplikacija i widget extension
 * `Shared/Design/`: stilovi fontova (`AppFont`) koje dijele aplikacija, widgeti i sat
 * `Packages/GymKit/`: logika bez sučelja, s unit testovima (Swift Testing)
+* `Resources/Catalog/`: javni katalog vježbi (`catalog.json`, gradi ga `Tools/CatalogBuilder`)
+* `Resources/MoveKit/`: licencirani MoveKit klipovi i upute, ne commita se (`scripts/movekit.sh`)
 * `AppStore/`: tekstovi za App Store Connect (hr i en), napomena za review i snimke zaslona. Duljine provjerava CI.
 * `site/`: pravila privatnosti i podrška (GitHub Pages)
 
@@ -39,6 +42,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * **SwiftData modeli koji se sinkroniziraju poštuju pravila CloudKita:** svako svojstvo opcionalno ili sa zadanom vrijednošću, bez `@Attribute(.unique)`, opcionalne relacije, redoslijed u `orderIndex`. Shema se nakon izdanja samo proširuje.
 * **Bez SDK-ova trećih strana** i bez vanjskih resursa (fontovi, CDN, analitika). Svaka nova ovisnost ide u `docs/PRAVNO_I_PRIVATNOST.md` s licencom.
 * **Dizajn prema `docs/DIZAJN.md`:** sistemske komponente, tab bar samo za navigaciju, Dynamic Type, iPad preko size classa.
+* **MoveKit sadržaj nikad ne ide u repozitorij** (klipovi, posteri, upute, česte greške i njihovi prijevodi): `docs/movekit.md`.
 * Debug-only kod (prototipi, alati) ide unutar `#if DEBUG`.
 
 ## Naredbe
@@ -46,6 +50,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 ```sh
 brew install xcodegen swiftlint
 xcodegen generate                              # generira GymApp.xcodeproj
+scripts/movekit.sh                             # MoveKit klipovi i upute u build (na Macu, treba ffmpeg)
 scripts/testflight.sh                          # arhiva i upload za TestFlight (na Macu)
 swift test --package-path Packages/GymKit      # testovi logike
 swiftlint lint

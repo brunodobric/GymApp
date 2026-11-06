@@ -1,3 +1,4 @@
+import Catalog
 import Models
 import OSLog
 import SwiftData
@@ -99,9 +100,33 @@ enum AppServices {
             Logger(subsystem: "com.brunodobric.gymapp", category: "Health")
                 .error("Premještanje podataka iz Zdravlja: \(String(describing: error))")
         }
+        // Stari id-jevi vježbi (katalog prije MoveKita) prelaze na nove.
+        migrateCatalogIds()
         PhoneWatchSync.shared.start(container: container)
         SyncMonitor.shared.start()
         // Rušenja, zastoji i performanse (MetricKit), samo u lokalni dnevnik.
         MetricsReporter.shared.start()
+    }
+
+    /// Javni katalog iz bundlea, samo za migraciju id-jeva (ekrani koriste `CatalogStore`).
+    private static let bundledCatalog: ExerciseCatalog? = {
+        guard let url = Bundle.main.url(forResource: "catalog", withExtension: "json", subdirectory: "Catalog") else { return nil }
+        return try? ExerciseCatalog(data: Data(contentsOf: url))
+    }()
+
+    /// Prevodi stare id-jeve kataloga u spremljenim treninzima i predlošcima (`CatalogIdMigration`).
+    /// Poziva se pri pokretanju, nakon uvoza i nakon sinkronizacije, jer stari zapisi mogu stići i kasnije.
+    static func migrateCatalogIds() {
+        guard storeOpenError == nil, let catalog = bundledCatalog else { return }
+        do {
+            let result = try CatalogIdMigration.migrate(in: container.mainContext, catalog: catalog)
+            if result.changed {
+                Logger(subsystem: "com.brunodobric.gymapp", category: "Catalog")
+                    .info("Migracija kataloga: \(result.renamed) preimenovano, \(result.convertedToCustom) u vlastite vježbe")
+            }
+        } catch {
+            Logger(subsystem: "com.brunodobric.gymapp", category: "Catalog")
+                .error("Migracija id-jeva kataloga: \(String(describing: error))")
+        }
     }
 }

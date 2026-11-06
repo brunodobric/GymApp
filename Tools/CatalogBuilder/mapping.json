@@ -1,126 +1,54 @@
 {
-  "_opis": "Tablica mapiranja free-exercise-db vrijednosti na naše kategorije, mišiće, opremu, vrste unosa i regije body heatmapa.",
+  "_opis": "Mapiranje MoveKit metapodataka (metadata.json) na naše kategorije, mišiće, opremu i regije mape mišića. Ispravke za pojedine vježbe su u overrides.json.",
 
+  "regions": {
+    "chest": "chest", "shoulders": "shoulders", "triceps": "triceps", "biceps": "biceps", "forearms": "forearms",
+    "lats": "lats", "middle back": "upperBack", "lower back": "lowerBack", "traps": "traps", "neck": "neck",
+    "quadriceps": "quads", "hamstrings": "hamstrings", "glutes": "glutes", "calves": "calves",
+    "adductors": "innerThigh", "abductors": "outerThigh", "abdominals": "abs"
+  },
+
+  "_muscles": "MoveKit mišić -> naši mišići. 'Back' se dijeli po nazivu vježbe (backRules).",
   "muscles": {
-    "chest":       { "category": "chest",     "movement": "push", "region": "chest" },
-    "shoulders":   { "category": "shoulders", "movement": "push", "region": "shoulders" },
-    "triceps":     { "category": "arms",      "movement": "push", "region": "triceps" },
-    "biceps":      { "category": "arms",      "movement": "pull", "region": "biceps" },
-    "forearms":    { "category": "arms",      "movement": "pull", "region": "forearms" },
-    "lats":        { "category": "back",      "movement": "pull", "region": "lats" },
-    "middle back": { "category": "back",      "movement": "pull", "region": "upperBack" },
-    "lower back":  { "category": "back",      "movement": "pull", "region": "lowerBack" },
-    "traps":       { "category": "back",      "movement": "pull", "region": "traps" },
-    "neck":        { "category": "shoulders", "movement": "pull", "region": "neck" },
-    "quadriceps":  { "category": "legs",      "movement": "legs", "region": "quads" },
-    "hamstrings":  { "category": "legs",      "movement": "legs", "region": "hamstrings" },
-    "glutes":      { "category": "legs",      "movement": "legs", "region": "glutes" },
-    "calves":      { "category": "legs",      "movement": "legs", "region": "calves" },
-    "adductors":   { "category": "legs",      "movement": "legs", "region": "innerThigh" },
-    "abductors":   { "category": "legs",      "movement": "legs", "region": "outerThigh" },
-    "abdominals":  { "category": "core",      "movement": null,   "region": "abs" }
+    "Chest": ["chest"], "Shoulders": ["shoulders"], "Triceps": ["triceps"], "Biceps": ["biceps"],
+    "Forearms": ["forearms"], "Trapezius": ["traps"], "Lower Back": ["lower back"], "Neck": ["neck"],
+    "Quadriceps": ["quadriceps"], "Hamstrings": ["hamstrings"], "Glutes": ["glutes"], "Calves": ["calves"],
+    "Tibialis": ["calves"], "Adductors": ["adductors"], "Core": ["abdominals"],
+    "Back": ["lats", "middle back"]
+  },
+  "_backRules": "Ako naziv sadrži neku od riječi, 'Back' postaje samo navedeni mišić. Inače oba (lats i middle back).",
+  "backRules": [
+    { "words": ["pulldown", "pull-up", "pull up", "pullup", "chin", "pullover", "muscle-up", "straight-arm", "straight arm", "lat "], "muscles": ["lats"] },
+    { "words": ["row", "face pull", "rear delt", "reverse fly", "reverse pec", "y-t", "shrug"], "muscles": ["middle back"] },
+    { "words": ["deadlift", "back extension", "good morning", "hyperextension", "superman"], "muscles": ["lower back"] }
+  ],
+
+  "category": {
+    "chest": "chest", "shoulders": "shoulders", "triceps": "arms", "biceps": "arms", "forearms": "arms",
+    "lats": "back", "middle back": "back", "lower back": "back", "traps": "back", "neck": "shoulders",
+    "quadriceps": "legs", "hamstrings": "legs", "glutes": "legs", "calves": "legs", "adductors": "legs",
+    "abductors": "legs", "abdominals": "core"
   },
 
+  "_equipment": "Prva oprema s popisa koja nije u equipmentIgnore određuje našu opremu.",
+  "equipmentIgnore": ["Bench"],
   "equipment": {
-    "barbell": "barbell",
-    "e-z curl bar": "ezBar",
-    "dumbbell": "dumbbell",
-    "cable": "cable",
-    "machine": "machine",
-    "body only": "bodyweight",
-    "kettlebells": "kettlebell",
-    "bands": "bands",
-    "medicine ball": "other",
-    "exercise ball": "other",
-    "foam roll": "other",
-    "other": "other",
-    "null": "other"
+    "Bodyweight": "bodyweight", "Dumbbell": "dumbbell", "Barbell": "barbell", "Machine": "machine",
+    "Cable Machine": "cable", "Kettlebell": "kettlebell", "Band": "bands", "Bench": "other",
+    "Bicycle": "machine", "Weight Plate": "other", "Stability Ball": "other", "Backpack": "other",
+    "Medicine Ball": "other", "Sled": "other", "Towel": "other", "TRX": "other", "Battle Ropes": "other",
+    "Dowel": "other", "Slider": "other", "Foam Roller": "other", "Wrist Roller": "other"
   },
 
-  "levels": { "beginner": "beginner", "intermediate": "intermediate", "expert": "advanced" },
-  "mechanics": { "compound": "compound", "isolation": "isolation", "null": null },
+  "levels": { "beginner": "beginner", "intermediate": "intermediate", "advanced": "advanced" },
 
-  "_kardio": "Vježbe iz kategorije cardio dobivaju našu kategoriju cardio, bez vrste pokreta, i unos vrijeme + udaljenost.",
-  "cardioInputType": "durationDistance",
-
-  "inputTypeOverrides": {
-    "Side_Bridge": "duration",
-    "Pullups": "bodyweight",
-    "Chin-Up": "bodyweight",
-    "Weighted_Pull_Ups": "weightedBodyweight",
-    "Band_Assisted_Pull-Up": "assisted",
-    "Dips_-_Chest_Version": "bodyweight",
-    "Dips_-_Triceps_Version": "bodyweight",
-    "Parallel_Bar_Dip": "bodyweight",
-    "Inverted_Row": "bodyweight",
-    "Hyperextensions_Back_Extensions": "bodyweight",
-    "Knee_Hip_Raise_On_Parallel_Bars": "bodyweight",
-    "Ab_Roller": "bodyweight",
-    "Plank": "duration",
-    "Air_Bike": "duration",
-    "Rope_Jumping": "duration"
+  "movement": {
+    "Push": "push", "Pull": "pull", "Squat": "legs", "Lunge": "legs", "Hinge": "legs", "Hip Abduction": "legs"
   },
+  "_noMechanic": "Obrasci bez mehanike (nisu ni izolacijske ni višezglobne vježbe snage).",
+  "noMechanic": ["Cardio", "Mobility", "Stretch"],
 
-  "_instructionOverrides": "Engleske upute za vježbe koje ih u izvoru nemaju.",
-  "instructionOverrides": {
-    "Side_Bridge": [
-      "Lie on your side on a mat with your legs straight and stacked. Place the forearm of the lower arm on the floor, with the elbow directly under the shoulder.",
-      "Lift your hips off the floor so that your body forms a straight line from head to feet. Keep your core tight and do not let your hips sag. This will be your starting position.",
-      "Hold the position for the recommended amount of time while breathing steadily.",
-      "Lower your hips back to the floor and repeat on the other side."
-    ]
-  },
-
-  "_muscleOverrides": "Ispravljeni glavni i pomoćni mišići za vježbe kod kojih izvor ne odgovara mjerenjima aktivacije i rasta (npr. čučanj jako radi gluteus i aduktore, a malo stražnju ložu i listove). Kategorija i vrsta pokreta i dalje se uzimaju iz izvora.",
-  "muscleOverrides": {
-    "Barbell_Squat": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors", "lower back"] },
-    "Box_Squat": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors", "hamstrings", "lower back"] },
-    "Smith_Machine_Squat": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors"] },
-    "Front_Squat_Clean_Grip": { "primary": ["quadriceps"], "secondary": ["glutes", "adductors", "abdominals"] },
-    "Goblet_Squat": { "primary": ["quadriceps"], "secondary": ["glutes", "adductors"] },
-    "Hack_Squat": { "primary": ["quadriceps"], "secondary": ["glutes", "adductors"] },
-    "Leg_Press": { "primary": ["quadriceps"], "secondary": ["glutes", "adductors"] },
-    "Bodyweight_Squat": { "primary": ["quadriceps"], "secondary": ["glutes"] },
-    "Barbell_Lunge": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors"] },
-    "Barbell_Walking_Lunge": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors"] },
-    "Dumbbell_Lunges": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors"] },
-    "Dumbbell_Rear_Lunge": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors"] },
-    "Bodyweight_Walking_Lunge": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors"] },
-    "Split_Squat_with_Dumbbells": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors"] },
-    "Dumbbell_Step_Ups": { "primary": ["quadriceps", "glutes"], "secondary": ["adductors"] },
-    "Barbell_Deadlift": { "primary": ["glutes", "hamstrings", "lower back"], "secondary": ["quadriceps", "adductors", "traps", "forearms"] },
-    "Trap_Bar_Deadlift": { "primary": ["quadriceps", "glutes"], "secondary": ["hamstrings", "lower back", "traps"] },
-    "Sumo_Deadlift": { "primary": ["glutes", "hamstrings"], "secondary": ["adductors", "quadriceps", "lower back", "traps"] },
-    "Rack_Pulls": { "primary": ["lower back", "glutes"], "secondary": ["hamstrings", "traps", "forearms"] },
-    "Romanian_Deadlift": { "primary": ["hamstrings", "glutes"], "secondary": ["lower back"] },
-    "Stiff-Legged_Barbell_Deadlift": { "primary": ["hamstrings", "glutes"], "secondary": ["lower back"] },
-    "Stiff-Legged_Dumbbell_Deadlift": { "primary": ["hamstrings", "glutes"], "secondary": ["lower back"] },
-    "Kettlebell_One-Legged_Deadlift": { "primary": ["hamstrings", "glutes"], "secondary": ["lower back"] },
-    "Good_Morning": { "primary": ["hamstrings", "glutes"], "secondary": ["lower back"] },
-    "Reverse_Hyperextension": { "primary": ["glutes", "hamstrings"], "secondary": ["lower back"] },
-    "Barbell_Hip_Thrust": { "primary": ["glutes"], "secondary": ["hamstrings"] },
-    "Barbell_Glute_Bridge": { "primary": ["glutes"], "secondary": ["hamstrings"] },
-    "Band_Assisted_Pull-Up": { "primary": ["lats"], "secondary": ["biceps", "middle back"] },
-    "Cable_Hip_Adduction": { "primary": ["adductors"], "secondary": [] },
-    "Mountain_Climbers": { "primary": ["abdominals"], "secondary": ["quadriceps", "shoulders"] }
-  },
-
-  "equipmentOverrides": {
-    "Inverted_Row": "bodyweight",
-    "Mountain_Climbers": "bodyweight",
-    "Bicycling": "machine",
-    "Rope_Jumping": "other",
-    "Trail_Running_Walking": "bodyweight"
-  },
-
-  "categoryOverrides": {
-    "Mountain_Climbers": "core",
-    "Clean_and_Press": "shoulders",
-    "Power_Clean": "legs",
-    "Clean": "legs",
-    "Hang_Clean": "legs",
-    "Snatch": "legs",
-    "Barbell_Deadlift": "back",
-    "Trap_Bar_Deadlift": "legs"
-  }
+  "_inputType": "Vrsta unosa kad je nema u overrides.json. Pravila se provjeravaju redom.",
+  "distanceCardioWords": ["run", "walk", "hik", "swim", "cycl", "ride", "bike", "rowing", "ski erg", "elliptical", "arc trainer", "stair", "versaclimber"],
+  "durationWords": ["plank", "hold", "wall sit", "dead hang", "carry", "isometric", "hollow"]
 }

@@ -62,7 +62,7 @@ struct DemoDataTests {
         let weights = try context.fetch(FetchDescriptor<BodyMeasurement>()).filter { $0.kind == .weight }
         #expect(weights.count == 10)
         let bench = try context.fetch(FetchDescriptor<SessionExercise>())
-            .filter { $0.exerciseCatalogId == "Barbell_Bench_Press_-_Medium_Grip" }
+            .filter { $0.exerciseCatalogId == "barbell-bench-press" }
             .sorted { ($0.session?.startedAt ?? .distantPast) < ($1.session?.startedAt ?? .distantPast) }
         let firstWeight = bench.first?.orderedSets.first?.weightKg ?? 0
         let lastWeight = bench.last?.orderedSets.first?.weightKg ?? 0

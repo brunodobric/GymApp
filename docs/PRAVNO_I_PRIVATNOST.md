@@ -18,7 +18,7 @@ GymApp je u dobrom položaju jer nema vlastiti server, korisničke račune, anal
 | **Session replay i tracking** | Ne koristi se. Za rušenja i performanse koristi se MetricKit i Xcode Organizer. MetricKit izvještaji spremaju se samo u lokalni dnevnik (`Diagnostics` u GymKitu, `App/Diagnostics/`), bez korisničkih podataka; korisnik ih sam izvozi u Postavke > O aplikaciji > Dijagnostika. Ništa se ne šalje automatski, pa to nije "prikupljanje" u smislu privacy labela. | Faza 13 (gotovo) |
 | **Dobna oznaka i djeca (COPPA)** | Aplikacija nije namijenjena djeci i ne prikuplja osobne podatke prema razvojnom timu. Dobna oznaka u App Store Connectu: 4+, odgovori na upitnik su u `AppStore/README.md`. Age gate nije potreban jer nema računa ni prikupljanja. | Faza 14 (gotovo) |
 | **Pristupačnost** | Dynamic Type, VoiceOver oznake, dovoljan kontrast (WCAG 2.2 AA kao smjernica). Pravila i ručna provjera su u `docs/DIZAJN.md`. | Faza 13 (gotovo) |
-| **Open source licence** | free-exercise-db je Unlicense (javno vlasništvo), uz atribuciju u "O aplikaciji". Za svaku novu biblioteku provjeriti licencu i upisati je ovdje. Prednost imaju MIT, Apache i BSD. GPL se ne koristi. | Stalno |
+| **Open source licence** | Katalog vježbi je MoveKit (komercijalna licenca, vidi ispod). Za svaku novu biblioteku provjeriti licencu i upisati je ovdje. Prednost imaju MIT, Apache i BSD. GPL se ne koristi. | Stalno |
 | **Sigurnost podataka** | Podatke štiti iOS enkripcija uređaja i iCloud. Aplikacija ne drži ni ne šalje lozinke. Datoteke baze koriste zadanu zaštitu datoteka (Data Protection). | Faza 1 |
 
 ## App Store Connect: privatnost
@@ -37,7 +37,8 @@ Odgovori za App Privacy u App Store Connectu (vrijede dok aplikacija nema server
 
 | Komponenta | Licenca | Gdje se koristi |
 |---|---|---|
-| free-exercise-db | Unlicense | Katalog vježbi (podaci i slike) |
+| MoveKit, Complete Exercise Library (movekit.com) | Komercijalna, MoveKit License Agreement v1.0 (licenca na Bruna Dobrića, prijenos na tvrtku moguć jednom) | Katalog vježbi: klipovi, posteri, metapodaci, upute i česte greške. Pisanom potvrdom (e-mail, studeni 2026) dopušteno je ugraditi sadržaj u aplikaciju i isporučiti ga preko Applea, pretvoriti klipove u drugi format, izrezati ih, napraviti postere i ukloniti metapodatke. Navođenje izvora nije obavezno. Uvjeti: sirove datoteke ne smiju biti javno dostupne ni preuzimljive (nema javnih poveznica, aplikacija nema izvoz klipova), a licenca i certifikat čuvaju se uz pakete. Zato licencirani sadržaj nije u javnom repozitoriju: postupak je u `docs/movekit.md`. U repozitoriju su samo naši podaci (mapiranje, hrvatski nazivi, tablica starih id-jeva). |
+| free-exercise-db | Unlicense | **Više se ne koristi** (zamijenjen MoveKitom u studenom 2026). Stari id-jevi su u `Tools/CatalogBuilder/legacy-ids.json` zbog migracije spremljenih podataka. |
 | Everkinetic (github.com/everkinetic/data) | CC BY-SA 4.0, © Greg Priday i suradnici | **Više se ne koristi** (izbačeno u studenom 2026). Starije verzije aplikacije sadrže izmijenjene crteže. Njihova javna kopija pod istom licencom ostaje u povijesti ovog repozitorija: `Resources/Drawings/` na commitu `52fe599`. |
 | MuscleMap (github.com/Jsplice/MuscleMap) | MIT, © 2026 Jsplice / MuscleMap contributors | SVG putanje muškog i ženskog tijela za heatmap (samo vektori, bez fotografija). Pretvara ih `scripts/convert-musclemap.py` u `Resources/BodyMap/body.json`. Copyright napomena i tekst licence (`LICENSE-MuscleMap.txt`) su u "O aplikaciji". |
 

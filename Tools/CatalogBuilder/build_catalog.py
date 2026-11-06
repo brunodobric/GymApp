@@ -1,203 +1,280 @@
 #!/usr/bin/env python3
-"""Gradi katalog vježbi iz free-exercise-db (Unlicense) za aplikaciju.
+"""Gradi katalog vježbi iz MoveKit paketa (komercijalna licenca, docs/movekit.md).
 
-Koraci: preuzme fiksiranu verziju baze, odabere vježbe iz selection.txt, primijeni mapping.json,
-spoji prijevode iz translations/hr.json te upiše Resources/Catalog/catalog.json i slike.
-Samo standardna biblioteka Pythona, bez vanjskih ovisnosti.
+MoveKit sadržaj ne smije u javni repozitorij, pa build ima dva izlaza:
 
-Pokretanje (iz korijena repozitorija):  python3 Tools/CatalogBuilder/build_catalog.py
+* javni `Resources/Catalog/catalog.json`: naši podaci o vježbama (id, nazivi, kategorija, mišići,
+  oprema, vrsta unosa, regije mape mišića) i tablica starih id-jeva. Bez MoveKit tekstova i medija.
+* privatna mapa (zadano `<MoveKit paket>/GymApp`): `texts.json` s uputama i čestim greškama te
+  `Media/` s pretvorenim klipovima (HEVC) i posterima (JPEG). `scripts/movekit.sh` je kopira u
+  `Resources/MoveKit/`, koja je u .gitignore i ulazi u build samo na Macu s paketom.
+
+Ulazi u repozitoriju: mapping.json (pravila), overrides.json (ispravke po vježbi), names-hr.json
+(hrvatski nazivi), legacy-ids.json (stari id-jevi iz free-exercise-db). Hrvatski prijevodi uputa su
+privatni: `<privatna mapa>/translations-hr.json`.
+
+Pokretanje (iz korijena repozitorija, za medije treba ffmpeg):
+    python3 Tools/CatalogBuilder/build_catalog.py --movekit ~/Documents/MoveKit [--media]
 """
 import argparse
 import json
+import shutil
+import subprocess
 import sys
-import urllib.parse
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-# Fiksirana verzija izvora: promjena ove vrijednosti je namjerna odluka o ažuriranju kataloga.
-SOURCE_COMMIT = "f00c92c7dcf1216a928a52c3706c7ce8e2f71ed5"
-SOURCE_REPO = "yuhonas/free-exercise-db"
-RAW = f"https://raw.githubusercontent.com/{SOURCE_REPO}/{SOURCE_COMMIT}"
-CATALOG_VERSION = 1
+CATALOG_VERSION = 2
+SOURCE = {"name": "MoveKit", "url": "https://movekit.com", "license": "MoveKit License Agreement v1.0"}
 
 ROOT = Path(__file__).resolve().parents[2]
 TOOL = Path(__file__).resolve().parent
-OUTPUT = ROOT / "Resources" / "Catalog"
-CACHE = TOOL / ".cache"
+PUBLIC_OUTPUT = ROOT / "Resources" / "Catalog" / "catalog.json"
+
+# Pretvorba medija: klip 1280 px širine u HEVC bez zvuka, poster 960 px u JPEG.
+VIDEO_WIDTH = 1280
+VIDEO_CRF = 28
+POSTER_WIDTH = 960
 
 
 class BuildError(Exception):
     pass
 
 
-def load_selection(path: Path) -> list[str]:
-    ids = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if line and not line.startswith("#"):
-            ids.append(line)
-    duplicates = {i for i in ids if ids.count(i) > 1}
-    if duplicates:
-        raise BuildError(f"Duplicirani id-evi u selection.txt: {sorted(duplicates)}")
-    return ids
+def load_json(path: Path, default=None):
+    if not path.exists():
+        if default is not None:
+            return default
+        raise BuildError(f"Nema datoteke {path}")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
-def lookup(table: dict, value, what: str, exercise_id: str):
-    key = "null" if value is None else value
-    if key not in table:
-        raise BuildError(f"{exercise_id}: nema mapiranja za {what} '{value}' u mapping.json")
-    return table[key]
+def unique(items: list) -> list:
+    result = []
+    for item in items:
+        if item not in result:
+            result.append(item)
+    return result
 
 
-def regions_for(muscles: list[str], mapping: dict, exercise_id: str) -> list[str]:
+def map_muscles(names: list[str], exercise_name: str, mapping: dict, slug: str) -> list[str]:
+    lowered = exercise_name.lower()
+    result = []
+    for name in names:
+        if name not in mapping["muscles"]:
+            raise BuildError(f"{slug}: nema mapiranja za mišić '{name}'")
+        muscles = mapping["muscles"][name]
+        if name == "Back":
+            for rule in mapping["backRules"]:
+                if any(word in lowered for word in rule["words"]):
+                    muscles = rule["muscles"]
+                    break
+        result.extend(muscles)
+    return unique(result)
+
+
+def map_equipment(names: list[str], mapping: dict, slug: str) -> str:
+    candidates = [n for n in names if n not in mapping["equipmentIgnore"]] or names
+    if not candidates:
+        return "other"
+    first = candidates[0]
+    if first not in mapping["equipment"]:
+        raise BuildError(f"{slug}: nema mapiranja za opremu '{first}'")
+    return mapping["equipment"][first]
+
+
+def infer_input_type(raw: dict, equipment: str, mapping: dict) -> str:
+    name = raw["name"].lower()
+    patterns = set(raw["movementPattern"])
+    if "Cardio" in patterns:
+        if any(word in name for word in mapping["distanceCardioWords"]):
+            return "durationDistance"
+        return "duration"
+    if patterns & {"Mobility", "Stretch"}:
+        return "duration"
+    if any(word in name for word in mapping["durationWords"]):
+        return "duration"
+    if "assisted" in name and ("pull" in name or "dip" in name or "chin" in name):
+        return "assisted"
+    if "weighted" in name and ("pull" in name or "dip" in name or "chin" in name):
+        return "weightedBodyweight"
+    if equipment == "bodyweight":
+        return "bodyweight"
+    return "weightReps"
+
+
+def regions_for(muscles: list[str], mapping: dict, slug: str) -> list[str]:
     regions = []
     for muscle in muscles:
-        if muscle not in mapping["muscles"]:
-            raise BuildError(f"{exercise_id}: nema mapiranja za mišić '{muscle}'")
-        region = mapping["muscles"][muscle]["region"]
-        if region not in regions:
-            regions.append(region)
-    return regions
+        if muscle not in mapping["regions"]:
+            raise BuildError(f"{slug}: nema regije za mišić '{muscle}'")
+        regions.append(mapping["regions"][muscle])
+    return unique(regions)
 
 
-def convert(raw: dict, mapping: dict, hr: dict) -> dict:
-    """Pretvara jedan zapis iz izvora u zapis kataloga. Čista funkcija, pokrivena testovima."""
-    exercise_id = raw["id"]
-    primary = raw["primaryMuscles"]
-    secondary = raw["secondaryMuscles"]
-    if not primary:
-        raise BuildError(f"{exercise_id}: nema primarnog mišića")
-    lead = mapping["muscles"].get(primary[0])
-    if lead is None:
-        raise BuildError(f"{exercise_id}: nema mapiranja za mišić '{primary[0]}'")
+def convert(raw: dict, mapping: dict, override: dict, hr_name: str | None) -> dict:
+    """Pretvara jedan zapis iz metadata.json u javni zapis kataloga. Čista funkcija, pokrivena testovima."""
+    slug = raw["slug"]
+    if not raw["primaryMuscles"] and "primaryMuscles" not in override:
+        raise BuildError(f"{slug}: nema glavnog mišića")
+    primary = override.get("primaryMuscles") or map_muscles(raw["primaryMuscles"], raw["name"], mapping, slug)
+    secondary = override.get("secondaryMuscles")
+    if secondary is None:
+        secondary = map_muscles(raw["secondaryMuscles"], raw["name"], mapping, slug)
+    secondary = [m for m in secondary if m not in primary]
 
-    # Ispravke mišića iz mapping.json. Kategorija i vrsta pokreta i dalje slijede prvi mišić iz izvora.
-    override = mapping.get("muscleOverrides", {}).get(exercise_id)
-    if override:
-        primary = override["primary"]
-        secondary = override["secondary"]
+    patterns = raw["movementPattern"]
+    is_cardio = "Cardio" in patterns
+    category = override.get("category") or ("cardio" if is_cardio else mapping["category"][primary[0]])
 
-    is_cardio = raw["category"] == "cardio"
-    category = "cardio" if is_cardio else lead["category"]
-    category = mapping["categoryOverrides"].get(exercise_id, category)
-    movement = None if is_cardio else lead["movement"]
+    movement = None
+    if not is_cardio:
+        movement = next((mapping["movement"][p] for p in patterns if p in mapping["movement"]), None)
+    movement = override.get("movement", movement)
 
-    equipment = mapping["equipmentOverrides"].get(exercise_id) or lookup(
-        mapping["equipment"], raw["equipment"], "opremu", exercise_id
-    )
-
-    if exercise_id in mapping["inputTypeOverrides"]:
-        input_type = mapping["inputTypeOverrides"][exercise_id]
-    elif is_cardio:
-        input_type = mapping["cardioInputType"]
-    elif equipment == "bodyweight":
-        input_type = "bodyweight"
+    if "Isolation" in patterns:
+        mechanic = "isolation"
+    elif set(patterns) & set(mapping["noMechanic"]):
+        mechanic = None
     else:
-        input_type = "weightReps"
+        mechanic = "compound"
+
+    equipment = override.get("equipment") or map_equipment(raw["equipment"], mapping, slug)
+    input_type = override.get("inputType") or infer_input_type(raw, equipment, mapping)
+
+    level = mapping["levels"].get(raw["difficulty"])
+    if level is None:
+        raise BuildError(f"{slug}: nepoznata razina '{raw['difficulty']}'")
 
     names = {"en": raw["name"]}
-    # Nekoliko vježbi u izvoru nema uputa: tada se koriste upute iz mapping.json (instructionOverrides).
-    instructions = {"en": raw["instructions"] or mapping.get("instructionOverrides", {}).get(exercise_id, [])}
-    translation = hr.get(exercise_id)
-    if translation:
-        names["hr"] = translation["name"]
-        if translation.get("instructions"):
-            instructions["hr"] = translation["instructions"]
+    if hr_name:
+        names["hr"] = hr_name
 
     return {
-        "id": exercise_id,
+        "id": slug,
         "name": names,
-        "instructions": instructions,
         "category": category,
         "primaryMuscles": primary,
         "secondaryMuscles": secondary,
         "equipment": equipment,
-        "level": lookup(mapping["levels"], raw["level"], "razinu", exercise_id),
-        "mechanic": lookup(mapping["mechanics"], raw["mechanic"], "mehaniku", exercise_id),
+        "level": level,
+        "mechanic": mechanic,
         "movement": movement,
         "inputType": input_type,
-        "primaryRegions": regions_for(primary, mapping, exercise_id),
-        "secondaryRegions": regions_for(secondary, mapping, exercise_id),
-        "images": [f"Images/{exercise_id}/{Path(image).name}" for image in raw.get("images", [])],
+        "primaryRegions": regions_for(primary, mapping, slug),
+        "secondaryRegions": regions_for(secondary, mapping, slug),
+        "video": f"Media/{slug}.mp4",
+        "poster": f"Media/{slug}.jpg",
     }
 
 
-def download(url: str, destination: Path) -> None:
-    if destination.exists():
-        return
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    request = urllib.request.Request(url, headers={"User-Agent": "gymapp-catalog-builder"})
-    with urllib.request.urlopen(request, timeout=60) as response:
-        destination.write_bytes(response.read())
+def texts_for(raw: dict, hr: dict | None) -> dict:
+    """Privatni tekstovi jedne vježbe: upute i česte greške, engleski i (ako postoji) hrvatski."""
+    instructions = {"en": raw["instructions"]}
+    mistakes = {"en": raw["commonMistakes"]}
+    if hr:
+        if hr.get("instructions"):
+            instructions["hr"] = hr["instructions"]
+        if hr.get("commonMistakes"):
+            mistakes["hr"] = hr["commonMistakes"]
+    return {"instructions": instructions, "commonMistakes": mistakes}
+
+
+def check_legacy(legacy: dict, slugs: set[str]) -> None:
+    unknown = {old: new for old, new in legacy.items() if new is not None and new not in slugs}
+    if unknown:
+        raise BuildError(f"legacy-ids.json upućuje na nepostojeće vježbe: {unknown}")
+
+
+def find_media(package: Path, relative: str) -> Path:
+    """Datoteka iz paketa: MoveKit isporučuje klipove i postere u zasebnim mapama."""
+    name = Path(relative).name
+    matches = sorted(package.glob(f"*/{relative}")) + sorted(package.glob(f"*/{name}"))
+    if not matches:
+        raise BuildError(f"Nema datoteke {relative} u {package}")
+    return matches[0]
+
+
+def convert_media(source_video: Path, source_poster: Path, out: Path, slug: str) -> None:
+    """Klip u HEVC 1280 px bez zvuka i poster u JPEG 960 px. Gotova datoteka novija od izvora se preskače,
+    a pretvorba ide u privremenu datoteku, pa prekinuto pokretanje ne ostavlja napola zapisan klip."""
+    jobs = (
+        (source_video, out / f"{slug}.mp4",
+         ["-an", "-vf", f"scale={VIDEO_WIDTH}:-2", "-c:v", "libx265", "-crf", str(VIDEO_CRF), "-preset", "medium",
+          "-tag:v", "hvc1", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-x265-params", "log-level=error"]),
+        (source_poster, out / f"{slug}.jpg", ["-vf", f"scale={POSTER_WIDTH}:-2", "-q:v", "4"]),
+    )
+    for source, target, options in jobs:
+        if target.exists() and target.stat().st_size > 0 and target.stat().st_mtime >= source.stat().st_mtime:
+            continue
+        temporary = target.with_name(f".tmp-{target.name}")
+        subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", str(source), *options, str(temporary)], check=True)
+        temporary.replace(target)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", type=Path, help="lokalni exercises.json umjesto preuzimanja (za testove)")
-    parser.add_argument("--no-images", action="store_true", help="preskoči preuzimanje slika")
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--movekit", type=Path, required=True, help="mapa s raspakiranim MoveKit paketom")
+    parser.add_argument("--private-out", type=Path, help="privatni izlaz (zadano <movekit>/GymApp)")
+    parser.add_argument("--media", action="store_true", help="pretvori klipove i postere (treba ffmpeg)")
+    parser.add_argument("--no-public", action="store_true", help="ne piši Resources/Catalog/catalog.json")
     args = parser.parse_args()
 
-    selection = load_selection(TOOL / "selection.txt")
-    mapping = json.loads((TOOL / "mapping.json").read_text(encoding="utf-8"))
-    hr_path = TOOL / "translations" / "hr.json"
-    hr = json.loads(hr_path.read_text(encoding="utf-8")) if hr_path.exists() else {}
+    package = args.movekit.expanduser()
+    private = (args.private_out or package / "GymApp").expanduser()
+    metadata_files = sorted(package.glob("*/metadata.json"))
+    if not metadata_files:
+        raise BuildError(f"Nema metadata.json u {package}")
+    metadata = load_json(metadata_files[0])
 
-    source_file = args.source or CACHE / SOURCE_COMMIT / "exercises.json"
-    if not args.source:
-        print("Preuzimam exercises.json …")
-        download(f"{RAW}/dist/exercises.json", source_file)
-    database = {item["id"]: item for item in json.loads(source_file.read_text(encoding="utf-8"))}
+    mapping = load_json(TOOL / "mapping.json")
+    overrides = load_json(TOOL / "overrides.json", {})
+    hr_names = load_json(TOOL / "names-hr.json", {})
+    legacy = load_json(TOOL / "legacy-ids.json", {})
+    hr_texts = load_json(private / "translations-hr.json", {})
 
-    missing = [i for i in selection if i not in database]
-    if missing:
-        raise BuildError(f"Nema u izvoru: {missing}")
-    unknown_translations = [i for i in hr if i not in selection]
-    if unknown_translations:
-        raise BuildError(f"Prijevodi za vježbe koje nisu odabrane: {unknown_translations}")
+    slugs = {raw["slug"] for raw in metadata}
+    for table, label in ((overrides, "overrides.json"), (hr_names, "names-hr.json"), (hr_texts, "translations-hr.json")):
+        unknown = sorted(k for k in table if not k.startswith("_") and k not in slugs)
+        if unknown:
+            raise BuildError(f"{label}: nepoznate vježbe {unknown}")
+    check_legacy({k: v for k, v in legacy.items() if not k.startswith("_")}, slugs)
 
-    exercises = [convert(database[i], mapping, hr) for i in selection]
+    exercises = [convert(raw, mapping, overrides.get(raw["slug"], {}), hr_names.get(raw["slug"])) for raw in metadata]
+    exercises.sort(key=lambda e: e["name"]["en"].lower())
 
-    for exercise in exercises:
-        if not exercise["instructions"]["en"]:
-            raise BuildError(f"{exercise['id']}: nema uputa, izbaciti iz selection.txt")
-        if not exercise["images"]:
-            raise BuildError(f"{exercise['id']}: nema slika, izbaciti iz selection.txt")
+    if not args.no_public:
+        catalog = {
+            "version": CATALOG_VERSION,
+            "source": SOURCE,
+            "legacyIds": {k: v for k, v in sorted(legacy.items()) if not k.startswith("_")},
+            "exercises": exercises,
+        }
+        PUBLIC_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        PUBLIC_OUTPUT.write_text(json.dumps(catalog, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
-    if not args.no_images:
-        jobs = []
-        for raw_id in selection:
-            for image in database[raw_id].get("images", []):
-                quoted = urllib.parse.quote(image)
-                jobs.append((f"{RAW}/exercises/{quoted}", OUTPUT / "Images" / raw_id / Path(image).name))
-        print(f"Preuzimam {len(jobs)} slika …")
-        with ThreadPoolExecutor(max_workers=8) as pool:
-            list(pool.map(lambda job: download(*job), jobs))
+    private.mkdir(parents=True, exist_ok=True)
+    texts = {raw["slug"]: texts_for(raw, hr_texts.get(raw["slug"])) for raw in metadata}
+    (private / "texts.json").write_text(json.dumps(texts, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    for licence in sorted(package.glob("*/LICENSE.txt"))[:1]:
+        shutil.copyfile(licence, private / "LICENSE.txt")
 
-    # Mape slika vježbi koje više nisu u odabiru brišu se, da build uvijek odgovara selection.txt.
-    images_root = OUTPUT / "Images"
-    if images_root.exists():
-        for folder in images_root.iterdir():
-            if folder.is_dir() and folder.name not in selection:
-                for file in folder.iterdir():
-                    file.unlink()
-                folder.rmdir()
+    if args.media:
+        if shutil.which("ffmpeg") is None:
+            raise BuildError("Za --media treba ffmpeg (brew install ffmpeg).")
+        media = private / "Media"
+        media.mkdir(parents=True, exist_ok=True)
+        jobs = [
+            (find_media(package, raw["videoFile"]), find_media(package, raw["posterFile"]), media, raw["slug"])
+            for raw in metadata
+        ]
+        print(f"Pretvaram {len(jobs)} klipova i postera …")
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            list(pool.map(lambda job: convert_media(*job), jobs))
 
-    catalog = {
-        "version": CATALOG_VERSION,
-        "source": {"name": "free-exercise-db", "repository": SOURCE_REPO, "commit": SOURCE_COMMIT, "license": "Unlicense"},
-        "exercises": exercises,
-    }
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    (OUTPUT / "catalog.json").write_text(
-        json.dumps(catalog, ensure_ascii=False, indent=1, sort_keys=False) + "\n", encoding="utf-8"
-    )
-
-    translated = sum(1 for e in exercises if "hr" in e["name"])
-    with_steps = sum(1 for e in exercises if "hr" in e["instructions"])
-    print(
-        f"Gotovo: {len(exercises)} vježbi, {translated} s hrvatskim nazivom, {with_steps} s hrvatskim uputama."
-    )
+    named = sum(1 for e in exercises if "hr" in e["name"])
+    print(f"Gotovo: {len(exercises)} vježbi, {named} s hrvatskim nazivom, {len(hr_texts)} s hrvatskim uputama.")
+    print(f"Privatni izlaz: {private}")
     return 0
 
 

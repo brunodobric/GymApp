@@ -8,7 +8,7 @@ public enum ExerciseCategory: String, Codable, CaseIterable, Sendable {
     case chest, back, shoulders, arms, legs, core, cardio
 }
 
-/// Mišići koriste nazive iz free-exercise-db.
+/// Naši mišići. MoveKit nazive mišića prevodi CatalogBuilder (Tools/CatalogBuilder/mapping.json).
 public enum Muscle: String, Codable, CaseIterable, Sendable {
     case chest, shoulders, triceps, biceps, forearms
     case lats

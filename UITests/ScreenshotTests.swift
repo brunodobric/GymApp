@@ -23,7 +23,7 @@ final class ScreenshotTests: XCTestCase {
         language == "en"
             ? Texts(
                 home: "Home", history: "History", schedules: "Schedules", exercises: "Exercises", statistics: "Statistics",
-                search: "Bench", exercise: "Barbell Bench Press - Medium Grip"
+                search: "Bench", exercise: "Barbell Bench Press"
             )
             : Texts(
                 home: "Početna", history: "Povijest", schedules: "Rasporedi", exercises: "Vježbe", statistics: "Statistika",
