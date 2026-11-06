@@ -8,7 +8,7 @@
       "shouldTranslate" : false
     },
     "NSAlarmKitUsageDescription" : {
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
