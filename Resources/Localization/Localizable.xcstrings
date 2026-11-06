@@ -4688,6 +4688,16 @@
         }
       }
     },
+    "Prikaži vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show exercise"
+          }
+        }
+      }
+    },
     "Primarni" : {
       "localizations" : {
         "en" : {
@@ -6624,16 +6634,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Instructions for this exercise are only in English for now."
-          }
-        }
-      }
-    },
-    "Upute za vježbu" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exercise instructions"
           }
         }
       }
