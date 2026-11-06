@@ -84,7 +84,8 @@ struct SessionDetailScreen: View {
                 }
             }
         }
-        .sheet(item: $editDraft) { draft in
+        // Uređivač sprema u svom kontekstu; ovaj kontekst bi bez osvježavanja i dalje prikazivao stari trening.
+        .sheet(item: $editDraft, onDismiss: { SessionEditor.refresh(sessionId: session.id, in: context) }) { draft in
             SessionEditorScreen(session: draft.session, editor: SessionEditor(context: draft.context))
                 .environment(\.modelContext, draft.context)
         }
