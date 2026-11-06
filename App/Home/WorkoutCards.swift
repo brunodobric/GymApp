@@ -424,7 +424,13 @@ private struct SetValueStepper: View {
         }
         .buttonStyle(.plain)
         .padding(3)
-        .background(Color.primary.opacity(0.08), in: .rect(cornerRadius: CornerRadius.inner))
+        .background {
+            // Neprozirna podloga da traka odmora ne prosijava; boja je ista kao dosad na podlozi kartice bez trake.
+            let shape = RoundedRectangle(cornerRadius: CornerRadius.inner)
+            shape
+                .fill(Color(.secondarySystemGroupedBackground))
+                .overlay { shape.fill(Color.primary.opacity(0.08)) }
+        }
     }
 }
 

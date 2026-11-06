@@ -269,8 +269,22 @@ private struct GreenCheckmark: View {
             .font(.title.weight(.bold))
             .foregroundStyle(Color.green)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.green.opacity(0.18), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .background(OpaqueFill(color: Color.green.opacity(0.18), cornerRadius: 14))
             .accessibilityLabel(Text("Potvrdi seriju"))
+    }
+}
+
+/// Neprozirna podloga elementa iznad trake odmora, da traka ne prosijava kroz nju.
+/// Poluprozirna boja leži na pozadini Live Activityja (bijela ili crna), pa izgleda isto kao dosad bez trake.
+private struct OpaqueFill: View {
+    let color: Color
+    let cornerRadius: CGFloat
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+        shape
+            .fill(Color(.systemBackground))
+            .overlay { shape.fill(color) }
     }
 }
 
@@ -327,7 +341,7 @@ private struct LargeSetValueStepper: View {
             .opacity(value.canIncrease ? 1 : 0.4)
         }
         .padding(3)
-        .background(Color.primary.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(OpaqueFill(color: Color.primary.opacity(0.1), cornerRadius: 12))
     }
 }
 
