@@ -6638,16 +6638,6 @@
         }
       }
     },
-    "Upute za vježbu" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exercise instructions"
-          }
-        }
-      }
-    },
     "Uredi" : {
       "localizations" : {
         "en" : {
