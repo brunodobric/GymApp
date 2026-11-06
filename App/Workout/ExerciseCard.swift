@@ -100,7 +100,10 @@ struct ExerciseCard: View {
                     }
                     Button("Izbaci vježbu", systemImage: "trash", role: .destructive, action: onRemove)
                 } label: {
-                    Label("Više", systemImage: "ellipsis.circle").headerIcon()
+                    // Lagana siva ikona bez kruga, da se ne natječe s nazivom vježbe.
+                    Label("Više", systemImage: "ellipsis")
+                        .headerIcon()
+                        .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
             }
