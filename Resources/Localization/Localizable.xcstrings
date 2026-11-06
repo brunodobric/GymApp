@@ -493,6 +493,52 @@
         }
       }
     },
+    "%lld spremljenih treninga" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld saved workout"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld saved workouts"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld spremljena treninga"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld spremljeni trening"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld spremljenih treninga"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld treninga, ciklus %lld" : {
       "localizations" : {
         "en" : {
@@ -4144,6 +4190,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Run from Xcode (a Debug build goes to the Development environment) after every schema change. Then in the CloudKit console: Deploy Schema Changes to production."
+          }
+        }
+      }
+    },
+    "Pokreće trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts the workout"
           }
         }
       }

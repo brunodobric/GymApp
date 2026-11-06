@@ -18,6 +18,14 @@ public struct TemplateStarter {
         try begin(planned.template, exercises: planned.exercises, scheduleId: planned.schedule.id, now: now)
     }
 
+    /// Treninzi koji se mogu pokrenuti izvan rasporeda, poredani po nazivu: samo treninzi snage s barem jednom vježbom.
+    /// Kardio se ne pokreće u aplikaciji nego na satu, a trening bez vježbi je isto što i prazan trening.
+    public static func startable(_ templates: [WorkoutTemplate]) -> [WorkoutTemplate] {
+        templates
+            .filter { $0.kind == .strength && !($0.exercises ?? []).isEmpty }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+    }
+
     /// Pokreće predložak izvan rasporeda.
     @discardableResult
     public func start(_ template: WorkoutTemplate, now: Date = Date()) throws -> Session {
