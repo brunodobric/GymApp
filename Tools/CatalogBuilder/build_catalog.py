@@ -16,6 +16,8 @@ privatni: `<privatna mapa>/translations-hr.json`.
 Pokretanje (iz korijena repozitorija, za medije treba ffmpeg):
     python3 Tools/CatalogBuilder/build_catalog.py --movekit ~/Documents/MoveKit [--media]
 """
+from __future__ import annotations
+
 import argparse
 import json
 import shutil
