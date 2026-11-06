@@ -78,6 +78,31 @@ struct RestTimerLiveActivity: Widget {
     }
 }
 
+// MARK: Tema
+
+private extension View {
+    /// Na zaključanom zaslonu: vlastita pozadina i shema boja kad tema nije "Sustav".
+    /// Dynamic Island je uvijek crn, pa se ondje primjenjuje samo naglasna boja.
+    @ViewBuilder
+    func lockScreenAppearance(_ state: RestTimerActivityAttributes.ContentState) -> some View {
+        let accented = environment(\.activityAccent, state.accentColor)
+        switch state.colorScheme {
+        case .some(.light):
+            accented
+                .environment(\.colorScheme, .light)
+                .activityBackgroundTint(Color.white.opacity(0.9))
+                .activitySystemActionForegroundColor(.black)
+        case .some(.dark):
+            accented
+                .environment(\.colorScheme, .dark)
+                .activityBackgroundTint(Color.black.opacity(0.8))
+                .activitySystemActionForegroundColor(.white)
+        default:
+            accented
+        }
+    }
+}
+
 // MARK: Stanje odmora
 
 private enum RestState {
