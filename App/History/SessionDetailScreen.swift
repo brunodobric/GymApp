@@ -23,6 +23,9 @@ struct SessionDetailScreen: View {
     @State private var discardedTemplate: WorkoutTemplate?
     /// Je li veliki naslov na vrhu liste vidljiv; dok jest, naslov u traci je prazan da se ne ponavlja.
     @State private var showsHeader = true
+    /// Raste nakon zatvaranja uređivača. Osvježeni trening ne javlja promjenu SwiftUI-ju,
+    /// pa se lista s novim `id` iscrtava iznova i čita nove vrijednosti.
+    @State private var contentVersion = 0
 
     /// Kalorije i puls su u lokalnoj bazi podataka iz Zdravlja.
     private var health: HealthLocalStore { HealthLocalStore(context: context) }
@@ -67,6 +70,7 @@ struct SessionDetailScreen: View {
             // Mapa mišića je na dnu, ispod serija i bilješki.
             SessionMusclesSection(session: session)
         }
+        .id(contentVersion)
         .navigationTitle(showsHeader ? "" : session.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -85,7 +89,7 @@ struct SessionDetailScreen: View {
             }
         }
         // Uređivač sprema u svom kontekstu; ovaj kontekst bi bez osvježavanja i dalje prikazivao stari trening.
-        .sheet(item: $editDraft, onDismiss: { SessionEditor.refresh(sessionId: session.id, in: context) }) { draft in
+        .sheet(item: $editDraft, onDismiss: reloadAfterEditing) { draft in
             SessionEditorScreen(session: draft.session, editor: SessionEditor(context: draft.context))
                 .environment(\.modelContext, draft.context)
         }
@@ -130,6 +134,12 @@ struct SessionDetailScreen: View {
             return
         }
         editDraft = draft
+    }
+
+    /// Uređivač sprema u svom kontekstu: ovaj kontekst se osvježava i lista se iscrtava iznova.
+    private func reloadAfterEditing() {
+        SessionEditor.refresh(sessionId: session.id, in: context)
+        contentVersion += 1
     }
 
     private func createTemplate() {
