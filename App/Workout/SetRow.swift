@@ -90,7 +90,8 @@ struct SetRow: View {
         .sheet(isPresented: $showsPlates) {
             PlateCalculatorSheet(targetText: weightText, unit: unit)
         }
-        .listRowBackground(isHighlighted ? Color.accentColor.opacity(0.12) : nil)
+        // Boja aktivne serije je samo pozadina retka; polja, oznaka i kvačica su na neprozirnoj podlozi iznad nje.
+        .listRowBackground(isHighlighted ? highlightBackground : nil)
         // Serija se može promijeniti i izvana (sat, Live Activity). Polje tada preuzima novu vrijednost,
         // da ga kvačica (`applyAllFields`) ne bi vratila na staru. Vlastiti unos se ne dira, jer nakon
         // `apply` model već odgovara tekstu u polju.
@@ -99,6 +100,12 @@ struct SetRow: View {
         .onChange(of: set.reps) { syncReps() }
         .onChange(of: set.durationSeconds) { syncDuration() }
         .onChange(of: set.distanceMeters) { syncDistance() }
+    }
+
+    /// Boja aktivne serije preko obične boje retka, da redak ostane neprozirna kartica.
+    private var highlightBackground: some View {
+        Color.accentColor.opacity(0.12)
+            .background(Color(uiColor: .secondarySystemGroupedBackground))
     }
 
     private var isDimmed: Bool {
@@ -129,6 +136,7 @@ struct SetRow: View {
                     previousValue
                     if showsEffort { effortMenu }
                 }
+                .padding(.leading, metrics.previousInset)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 tableFields
             }
@@ -221,7 +229,7 @@ struct SetRow: View {
                 .font(.caption)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 2)
-                .background(.quaternary, in: .capsule)
+                .opaqueFill(.quaternary, in: .capsule)
         }
         .foregroundStyle(.secondary)
         .accessibilityLabel(Text("Napor"))
@@ -443,8 +451,8 @@ extension SetRow {
                 .font(.title2.weight(.bold))
                 .foregroundStyle(set.isCompleted ? Color.white : Color.green)
                 .frame(minWidth: metrics.check, maxHeight: .infinity)
-                .frame(minHeight: 52)
-                .background(
+                .frame(minHeight: metrics.rowHeight)
+                .opaqueFill(
                     set.isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(Color.green.opacity(0.14)),
                     in: .rect(cornerRadius: CornerRadius.inner)
                 )
@@ -489,6 +497,7 @@ struct SetTableHeader: View {
                     Group {
                         if showsPrevious { Text("Prošli put") } else { Color.clear.frame(height: 1) }
                     }
+                    .padding(.leading, metrics.previousInset)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
                         column.title
