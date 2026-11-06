@@ -16,6 +16,21 @@ public enum WorkoutCommand: Codable, Sendable, Equatable {
     case setNotes(String)
     case finish(at: Date)
     case discard
+    /// Sat je za trening koji vodi iPhone pokrenuo sesiju u Zdravlju (puls, kalorije): na kraju će trening
+    /// u Zdravlje spremiti sat, pa iPhone to ne radi.
+    case healthRecordingStarted
+    /// Sat je zatvorio tu sesiju: UUID treninga spremljenog u Zdravlje (ako je spremljen), kalorije i puls.
+    /// Stiže i nakon što je trening na iPhoneu već završen.
+    case healthRecorded(workoutId: UUID?, activeEnergyKilocalories: Double?, averageHeartRate: Double?)
+
+    /// Izvještaj sata o sesiji u Zdravlju. Ne mijenja serije ni stanje treninga, pa se primjenjuje
+    /// i na završen trening (`SessionSnapshotStore.applyWatchHealth`).
+    public var isHealthReport: Bool {
+        switch self {
+        case .healthRecordingStarted, .healthRecorded: true
+        default: false
+        }
+    }
 }
 
 public enum SnapshotDiff {
@@ -111,6 +126,12 @@ public enum SnapshotDiff {
             }
         case .discard:
             snapshot.state = .discarded
+        case .healthRecordingStarted:
+            break
+        case let .healthRecorded(workoutId, energy, heartRate):
+            if let workoutId { snapshot.healthKitWorkoutId = workoutId }
+            if let energy, energy > 0 { snapshot.activeEnergyKilocalories = energy }
+            if let heartRate, heartRate > 0 { snapshot.averageHeartRate = heartRate }
         }
     }
 }

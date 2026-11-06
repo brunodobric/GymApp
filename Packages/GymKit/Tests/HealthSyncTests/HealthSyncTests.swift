@@ -88,6 +88,40 @@ struct WorkoutImportTests {
         #expect(try context.fetchCount(FetchDescriptor<HealthWorkout>()) == 0)
     }
 
+    @Test("Vlastiti trening iz Zdravlja povezuje se s treningom u povijesti, s pulsom i kalorijama")
+    func linksOwnWorkout() throws {
+        let context = try makeContext()
+        let session = finishedSession(in: context)
+        session.controllingDevice = .watch
+        try context.save()
+        // Sat je završio bez odgovora Zdravlja (istek čekanja), a trening je ipak spremljen.
+        let workoutId = UUID()
+        let saved = run(workoutId, activity: .traditionalStrengthTraining, source: "com.brunodobric.gymapp.watchkitapp", external: session.id)
+        let imported = try HealthImporter(context: context).importWorkouts([saved], name: name)
+        #expect(imported == 0)
+        #expect(session.healthKitWorkoutId == workoutId)
+        let local = HealthLocalStore(context: context)
+        #expect(local.activeEnergy(of: session) == 320)
+        #expect(local.averageHeartRate(of: session) == 148)
+        #expect(try context.fetchCount(FetchDescriptor<HealthWorkout>()) == 0)
+    }
+
+    @Test("Povezivanje ne mijenja postojeću vezu ni izmjerene vrijednosti")
+    func keepsExistingLink() throws {
+        let context = try makeContext()
+        let session = finishedSession(in: context)
+        let original = UUID()
+        session.healthKitWorkoutId = original
+        try HealthLocalStore(context: context).setValues(forSession: session.id, activeEnergyKilocalories: 250, averageHeartRate: 130)
+        try context.save()
+        let other = run(activity: .traditionalStrengthTraining, source: "com.brunodobric.gymapp", external: session.id)
+        try HealthImporter(context: context).importWorkouts([other], name: name)
+        #expect(session.healthKitWorkoutId == original)
+        let local = HealthLocalStore(context: context)
+        #expect(local.activeEnergy(of: session) == 250)
+        #expect(local.averageHeartRate(of: session) == 130)
+    }
+
     @Test("Uvoze se samo kardio treninzi iz Appleovih aplikacija")
     func filtersSourceAndActivity() throws {
         let context = try makeContext()
@@ -201,7 +235,9 @@ struct WorkoutExportTests {
         saved.healthKitWorkoutId = UUID()
         let imported = finishedSession(in: context, kind: .cardio)
         imported.isImportedFromWorkoutsApp = true
-        for session in [active, watch, saved, imported] {
+        let recordedByWatch = finishedSession(in: context)
+        recordedByWatch.healthRecordedByWatch = true
+        for session in [active, watch, saved, imported, recordedByWatch] {
             #expect(HealthWorkoutExport.make(for: session) == nil)
         }
     }

@@ -107,6 +107,26 @@ public struct SessionSnapshotStore {
         return .applied(previousState: previous)
     }
 
+    /// Izvještaj sata o sesiji u Zdravlju za trening koji vodi iPhone (`WorkoutCommand.isHealthReport`).
+    /// Vrijedi i za trening koji je na iPhoneu već završen. Ostale naredbe se ovdje preskaču.
+    /// Vraća je li se trening promijenio.
+    @discardableResult
+    public func applyWatchHealth(_ commands: [WorkoutCommand], toSessionWithID id: UUID) throws -> Bool {
+        let reports = commands.filter(\.isHealthReport)
+        guard !reports.isEmpty, let session = try session(withID: id), session.controllingDevice == .phone,
+              session.state != .discarded else { return false }
+        // Svaki izvještaj (i završni, ako je prvi izgubljen) znači da trening u Zdravlje sprema sat.
+        session.healthRecordedByWatch = true
+        for case let .healthRecorded(workoutId, energy, heartRate) in reports {
+            if session.healthKitWorkoutId == nil, let workoutId { session.healthKitWorkoutId = workoutId }
+            try HealthLocalStore(context: context).setValues(
+                forSession: id, activeEnergyKilocalories: energy, averageHeartRate: heartRate
+            )
+        }
+        try context.save()
+        return true
+    }
+
     /// Briše odbačene treninge (vidi `Outcome.discarded`). Vraća broj obrisanih.
     @discardableResult
     public func purgeDiscarded() throws -> Int {

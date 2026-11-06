@@ -24,6 +24,13 @@ struct TrainingSettingsSection: View {
             }
             Toggle("Zvuk kraja odmora", isOn: $settings.restEndSoundEnabled)
         }
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            Section {
+                Toggle("Pokreni trening i na satu", isOn: $settings.startsWatchWorkout)
+            } footer: {
+                Text("Kad trening pokreneš na iPhoneu, Apple Watch mjeri puls i kalorije, ostaje otvoren tijekom treninga i vibrira na kraju odmora.")
+            }
+        }
         Section("Rekordi") {
             Toggle("Rekordi (PR)", isOn: $settings.prEnabled)
             if settings.prEnabled {

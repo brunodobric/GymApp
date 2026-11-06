@@ -61,6 +61,17 @@ final class PhoneWatchSync {
         flush(sessionID: session.id)
     }
 
+    /// Trening je upravo pokrenut na iPhoneu. Ako je to uključeno u Postavkama, pokreće se i trening na satu
+    /// (`HKHealthStore.startWatchApp`): sat mjeri puls i kalorije, ostaje otvoren i vibrira na kraju odmora,
+    /// a na kraju trening sprema u Zdravlje (vidi `WorkoutCommand.healthRecordingStarted`).
+    func sessionStarted(_ session: Session) {
+        guard let context, session.controllingDevice == .phone, session.kind == .strength,
+              transport.isCounterpartAvailable else { return }
+        let settings = try? GymQueries(context: context).settings()
+        guard settings?.startsWatchWorkout ?? true else { return }
+        HealthService.shared.startWatchWorkout()
+    }
+
     /// Mora se pozvati prije brisanja treninga na iPhoneu, jer se nakon brisanja ne zna što je bilo.
     func willDiscard(_ session: Session) {
         pendingChanges[session.id]?.cancel()
@@ -141,7 +152,9 @@ final class PhoneWatchSync {
             applyWatchSnapshot(snapshot)
         case let .commands(commands):
             guard let sessionID = event.sessionID else { return }
-            applyCommands(commands, to: sessionID, sentAt: event.createdAt)
+            if commands.contains(where: \.isHealthReport) { applyWatchHealth(commands, to: sessionID) }
+            let edits = commands.filter { !$0.isHealthReport }
+            if !edits.isEmpty { applyCommands(edits, to: sessionID, sentAt: event.createdAt) }
         }
     }
 
@@ -191,6 +204,19 @@ final class PhoneWatchSync {
             logger.error("Snimka sa sata: \(error.localizedDescription)")
         }
         // Live Activity prati i trening koji vodi sat.
+        WorkoutLiveUpdates.shared.refresh()
+    }
+
+    /// Sat drži sesiju u Zdravlju za trening s iPhonea: trening u Zdravlje sprema sat, a iPhone dobiva
+    /// puls i kalorije (i nakon što je trening ovdje završen).
+    private func applyWatchHealth(_ commands: [WorkoutCommand], to sessionID: UUID) {
+        guard let context else { return }
+        do {
+            try SessionSnapshotStore(context: context).applyWatchHealth(commands, toSessionWithID: sessionID)
+        } catch {
+            logger.error("Zdravlje sa sata: \(error.localizedDescription)")
+        }
+        // Kraj odmora sad javlja sat, pa se obavijest na iPhoneu uklanja.
         WorkoutLiveUpdates.shared.refresh()
     }
 

@@ -145,7 +145,11 @@ struct LiveStatusTests {
         #expect(RestNotificationPolicy.fireDate(
             restEndsAt: end, controllingDevice: .phone, notificationsEnabled: true, isSessionActive: true, now: start
         ) == end)
-        // Trening vodi sat: kraj odmora javlja sat.
+        // Trening vodi sat, ili sat drži sesiju za trening s iPhonea: kraj odmora javlja sat.
+        #expect(RestNotificationPolicy.fireDate(
+            restEndsAt: end, controllingDevice: .phone, notificationsEnabled: true, isSessionActive: true,
+            watchAlertsRest: true, now: start
+        ) == nil)
         #expect(RestNotificationPolicy.fireDate(
             restEndsAt: end, controllingDevice: .watch, notificationsEnabled: true, isSessionActive: true, now: start
         ) == nil)

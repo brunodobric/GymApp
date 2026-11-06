@@ -129,6 +129,8 @@ public extension UserSettings {
             (trainingDaysPerWeek, defaults.trainingDaysPerWeek),
             (wantsHealthKit, defaults.wantsHealthKit),
             (notificationsEnabled, defaults.notificationsEnabled),
+            (restNotificationEnabled, defaults.restNotificationEnabled),
+            (startsWatchWorkout, defaults.startsWatchWorkout),
             (bodyMapFemale, defaults.bodyMapFemale),
         ]
         return pairs.filter { $0.0 != $0.1 }.count

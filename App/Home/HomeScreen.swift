@@ -301,6 +301,7 @@ struct HomeScreen: View {
                 try TemplateStarter(context: context).start(planned)
             }
             ReminderScheduler.refresh(context: context)
+            if let presentedSession { PhoneWatchSync.shared.sessionStarted(presentedSession) }
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
         }
@@ -319,6 +320,7 @@ struct HomeScreen: View {
                 try TemplateStarter(context: context).start(template)
             }
             ReminderScheduler.refresh(context: context)
+            if let presentedSession { PhoneWatchSync.shared.sessionStarted(presentedSession) }
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
         }
@@ -328,6 +330,7 @@ struct HomeScreen: View {
         do {
             presentedSession = try WorkoutEngine(context: context).startSession(name: String(localized: "Trening"))
             ReminderScheduler.refresh(context: context)
+            if let presentedSession { PhoneWatchSync.shared.sessionStarted(presentedSession) }
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
         }

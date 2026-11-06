@@ -188,6 +188,7 @@ struct UpcomingWorkoutScreen: View {
                 try TemplateStarter(context: context).start(planned)
             }
             ReminderScheduler.refresh(context: context)
+            if let presentedSession { PhoneWatchSync.shared.sessionStarted(presentedSession) }
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
         }

@@ -164,11 +164,15 @@ struct NotificationSettingsSection: View {
 
     var body: some View {
         Section {
-            Toggle("Obavijesti", isOn: $settings.notificationsEnabled)
+            Toggle("Podsjetnici rasporeda", isOn: $settings.notificationsEnabled)
                 .onChange(of: settings.notificationsEnabled) {
                     try? context.save()
-                    WorkoutLiveUpdates.shared.refresh()
                     ReminderScheduler.refresh(context: context)
+                }
+            Toggle("Kraj odmora", isOn: $settings.restNotificationEnabled)
+                .onChange(of: settings.restNotificationEnabled) {
+                    try? context.save()
+                    WorkoutLiveUpdates.shared.refresh()
                 }
             NavigationLink {
                 FocusTipScreen()
@@ -176,7 +180,7 @@ struct NotificationSettingsSection: View {
                 Label("Fokus tijekom treninga", systemImage: "moon.fill")
             }
         } footer: {
-            Text("Podsjetnici rasporeda i obavijest o kraju odmora kad je iPhone zaključan. Dopuštenje se traži kad prvi put zatrebaju.")
+            Text("Obavijest o kraju odmora stiže kad je iPhone zaključan ili je trening sažet u karticu, i prolazi kroz Fokus. Dopuštenje se traži kad prvi put zatreba.")
         }
     }
 }
@@ -185,6 +189,8 @@ struct NotificationSettingsSection: View {
 struct HealthSettingsSection: View {
     @Bindable var settings: UserSettings
     @Environment(\.modelContext) private var context
+
+    @State private var isImporting = false
 
     private var isAvailable: Bool { HealthService.shared.isAvailable }
 
@@ -200,12 +206,33 @@ struct HealthSettingsSection: View {
                         await HealthService.shared.importNewData(context: context)
                     }
                 }
+            if isAvailable && settings.wantsHealthKit {
+                // Uvoz inače ide sam pri otvaranju aplikacije; gumb je za slučaj kad korisnik ne želi čekati.
+                Button {
+                    importNow()
+                } label: {
+                    HStack {
+                        Text("Uvezi iz Zdravlja sada")
+                        Spacer()
+                        if isImporting { ProgressView() }
+                    }
+                }
+                .disabled(isImporting)
+            }
         } footer: {
             if isAvailable {
                 Text("Treninzi s iPhonea spremaju se u Zdravlje, a kardio treninzi, težina i visina uvoze se iz njega. Dozvole mijenjaš u Zdravlju: Profil > Aplikacije > Apolon.")
             } else {
                 Text("Zdravlje nije dostupno na ovom uređaju.")
             }
+        }
+    }
+
+    private func importNow() {
+        isImporting = true
+        Task {
+            await HealthService.shared.importNewData(context: context)
+            isImporting = false
         }
     }
 }

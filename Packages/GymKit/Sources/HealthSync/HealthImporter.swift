@@ -13,8 +13,8 @@ public struct HealthImporter {
         self.context = context
     }
 
-    /// Uvozi kardio treninge iz Appleovih aplikacija. Treninzi koje je spremila ova aplikacija se preskaču.
-    /// Vraća broj novih treninga u povijesti.
+    /// Uvozi kardio treninge iz Appleovih aplikacija. Treninzi koje je spremila ova aplikacija se ne uvoze,
+    /// nego se povezuju s treningom u povijesti (vidi `linkOwnWorkout`). Vraća broj novih treninga u povijesti.
     @discardableResult
     public func importWorkouts(_ records: [HealthWorkoutRecord], name: (HealthActivity) -> String) throws -> Int {
         let store = HealthLocalStore(context: context)
@@ -22,13 +22,17 @@ public struct HealthImporter {
         // Trening koji je ova aplikacija spremila u Zdravlje (i s drugog uređaja, preko iClouda) već je u povijesti.
         let sessions = try context.fetch(FetchDescriptor<Session>())
         knownWorkouts.formUnion(sessions.compactMap(\.healthKitWorkoutId))
-        let sessionIds = Set(sessions.map(\.id))
+        let sessionsById = Dictionary(sessions.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         var imported = 0
+        var linked = false
         for record in records.sorted(by: { $0.start < $1.start }) {
+            if let external = record.externalUUID, let session = sessionsById[external] {
+                linked = try linkOwnWorkout(record, to: session) || linked
+                continue
+            }
             guard record.isFromApple, record.activity.isCardio, record.end > record.start,
                   !knownWorkouts.contains(record.uuid)
             else { continue }
-            if let external = record.externalUUID, sessionIds.contains(external) { continue }
 
             let workout = HealthWorkout(
                 healthKitWorkoutId: record.uuid, name: name(record.activity), startedAt: record.start, endedAt: record.end
@@ -41,8 +45,30 @@ public struct HealthImporter {
             knownWorkouts.insert(record.uuid)
             imported += 1
         }
-        if imported > 0 { try context.save() }
+        if imported > 0 || linked { try context.save() }
         return imported
+    }
+
+    /// Trening koji je ova aplikacija (sat ili iPhone) spremila u Zdravlje povezuje se s treningom u povijesti,
+    /// ako veza još ne postoji. Tako trening dobije puls i kalorije i kad sat nije stigao javiti ih
+    /// (Zdravlje je odgovorilo nakon isteka čekanja na satu, ili je poruka sa sata zakasnila).
+    /// Postojeće vrijednosti se ne mijenjaju. Vraća je li nešto promijenjeno; ne sprema kontekst.
+    private func linkOwnWorkout(_ record: HealthWorkoutRecord, to session: Session) throws -> Bool {
+        var changed = false
+        if session.healthKitWorkoutId == nil {
+            session.healthKitWorkoutId = record.uuid
+            changed = true
+        }
+        guard session.healthKitWorkoutId == record.uuid else { return changed }
+        let local = HealthLocalStore(context: context)
+        let existing = try local.values(forSession: session.id)
+        let energy = existing?.activeEnergyKilocalories == nil ? record.activeEnergyKilocalories : nil
+        let heartRate = existing?.averageHeartRate == nil ? record.averageHeartRate : nil
+        if (energy ?? 0) > 0 || (heartRate ?? 0) > 0 {
+            try local.setValues(forSession: session.id, activeEnergyKilocalories: energy, averageHeartRate: heartRate)
+            changed = true
+        }
+        return changed
     }
 
     /// Uvozi težinu i visinu. Vraća broj novih mjerenja.
