@@ -27,6 +27,7 @@ private struct Work {
     let weight: Double
     let reps: Int
     var kind: SetKind = .working
+    var rpe: Double?
 }
 
 private struct Lift {
@@ -51,6 +52,7 @@ private func addSession(
             let set = SetLog(orderIndex: setIndex, kind: work.kind)
             set.weightKg = work.weight
             set.reps = work.reps
+            set.rpe = work.rpe
             set.completedAt = date.addingTimeInterval(600)
             context.insert(set)
             set.exercise = exercise
@@ -178,17 +180,31 @@ struct StatisticsTests {
         let engine = StatisticsEngine(context: context)
         let weeks = try engine.volumeBuckets(size: .week, count: 2, endingAt: base, calendar: calendar, info: infoProvider)
         #expect(weeks.count == 2)
-        #expect(weeks[0].loads[.chest] == MuscleLoad(volumeKg: 450, sets: 1))
-        #expect(weeks[1].loads[.chest] == MuscleLoad(volumeKg: 900, sets: 2))
-        #expect(weeks[1].loads[.quadriceps] == MuscleLoad(volumeKg: 600, sets: 1))
+        #expect(weeks[0].loads["chest"] == MuscleLoad(volumeKg: 450, sets: 1))
+        #expect(weeks[1].loads["chest"] == MuscleLoad(volumeKg: 900, sets: 2))
+        #expect(weeks[1].loads["quads"] == MuscleLoad(volumeKg: 600, sets: 1))
         #expect(weeks[1].totalVolumeKg == 1500)
-        // Sekundarni mišići ne ulaze u volumen.
-        #expect(weeks[1].loads[.triceps] == nil)
+        #expect(weeks[1].totalSets == 3)
+        // Pomoćne regije dobivaju pola serije, ali ne i tonažu.
+        #expect(weeks[1].loads["triceps"] == MuscleLoad(volumeKg: 0, sets: 1))
+        #expect(weeks[1].loads["glutes"] == MuscleLoad(volumeKg: 0, sets: 0.5))
 
         let months = try engine.volumeBuckets(size: .month, count: 3, endingAt: base, calendar: calendar, info: infoProvider)
         #expect(months.count == 3)
-        #expect(months[2].loads[.chest]?.sets == 3)
-        #expect(months[0].loads[.chest]?.sets == 1)
+        #expect(months[2].loads["chest"]?.sets == 3)
+        #expect(months[0].loads["chest"]?.sets == 1)
+    }
+
+    @Test("Serije s vlastitom težinom broje se u serije, a ne u tonažu")
+    func bodyweightSetsCount() throws {
+        let context = try makeContext()
+        let session = try addSession(context, at: base, lifts: [Lift(ref: bench, sets: [Work(weight: 0, reps: 12)])])
+        session.orderedExercises.first?.inputType = .bodyweight
+        try context.save()
+        let weeks = try StatisticsEngine(context: context)
+            .volumeBuckets(size: .week, count: 1, endingAt: base, calendar: calendar, info: infoProvider)
+        #expect(weeks[0].loads["chest"] == MuscleLoad(volumeKg: 0, sets: 1))
+        #expect(weeks[0].totalSets == 1)
     }
 
     @Test("Frekvencija po tjednima")
@@ -219,7 +235,7 @@ struct StatisticsTests {
         #expect(try StatisticsEngine(context: context).personalRecords(kinds: []).isEmpty)
     }
 
-    @Test("Heatmap: primarne regije puni volumen, sekundarne pola, intenzitet prema najopterećenijoj")
+    @Test("Heatmap: serije tjedno na fiksnoj skali, pomoćne upola, učestalost samo s cijelom serijom")
     func heatmap() throws {
         let context = try makeContext()
         try addSession(context, at: base, lifts: [Lift(ref: bench, sets: [Work(weight: 100, reps: 5)])])
@@ -228,14 +244,50 @@ struct StatisticsTests {
             Lift(ref: squat, sets: [Work(weight: 100, reps: 5)]),
         ])
 
+        // Prvi trening je na početku razdoblja, pa je razdoblje kraće od tjedna i prosjek se računa na 1 tjedan.
         let result = try StatisticsEngine(context: context).heatmap(
             from: base.addingTimeInterval(-day), until: base.addingTimeInterval(3 * day), info: infoProvider
         )
-        #expect(result["chest"] == RegionLoad(sessions: 2, volumeKg: 1000, intensity: 1))
-        #expect(result["triceps"]?.volumeKg == 500)
-        #expect(result["quads"]?.sessions == 1 && result["quads"]?.intensity == 0.5)
+        let chest = try #require(result["chest"])
+        #expect(chest.sessions == 2 && chest.sets == 2 && chest.weeklySets == 2 && chest.volumeKg == 1000)
+        #expect(chest.weeklyLevel == 1 && chest.intensity == 0.25)
+        #expect(chest.lastTrained == base.addingTimeInterval(day))
+        // Pomoćna regija: dvije polovine serije u dva treninga, ni u jednom cijela serija.
+        #expect(result["triceps"]?.sets == 1 && result["triceps"]?.sessions == 0 && result["triceps"]?.volumeKg == 500)
+        #expect(result["quads"]?.sessions == 1)
         #expect(result["glutes"]?.volumeKg == 250)
         #expect(result["lats"] == nil)
+    }
+
+    @Test("Heatmap: prosjek po tjednima razdoblja i razine skale")
+    func heatmapWeeklyAverage() throws {
+        let context = try makeContext()
+        // Stari trening izvan razdoblja: razdoblje od 14 dana računa se cijelo.
+        try addSession(context, at: base.addingTimeInterval(-60 * day), lifts: [Lift(ref: bench, sets: [Work(weight: 80, reps: 5)])])
+        let ten = (0..<10).map { _ in Work(weight: 80, reps: 8) }
+        try addSession(context, at: base.addingTimeInterval(-3 * day), lifts: [Lift(ref: bench, sets: ten)])
+        try addSession(context, at: base.addingTimeInterval(-10 * day), lifts: [Lift(ref: bench, sets: ten)])
+        let result = try StatisticsEngine(context: context).heatmap(
+            from: base.addingTimeInterval(-14 * day), until: base, info: infoProvider
+        )
+        #expect(abs((result["chest"]?.weeklySets ?? 0) - 10) < 0.001)
+        #expect(result["chest"]?.weeklyLevel == 3)
+        #expect(abs((result["chest"]?.sessionsPerWeek ?? 0) - 1) < 0.001)
+        #expect(result["triceps"]?.weeklyLevel == 2)
+    }
+
+    @Test("Trend snage: promjena najbolje procjene 1RM po regiji između dva razdoblja")
+    func strengthTrends() throws {
+        let context = try makeContext()
+        try addSession(context, at: base.addingTimeInterval(-35 * day), lifts: [Lift(ref: bench, sets: [Work(weight: 100, reps: 5)])])
+        try addSession(context, at: base.addingTimeInterval(-3 * day), lifts: [
+            Lift(ref: bench, sets: [Work(weight: 105, reps: 5), Work(weight: 60, reps: 20)]),
+            Lift(ref: squat, sets: [Work(weight: 120, reps: 5)]),
+        ])
+        let trends = try StatisticsEngine(context: context).strengthTrends(weeks: 4, endingAt: base, info: infoProvider)
+        #expect(trends.map(\.region) == ["chest"])
+        #expect(abs(trends[0].change - 0.05) < 0.0001)
+        #expect(trends[0].exercises == 1)
     }
 }
 
@@ -323,6 +375,10 @@ struct ExerciseInfoBuilderTests {
         #expect(info?.primary == [.chest, .middleBack, .neck, .traps])
         #expect(info?.primaryRegions == ["chest", "upperBack", "traps"])
         #expect(provider("c:nepoznato") == nil)
+    }
+
+    @Test func majorRegionsAreKnown() {
+        #expect(BodyRegion.major.allSatisfy(BodyRegion.all.contains))
     }
 
     @Test func everyMuscleHasKnownRegion() {
@@ -416,17 +472,19 @@ struct BodyMapTests {
 
 @Suite("Regije treninga")
 struct SessionRegionsTests {
-    @Test("Primarne regije su označene, sekundarne slabije, a neodrađene ih nemaju")
+    @Test("Boja jednog treninga je na fiksnoj skali, pomoćne serije upola")
     func primaryAndSecondary() throws {
         let context = try makeContext()
-        let session = try addSession(context, at: base, lifts: [Lift(ref: bench, sets: [Work(weight: 80, reps: 5)])])
+        let six = (0..<6).map { _ in Work(weight: 80, reps: 5) }
+        let session = try addSession(context, at: base, lifts: [Lift(ref: bench, sets: six)])
         let regions = SessionRegions.worked(in: session, info: infoProvider)
-        #expect(regions["chest"]?.intensity == 1)
-        #expect(regions["triceps"]?.intensity == SessionRegions.secondaryWeight)
+        #expect(regions["chest"]?.intensity == 0.75)
+        #expect(regions["triceps"]?.intensity == 0.5)
+        #expect(regions["triceps"]?.sets == 3)
         #expect(regions["quads"] == nil)
     }
 
-    @Test("Intenzitet raste s brojem serija, a pomoćne serije broje se upola")
+    @Test("Lagan trening ostaje svijetao: boja ne ovisi o najopterećenijoj regiji")
     func intensityBySets() throws {
         let context = try makeContext()
         let session = try addSession(context, at: base, lifts: [
@@ -442,10 +500,20 @@ struct SessionRegionsTests {
         #expect(sets.last == RegionSets(region: "triceps", secondarySets: 2, volumeKg: 400))
 
         let heatmap = SessionRegions.heatmap(sets)
-        #expect(heatmap["quads"]?.intensity == 1)
-        #expect(heatmap["chest"]?.intensity == 0.5)
-        #expect(heatmap["glutes"]?.intensity == 0.5)
+        #expect(heatmap["quads"]?.intensity == 0.5)
+        #expect(heatmap["chest"]?.intensity == 0.25)
+        #expect(heatmap["glutes"]?.intensity == 0.25)
         #expect(heatmap["triceps"]?.intensity == 0.25)
+    }
+
+    @Test("Serija s RPE ispod 6 se ne broji, s RPE 6 ili bez RPE-a se broji")
+    func easySetsIgnored() throws {
+        let context = try makeContext()
+        let session = try addSession(context, at: base, lifts: [Lift(ref: bench, sets: [
+            Work(weight: 40, reps: 10, rpe: 5), Work(weight: 60, reps: 8, rpe: 6), Work(weight: 70, reps: 6)
+        ])])
+        let sets = SessionRegions.sets(in: session, info: infoProvider)
+        #expect(sets.first { $0.region == "chest" }?.primarySets == 2)
     }
 
     @Test("Serije iste regije iz više vježbi se zbrajaju, glavne i pomoćne odvojeno")
@@ -481,39 +549,57 @@ struct SessionRegionsTests {
 @Suite("Usporedba volumena")
 struct VolumeComparisonTests {
 
-    @Test("Zadnje razdoblje uspoređuje se s prethodnim, mišići od najvećeg volumena")
+    @Test("Zadnje razdoblje uspoređuje se s prethodnim u serijama, regije od najviše serija")
     func compareLastTwo() throws {
         let buckets = [
-            VolumeBucket(start: base.addingTimeInterval(-14 * day), loads: [.chest: MuscleLoad(volumeKg: 5000, sets: 9)]),
+            VolumeBucket(start: base.addingTimeInterval(-14 * day), loads: ["chest": MuscleLoad(volumeKg: 5000, sets: 9)], totalSets: 9),
             VolumeBucket(start: base.addingTimeInterval(-7 * day), loads: [
-                .chest: MuscleLoad(volumeKg: 1000, sets: 3),
-                .quadriceps: MuscleLoad(volumeKg: 3000, sets: 4),
-            ]),
+                "chest": MuscleLoad(volumeKg: 1000, sets: 3),
+                "quads": MuscleLoad(volumeKg: 3000, sets: 5),
+            ], totalSets: 8),
             VolumeBucket(start: base, loads: [
-                .chest: MuscleLoad(volumeKg: 1500, sets: 4),
-                .biceps: MuscleLoad(volumeKg: 300, sets: 2),
-            ]),
+                "chest": MuscleLoad(volumeKg: 1500, sets: 4),
+                "biceps": MuscleLoad(volumeKg: 300, sets: 2),
+            ], totalSets: 6),
         ]
         let comparison = try #require(VolumeComparison(buckets: buckets))
         #expect(comparison.currentStart == base)
         #expect(comparison.previousStart == base.addingTimeInterval(-7 * day))
-        #expect(comparison.currentKg == 1800)
-        #expect(comparison.previousKg == 4000)
-        #expect(comparison.change == -0.55)
-        #expect(comparison.muscles.map(\.muscle) == [.quadriceps, .chest, .biceps])
-        #expect(comparison.muscles[0] == MuscleComparison(muscle: .quadriceps, currentKg: 0, previousKg: 3000))
-        #expect(comparison.muscles[2] == MuscleComparison(muscle: .biceps, currentKg: 300, previousKg: 0))
+        #expect(comparison.currentSets == 6)
+        #expect(comparison.previousSets == 8)
+        #expect(comparison.change == -0.25)
+        #expect(comparison.muscles.map(\.region) == ["quads", "chest", "biceps"])
+        #expect(comparison.muscles[0] == MuscleComparison(region: "quads", currentSets: 0, previousSets: 5))
+        #expect(comparison.muscles[2] == MuscleComparison(region: "biceps", currentSets: 2, previousSets: 0))
     }
 
-    @Test("Bez prethodnog volumena nema postotka, a s jednim razdobljem nema usporedbe")
+    @Test("Bez prethodnih serija nema postotka, a s jednim razdobljem nema usporedbe")
     func edgeCases() {
-        #expect(VolumeComparison(buckets: [VolumeBucket(start: base, loads: [:])]) == nil)
+        #expect(VolumeComparison(buckets: [VolumeBucket(start: base)]) == nil)
         let comparison = VolumeComparison(buckets: [
-            VolumeBucket(start: base.addingTimeInterval(-7 * day), loads: [:]),
-            VolumeBucket(start: base, loads: [.chest: MuscleLoad(volumeKg: 100, sets: 1)]),
+            VolumeBucket(start: base.addingTimeInterval(-7 * day)),
+            VolumeBucket(start: base, loads: ["chest": MuscleLoad(volumeKg: 100, sets: 1)], totalSets: 1),
         ])
         #expect(comparison?.change == nil)
         #expect(comparison?.muscles.count == 1)
+    }
+}
+
+@Suite("Tvrde serije i skala")
+struct EffectiveSetsTests {
+    @Test("Skala tjednih serija i serija jednog treninga")
+    func scales() {
+        #expect([0, 1, 4.5, 5, 9.5, 10, 20, 20.5].map(LoadScale.weeklyLevel) == [0, 1, 1, 2, 2, 3, 3, 4])
+        #expect([0, 0.5, 2.5, 3, 5.5, 6, 9.5, 10].map(LoadScale.sessionLevel) == [0, 1, 1, 2, 2, 3, 3, 4])
+        #expect(LoadScale.intensity(level: 2) == 0.5 && LoadScale.intensity(level: 9) == 1)
+    }
+
+    @Test("Warm-up i serija s niskim RPE-om nisu tvrde")
+    func hardSets() {
+        #expect(EffectiveSets.isHard(SetValues(weightKg: 50, reps: 10)))
+        #expect(EffectiveSets.isHard(SetValues(weightKg: 50, reps: 10, rpe: 6)))
+        #expect(!EffectiveSets.isHard(SetValues(weightKg: 50, reps: 10, rpe: 5.5)))
+        #expect(!EffectiveSets.isHard(SetValues(kind: .warmUp, weightKg: 50, reps: 10)))
     }
 }
 

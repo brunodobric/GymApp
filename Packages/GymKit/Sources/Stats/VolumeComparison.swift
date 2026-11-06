@@ -1,26 +1,26 @@
-import Catalog
 import Foundation
 
-/// Volumen jednog mišića u dva uzastopna razdoblja.
+/// Tvrde serije jedne regije tijela u dva uzastopna razdoblja.
 public struct MuscleComparison: Equatable, Sendable {
-    public let muscle: Muscle
-    public let currentKg: Double
-    public let previousKg: Double
+    public let region: String
+    public let currentSets: Double
+    public let previousSets: Double
 }
 
-/// Usporedba zadnjeg razdoblja (tjedna ili mjeseca, koji je možda još u tijeku) s prethodnim.
-/// Služi za graf usporedbe u statistici (faza 11).
+/// Usporedba zadnjeg razdoblja (tjedna ili mjeseca, koji je možda još u tijeku) s prethodnim, u tvrdim serijama.
+/// Služi za graf usporedbe u statistici.
 public struct VolumeComparison: Equatable, Sendable {
     public let currentStart: Date
     public let previousStart: Date
-    public let currentKg: Double
-    public let previousKg: Double
-    /// Mišići s volumenom u barem jednom od dva razdoblja, od najvećeg volumena prema manjem.
+    /// Ukupno tvrdih serija; svaka serija broji se jednom.
+    public let currentSets: Int
+    public let previousSets: Int
+    /// Regije sa serijama u barem jednom od dva razdoblja, od najviše serija prema manje.
     public let muscles: [MuscleComparison]
 
-    /// Relativna promjena ukupnog volumena (0,1 = +10 %). Bez volumena u prethodnom razdoblju nema smisla.
+    /// Relativna promjena ukupnog broja serija (0,1 = +10 %). Bez serija u prethodnom razdoblju nema smisla.
     public var change: Double? {
-        previousKg > 0 ? (currentKg - previousKg) / previousKg : nil
+        previousSets > 0 ? Double(currentSets - previousSets) / Double(previousSets) : nil
     }
 
     /// `buckets` su od najstarijeg prema najnovijem, kao iz `StatisticsEngine.volumeBuckets`.
@@ -31,23 +31,23 @@ public struct VolumeComparison: Equatable, Sendable {
         let previous = buckets[buckets.count - 2]
         currentStart = current.start
         previousStart = previous.start
-        currentKg = current.totalVolumeKg
-        previousKg = previous.totalVolumeKg
+        currentSets = current.totalSets
+        previousSets = previous.totalSets
         let all = Set(current.loads.keys).union(previous.loads.keys)
         muscles = all
-            .map { muscle in
+            .map { region in
                 MuscleComparison(
-                    muscle: muscle,
-                    currentKg: current.loads[muscle]?.volumeKg ?? 0,
-                    previousKg: previous.loads[muscle]?.volumeKg ?? 0
+                    region: region,
+                    currentSets: current.loads[region]?.sets ?? 0,
+                    previousSets: previous.loads[region]?.sets ?? 0
                 )
             }
-            .filter { $0.currentKg > 0 || $0.previousKg > 0 }
+            .filter { $0.currentSets > 0 || $0.previousSets > 0 }
             .sorted { lhs, rhs in
-                let left = max(lhs.currentKg, lhs.previousKg)
-                let right = max(rhs.currentKg, rhs.previousKg)
-                // Jednaki volumen: stalan redoslijed po nazivu, da se graf ne miješa između učitavanja.
-                return left == right ? lhs.muscle.rawValue < rhs.muscle.rawValue : left > right
+                let left = max(lhs.currentSets, lhs.previousSets)
+                let right = max(rhs.currentSets, rhs.previousSets)
+                // Jednako serija: stalan redoslijed po nazivu, da se graf ne miješa između učitavanja.
+                return left == right ? lhs.region < rhs.region : left > right
             }
     }
 }

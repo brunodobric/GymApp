@@ -1093,8 +1093,7 @@
     "lats"
    ],
    "secondaryMuscles": [
-    "abdominals",
-    "forearms",
+    "biceps",
     "middle back"
    ],
    "equipment": "other",
@@ -1106,8 +1105,7 @@
     "lats"
    ],
    "secondaryRegions": [
-    "abs",
-    "forearms",
+    "biceps",
     "upperBack"
    ],
    "images": [
@@ -1997,17 +1995,15 @@
    },
    "category": "back",
    "primaryMuscles": [
+    "glutes",
+    "hamstrings",
     "lower back"
    ],
    "secondaryMuscles": [
-    "calves",
-    "forearms",
-    "glutes",
-    "hamstrings",
-    "lats",
-    "middle back",
     "quadriceps",
-    "traps"
+    "adductors",
+    "traps",
+    "forearms"
    ],
    "equipment": "barbell",
    "level": "intermediate",
@@ -2015,17 +2011,15 @@
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
+    "glutes",
+    "hamstrings",
     "lowerBack"
    ],
    "secondaryRegions": [
-    "calves",
-    "forearms",
-    "glutes",
-    "hamstrings",
-    "lats",
-    "upperBack",
     "quads",
-    "traps"
+    "innerThigh",
+    "traps",
+    "forearms"
    ],
    "images": [
     "Images/Barbell_Deadlift/0.jpg",
@@ -2052,13 +2046,13 @@
    },
    "category": "back",
    "primaryMuscles": [
-    "lower back"
+    "lower back",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "forearms",
-    "glutes",
     "hamstrings",
-    "traps"
+    "traps",
+    "forearms"
    ],
    "equipment": "barbell",
    "level": "intermediate",
@@ -2066,13 +2060,13 @@
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
-    "lowerBack"
+    "lowerBack",
+    "glutes"
    ],
    "secondaryRegions": [
-    "forearms",
-    "glutes",
     "hamstrings",
-    "traps"
+    "traps",
+    "forearms"
    ],
    "images": [
     "Images/Rack_Pulls/0.jpg",
@@ -4713,12 +4707,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes",
-    "hamstrings",
+    "adductors",
     "lower back"
    ],
    "equipment": "barbell",
@@ -4727,12 +4720,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes",
-    "hamstrings",
+    "innerThigh",
     "lowerBack"
    ],
    "images": [
@@ -4765,9 +4757,9 @@
     "quadriceps"
    ],
    "secondaryMuscles": [
-    "abdominals",
     "glutes",
-    "hamstrings"
+    "adductors",
+    "abdominals"
    ],
    "equipment": "barbell",
    "level": "intermediate",
@@ -4778,9 +4770,9 @@
     "quads"
    ],
    "secondaryRegions": [
-    "abs",
     "glutes",
-    "hamstrings"
+    "innerThigh",
+    "abs"
    ],
    "images": [
     "Images/Front_Squat_Clean_Grip/0.jpg",
@@ -4809,12 +4801,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
     "adductors",
-    "calves",
-    "glutes",
     "hamstrings",
     "lower back"
    ],
@@ -4824,12 +4815,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
     "innerThigh",
-    "calves",
-    "glutes",
     "hamstrings",
     "lowerBack"
    ],
@@ -4861,8 +4851,7 @@
     "quadriceps"
    ],
    "secondaryMuscles": [
-    "glutes",
-    "hamstrings"
+    "glutes"
    ],
    "equipment": "bodyweight",
    "level": "beginner",
@@ -4873,8 +4862,7 @@
     "quads"
    ],
    "secondaryRegions": [
-    "glutes",
-    "hamstrings"
+    "glutes"
    ],
    "images": [
     "Images/Bodyweight_Squat/0.jpg",
@@ -4904,10 +4892,8 @@
     "quadriceps"
    ],
    "secondaryMuscles": [
-    "calves",
     "glutes",
-    "hamstrings",
-    "shoulders"
+    "adductors"
    ],
    "equipment": "kettlebell",
    "level": "beginner",
@@ -4918,10 +4904,8 @@
     "quads"
    ],
    "secondaryRegions": [
-    "calves",
     "glutes",
-    "hamstrings",
-    "shoulders"
+    "innerThigh"
    ],
    "images": [
     "Images/Goblet_Squat/0.jpg",
@@ -4954,13 +4938,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes",
-    "hamstrings",
-    "lower back"
+    "adductors"
    ],
    "equipment": "machine",
    "level": "beginner",
@@ -4968,13 +4950,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes",
-    "hamstrings",
-    "lowerBack"
+    "innerThigh"
    ],
    "images": [
     "Images/Smith_Machine_Squat/0.jpg",
@@ -5012,9 +4992,8 @@
     "quadriceps"
    ],
    "secondaryMuscles": [
-    "calves",
     "glutes",
-    "hamstrings"
+    "adductors"
    ],
    "equipment": "machine",
    "level": "beginner",
@@ -5025,9 +5004,8 @@
     "quads"
    ],
    "secondaryRegions": [
-    "calves",
     "glutes",
-    "hamstrings"
+    "innerThigh"
    ],
    "images": [
     "Images/Hack_Squat/0.jpg",
@@ -5061,9 +5039,8 @@
     "quadriceps"
    ],
    "secondaryMuscles": [
-    "calves",
     "glutes",
-    "hamstrings"
+    "adductors"
    ],
    "equipment": "machine",
    "level": "beginner",
@@ -5074,9 +5051,8 @@
     "quads"
    ],
    "secondaryRegions": [
-    "calves",
     "glutes",
-    "hamstrings"
+    "innerThigh"
    ],
    "images": [
     "Images/Leg_Press/0.jpg",
@@ -5146,12 +5122,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "adductors"
    ],
    "equipment": "barbell",
    "level": "intermediate",
@@ -5159,12 +5134,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "innerThigh"
    ],
    "images": [
     "Images/Barbell_Lunge/0.jpg",
@@ -5193,12 +5167,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "adductors"
    ],
    "equipment": "barbell",
    "level": "beginner",
@@ -5206,12 +5179,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "innerThigh"
    ],
    "images": [
     "Images/Barbell_Walking_Lunge/0.jpg",
@@ -5240,12 +5212,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "adductors"
    ],
    "equipment": "dumbbell",
    "level": "beginner",
@@ -5253,12 +5224,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "innerThigh"
    ],
    "images": [
     "Images/Dumbbell_Lunges/0.jpg",
@@ -5287,12 +5257,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "adductors"
    ],
    "equipment": "dumbbell",
    "level": "intermediate",
@@ -5300,12 +5269,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "innerThigh"
    ],
    "images": [
     "Images/Dumbbell_Rear_Lunge/0.jpg",
@@ -5334,12 +5302,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "adductors"
    ],
    "equipment": "other",
    "level": "beginner",
@@ -5347,12 +5314,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "innerThigh"
    ],
    "images": [
     "Images/Bodyweight_Walking_Lunge/0.jpg",
@@ -5381,11 +5347,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "glutes",
-    "hamstrings"
+    "adductors"
    ],
    "equipment": "dumbbell",
    "level": "beginner",
@@ -5393,11 +5359,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "glutes",
-    "hamstrings"
+    "innerThigh"
    ],
    "images": [
     "Images/Split_Squat_with_Dumbbells/0.jpg",
@@ -5426,12 +5392,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "adductors"
    ],
    "equipment": "dumbbell",
    "level": "intermediate",
@@ -5439,12 +5404,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes",
-    "hamstrings"
+    "innerThigh"
    ],
    "images": [
     "Images/Dumbbell_Step_Ups/0.jpg",
@@ -5473,11 +5437,13 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "quadriceps",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "glutes",
-    "hamstrings"
+    "hamstrings",
+    "lower back",
+    "traps"
    ],
    "equipment": "other",
    "level": "beginner",
@@ -5485,11 +5451,13 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "quads",
+    "glutes"
    ],
    "secondaryRegions": [
-    "glutes",
-    "hamstrings"
+    "hamstrings",
+    "lowerBack",
+    "traps"
    ],
    "images": [
     "Images/Trap_Bar_Deadlift/0.jpg",
@@ -5520,11 +5488,10 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes",
     "lower back"
    ],
    "equipment": "barbell",
@@ -5533,11 +5500,10 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes",
     "lowerBack"
    ],
    "images": [
@@ -5569,10 +5535,10 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "glutes",
     "lower back"
    ],
    "equipment": "barbell",
@@ -5581,10 +5547,10 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryRegions": [
-    "glutes",
     "lowerBack"
    ],
    "images": [
@@ -5616,10 +5582,10 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "glutes",
     "lower back"
    ],
    "equipment": "dumbbell",
@@ -5628,10 +5594,10 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryRegions": [
-    "glutes",
     "lowerBack"
    ],
    "images": [
@@ -5661,15 +5627,13 @@
    },
    "category": "legs",
    "primaryMuscles": [
+    "glutes",
     "hamstrings"
    ],
    "secondaryMuscles": [
     "adductors",
-    "forearms",
-    "glutes",
-    "lower back",
-    "middle back",
     "quadriceps",
+    "lower back",
     "traps"
    ],
    "equipment": "barbell",
@@ -5678,15 +5642,13 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
+    "glutes",
     "hamstrings"
    ],
    "secondaryRegions": [
     "innerThigh",
-    "forearms",
-    "glutes",
-    "lowerBack",
-    "upperBack",
     "quads",
+    "lowerBack",
     "traps"
    ],
    "images": [
@@ -5714,11 +5676,10 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "abdominals",
-    "glutes",
     "lower back"
    ],
    "equipment": "barbell",
@@ -5727,11 +5688,10 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryRegions": [
-    "abs",
-    "glutes",
     "lowerBack"
    ],
    "images": [
@@ -5974,11 +5934,11 @@
    },
    "category": "legs",
    "primaryMuscles": [
+    "glutes",
     "hamstrings"
    ],
    "secondaryMuscles": [
-    "calves",
-    "glutes"
+    "lower back"
    ],
    "equipment": "machine",
    "level": "intermediate",
@@ -5986,11 +5946,11 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
+    "glutes",
     "hamstrings"
    ],
    "secondaryRegions": [
-    "calves",
-    "glutes"
+    "lowerBack"
    ],
    "images": [
     "Images/Reverse_Hyperextension/0.jpg",
@@ -6017,10 +5977,10 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryMuscles": [
-    "glutes",
     "lower back"
    ],
    "equipment": "kettlebell",
@@ -6029,10 +5989,10 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "hamstrings"
+    "hamstrings",
+    "glutes"
    ],
    "secondaryRegions": [
-    "glutes",
     "lowerBack"
    ],
    "images": [
@@ -6063,7 +6023,6 @@
     "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
     "hamstrings"
    ],
    "equipment": "barbell",
@@ -6075,7 +6034,6 @@
     "glutes"
    ],
    "secondaryRegions": [
-    "calves",
     "hamstrings"
    ],
    "images": [
@@ -6106,7 +6064,6 @@
     "glutes"
    ],
    "secondaryMuscles": [
-    "calves",
     "hamstrings"
    ],
    "equipment": "barbell",
@@ -6118,7 +6075,6 @@
     "glutes"
    ],
    "secondaryRegions": [
-    "calves",
     "hamstrings"
    ],
    "images": [
@@ -6416,7 +6372,7 @@
    },
    "category": "legs",
    "primaryMuscles": [
-    "quadriceps"
+    "adductors"
    ],
    "secondaryMuscles": [],
    "equipment": "cable",
@@ -6425,7 +6381,7 @@
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
-    "quads"
+    "innerThigh"
    ],
    "secondaryRegions": [],
    "images": [
@@ -7459,11 +7415,10 @@
    },
    "category": "core",
    "primaryMuscles": [
-    "quadriceps"
+    "abdominals"
    ],
    "secondaryMuscles": [
-    "chest",
-    "hamstrings",
+    "quadriceps",
     "shoulders"
    ],
    "equipment": "bodyweight",
@@ -7472,11 +7427,10 @@
    "movement": "legs",
    "inputType": "bodyweight",
    "primaryRegions": [
-    "quads"
+    "abs"
    ],
    "secondaryRegions": [
-    "chest",
-    "hamstrings",
+    "quads",
     "shoulders"
    ],
    "images": [

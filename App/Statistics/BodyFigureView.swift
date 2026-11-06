@@ -93,7 +93,7 @@ struct BodyFigureView: View {
                 ForEach(parsed.muscles) { shape in
                     let intensity = shape.region.flatMap { heatmap[$0]?.intensity } ?? 0
                     SVGShape(commands: shape.commands, box: parsed.bounds)
-                        .fill(intensity > 0 ? Color.accentColor.opacity(0.25 + 0.75 * intensity) : Color.secondary.opacity(0.22))
+                        .fill(Self.fill(intensity: intensity))
                         .overlay {
                             if let region = shape.region, region == selected {
                                 SVGShape(commands: shape.commands, box: parsed.bounds).stroke(Color.primary, lineWidth: 1.5)
@@ -107,5 +107,10 @@ struct BodyFigureView: View {
         }
         .aspectRatio(box[2] / box[3], contentMode: .fit)
         .frame(maxWidth: .infinity)
+    }
+
+    /// Boja mišića za intenzitet 0...1; 0 je neopterećen mišić (sivo). Koristi je i legenda heatmapa.
+    static func fill(intensity: Double) -> Color {
+        intensity > 0 ? Color.accentColor.opacity(0.25 + 0.75 * intensity) : Color.secondary.opacity(0.22)
     }
 }
