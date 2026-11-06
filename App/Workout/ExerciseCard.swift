@@ -32,6 +32,8 @@ struct ExerciseCard: View {
     var body: some View {
         header
             .padding(.vertical, 6)
+            // Crta ispod zaglavlja ide cijelom širinom retka, i ispod sličice.
+            .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
         if isOpen && !isEditing {
             if !exercise.orderedSets.isEmpty {
                 SetTableHeader(inputType: exercise.inputType, unit: unit)
@@ -60,9 +62,11 @@ struct ExerciseCard: View {
         }
     }
 
+    /// Sličica i naziv otvaraju stranicu vježbe (animacija i upute), a strelica desno otvara i zatvara serije.
+    /// Vježba koje nema u katalogu ni među vlastitima nema stranicu, pa naziv tada otvara i zatvara serije.
     private var header: some View {
         HStack {
-            Button(action: onToggleOpen) {
+            Button(action: onShowInfo ?? onToggleOpen) {
                 HStack(spacing: 12) {
                     ExerciseRowThumbnail(source: thumbnail)
                     titles
@@ -71,14 +75,21 @@ struct ExerciseCard: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityHint(Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu"))
+            .accessibilityHint(onShowInfo == nil ? Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu") : Text("Upute za vježbu"))
 
-            if !isEditing, let onShowInfo {
-                Button(action: onShowInfo) {
-                    Label("Upute za vježbu", systemImage: "info.circle").headerIcon()
+            if !isEditing {
+                Button(action: onToggleOpen) {
+                    Label {
+                        Text(isOpen ? "Zatvori vježbu" : "Otvori vježbu")
+                    } icon: {
+                        Image(systemName: "chevron.down")
+                            .rotationEffect(.degrees(isOpen ? 180 : 0))
+                    }
+                    .headerIcon()
+                    .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel(Text("Upute: \(exercise.exerciseName)"))
+                .animation(.easeInOut(duration: 0.2), value: isOpen)
             }
 
             if !isEditing {
@@ -165,7 +176,7 @@ struct ExerciseCard: View {
     }
 }
 
-private extension Label where Title == Text, Icon == Image {
+private extension Label {
     /// Ikona u zaglavlju vježbe: veća sistemska ikona i dodirna površina od 44 × 44 pt (Apple HIG).
     func headerIcon() -> some View {
         labelStyle(.iconOnly)

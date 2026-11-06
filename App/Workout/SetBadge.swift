@@ -1,20 +1,23 @@
 import Models
 import SwiftUI
 
-/// Oznaka serije u krugu: redni broj radne serije ili "Z" za zagrijavanje.
-/// Krug raste s Dynamic Typeom, a VoiceOver čita "Serija 2" ili "Zagrijavanje" umjesto slova.
+/// Oznaka serije: veći redni broj radne serije ili narančasto "Z" za zagrijavanje, bez pozadine.
+/// Dodirna površina je barem 44 × 44 pt (Apple HIG), a VoiceOver čita "Serija 2" ili "Zagrijavanje" umjesto slova.
 struct SetBadge: View {
     let kind: SetKind
     /// Redni broj radne serije; zagrijavanje ga nema.
     let number: Int?
 
-    @ScaledMetric(relativeTo: .subheadline) private var size: CGFloat = 30
+    @ScaledMetric(relativeTo: .title3) private var size: CGFloat = 30
 
     var body: some View {
         symbol
-            .font(.rowValueSmall)
-            .frame(minWidth: size, minHeight: size)
-            .opaqueFill(kind == .warmUp ? Color.orange.opacity(0.25) : Color.secondary.opacity(0.15), in: .circle)
+            .font(.metricSmall)
+            .foregroundStyle(kind == .warmUp ? AnyShapeStyle(Color.orange) : AnyShapeStyle(.primary))
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+            .frame(minWidth: size, minHeight: 44)
+            .contentShape(.rect)
             .accessibilityLabel(label)
     }
 
@@ -69,15 +72,17 @@ extension View {
 /// Širine stupaca tablice serija: oznaka, polja i kvačica. Dijele ih redak serije i zaglavlje tablice,
 /// pa su stupci poravnati. Rastu s Dynamic Typeom.
 struct SetTableMetrics: DynamicProperty {
-    @ScaledMetric(relativeTo: .subheadline) var badge: CGFloat = 30
+    @ScaledMetric(relativeTo: .title3) var badge: CGFloat = 30
+    /// Stupac "Prošli put": stalne širine, da su vrijednosti poravnate u svim retcima.
+    @ScaledMetric(relativeTo: .subheadline) var previous: CGFloat = 68
     @ScaledMetric(relativeTo: .title2) var wideField: CGFloat = 76
     @ScaledMetric(relativeTo: .title2) var narrowField: CGFloat = 52
     @ScaledMetric(relativeTo: .title2) var check: CGFloat = 56
     /// Visina kvačice i polja u retku serije.
     @ScaledMetric(relativeTo: .title2) var rowHeight: CGFloat = 52
-    let columnSpacing: CGFloat = 6
-    /// Razmak stupca "Prošli put" od oznake serije, da broj serije i prošla vrijednost ne budu slijepljeni.
-    let previousInset: CGFloat = 12
+    /// Najmanji razmak među stupcima. Ostatak širine retka dijeli se jednako na sve razmake,
+    /// pa su oznaka, prošli put, polja i kvačica podjednako udaljeni.
+    let minGap: CGFloat = 4
 }
 
 private struct SetFieldWidthKey: EnvironmentKey {
