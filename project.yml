@@ -85,8 +85,6 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         NSHealthShareUsageDescription: "Apolon čita kardio treninge (s kalorijama, udaljenošću i pulsom), tjelesnu masu i visinu kako bi ih prikazao u povijesti i praćenju tijela."
         NSHealthUpdateUsageDescription: "Apolon sprema tvoje treninge u Zdravlje kako bi se zatvarali Activity prstenovi."
-        # Kraj odmora kao alarm (AlarmKit, iOS 26): App/LiveActivity/RestAlarm.swift.
-        NSAlarmKitUsageDescription: "Apolon na kraju odmora javlja alarm, koji se vidi u Dynamic Islandu i na zaključanom zaslonu."
     configFiles:
       Debug: Config/App.xcconfig
       Release: Config/App.xcconfig

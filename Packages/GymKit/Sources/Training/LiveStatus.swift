@@ -112,28 +112,3 @@ public enum RestNotificationPolicy {
         return restEndsAt
     }
 }
-
-/// Kako iPhone javlja kraj odmora kad ga uopće javlja (`RestNotificationPolicy.fireDate`).
-public enum RestEndAlert: Equatable, Sendable {
-    /// Ništa se ne zakazuje.
-    case none
-    /// Obična lokalna obavijest (banner, na zaključanom zaslonu obavijest).
-    case notification(Date)
-    /// Alarm sustava (AlarmKit, iOS 26): iskoči u Dynamic Islandu, a na zaključanom zaslonu preko cijelog zaslona.
-    case alarm(Date)
-
-    /// Bira između alarma i obavijesti.
-    ///
-    /// Alarm samo dok aplikacija nije u prvom planu: s otvorenom aplikacijom ekran treninga sam svira i vibrira,
-    /// a alarm bi zazvonio preko njega (on se, za razliku od obavijesti, u prvom planu ne može utišati). Kad aplikacija
-    /// ode u pozadinu, kraj odmora se zakazuje iznova, ovaj put kao alarm.
-    public static func choose(
-        fireDate: Date?,
-        prefersAlarm: Bool,
-        isAlarmAvailable: Bool,
-        isAppActive: Bool
-    ) -> RestEndAlert {
-        guard let fireDate else { return .none }
-        return prefersAlarm && isAlarmAvailable && !isAppActive ? .alarm(fireDate) : .notification(fireDate)
-    }
-}

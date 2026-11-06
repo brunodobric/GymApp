@@ -387,9 +387,7 @@ Korisnik gradi planove na tri razine:
 Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, i to samo kad je potrebna:
 * **Aplikacija otvorena na iPhoneu:** zvuk i haptika iz same aplikacije, bez notifikacije.
 * **iPhone zaključan ili aplikacija u pozadini, trening na iPhoneu:** pri pokretanju timera zakazuje se lokalna notifikacija za trenutak isteka (zvuk ako je uključen u Postavkama, razina "time-sensitive", za koju aplikacija ima entitlement `com.apple.developer.usernotifications.time-sensitive`, pa obavijest prolazi kroz Fokus). Obavijest ima svoj prekidač u Postavkama, odvojen od podsjetnika rasporeda. Ako korisnik promijeni timer (+10/−10) ili ga prekine, notifikacija se premješta ili otkazuje.
-* **Kraj odmora kao alarm (iOS 26, zadano uključeno):** dok aplikacija nije u prvom planu, umjesto notifikacije se zakazuje alarm sustava (AlarmKit, `App/LiveActivity/RestAlarm.swift`). Izvan aplikacije iskoči u Dynamic Islandu kao tajmer iz aplikacije Sat, a na zaključanom zaslonu preko cijelog zaslona, s gumbom za gašenje. Zvoni i u tihom načinu rada i kroz Fokus. Alarm nema vlastito odbrojavanje: odbrojavanje i dalje prikazuje Live Activity treninga, da u Dynamic Islandu ne budu dvije. Pri odlasku aplikacije u pozadinu kraj odmora se zakazuje iznova (kao alarm), a pri povratku opet kao notifikacija, jer bi alarm zazvonio i preko otvorenog ekrana treninga. Dopuštenje se traži pri prvom osvježavanju aktivnog treninga u aplikaciji. Prekidač "Kraj odmora kao alarm" u Postavkama vrijedi za uređaj; uz isključen zvuk kraja odmora stiže obična (tiha) notifikacija. Na starijem iOS-u ili bez dopuštenja ostaje notifikacija.
-* Live Activity ne može sama u točnom trenutku iskočiti s upozorenjem: ažuriranje s `AlertConfiguration` zahtijeva da aplikacija radi u tom trenutku ili push s poslužitelja, a aplikacija je u pozadini suspendirana i nema poslužitelja. Zato je upozorenje na kraju odmora alarm.
-* **Trening se vodi na Watchu:** haptika na satu, a na iPhoneu nema notifikacije ni alarma kraja odmora (samo Live Activity).
+* **Trening se vodi na Watchu:** haptika na satu, a na iPhoneu nema notifikacije kraja odmora (samo Live Activity).
 * Aplikacija ne drži audio sesiju aktivnom u pozadini samo radi timera.
 * Na iPhoneu može biti aktivna **Live Activity** koja prikazuje:
   * Na vrhu naziv treninga i trajanje od početka
@@ -398,6 +396,7 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
   * Broj serija
   * Težinu i ponavljanja (ili trajanje i udaljenost) sljedeće serije, s gumbima − i + za promjenu (isti koraci kao Digital Crown na satu)
   * Kvačicu za potvrdu sljedeće serije
+* Live Activity ne iskače s upozorenjem na kraju odmora: ažuriranje s `AlertConfiguration` mora se poslati u trenutku isteka, a aplikacija je tada u pozadini suspendirana i nema poslužitelja za push. Kraj odmora zato javlja obična notifikacija.
 * Live Activity je tiha (bez zvuka i notifikacijskih bannera). Timer u njoj prikazuje se sustavskim odbrojavanjem (`Text(timerInterval:)`), pa ne treba stalna ažuriranja.
 * Dodir na Live Activity (izvan gumba) otvara aplikaciju izravno na puni ekran aktivnog treninga.
 * Gasi se automatski kad trening završi.

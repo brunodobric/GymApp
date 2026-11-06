@@ -193,8 +193,6 @@ struct PlatesSettingsSection: View {
 struct NotificationSettingsSection: View {
     @Bindable var settings: UserSettings
     @Environment(\.modelContext) private var context
-    /// Na ovom uređaju, jer alarm kraja odmora postoji samo na iPhoneu (iOS 26).
-    @AppStorage(RestAlarm.preferenceKey) private var restEndAsAlarm = true
 
     var body: some View {
         Section {
@@ -208,26 +206,13 @@ struct NotificationSettingsSection: View {
                     try? context.save()
                     WorkoutLiveUpdates.shared.refresh()
                 }
-            if RestAlarm.isSupported {
-                Toggle("Kraj odmora kao alarm", isOn: $restEndAsAlarm)
-                    .disabled(!settings.restNotificationEnabled)
-                    .onChange(of: restEndAsAlarm) {
-                        WorkoutLiveUpdates.shared.refresh()
-                    }
-            }
             NavigationLink {
                 FocusTipScreen()
             } label: {
                 Label("Fokus tijekom treninga", systemImage: "moon.fill")
             }
         } footer: {
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Obavijest o kraju odmora stiže kad je iPhone zaključan ili je trening sažet u karticu, i prolazi kroz Fokus. Dopuštenje se traži kad prvi put zatreba.")
-                if RestAlarm.isSupported {
-                    Text("Kao alarm, kraj odmora izvan aplikacije iskoči u Dynamic Islandu, a na zaključanom zaslonu preko cijelog zaslona.")
-                    Text("Alarm zvoni i u tihom načinu rada, a gasi se gumbom. Kad je zvuk kraja odmora isključen, stiže obična obavijest.")
-                }
-            }
+            Text("Obavijest o kraju odmora stiže kad je iPhone zaključan ili je trening sažet u karticu, i prolazi kroz Fokus. Dopuštenje se traži kad prvi put zatreba.")
         }
     }
 }
