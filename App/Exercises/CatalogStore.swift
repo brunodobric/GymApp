@@ -1,5 +1,6 @@
 import Catalog
 import Foundation
+import Models
 import Observation
 
 /// Učitava službeni katalog iz bundlea i čuva ga u memoriji.
@@ -72,11 +73,19 @@ final class CatalogStore {
         exercise.illustration { mediaURL($0) != nil }
     }
 
-    /// Sličica službene vježbe u mreži kataloga: poster klipa.
-    func thumbnail(for summary: ExerciseSummary) -> ExerciseThumbnail.Source? {
-        guard case .catalog(let id) = summary.source,
-              let poster = catalog?.exercise(withID: id)?.poster,
-              let url = mediaURL(poster) else { return nil }
-        return .file(url)
+    /// Sličica vježbe: poster klipa za službenu vježbu, fotografija za vlastitu.
+    /// Nil kad slike nema (vježba bez postera, build bez MoveKit dodatka ili vlastita vježba bez fotografije).
+    func thumbnail(for source: ExerciseSummary.Source?, customExercises: [CustomExercise]) -> ExerciseThumbnail.Source? {
+        switch source {
+        case .catalog(let id):
+            guard let poster = catalog?.exercise(withID: id)?.poster,
+                  let url = mediaURL(poster) else { return nil }
+            return .file(url)
+        case .custom(let id):
+            guard let data = customExercises.first(where: { $0.id == id })?.imageData else { return nil }
+            return .data(key: id.uuidString, data)
+        case nil:
+            return nil
+        }
     }
 }

@@ -30,6 +30,9 @@ struct ExerciseThumbnail: View {
     }
 
     let source: Source?
+    /// Veličina ikone kad slike nema i zaobljenje kutova. Mala sličica u retku popisa ima manje od mreže.
+    var placeholderFont: Font = .title
+    var cornerRadius: CGFloat = CornerRadius.inner
 
     @State private var image: UIImage?
 
@@ -43,17 +46,30 @@ struct ExerciseThumbnail: View {
                         .scaledToFill()
                 } else {
                     Image(systemName: "dumbbell")
-                        .font(.title)
+                        .font(placeholderFont)
                         .foregroundStyle(.secondary)
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.inner))
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .accessibilityHidden(true)
             .task(id: source) {
                 image = nil
                 guard let source else { return }
                 image = await ThumbnailLoader.image(for: source)
             }
+    }
+}
+
+/// Mala sličica (4:3) ispred naziva vježbe: u popisu kataloga na iPhoneu i u aktivnom treningu.
+/// Širina raste s Dynamic Typeom, ali samo do granice, da kod veličina pristupačnosti ostane mjesta za naziv.
+struct ExerciseRowThumbnail: View {
+    let source: ExerciseThumbnail.Source?
+
+    @ScaledMetric(relativeTo: .body) private var width: CGFloat = 64
+
+    var body: some View {
+        ExerciseThumbnail(source: source, placeholderFont: .body, cornerRadius: CornerRadius.small)
+            .frame(width: min(width, 96))
     }
 }
 

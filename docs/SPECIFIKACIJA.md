@@ -391,11 +391,12 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 * Aplikacija ne drži audio sesiju aktivnom u pozadini samo radi timera.
 * Na iPhoneu može biti aktivna **Live Activity** koja prikazuje:
   * Na vrhu naziv treninga i trajanje od početka
-  * Preostalo vrijeme rest timera (traka + odbrojavanje u sekundama u realnom vremenu)
+  * Preostalo vrijeme rest timera (traka + odbrojavanje u sekundama u realnom vremenu). U sažetom Dynamic Islandu lijevo je krug koji se prazni, a desno odbrojavanje u naglasnoj boji.
   * Trenutnu / sljedeću vježbu
   * Broj serija
   * Težinu i ponavljanja (ili trajanje i udaljenost) sljedeće serije, s gumbima − i + za promjenu (isti koraci kao Digital Crown na satu)
   * Kvačicu za potvrdu sljedeće serije
+* Live Activity ne iskače s upozorenjem na kraju odmora: ažuriranje s `AlertConfiguration` mora se poslati u trenutku isteka, a aplikacija je tada u pozadini suspendirana i nema poslužitelja za push. Kraj odmora zato javlja obična notifikacija.
 * Live Activity je tiha (bez zvuka i notifikacijskih bannera). Timer u njoj prikazuje se sustavskim odbrojavanjem (`Text(timerInterval:)`), pa ne treba stalna ažuriranja.
 * Dodir na Live Activity (izvan gumba) otvara aplikaciju izravno na puni ekran aktivnog treninga.
 * Gasi se automatski kad trening završi.

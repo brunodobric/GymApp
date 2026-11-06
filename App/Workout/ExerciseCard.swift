@@ -7,6 +7,8 @@ import Units
 /// Vježba u aktivnom treningu: zaglavlje i, kad je otvorena, retci serija i gumbi za dodavanje.
 struct ExerciseCard: View {
     let exercise: SessionExercise
+    /// Sličica ispred naziva (poster ili fotografija vlastite vježbe), nil kad slike nema.
+    let thumbnail: ExerciseThumbnail.Source?
     let isOpen: Bool
     let isEditing: Bool
     let highlightedSetID: UUID?
@@ -61,17 +63,9 @@ struct ExerciseCard: View {
     private var header: some View {
         HStack {
             Button(action: onToggleOpen) {
-                VStack(alignment: .leading, spacing: 2) {
-                    if exercise.supersetGroupId != nil {
-                        Text("Superset")
-                            .font(.eyebrow)
-                            .textCase(.uppercase)
-                            .foregroundStyle(.tint)
-                    }
-                    Text(exercise.exerciseName).font(.itemTitle)
-                    Text("\(completedCount) od \(exercise.orderedSets.count) serija")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                HStack(spacing: 12) {
+                    ExerciseRowThumbnail(source: thumbnail)
+                    titles
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
@@ -99,6 +93,21 @@ struct ExerciseCard: View {
                 }
                 .buttonStyle(.borderless)
             }
+        }
+    }
+
+    private var titles: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            if exercise.supersetGroupId != nil {
+                Text("Superset")
+                    .font(.eyebrow)
+                    .textCase(.uppercase)
+                    .foregroundStyle(.tint)
+            }
+            Text(exercise.exerciseName).font(.itemTitle)
+            Text("\(completedCount) od \(exercise.orderedSets.count) serija")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
     }
 
