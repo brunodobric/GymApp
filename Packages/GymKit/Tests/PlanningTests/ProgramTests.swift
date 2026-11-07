@@ -53,7 +53,6 @@ private func weeklyLoad(
 
 @Suite("Gotovi programi")
 struct ProgramTests {
-
     @Test("Svaka izvedba postoji u katalogu s istom vrstom unosa i opremom")
     func optionsMatchCatalog() throws {
         let catalog = try loadCatalog()
@@ -167,7 +166,6 @@ struct ProgramTests {
 
 @Suite("Doziranje prema cilju i iskustvu")
 struct PrescriptionTests {
-
     @Test("Snaga: glavne vježbe 3–6 ponavljanja i duža pauza")
     func strength() {
         let main = ProgramPrescription.make(role: .main, sets: 3, goal: .strength, level: .intermediate)
@@ -204,7 +202,6 @@ struct PrescriptionTests {
 
 @Suite("Instalacija programa")
 struct ProgramInstallerTests {
-
     @Test("Stvara predloške i raspored u istom redoslijedu, s rasponima i pauzama")
     func install() throws {
         let context = try makeContext()
@@ -268,8 +265,8 @@ struct ProgramInstallerTests {
     func localizedNames() throws {
         let context = try makeContext()
         let schedule = try ProgramInstaller(context: context).install(
-            try program("upper-lower-4"), name: "Upper/Lower (4 days)", workoutName: { "W \($0.key)" }
-        ) { $0 }
+            try program("upper-lower-4"), name: "Upper/Lower (4 days)", workoutName: { "W \($0.key)" }, exerciseName: { $0 }
+        )
         #expect(schedule.name == "Upper/Lower (4 days)")
         let names = Set(try context.fetch(FetchDescriptor<WorkoutTemplate>()).map(\.name))
         #expect(names == ["W upperA", "W lowerA", "W upperB", "W lowerB"])
@@ -303,7 +300,6 @@ struct ProgramInstallerTests {
 
 @Suite("Preporuka programa")
 struct RecommenderTests {
-
     private func top(_ profile: TrainingProfile) -> String? {
         ProgramRecommender.recommend(for: profile).first?.program.id
     }
@@ -384,7 +380,6 @@ struct RecommenderTests {
 
 @Suite("Preseti opreme")
 struct EquipmentPresetTests {
-
     @Test("Teretana je sva oprema, a preset se prepoznaje iz spremljenog popisa")
     func presets() {
         #expect(Set(EquipmentPreset.gym.equipment) == Set(Equipment.allCases))

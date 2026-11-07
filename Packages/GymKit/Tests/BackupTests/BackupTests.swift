@@ -50,7 +50,6 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     context.insert(templateExercise)
     templateExercise.template = template
     let templateSet = TemplateSet(orderIndex: 0, targetWeightKg: 80, targetReps: 5)
-    templateSet.targetRepsMax = 8
     context.insert(templateSet)
     templateSet.exercise = templateExercise
 
@@ -133,6 +132,7 @@ struct JSONBackupTests {
     func roundTrip() throws {
         let source = try makeContext()
         try fillSample(source)
+        try #require(try source.fetch(FetchDescriptor<TemplateSet>()).first).targetRepsMax = 8
         let first = try JSONBackup.export(from: source, now: exportTime)
 
         let target = try makeContext()
