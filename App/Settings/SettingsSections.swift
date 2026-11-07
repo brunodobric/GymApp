@@ -56,9 +56,9 @@ enum PRSettingOption: String, CaseIterable, Identifiable {
 
     var title: LocalizedStringKey {
         switch self {
-        case .maxWeight: "Najveća težina"
-        case .maxVolume: "Najveći volumen"
-        case .maxReps: "Najviše ponavljanja"
+        case .maxWeight: "Snaga (1RM i najveća težina)"
+        case .maxVolume: "Volumen vježbe u treningu"
+        case .maxReps: "Ponavljanja, trajanje i udaljenost"
         }
     }
 

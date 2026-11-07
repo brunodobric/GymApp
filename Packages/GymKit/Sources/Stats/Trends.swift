@@ -71,9 +71,9 @@ public enum TrendAnalysis {
     /// Medijan nagiba svih parova točaka s različitim x. Nil za manje od dvije takve točke.
     public static func theilSenSlope(_ points: [(x: Double, y: Double)]) -> Double? {
         var slopes: [Double] = []
-        for i in points.indices {
-            for j in points.indices where j > i && points[j].x != points[i].x {
-                slopes.append((points[j].y - points[i].y) / (points[j].x - points[i].x))
+        for first in points.indices {
+            for second in points.indices where second > first && points[second].x != points[first].x {
+                slopes.append((points[second].y - points[first].y) / (points[second].x - points[first].x))
             }
         }
         return median(slopes)
@@ -93,12 +93,12 @@ public enum TrendAnalysis {
             return insufficient
         }
         let sign = higherIsBetter ? 1.0 : -1.0
-        let xy = window.map { (x: $0.date.timeIntervalSince(first.date) / day, y: sign * log($0.value)) }
-        guard let slope = theilSenSlope(xy) else { return insufficient }
+        let samples = window.map { (x: $0.date.timeIntervalSince(first.date) / day, y: sign * log($0.value)) }
+        guard let slope = theilSenSlope(samples) else { return insufficient }
 
         var noise = defaultNoise
-        if window.count >= learnedNoiseSessions, let intercept = median(xy.map { $0.y - slope * $0.x }),
-           let deviation = median(xy.map { abs($0.y - (intercept + slope * $0.x)) }) {
+        if window.count >= learnedNoiseSessions, let intercept = median(samples.map { $0.y - slope * $0.x }),
+           let deviation = median(samples.map { abs($0.y - (intercept + slope * $0.x)) }) {
             // Robusna procjena standardne devijacije iz medijana apsolutnih odstupanja.
             noise = min(max(1.4826 * deviation, noiseRange.lowerBound), noiseRange.upperBound)
         }

@@ -2,6 +2,7 @@ import AudioToolbox
 import Catalog
 import Models
 import Planning
+import Stats
 import SwiftData
 import SwiftUI
 import Training
@@ -363,7 +364,11 @@ struct ActiveWorkoutScreen: View {
             _ = try? ScheduleEngine(context: context).sessionFinished(session)
             ReminderScheduler.refresh(context: context)
             let tracked = PRKind.tracked(by: settings)
-            finishedSummary = SummaryBox(summary: try engine.summary(of: session, trackedKinds: tracked))
+            let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
+            finishedSummary = SummaryBox(summary: try engine.summary(
+                of: session, trackedKinds: tracked, excludedExercises: settings?.prExcludedExerciseKeys ?? [],
+                isCompound: { info($0)?.isCompound }
+            ))
             Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {
             isClosingHere = false

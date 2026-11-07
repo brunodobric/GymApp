@@ -33,7 +33,7 @@ public enum PRRanking {
 
     /// Redoslijed vrsta kad vježba ima više rekorda u istom treningu: prvi postojeći se ističe.
     public static let priority: [PRKind] = [
-        .estimatedOneRepMax, .repMax, .maxWeight, .maxReps, .lowestAssistance, .longestDistance, .longestDuration, .exerciseVolume,
+        .estimatedOneRepMax, .repMax, .maxWeight, .maxReps, .lowestAssistance, .longestDistance, .longestDuration, .exerciseVolume
     ]
 
     /// Uobičajeno kolebanje rezultata između treninga (udio). Polazne procjene iz pouzdanosti mjerenja 1RM

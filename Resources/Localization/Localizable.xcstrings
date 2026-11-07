@@ -24,6 +24,29 @@
         }
       }
     },
+    "%@ min" : {
+      "shouldTranslate" : false
+    },
+    "%@ mjesečno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ per month"
+          }
+        }
+      }
+    },
+    "%@ serija s 0 do 3 ponavljanja u rezervi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ of sets with 0 to 3 reps in reserve."
+          }
+        }
+      }
+    },
     "%@ serija, %@" : {
       "localizations" : {
         "en" : {
@@ -34,8 +57,41 @@
         }
       }
     },
+    "%@ stoji 4 tjedna uz više od 20 tvrdih serija tjedno. Manje serija ili lakši tjedan može pomoći oporavku." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ has been steady for 4 weeks with more than 20 hard sets per week. Fewer sets or an easier week can help recovery."
+          }
+        }
+      }
+    },
+    "%@ stoji 4 tjedna, a mišić ima manje od 10 tvrdih serija tjedno. Više serija daje više napretka (Pelland i sur. 2024)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ has been steady for 4 weeks, and the muscle gets fewer than 10 hard sets per week. More sets bring more progress (Pelland et al. 2024)."
+          }
+        }
+      }
+    },
     "%@ · %@" : {
       "shouldTranslate" : false
+    },
+    "%@ × %lld" : {
+      "shouldTranslate" : false
+    },
+    "%@ × tjelesna težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ × body weight"
+          }
+        }
+      }
     },
     "%@ → %@" : {
       "shouldTranslate" : false
@@ -116,7 +172,20 @@
         }
       }
     },
+    "%@: %lld dana bez treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %lld days without training"
+          }
+        }
+      }
+    },
     "%lld" : {
+      "shouldTranslate" : false
+    },
+    "%lld (%@)" : {
       "shouldTranslate" : false
     },
     "%lld dana nakon zadnjeg treninga" : {
@@ -217,6 +286,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld m"
+          }
+        }
+      }
+    },
+    "%lld od %lld glavnih mišića ima %lld do %lld tvrdih serija tjedno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld main muscles get %lld to %lld hard sets per week."
+          }
+        }
+      }
+    },
+    "%lld od %lld glavnih mišića ima barem %lld tvrdih serija tjedno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld main muscles get at least %lld hard sets per week."
+          }
+        }
+      }
+    },
+    "%lld od %lld planiranih treninga, prosjek %@ tjedno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld planned workouts, average %@ per week."
           }
         }
       }
@@ -791,6 +890,16 @@
         }
       }
     },
+    "%lld+ ponavljanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld+ reps"
+          }
+        }
+      }
+    },
     "%lld. %@" : {
       "localizations" : {
         "en" : {
@@ -1350,6 +1459,16 @@
         }
       }
     },
+    "Danas nema većih rekorda." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No major records today."
+          }
+        }
+      }
+    },
     "Datoteka je iz novije verzije aplikacije." : {
       "localizations" : {
         "en" : {
@@ -1420,6 +1539,26 @@
         }
       }
     },
+    "Detaljni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detailed"
+          }
+        }
+      }
+    },
+    "Detaljni prikaz dodaje sve prijedloge, napor i intenzitet serija, tablicu rekorda po ponavljanjima, relativnu snagu, odmor između serija i ocjenu napora treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The detailed view adds all suggestions, set effort and intensity, a table of records by reps, relative strength, rest between sets and a workout effort rating."
+          }
+        }
+      }
+    },
     "Dijagnostika" : {
       "localizations" : {
         "en" : {
@@ -1440,12 +1579,32 @@
         }
       }
     },
+    "Dobro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good"
+          }
+        }
+      }
+    },
     "Dobro došao" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welcome"
+          }
+        }
+      }
+    },
+    "Dobro: %lld od %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good: %lld of %lld"
           }
         }
       }
@@ -1466,6 +1625,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add (%lld)"
+          }
+        }
+      }
+    },
+    "Dodaj 2 serije tjedno: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add 2 sets per week: %@"
           }
         }
       }
@@ -1900,6 +2069,26 @@
         }
       }
     },
+    "Graf serija po ponavljanjima u rezervi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of sets by reps in reserve"
+          }
+        }
+      }
+    },
+    "Graf serija po udjelu procjene 1RM" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of sets by share of estimated 1RM"
+          }
+        }
+      }
+    },
     "Greška" : {
       "localizations" : {
         "en" : {
@@ -1990,6 +2179,26 @@
         }
       }
     },
+    "Intenzitet se pojavi uz vježbe s težinom." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensity appears with weighted exercises."
+          }
+        }
+      }
+    },
+    "Intenzitet serija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set intensity"
+          }
+        }
+      }
+    },
     "Intervali 6 × 400 m" : {
       "localizations" : {
         "en" : {
@@ -2010,6 +2219,26 @@
         }
       }
     },
+    "Isključeno: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluded: %lld"
+          }
+        }
+      }
+    },
+    "Isključi vježbe za koje ne želiš rekorde, npr. zagrijavanje ili vježbe koje radiš samo za tehniku." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exclude exercises you don't want records for, such as warm-ups or exercises you do only for technique."
+          }
+        }
+      }
+    },
     "Isključuje se nakon ponovnog pokretanja" : {
       "localizations" : {
         "en" : {
@@ -2026,6 +2255,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Experience"
+          }
+        }
+      }
+    },
+    "Isti trening %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same workout on %@."
+          }
+        }
+      }
+    },
+    "Isto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same"
+          }
+        }
+      }
+    },
+    "Isto (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same (%lld)"
           }
         }
       }
@@ -2186,6 +2445,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Export failed."
+          }
+        }
+      }
+    },
+    "Još manjih rekorda: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More minor records: %lld"
+          }
+        }
+      }
+    },
+    "Još nema tvrdih serija." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hard sets yet."
           }
         }
       }
@@ -2510,6 +2789,16 @@
         }
       }
     },
+    "Koliko je bio težak cijeli trening, od 1 do 10. Napor puta trajanje je opterećenje treninga (Foster i sur. 2001)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How hard the whole workout was, from 1 to 10. Effort times duration is the training load (Foster et al. 2001)."
+          }
+        }
+      }
+    },
     "Kontejner" : {
       "localizations" : {
         "en" : {
@@ -2620,6 +2909,16 @@
         }
       }
     },
+    "Medijan %@ mjesečno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Median %@ per month."
+          }
+        }
+      }
+    },
     "Minute: %lld" : {
       "localizations" : {
         "en" : {
@@ -2636,6 +2935,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Muscle"
+          }
+        }
+      }
+    },
+    "Mišić je ranije bio u treninzima. Ako to nije namjerno, vrati ga u raspored." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This muscle used to be in your workouts. If that wasn't on purpose, add it back to your schedule."
           }
         }
       }
@@ -2660,12 +2969,32 @@
         }
       }
     },
+    "Mjeri se %@. Napredak se računa tek kad je veći od uobičajenog kolebanja ove vježbe (oko %@ između treninga)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Measured: %@. Progress only counts when it is larger than this exercise's usual variation (about %@ between workouts)."
+          }
+        }
+      }
+    },
     "Mjesto" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Location"
+          }
+        }
+      }
+    },
+    "Može bolje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could be better"
           }
         }
       }
@@ -2720,16 +3049,6 @@
         }
       }
     },
-    "Najdulje trajanje %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Longest duration %@"
-          }
-        }
-      }
-    },
     "Najduže trajanje" : {
       "localizations" : {
         "en" : {
@@ -2746,16 +3065,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Least assistance"
-          }
-        }
-      }
-    },
-    "Najmanja pomoć %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Least assistance %@"
           }
         }
       }
@@ -2790,6 +3099,36 @@
         }
       }
     },
+    "Najteža serija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heaviest set"
+          }
+        }
+      }
+    },
+    "Najteža serija od %lld+ ponavljanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heaviest set of %lld+ reps"
+          }
+        }
+      }
+    },
+    "Najteža serija po ponavljanjima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heaviest set by reps"
+          }
+        }
+      }
+    },
     "Najveća težina" : {
       "localizations" : {
         "en" : {
@@ -2800,62 +3139,12 @@
         }
       }
     },
-    "Najveća težina %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heaviest weight %@"
-          }
-        }
-      }
-    },
     "Najveća udaljenost" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Longest distance"
-          }
-        }
-      }
-    },
-    "Najveća udaljenost %@ km" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Longest distance %@ km"
-          }
-        }
-      }
-    },
-    "Najveći volumen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Highest volume"
-          }
-        }
-      }
-    },
-    "Najveći volumen serije" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Highest set volume"
-          }
-        }
-      }
-    },
-    "Najveći volumen serije %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Highest set volume %@"
           }
         }
       }
@@ -2880,12 +3169,12 @@
         }
       }
     },
-    "Najviše ponavljanja %lld" : {
+    "najviše ponavljanja" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Most reps %lld"
+            "value" : "most reps"
           }
         }
       }
@@ -2916,6 +3205,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Effort"
+          }
+        }
+      }
+    },
+    "Napor serija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set effort"
+          }
+        }
+      }
+    },
+    "Napor treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout effort"
+          }
+        }
+      }
+    },
+    "Napravi lakši tjedan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take an easier week"
           }
         }
       }
@@ -2956,6 +3275,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Advanced"
+          }
+        }
+      }
+    },
+    "Napreduje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Improving"
+          }
+        }
+      }
+    },
+    "Napreduje %lld, stoji %lld, plato %lld, pada %lld." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Improving %lld, steady %lld, plateau %lld, declining %lld."
           }
         }
       }
@@ -3116,6 +3455,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No cards. Add some below."
+          }
+        }
+      }
+    },
+    "Nema podataka" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data"
           }
         }
       }
@@ -3690,6 +4039,16 @@
         }
       }
     },
+    "Odmor oko %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest about %@"
+          }
+        }
+      }
+    },
     "Odrađeno na satu. Trening se upisuje u povijest kad stigne iz Zdravlja." : {
       "localizations" : {
         "en" : {
@@ -3810,6 +4169,16 @@
         }
       }
     },
+    "Osnovni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basic"
+          }
+        }
+      }
+    },
     "Osobni rekordi" : {
       "localizations" : {
         "en" : {
@@ -3886,6 +4255,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This week"
+          }
+        }
+      }
+    },
+    "ovaj tjedan %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "this week %@"
           }
         }
       }
@@ -3970,6 +4349,16 @@
         }
       }
     },
+    "Pada" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Declining"
+          }
+        }
+      }
+    },
     "Pauza" : {
       "localizations" : {
         "en" : {
@@ -4026,6 +4415,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hiking"
+          }
+        }
+      }
+    },
+    "Plato" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plateau"
           }
         }
       }
@@ -4340,6 +4739,36 @@
         }
       }
     },
+    "Ponavljanja u rezervi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reps in reserve"
+          }
+        }
+      }
+    },
+    "Ponavljanja u rezervi, zadnja 4 tjedna. Za rast mišića najbolje rade serije blizu otkaza (0 do 3), a za snagu blizina otkaza manje znači (Robinson i sur. 2024). Bez ocjene: %lld." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reps in reserve, last 4 weeks. Sets close to failure (0 to 3) work best for muscle growth, while proximity to failure matters less for strength (Robinson et al. 2024). Unrated: %lld."
+          }
+        }
+      }
+    },
+    "Ponavljanja, trajanje i udaljenost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reps, duration and distance"
+          }
+        }
+      }
+    },
     "Ponavljanja: %lld" : {
       "localizations" : {
         "en" : {
@@ -4466,6 +4895,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Increase weight"
+          }
+        }
+      }
+    },
+    "Povećaj težinu: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Increase weight: %@"
           }
         }
       }
@@ -4640,6 +5079,26 @@
         }
       }
     },
+    "Prema prošlom treningu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compared with last workout"
+          }
+        }
+      }
+    },
+    "Premalo podataka" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not enough data"
+          }
+        }
+      }
+    },
     "Premjesti stare podatke i počni" : {
       "localizations" : {
         "en" : {
@@ -4790,6 +5249,16 @@
         }
       }
     },
+    "Prikaz statistike" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistics view"
+          }
+        }
+      }
+    },
     "Prikaz tijela s opterećenjem. %@" : {
       "localizations" : {
         "en" : {
@@ -4836,6 +5305,76 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Primary"
+          }
+        }
+      }
+    },
+    "Probaj raspored s manje dana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try a schedule with fewer days"
+          }
+        }
+      }
+    },
+    "procjena 1RM" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "estimated 1RM"
+          }
+        }
+      }
+    },
+    "Procjena 1RM" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimated 1RM"
+          }
+        }
+      }
+    },
+    "Procjena 1RM %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimated 1RM %@"
+          }
+        }
+      }
+    },
+    "Procjena 1RM %@, %@ prema prošlom izvođenju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimated 1RM %@, %@ vs. last time"
+          }
+        }
+      }
+    },
+    "Procjena 1RM pada na %lld vježbe. Tjedan s pola serija i lakšom težinom pomaže oporavku (Bell i sur. 2023)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimated 1RM is dropping on %lld exercises. A week with half the sets and lighter weight helps recovery (Bell et al. 2023)."
+          }
+        }
+      }
+    },
+    "Procjena 1RM računa se iz serija do 12 ponavljanja, uz ponavljanja u rezervi kad je upisan RPE ili RIR." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimated 1RM is calculated from sets of up to 12 reps, including reps in reserve when RPE or RIR is logged."
           }
         }
       }
@@ -4910,6 +5449,16 @@
         }
       }
     },
+    "Promjena procjene 1RM glavnih vježbi mjesečno, zadnjih 8 tjedana." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monthly change in estimated 1RM of main exercises, last 8 weeks."
+          }
+        }
+      }
+    },
     "Promjena se nije mogla spremiti." : {
       "localizations" : {
         "en" : {
@@ -4926,6 +5475,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The change takes effect after you close the app (swipe it up in the app switcher) and open it again."
+          }
+        }
+      }
+    },
+    "Prosjek %@ treninga tjedno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average %@ workouts per week."
           }
         }
       }
@@ -5066,6 +5625,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Push/Pull/Legs (%lld days)"
+          }
+        }
+      }
+    },
+    "Redovitost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consistency"
+          }
+        }
+      }
+    },
+    "Rekord se računa od četvrtog izvođenja vježbe i kad je napredak barem 1 posto. Glavni rekord je procjena 1RM, a sažetak treninga ističe najviše tri rekorda." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records count from the fourth time you do an exercise and when the improvement is at least 1 percent. The main record is the estimated 1RM, and the workout summary highlights at most three records."
+          }
+        }
+      }
+    },
+    "Relativna snaga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relative strength"
           }
         }
       }
@@ -5306,6 +5895,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bar only."
+          }
+        }
+      }
+    },
+    "Savjeti su opći i temelje se na istraživanjima treninga snage, nisu medicinska preporuka." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tips are general and based on strength training research. They are not medical advice."
           }
         }
       }
@@ -5710,12 +6309,32 @@
         }
       }
     },
+    "Smanji volumen: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce volume: %@"
+          }
+        }
+      }
+    },
     "Snaga" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Strength"
+          }
+        }
+      }
+    },
+    "Snaga (1RM i najveća težina)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strength (1RM and heaviest weight)"
           }
         }
       }
@@ -5840,12 +6459,32 @@
         }
       }
     },
+    "Status se pojavi nakon 4 izvođenja u 8 tjedana. Mjeri se %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The status appears after 4 sessions in 8 weeks. Measured: %@."
+          }
+        }
+      }
+    },
     "Stepenice" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stairs"
+          }
+        }
+      }
+    },
+    "Stoji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steady"
           }
         }
       }
@@ -6030,6 +6669,16 @@
         }
       }
     },
+    "Težina serije prema najboljoj procjeni 1RM vježbe, zadnja 4 tjedna. Iznad 85 posto je trening maksimalne snage." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set weight relative to the exercise's best estimated 1RM, last 4 weeks. Above 85 percent is maximal strength training."
+          }
+        }
+      }
+    },
     "Težina × ponavljanja" : {
       "localizations" : {
         "en" : {
@@ -6106,6 +6755,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Weekly volume"
+          }
+        }
+      }
+    },
+    "Tonaža" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonnage"
           }
         }
       }
@@ -6196,6 +6855,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abdominals"
+          }
+        }
+      }
+    },
+    "Treba barem 4 izvođenja iste vježbe u 8 tjedana." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Needs at least 4 sessions of the same exercise in 8 weeks."
+          }
+        }
+      }
+    },
+    "Treba pažnju" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Needs attention"
+          }
+        }
+      }
+    },
+    "Trend se pojavi kad istu vježbu s težinom napraviš barem 4 puta u 8 tjedana." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The trend appears when you do the same weighted exercise at least 4 times in 8 weeks."
           }
         }
       }
@@ -6540,6 +7229,16 @@
         }
       }
     },
+    "Tvrde serije su radne serije bez onih s RPE ispod 6." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard sets are working sets, excluding those with RPE below 6."
+          }
+        }
+      }
+    },
     "U Dopuštenim obavijestima dodaj Apolon, da obavijest o kraju odmora i dalje stiže." : {
       "localizations" : {
         "en" : {
@@ -6590,12 +7289,32 @@
         }
       }
     },
+    "U zadnja 4 tjedna prosjek je %@ treninga tjedno od planiranih %lld ukupno. Raspored koji stvarno odradiš daje više od zahtjevnijeg." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Over the last 4 weeks you averaged %@ workouts per week, out of %lld planned in total. A schedule you actually follow does more than a harder one."
+          }
+        }
+      }
+    },
     "Udaljenost" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Distance"
+          }
+        }
+      }
+    },
+    "Udio 1RM" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share of 1RM"
           }
         }
       }
@@ -6706,6 +7425,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter a number."
+          }
+        }
+      }
+    },
+    "Upiši RPE ili RIR u barem 10 serija." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log RPE or RIR in at least 10 sets."
+          }
+        }
+      }
+    },
+    "Upiši RPE ili RIR uz serije da vidiš koliko blizu otkaza treniraš." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log RPE or RIR with your sets to see how close to failure you train."
           }
         }
       }
@@ -7130,7 +7869,27 @@
         }
       }
     },
+    "Vježbe u rekordima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercises in records"
+          }
+        }
+      }
+    },
     "Vježbe: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercises: %lld"
+          }
+        }
+      }
+    },
+    "Vježbi: %lld" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7216,6 +7975,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Volume"
+          }
+        }
+      }
+    },
+    "Volumen vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise volume"
+          }
+        }
+      }
+    },
+    "Volumen vježbe u treningu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise volume per workout"
           }
         }
       }
@@ -7430,6 +8209,16 @@
         }
       }
     },
+    "Zadnja 4 tjedna" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 4 weeks"
+          }
+        }
+      }
+    },
     "Zadnja sinkronizacija: %@" : {
       "localizations" : {
         "en" : {
@@ -7440,12 +8229,32 @@
         }
       }
     },
+    "Zadnja tri treninga s istom težinom imala su 4 ili više ponavljanja u rezervi. Dodaj jedan korak težine." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The last three workouts at the same weight had 4 or more reps in reserve. Add one weight step."
+          }
+        }
+      }
+    },
     "Zadnji trening" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Last workout"
+          }
+        }
+      }
+    },
+    "Zadnjih 8 tjedana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 8 weeks"
           }
         }
       }
@@ -7646,16 +8455,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Close exercise"
-          }
-        }
-      }
-    },
-    "Završene serije" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completed sets"
           }
         }
       }
@@ -8273,26 +9072,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Strength trend by muscle"
-          }
-        }
-      }
-    },
-    "Trend se pojavi kad istu vježbu s težinom radiš i u zadnja 4 tjedna i u 4 tjedna prije toga." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The trend appears when you do the same weighted exercise in the last 4 weeks and in the 4 weeks before that."
-          }
-        }
-      }
-    },
-    "Najbolja procjena 1RM glavnih vježbi u zadnja 4 tjedna prema 4 tjedna prije." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Best estimated 1RM of the main exercises in the last 4 weeks compared with the 4 weeks before."
           }
         }
       }

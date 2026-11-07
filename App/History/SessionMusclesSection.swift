@@ -11,6 +11,8 @@ import SwiftUI
 /// (npr. uvezen iz Zdravlja) nema odjeljak.
 struct SessionMusclesSection: View {
     let session: Session
+    /// Tvrde serije po regiji u tjednu treninga (sažetak nakon treninga); prazno kad se ne prikazuju.
+    var weekSets: [String: Double] = [:]
 
     @Environment(CatalogStore.self) private var catalogStore
     @Query private var customExercises: [CustomExercise]
@@ -101,6 +103,10 @@ struct SessionMusclesSection: View {
         var parts: [String] = []
         if load.primarySets > 0 { parts.append(String(localized: "\(load.primarySets) glavne")) }
         if load.secondarySets > 0 { parts.append(String(localized: "\(load.secondarySets) pomoćne")) }
+        if let week = weekSets[load.region], week > 0 {
+            let total = week.formatted(.number.precision(.fractionLength(0...1)))
+            parts.append(String(localized: "ovaj tjedan \(total)"))
+        }
         return parts.joined(separator: " · ")
     }
 
