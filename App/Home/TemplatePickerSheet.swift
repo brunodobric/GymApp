@@ -1,24 +1,45 @@
 import Models
+import Planning
 import SwiftUI
 
-/// Izbor spremljenog treninga kad nema rasporeda: popis treninga snage, dodir pokreće odabrani.
-/// Popis daje `TemplateStarter.startable`, a pokretanje radi Početna tek kad se list zatvori.
+/// Trening odabran u `TemplatePickerSheet`: trening rasporeda (s izmjenama ciklusa) ili spremljeni trening.
+enum WorkoutChoice {
+    case planned(PlannedWorkout)
+    case template(WorkoutTemplate)
+}
+
+/// Izbor treninga za pokretanje: popis treninga snage, dodir pokreće odabrani.
+/// Uz raspored su gore njegovi treninzi (`ScheduleEngine.workoutChoices`), a ispod ostali spremljeni treninzi;
+/// bez rasporeda samo spremljeni (`TemplateStarter.startable`). Pokretanje radi Početna tek kad se list zatvori.
 struct TemplatePickerSheet: View {
+    /// Raspored iz kojeg je izbor otvoren, ili nil.
+    var schedule: Schedule?
+    /// Treninzi rasporeda, redom niza.
+    var scheduled: [PlannedWorkout] = []
+    /// Sljedeći trening rasporeda, označen u popisu.
+    var nextItemID: UUID?
     let templates: [WorkoutTemplate]
-    let onSelect: (WorkoutTemplate) -> Void
+    let onSelect: (WorkoutChoice) -> Void
 
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
-            List(templates) { template in
-                Button {
-                    onSelect(template)
-                    dismiss()
-                } label: {
-                    TemplatePickerRow(template: template)
+            List {
+                if let schedule, !scheduled.isEmpty {
+                    Section(schedule.name) {
+                        ForEach(scheduled, id: \.item.id) { planned in
+                            row(.planned(planned)) {
+                                TemplatePickerRow(template: planned.template, isNext: planned.item.id == nextItemID)
+                            }
+                        }
+                    }
+                    if !otherTemplates.isEmpty {
+                        Section("Ostali treninzi") { templateRows(otherTemplates) }
+                    }
+                } else {
+                    templateRows(templates)
                 }
-                .accessibilityIdentifier("home.templatePicker.row")
             }
             .navigationTitle("Odaberi trening")
             .navigationBarTitleDisplayMode(.inline)
@@ -30,19 +51,51 @@ struct TemplatePickerSheet: View {
         }
         .presentationDetents([.medium, .large])
     }
+
+    /// Spremljeni treninzi koji nisu u rasporedu.
+    private var otherTemplates: [WorkoutTemplate] {
+        let inSchedule = Set(scheduled.map(\.template.id))
+        return templates.filter { !inSchedule.contains($0.id) }
+    }
+
+    private func templateRows(_ list: [WorkoutTemplate]) -> some View {
+        ForEach(list) { template in
+            row(.template(template)) { TemplatePickerRow(template: template, isNext: false) }
+        }
+    }
+
+    private func row<Label: View>(_ choice: WorkoutChoice, @ViewBuilder label: () -> Label) -> some View {
+        let content = label()
+        return Button {
+            onSelect(choice)
+            dismiss()
+        } label: {
+            content
+        }
+        .accessibilityIdentifier("home.templatePicker.row")
+    }
 }
 
-/// Red popisa: naziv treninga (zaobljeni bold), ispod broj vježbi i prve vježbe redom.
+/// Red popisa: naziv treninga (zaobljeni bold, uz oznaku sljedećeg u rasporedu), ispod broj vježbi i prve vježbe redom.
 private struct TemplatePickerRow: View {
     let template: WorkoutTemplate
+    /// Sljedeći trening rasporeda.
+    let isNext: Bool
 
     var body: some View {
         let exercises = template.orderedExercises
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(template.name)
-                    .font(.itemTitle)
-                    .foregroundStyle(.primary)
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(template.name)
+                        .font(.itemTitle)
+                        .foregroundStyle(.primary)
+                    if isNext {
+                        Text("Sljedeći")
+                            .font(.caption.bold())
+                            .foregroundStyle(.tint)
+                    }
+                }
                 Text("\(exercises.count) vježbi")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)

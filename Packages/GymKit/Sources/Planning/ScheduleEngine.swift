@@ -196,6 +196,39 @@ public struct ScheduleEngine {
         return nil
     }
 
+    /// Treninzi aktivnog rasporeda koje korisnik može pokrenuti umjesto sljedećeg, redom kao u nizu.
+    /// Svaki predložak je jednom: kad se ponavlja u nizu, uzima se prva stavka od pozicije rasporeda
+    /// nadalje (njezine izmjene ciklusa vrijede), inače prva u nizu. Kao i izvan rasporeda, nude se samo
+    /// treninzi snage s vježbama (`TemplateStarter.startable`). Odrađeni trening pomiče raspored samo ako
+    /// je bio sljedeći (`sessionFinished`).
+    public func workoutChoices(of schedule: Schedule) throws -> [PlannedWorkout] {
+        guard schedule.isActive else { return [] }
+        let items = schedule.orderedItems
+        var chosen: [UUID: Int] = [:]
+        var order: [UUID] = []
+        for (index, item) in items.enumerated() where item.kind == .workout {
+            guard let templateId = item.workoutTemplateId else { continue }
+            if let existing = chosen[templateId] {
+                if existing < schedule.currentPosition && index >= schedule.currentPosition {
+                    chosen[templateId] = index
+                }
+            } else {
+                chosen[templateId] = index
+                order.append(templateId)
+            }
+        }
+        let changes = try overrides(of: schedule, cycle: schedule.currentCycle)
+        return try order.compactMap { templateId in
+            guard let index = chosen[templateId], let template = try template(withID: templateId),
+                  !TemplateStarter.startable([template]).isEmpty else { return nil }
+            let item = items[index]
+            return PlannedWorkout(
+                schedule: schedule, item: item, template: template, cycle: schedule.currentCycle,
+                exercises: effectiveExercises(of: template, overrides: changes.filter { $0.scheduleItemId == item.id })
+            )
+        }
+    }
+
     /// Sljedeći trening svakog aktivnog rasporeda.
     public func upcomingWorkouts() throws -> [PlannedWorkout] {
         let schedules = try context.fetch(FetchDescriptor<Schedule>(sortBy: [SortDescriptor(\.createdAt)]))

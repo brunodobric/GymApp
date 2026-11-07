@@ -354,6 +354,47 @@ struct ScheduleProgressTests {
         #expect(try engine.upcomingWorkouts().count == 1)
         #expect(try engine.upcomingWorkouts().first?.schedule.id == first.id)
     }
+
+    @Test("Izbor treninga iz rasporeda: svaki trening snage jednom, redom niza, bez neaktivnog rasporeda")
+    func workoutChoices() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, templates) = try abcSchedule(in: context, cycles: nil)
+        // A se ponavlja na kraju, a trening bez vježbi se ne nudi.
+        try engine.addWorkout(templates[0], to: schedule)
+        try engine.addNewWorkout(named: "Prazan", to: schedule)
+        #expect(try engine.workoutChoices(of: schedule).map(\.template.name) == ["A", "B", "C"])
+
+        try engine.setActive(false, for: schedule)
+        #expect(try engine.workoutChoices(of: schedule).isEmpty)
+    }
+
+    @Test("Ponovljeni trening u izboru je onaj od pozicije rasporeda nadalje, s izmjenama ciklusa")
+    func workoutChoicesUseUpcomingItem() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, templates) = try abcSchedule(in: context, cycles: nil)
+        let repeated = try engine.addWorkout(templates[0], to: schedule)
+        let first = try #require(try engine.nextWorkout(of: schedule))
+        try doWorkout(first, in: context, at: base)
+
+        let choice = try #require(try engine.workoutChoices(of: schedule).first)
+        #expect(choice.item.id == repeated.id)
+        try engine.removeExercise(try #require(templates[0].orderedExercises.first), from: choice)
+        #expect(try engine.workoutChoices(of: schedule).first?.exercises.isEmpty == true)
+    }
+
+    @Test("Odabrani trening koji nije sljedeći ne pomiče raspored, a sljedeći ga pomiče")
+    func startChosenWorkout() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, _) = try abcSchedule(in: context, cycles: nil)
+        let choices = try engine.workoutChoices(of: schedule)
+        try doWorkout(choices[2], in: context, at: base)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "A")
+        try doWorkout(choices[0], in: context, at: base.addingTimeInterval(day))
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+    }
 }
 
 @Suite("Privremene izmjene ciklusa")

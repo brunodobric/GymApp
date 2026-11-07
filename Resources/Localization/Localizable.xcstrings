@@ -3395,6 +3395,26 @@
         }
       }
     },
+    "Odaberi drugi trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose another workout"
+          }
+        }
+      }
+    },
+    "Ostali treninzi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other workouts"
+          }
+        }
+      }
+    },
     "Preskočeno" : {
       "localizations" : {
         "en" : {
