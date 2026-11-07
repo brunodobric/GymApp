@@ -66,6 +66,8 @@ extension GymSchemaV1 {
         public var prExcludedExercisesRaw: String = ""
         /// Razina statistike (`StatsDetail`): osnovna ili detaljna (Pro).
         public var statsDetailRaw: String = StatsDetail.basic.rawValue
+        /// Spol (`Sex.rawValue`) za DOTS bodove. Prazan tekst znači da korisnik nije odgovorio.
+        public var sexRaw: String = ""
         public var restEndSoundEnabled: Bool = true
         /// Dostupne ploče u kilogramima, odvojene zarezom.
         public var availablePlatesRaw: String = "1.25,2.5,5,10,15,20,25"
@@ -163,6 +165,11 @@ extension GymSchemaV1 {
         public var availablePlatesKg: [Double] {
             get { availablePlatesRaw.split(separator: ",").compactMap { Double($0) } }
             set { availablePlatesRaw = newValue.map { String($0) }.joined(separator: ",") }
+        }
+
+        public var sex: Sex? {
+            get { Sex(rawValue: sexRaw) }
+            set { sexRaw = newValue?.rawValue ?? "" }
         }
 
         public var statsDetail: StatsDetail {

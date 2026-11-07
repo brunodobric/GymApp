@@ -1119,6 +1119,16 @@
         }
       }
     },
+    "Bez odgovora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No answer"
+          }
+        }
+      }
+    },
     "Bez usporedbe" : {
       "localizations" : {
         "en" : {
@@ -1205,6 +1215,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Blocks"
+          }
+        }
+      }
+    },
+    "Bodovi se računaju kad su u razdoblju rađena sva tri dizanja." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points are calculated once all three lifts have been done in this period."
           }
         }
       }
@@ -1559,12 +1579,12 @@
         }
       }
     },
-    "Detaljni prikaz dodaje sve prijedloge, napor i intenzitet serija, tablicu rekorda po ponavljanjima, relativnu snagu, odmor između serija i ocjenu napora treninga." : {
+    "Detaljni prikaz dodaje sve prijedloge, napor i intenzitet serija, tablicu rekorda po ponavljanjima, relativnu snagu, DOTS bodove, odmor između serija i ocjenu napora treninga." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The detailed view adds all suggestions, set effort and intensity, a table of records by reps, relative strength, rest between sets and a workout effort rating."
+            "value" : "The detailed view adds all suggestions, set effort and intensity, a table of records by reps, relative strength, DOTS points, rest between sets and a workout effort rating."
           }
         }
       }
@@ -1815,6 +1835,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Available equipment"
+          }
+        }
+      }
+    },
+    "DOTS bodovi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DOTS points"
+          }
+        }
+      }
+    },
+    "DOTS se pojavi kad u zadnjih 12 tjedana radiš čučanj, potisak s klupe ili mrtvo dizanje sa šipkom." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DOTS appears when you do the barbell squat, bench press or deadlift in the last 12 weeks."
           }
         }
       }
@@ -3009,6 +3049,16 @@
         }
       }
     },
+    "Mrtvo dizanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deadlift"
+          }
+        }
+      }
+    },
     "MuscleMap" : {
       "localizations" : {
         "en" : {
@@ -3579,12 +3629,12 @@
         }
       }
     },
-    "Neobavezno. Služi za praćenje mjera tijela; možeš ih unijeti i kasnije." : {
+    "Neobavezno. Visina i težina služe za praćenje mjera tijela, a spol za DOTS bodove i tijelo na prikazu mišića. Sve možeš unijeti i kasnije." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Optional. Used for body tracking; you can enter them later."
+            "value" : "Optional. Height and weight are used to track body measurements, and sex is used for DOTS points and the body in the muscle view. You can enter all of this later."
           }
         }
       }
@@ -3595,6 +3645,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not selected"
+          }
+        }
+      }
+    },
+    "Nije rađeno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not done"
           }
         }
       }
@@ -3915,6 +3975,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose photo"
+          }
+        }
+      }
+    },
+    "Odaberi spol u Postavkama, u dijelu Statistika, da vidiš DOTS bodove." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose your sex in Settings, under Statistics, to see DOTS points."
           }
         }
       }
@@ -4855,6 +4925,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Achieved"
+          }
+        }
+      }
+    },
+    "Potisak s klupe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bench press"
           }
         }
       }
@@ -6349,6 +6429,26 @@
         }
       }
     },
+    "Spol" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sex"
+          }
+        }
+      }
+    },
+    "Spol treba samo za DOTS bodove." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sex is only needed for DOTS points."
+          }
+        }
+      }
+    },
     "Sporo pokretanje" : {
       "localizations" : {
         "en" : {
@@ -7479,6 +7579,16 @@
         }
       }
     },
+    "Upiši tjelesnu težinu u Tijelu da vidiš DOTS bodove." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log your body weight in Body to see DOTS points."
+          }
+        }
+      }
+    },
     "Upper/Lower (4 dana)" : {
       "localizations" : {
         "en" : {
@@ -7769,12 +7879,12 @@
         }
       }
     },
-    "Visina i težina" : {
+    "Visina, težina i spol" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Height and weight"
+            "value" : "Height, weight and sex"
           }
         }
       }
@@ -8529,6 +8639,26 @@
         }
       }
     },
+    "Zbroj" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total"
+          }
+        }
+      }
+    },
+    "Zbroj najbolje procjene 1RM triju dizanja u zadnjih 12 tjedana, prilagođen tjelesnoj težini (%@). Služi za usporedbu s drugima; za vlastiti napredak gledaj trend vježbe." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total of the best estimated 1RM of the three lifts in the last 12 weeks, adjusted for body weight (%@). Use it to compare with others; for your own progress, look at the exercise trend."
+          }
+        }
+      }
+    },
     "Zdravlje" : {
       "localizations" : {
         "en" : {
@@ -8893,6 +9023,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Common mistakes"
+          }
+        }
+      }
+    },
+    "Čučanj" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squat"
           }
         }
       }

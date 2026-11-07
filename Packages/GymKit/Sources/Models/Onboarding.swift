@@ -10,6 +10,8 @@ public struct OnboardingAnswers: Equatable, Sendable {
     public static let daysPerWeekRange: ClosedRange<Int> = 1...7
 
     public var goal: TrainingGoal?
+    /// Spol, za DOTS bodove i tijelo na prikazu mišića.
+    public var sex: Sex?
     public var unit: WeightUnit = .kilograms
     /// Visina u centimetrima.
     public var heightCm: Double?
@@ -56,6 +58,10 @@ public struct OnboardingApplier {
         settings.experience = answers.experience
         settings.equipment = answers.equipment
         settings.trainingDaysPerWeek = answers.validDaysPerWeek
+        if let sex = answers.sex {
+            settings.sex = sex
+            settings.bodyMapFemale = sex == .female
+        }
         settings.onboardingCompleted = true
         if let weightKg = answers.weightKg {
             context.insert(BodyMeasurement(kind: .weight, value: weightKg, date: now))

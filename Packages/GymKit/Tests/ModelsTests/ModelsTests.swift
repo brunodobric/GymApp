@@ -437,10 +437,12 @@ struct OnboardingTests {
         answers.experience = .intermediate
         answers.equipment = [.barbell, .dumbbell]
         answers.daysPerWeek = 4
+        answers.sex = .female
         try OnboardingApplier(context: context).apply(answers)
 
         let settings = try GymQueries(context: context).settings()
         #expect(settings.goal == .strength && settings.weightUnit == .pounds)
+        #expect(settings.sex == .female && settings.bodyMapFemale)
         #expect(settings.experience == .intermediate && settings.equipment == [.barbell, .dumbbell])
         #expect(settings.trainingDaysPerWeek == 4 && settings.wantsHealthKit && settings.onboardingCompleted)
 
@@ -461,6 +463,7 @@ struct OnboardingTests {
 
         let settings = try GymQueries(context: context).settings()
         #expect(settings.goal == nil && settings.experience == nil && settings.equipment.isEmpty)
+        #expect(settings.sex == nil && !settings.bodyMapFemale)
         #expect(settings.trainingDaysPerWeek == nil && settings.onboardingCompleted)
         #expect(try context.fetch(FetchDescriptor<BodyMeasurement>()).isEmpty)
     }
