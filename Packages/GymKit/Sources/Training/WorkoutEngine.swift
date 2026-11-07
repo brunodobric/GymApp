@@ -15,6 +15,7 @@ public enum WorkoutError: Error, Equatable {
 
 public struct WorkoutSummary: Equatable, Sendable {
     public struct ExerciseRecords: Equatable, Sendable {
+        public let exerciseKey: String
         public let exerciseName: String
         public let records: [PersonalRecord]
     }
@@ -22,7 +23,14 @@ public struct WorkoutSummary: Equatable, Sendable {
     public let durationSeconds: TimeInterval
     public let totalVolumeKg: Double
     public let completedSets: Int
+    /// Tvrde serije (`SetMetrics.isHard`): radne serije bez preslabih.
+    public let hardSets: Int
+    /// Svi rekordi treninga po vježbi.
     public let records: [ExerciseRecords]
+    /// Najviše tri istaknuta rekorda (`PRRanking`), od najznačajnijeg.
+    public let highlights: [RecordHighlight]
+    /// Rekordi koji nisu istaknuti ("i još 4 manja rekorda").
+    public let otherRecordsCount: Int
 }
 
 /// Operacije nad aktivnim treningom. Svaka promjena odmah se sprema (specifikacija: oporavak prekinutog treninga),
@@ -316,27 +324,45 @@ public struct WorkoutEngine {
     // MARK: Sažetak i rekordi
 
     /// Sažetak treninga s osobnim rekordima. Rekordi se uspoređuju samo s ranije završenim treninzima.
-    public func summary(of session: Session, trackedKinds: Set<PRKind> = Set(PRKind.allCases)) throws -> WorkoutSummary {
+    /// - Parameters:
+    ///   - excludedExercises: ključevi vježbi koje je korisnik isključio iz rekorda (`UserSettings.prExcludedExerciseKeys`)
+    ///   - isCompound: je li vježba (po ključu) složena, za rang istaknutih rekorda
+    public func summary(
+        of session: Session,
+        trackedKinds: Set<PRKind> = Set(PRKind.allCases),
+        excludedExercises: Set<String> = [],
+        isCompound: (String) -> Bool? = { _ in nil }
+    ) throws -> WorkoutSummary {
         var volume = 0.0
         var completed = 0
+        var hard = 0
         var records: [WorkoutSummary.ExerciseRecords] = []
+        var candidates: [RecordCandidate] = []
         for exercise in visibleExercises(in: session) {
             let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)
             completed += done.count
+            hard += done.filter(SetMetrics.isHard).count
             volume += done.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
 
-            let history = try finishedHistory(of: exercise.exercise, before: session)
+            let key = exercise.exerciseKey
+            guard !trackedKinds.isEmpty, !excludedExercises.contains(key) else { continue }
+            let history = try recordHistory(of: exercise.exercise, before: session, inputType: exercise.inputType)
             let found = PersonalRecordDetector.records(
-                current: done, history: history, inputType: exercise.inputType, kinds: trackedKinds
+                current: done, history: history, inputType: exercise.inputType, kinds: trackedKinds, date: session.startedAt
             )
             if !found.isEmpty {
-                records.append(.init(exerciseName: exercise.exerciseName, records: found))
+                records.append(.init(exerciseKey: key, exerciseName: exercise.exerciseName, records: found))
+                candidates.append(RecordCandidate(
+                    exerciseKey: key, exerciseName: exercise.exerciseName, records: found, isCompound: isCompound(key)
+                ))
             }
         }
+        let ranked = PRRanking.highlights(candidates)
         let end = session.endedAt ?? Date()
         return WorkoutSummary(
             durationSeconds: max(0, end.timeIntervalSince(session.startedAt)),
-            totalVolumeKg: volume, completedSets: completed, records: records
+            totalVolumeKg: volume, completedSets: completed, hardSets: hard, records: records,
+            highlights: ranked.shown, otherRecordsCount: ranked.hiddenCount
         )
     }
 
@@ -387,10 +413,14 @@ public struct WorkoutEngine {
     }
 
     /// Završene serije iste vježbe u ranije završenim treninzima, od najnovijeg prema starijem.
-    private func finishedHistory(of ref: ExerciseRef, before session: Session?) throws -> [[SetValues]] {
-        try finishedExercises(of: ref, before: session)
-            .map { $0.orderedSets.filter(\.isCompleted).map(\.values) }
-            .filter { !$0.isEmpty }
+    /// Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga.
+    private func recordHistory(of ref: ExerciseRef, before session: Session?, inputType: ExerciseInputType) throws -> RecordHistory {
+        var history = RecordHistory()
+        for exercise in try finishedExercises(of: ref, before: session).reversed() {
+            let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)
+            history.add(done, inputType: inputType, date: exercise.session?.startedAt)
+        }
+        return history
     }
 
     /// Izvođenja vježbe u ranije završenim treninzima, od najnovijeg prema starijem, bez čitanja serija.

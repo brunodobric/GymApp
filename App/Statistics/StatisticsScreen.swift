@@ -26,11 +26,22 @@ struct StatisticsScreen: View {
     @State private var heatmap: [String: RegionLoad] = [:]
     @State private var trends: [StrengthTrend] = []
     @State private var records: [RecordEntry] = []
+    @State private var review: WeeklyReview?
+    @State private var suggestions: [Suggestion] = []
+    @State private var effort = EffortDistribution()
+    @State private var intensity = IntensityDistribution()
+
+    private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
+    private var isPro: Bool { settings?.statsDetail == .pro }
 
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
 
     private var trackedKinds: Set<PRKind> {
-        PRKind.tracked(by: UserSettings.preferred(in: settingsList))
+        PRKind.tracked(by: settings)
+    }
+
+    private var excludedExercises: Set<String> {
+        settings?.prExcludedExerciseKeys ?? []
     }
 
     private struct LoadKey: Equatable {
@@ -38,11 +49,14 @@ struct StatisticsScreen: View {
         var setsWeeks: Int
         var heatmapDays: Int
         var customCount: Int
+        var goal: TrainingGoal?
+        var plannedPerWeek: Int?
     }
 
     private struct RecordsKey: Equatable {
         var sessionCount: Int
         var kinds: Set<PRKind>
+        var excluded: Set<String>
     }
 
     var body: some View {
@@ -57,12 +71,19 @@ struct StatisticsScreen: View {
                 }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)], spacing: 16) {
                     if sessionCount > 0 {
+                        if let review {
+                            WeeklyReviewCard(review: review, suggestions: suggestions, isPro: isPro)
+                        }
                         SetsCard(weeks: $setsWeeks, loads: weeklySets)
                         ComparisonCard(comparison: VolumeComparison(buckets: buckets))
                         HeatmapCard(days: $heatmapDays, heatmap: heatmap, female: UserSettings.preferred(in: settingsList)?.bodyMapFemale ?? false)
-                        StrengthTrendCard(trends: trends)
+                        StrengthTrendCard(trends: trends, isPro: isPro)
                         FrequencyCard(points: frequency)
                         RecordsCard(records: records, unit: unit)
+                        if isPro {
+                            EffortCard(distribution: effort)
+                            IntensityCard(distribution: intensity)
+                        }
                     }
                     ProgressCard()
                     BodyCard()
@@ -72,10 +93,11 @@ struct StatisticsScreen: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Statistika")
             .task(id: LoadKey(
-                sessionCount: sessionCount, setsWeeks: setsWeeks, heatmapDays: heatmapDays, customCount: customExercises.count
+                sessionCount: sessionCount, setsWeeks: setsWeeks, heatmapDays: heatmapDays, customCount: customExercises.count,
+                goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek
             )) { load() }
             // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
-            .task(id: RecordsKey(sessionCount: sessionCount, kinds: trackedKinds)) { loadRecords() }
+            .task(id: RecordsKey(sessionCount: sessionCount, kinds: trackedKinds, excluded: excludedExercises)) { loadRecords() }
         }
     }
 
@@ -95,11 +117,21 @@ struct StatisticsScreen: View {
         let start = Calendar.current.date(byAdding: .day, value: -heatmapDays, to: now) ?? now
         heatmap = (try? engine.heatmap(from: start, until: end, info: info)) ?? [:]
         trends = (try? engine.strengthTrends(weeks: 4, endingAt: end, info: info)) ?? []
+        let weekly = try? engine.weeklyReview(
+            endingAt: now, goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek, info: info
+        )
+        review = weekly?.review
+        suggestions = weekly?.suggestions ?? []
+        let monthStart = now.addingTimeInterval(-28 * 24 * 3600)
+        effort = (try? engine.effortDistribution(from: monthStart, until: end)) ?? EffortDistribution()
+        intensity = (try? engine.intensityDistribution(from: monthStart, until: end)) ?? IntensityDistribution()
     }
 
     private func loadRecords() {
         PerformanceSignpost.measure("StatisticsRecords") {
-            records = (try? StatisticsEngine(context: context).personalRecords(kinds: trackedKinds)) ?? []
+            records = (try? StatisticsEngine(context: context).personalRecords(
+                kinds: trackedKinds, excluding: excludedExercises
+            )) ?? []
         }
     }
 }
@@ -252,23 +284,35 @@ private struct ComparisonCard: View {
 
 // MARK: - Trend snage
 
-/// Promjena najbolje procjene 1RM po mišiću: zadnja 4 tjedna prema 4 tjedna prije toga.
+/// Mjesečna promjena procjene 1RM po mišiću u zadnjih 8 tjedana. Osnovni prikaz pokazuje najviše tri mišića
+/// s najvećim i tri s najmanjim rastom, detaljni sve s brojem vježbi.
 private struct StrengthTrendCard: View {
     let trends: [StrengthTrend]
+    let isPro: Bool
+
+    private var shown: [StrengthTrend] {
+        guard !isPro, trends.count > 6 else { return trends }
+        return Array(trends.prefix(3)) + Array(trends.suffix(3))
+    }
 
     var body: some View {
         StatisticsCard(title: "Trend snage po mišićima") {
             if trends.isEmpty {
-                Text("Trend se pojavi kad istu vježbu s težinom radiš i u zadnja 4 tjedna i u 4 tjedna prije toga.")
+                Text("Trend se pojavi kad istu vježbu s težinom napraviš barem 4 puta u 8 tjedana.")
                     .foregroundStyle(.secondary)
             } else {
-                Text("Najbolja procjena 1RM glavnih vježbi u zadnja 4 tjedna prema 4 tjedna prije.")
+                Text("Promjena procjene 1RM glavnih vježbi mjesečno, zadnjih 8 tjedana.")
                     .font(.subheadline).foregroundStyle(.secondary)
-                ForEach(trends.prefix(8), id: \.region) { trend in
-                    LabeledContent(BodyRegion.title(trend.region)) {
-                        Text(trend.change.formatted(.percent.precision(.fractionLength(0...1)).sign(strategy: .always(includingZero: false))))
+                ForEach(shown, id: \.region) { trend in
+                    LabeledContent {
+                        Text(ChangeFormat.percent(trend.change))
                             .monospacedDigit()
-                            .foregroundStyle(trend.change >= 0.005 ? Color.green : trend.change <= -0.005 ? Color.red : Color.secondary)
+                            .foregroundStyle(ChangeFormat.color(trend.change))
+                    } label: {
+                        Text(BodyRegion.title(trend.region))
+                        if isPro {
+                            Text("Vježbi: \(trend.exercises)")
+                        }
                     }
                 }
             }
@@ -425,37 +469,6 @@ extension BodyRegion {
 }
 
 // MARK: - Rekordi
-
-extension PRKind {
-    var title: String {
-        switch self {
-        case .maxWeight: String(localized: "Najveća težina")
-        case .maxVolume: String(localized: "Najveći volumen serije")
-        case .maxReps: String(localized: "Najviše ponavljanja")
-        case .lowestAssistance: String(localized: "Najmanja pomoć")
-        case .longestDuration: String(localized: "Najduže trajanje")
-        case .longestDistance: String(localized: "Najveća udaljenost")
-        }
-    }
-}
-
-enum RecordFormat {
-    static func value(_ record: PersonalRecord, unit: WeightUnit) -> String {
-        switch record.kind {
-        case .maxWeight, .maxVolume, .lowestAssistance:
-            return WeightFormatter(unit: unit).string(fromKilograms: record.value)
-        case .maxReps:
-            return String(localized: "\(Int(record.value)) pon.")
-        case .longestDuration:
-            let seconds = Int(record.value)
-            return String(format: "%d:%02d", seconds / 60, seconds % 60)
-        case .longestDistance:
-            return record.value >= 1000
-                ? String(localized: "\((record.value / 1000).formatted(.number.precision(.fractionLength(0...2)))) km")
-                : String(localized: "\(Int(record.value)) m")
-        }
-    }
-}
 
 private struct RecordsCard: View {
     let records: [RecordEntry]

@@ -81,8 +81,9 @@ Aplikacija podržava 3 glavna modula:
   Primjer (2 vježbe, zadana pauza 90 s): pauza 0 nakon prve, 90 s nakon druge.  
   Primjer (3 vježbe, zadana pauza 120 s): pauza 0 nakon prve dvije, 120 s nakon treće.  
   Korisnik može dodati superset i ad-hoc tijekom samog treninga.
-* **Osobni rekordi (PR):** Automatsko prepoznavanje max težine, max volumena i max ponavljanja po vježbi (samo radne serije; za potpomognute vježbe rekord je najmanja pomoć, za vježbe s trajanjem najdulje trajanje).  
-  Korisnik može u Postavkama potpuno isključiti PR-ove ili odabrati koje tipove želi pratiti.  
+* **Osobni rekordi (PR):** Glavni rekord je procjena 1RM (Epley s ponavljanjima u rezervi iz RPE-a ili RIR-a, samo serije do 12 ponavljanja do otkaza). Uz nju se prate najteža serija po rasponu ponavljanja (1, 3, 5, 8, 10, 12, 15+), najveća težina, volumen vježbe u treningu i najviše ponavljanja; za potpomognute vježbe najmanja pomoć, za vježbe s trajanjem ili udaljenošću najdulje trajanje i najveća udaljenost. Samo radne serije. Rekord po volumenu jedne serije ne postoji.  
+  Protiv previše rekorda: rekord se računa od četvrtog izvođenja vježbe, napredak mora biti barem 1 % i barem 0,5 kg, a nakon pauze od 6 tjedana prva dva treninga ne daju rekord. Sažetak ističe najviše jedan rekord po vježbi i najviše tri ukupno, poredane po veličini napretka prema uobičajenom kolebanju vježbe (složene vježbe 3 %, ostale 5 %, ponavljanja 8 %); ostali su pod "Još manjih rekorda".  
+  Korisnik može u Postavkama potpuno isključiti PR-ove, odabrati koje tipove želi pratiti i isključiti pojedine vježbe iz rekorda.  
   Slavljenje se prikazuje na kraju treninga — u sažetku koji iskoči nakon zatvaranja treninga.
 
 ### B. Kardio trening (Cardio)
@@ -272,7 +273,11 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 * **PR lista** s filterima i datumima.
 * **Muscle heatmap** koji prikazuje prosjek tvrdih serija tjedno po mišiću u zadnjih 30 dana, 90 dana ili godinu dana, na fiksnoj skali s legendom: ispod 5, 5 do 9, 10 do 20 (zona za rast) i iznad 20 serija. Ispod mape su glavni mišići s manje od 5 serija tjedno, a dodir mišića pokazuje serije tjedno, treninge tjedno i zadnji trening.
 * **Serije po mišiću tjedno:** prosjek zadnja 4 ili 12 tjedana, s označenom zonom 10 do 20 serija. Usporedba ovog i prošlog tjedna je u serijama.
-* **Trend snage po mišiću:** prosječna promjena najbolje procjene 1RM glavnih vježbi mišića (zadnja 4 tjedna prema 4 tjedna prije), iz serija do 12 ponavljanja.
+* **Trend snage po mišiću:** medijan mjesečne promjene procjene 1RM glavnih vježbi mišića u zadnjih 8 tjedana.
+* **Status vježbe:** napreduje, stoji, plato (stoji barem 4 tjedna), pada ili premalo podataka. Računa se iz Theil–Senovog nagiba logaritma procjene 1RM (ili ponavljanja za vlastitu težinu) u zadnjih 8 tjedana, od 4 izvođenja. Napredak mora biti veći od kolebanja vježbe, koje se od 6 izvođenja uči iz podataka (2 do 8 %).
+* **Pregled zadnja 4 tjedna:** četiri dijela umjesto jedne ocjene: snaga (statusi vježbi), volumen (glavni mišići u zoni tvrdih serija prema cilju), redovitost (treninzi prema planu) i napor (udio serija s 0 do 3 ponavljanja u rezervi). Uz pregled ide prijedlog za dalje (lakši tjedan, manje dana, više ili manje serija, veća težina, zaboravljen mišić).
+* **Prikaz statistike:** osnovni ili detaljni, besplatna postavka. Detaljni dodaje zbroj dobrih dijelova pregleda, sve prijedloge, raspodjelu napora i intenziteta serija, najtežu seriju po ponavljanjima, relativnu snagu, odmor između serija i ocjenu napora treninga (sRPE, Foster i sur. 2001) u sažetku.
+* **Sažetak treninga:** tvrde serije, usporedba s prošlim izvođenjem istog predloška (tonaža, tvrde serije, trajanje), procjena 1RM po vježbi s promjenom prema prošlom izvođenju i tvrde serije mišića u tom tjednu.
 * **Tvrde serije:** mjera volumena po mišiću za mapu i grafove. Broji se završena radna serija; serija s upisanim RPE-om ispod 6 (RIR 5 i više) ne broji se, a serija bez RPE-a broji se uvijek. Mišić kojem je vježba glavna dobiva cijelu seriju, a mišić koji pomaže pola. Vježbe s vlastitom težinom broje se jednako. Tonaža (kg × ponavljanja) ostaje za napredak pojedine vježbe i karticu tjednog volumena na Početnoj, jer nije usporediva između mišića različite veličine. Izvori: Schoenfeld i sur. 2017 (doza i odgovor), Pelland i sur. (frakcijsko brojanje pomoćnih serija), Robinson i sur. 2024 (blizina otkaza).
 
 ---

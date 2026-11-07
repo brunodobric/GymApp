@@ -218,12 +218,12 @@ struct StatisticsTests {
         #expect(points.map(\.sessions) == [0, 1, 2])
     }
 
-    @Test("Rekordi kroz povijest: prvi trening nije rekord, kasniji jesu")
+    @Test("Rekordi kroz povijest: prva tri izvođenja nisu rekord, kasnija jesu")
     func records() throws {
         let context = try makeContext()
-        try addSession(context, at: base, lifts: [Lift(ref: bench, sets: [Work(weight: 80, reps: 5)])])
-        try addSession(context, at: base.addingTimeInterval(7 * day), lifts: [Lift(ref: bench, sets: [Work(weight: 85, reps: 5)])])
-        try addSession(context, at: base.addingTimeInterval(14 * day), lifts: [Lift(ref: bench, sets: [Work(weight: 82, reps: 5)])])
+        for (index, weight) in [80.0, 80, 80, 85, 82].enumerated() {
+            try addSession(context, at: base.addingTimeInterval(Double(index) * 7 * day), lifts: [Lift(ref: bench, sets: [Work(weight: weight, reps: 5)])])
+        }
 
         let entries = try StatisticsEngine(context: context).personalRecords()
         let weight = entries.filter { $0.record.kind == .maxWeight }
@@ -233,6 +233,7 @@ struct StatisticsTests {
         // Najnoviji prvi.
         #expect(entries.map(\.date) == entries.map(\.date).sorted(by: >))
         #expect(try StatisticsEngine(context: context).personalRecords(kinds: []).isEmpty)
+        #expect(try StatisticsEngine(context: context).personalRecords(excluding: [bench.key]).isEmpty)
     }
 
     @Test("Heatmap: serije tjedno na fiksnoj skali, pomoćne upola, učestalost samo s cijelom serijom")
@@ -276,17 +277,19 @@ struct StatisticsTests {
         #expect(result["triceps"]?.weeklyLevel == 2)
     }
 
-    @Test("Trend snage: promjena najbolje procjene 1RM po regiji između dva razdoblja")
+    @Test("Trend snage: mjesečni nagib procjene 1RM po regiji, vježba treba barem 4 izvođenja")
     func strengthTrends() throws {
         let context = try makeContext()
-        try addSession(context, at: base.addingTimeInterval(-35 * day), lifts: [Lift(ref: bench, sets: [Work(weight: 100, reps: 5)])])
-        try addSession(context, at: base.addingTimeInterval(-3 * day), lifts: [
-            Lift(ref: bench, sets: [Work(weight: 105, reps: 5), Work(weight: 60, reps: 20)]),
-            Lift(ref: squat, sets: [Work(weight: 120, reps: 5)]),
-        ])
+        for (offset, weight) in [(42.0, 100.0), (28, 102.5), (14, 105), (1, 107.5)] {
+            try addSession(context, at: base.addingTimeInterval(-offset * day), lifts: [
+                Lift(ref: bench, sets: [Work(weight: weight, reps: 5), Work(weight: 60, reps: 20)]),
+            ])
+        }
+        try addSession(context, at: base.addingTimeInterval(-3 * day), lifts: [Lift(ref: squat, sets: [Work(weight: 120, reps: 5)])])
         let trends = try StatisticsEngine(context: context).strengthTrends(weeks: 4, endingAt: base, info: infoProvider)
         #expect(trends.map(\.region) == ["chest"])
-        #expect(abs(trends[0].change - 0.05) < 0.0001)
+        // Theil–Sen nad ln(1RM): oko +5,4 % mjesečno.
+        #expect(abs(trends[0].change - 0.0543) < 0.001)
         #expect(trends[0].exercises == 1)
     }
 }
@@ -342,7 +345,7 @@ struct StatisticsPerformanceTests {
         for index in 0..<156 {
             let date = base.addingTimeInterval(Double(index) * 2.3 * day - 365 * day)
             let lifts = refs.map { ref in
-                Lift(ref: ref, sets: (0..<4).map { Work(weight: 60 + Double(index) * 0.2 + Double($0), reps: 8) })
+                Lift(ref: ref, sets: (0..<4).map { Work(weight: 60 + Double(index) + Double($0), reps: 8) })
             }
             try addSession(context, at: date, lifts: lifts, save: false)
         }

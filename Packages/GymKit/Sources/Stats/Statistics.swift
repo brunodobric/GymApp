@@ -10,14 +10,18 @@ public struct ExerciseInfo: Equatable, Sendable {
     public var secondary: [Muscle]
     public var primaryRegions: [String]
     public var secondaryRegions: [String]
+    /// Složena (više zglobova) ili izolacijska vježba iz kataloga. Nil kad se ne zna (vlastita vježba).
+    public var isCompound: Bool?
 
     public init(
-        primary: [Muscle] = [], secondary: [Muscle] = [], primaryRegions: [String] = [], secondaryRegions: [String] = []
+        primary: [Muscle] = [], secondary: [Muscle] = [], primaryRegions: [String] = [], secondaryRegions: [String] = [],
+        isCompound: Bool? = nil
     ) {
         self.primary = primary
         self.secondary = secondary
         self.primaryRegions = primaryRegions
         self.secondaryRegions = secondaryRegions
+        self.isCompound = isCompound
     }
 }
 
@@ -29,8 +33,17 @@ public struct ExercisePoint: Equatable, Sendable {
     /// Najveća težina radne serije (kg); 0 kad vježba nema težinu.
     public let bestWeightKg: Double
     public let bestReps: Int
+    /// Najbolja pouzdana procjena 1RM (s RIR-om, do 12 ponavljanja do otkaza); nil bez takve serije.
     public let estimatedOneRepMaxKg: Double?
     public let volumeKg: Double
+
+    public init(date: Date, bestWeightKg: Double, bestReps: Int, estimatedOneRepMaxKg: Double?, volumeKg: Double) {
+        self.date = date
+        self.bestWeightKg = bestWeightKg
+        self.bestReps = bestReps
+        self.estimatedOneRepMaxKg = estimatedOneRepMaxKg
+        self.volumeKg = volumeKg
+    }
 }
 
 /// Opterećenje jedne regije u razdoblju grafa.
@@ -112,11 +125,10 @@ public struct RegionLoad: Equatable, Sendable {
     public var weeklyLevel: Int { LoadScale.weeklyLevel(weeklySets) }
 }
 
-/// Promjena snage jedne regije: prosjek promjene najbolje procjene 1RM njenih glavnih vježbi
-/// između zadnjih i prethodnih nekoliko tjedana.
+/// Promjena snage jedne regije: prosjek mjesečnog nagiba procjene 1RM njenih glavnih vježbi.
 public struct StrengthTrend: Equatable, Sendable {
     public let region: String
-    /// Relativna promjena (0,05 = +5 %).
+    /// Relativna promjena mjesečno (0,05 = +5 % mjesečno).
     public let change: Double
     /// Broj vježbi koje su rađene u oba razdoblja.
     public let exercises: Int
@@ -142,29 +154,33 @@ public struct StatisticsEngine {
         )
         var points: [ExercisePoint] = []
         for exercise in try context.fetch(descriptor) {
-            guard let session = exercise.session, session.state == .finished else { continue }
-            let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values).filter { $0.kind == .working }
-            guard !sets.isEmpty else { continue }
-            let type = exercise.inputType
-            var bestWeight = 0.0
-            var bestReps = 0
-            var oneRepMax: Double?
-            for set in sets {
-                let weight = (type == .weightedBodyweight ? set.extraWeightKg : set.weightKg) ?? 0
-                bestWeight = max(bestWeight, weight)
-                bestReps = max(bestReps, set.reps ?? 0)
-                if type == .weightReps || type == .weightedBodyweight,
-                   let estimate = SetMetrics.estimatedOneRepMax(weightKg: weight, reps: set.reps ?? 0, formula: formula) {
-                    oneRepMax = max(oneRepMax ?? 0, estimate)
-                }
-            }
-            let volume = sets.reduce(0) { $0 + SetMetrics.volume($1, inputType: type) }
-            points.append(ExercisePoint(
-                date: session.startedAt, bestWeightKg: bestWeight, bestReps: bestReps,
-                estimatedOneRepMaxKg: oneRepMax, volumeKg: volume
-            ))
+            guard let session = exercise.session, session.state == .finished,
+                  let point = Self.point(of: exercise, date: session.startedAt, formula: formula) else { continue }
+            points.append(point)
         }
         return points.sorted { $0.date < $1.date }
+    }
+
+    /// Točka napretka jednog izvođenja vježbe. Nil kad nema završenih radnih serija.
+    static func point(of exercise: SessionExercise, date: Date, formula: SetMetrics.OneRepMaxFormula) -> ExercisePoint? {
+        let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values).filter { $0.kind == .working }
+        guard !sets.isEmpty else { return nil }
+        let type = exercise.inputType
+        var bestWeight = 0.0
+        var bestReps = 0
+        var oneRepMax: Double?
+        for set in sets {
+            bestWeight = max(bestWeight, SetMetrics.load(set, inputType: type) ?? 0)
+            bestReps = max(bestReps, set.reps ?? 0)
+            // Samo pouzdane serije (do 12 ponavljanja do otkaza), s RIR-om iz RPE-a.
+            if let estimate = SetMetrics.strengthEstimate(set, inputType: type, formula: formula) {
+                oneRepMax = max(oneRepMax ?? 0, estimate)
+            }
+        }
+        let volume = sets.reduce(0) { $0 + SetMetrics.volume($1, inputType: type) }
+        return ExercisePoint(
+            date: date, bestWeightKg: bestWeight, bestReps: bestReps, estimatedOneRepMaxKg: oneRepMax, volumeKg: volume
+        )
     }
 
     // MARK: Serije po mišićnoj skupini
@@ -223,29 +239,35 @@ public struct StatisticsEngine {
     // MARK: Osobni rekordi
 
     /// Svi rekordi postavljeni kroz povijest, od najnovijeg. Svaki trening se uspoređuje samo s ranijima.
-    public func personalRecords(kinds: Set<PRKind> = Set(PRKind.allCases)) throws -> [RecordEntry] {
+    /// Vježbe iz `excluding` (isključene u Postavkama) nemaju rekorda.
+    public func personalRecords(
+        kinds: Set<PRKind> = Set(PRKind.allCases), excluding excluded: Set<String> = []
+    ) throws -> [RecordEntry] {
+        guard !kinds.isEmpty else { return [] }
         let finished = SessionState.finished.rawValue
         let sessions = try context.fetch(FetchDescriptor<Session>(
             predicate: #Predicate { $0.stateRaw == finished },
             sortBy: [SortDescriptor(\.startedAt)]
         ))
-        var history: [String: [[SetValues]]] = [:]
+        // Sažeta povijest daje iste rekorde, a ne raste s brojem treninga.
+        var history: [String: RecordHistory] = [:]
         var entries: [RecordEntry] = []
         for session in sessions {
             for exercise in session.orderedExercises where !exercise.isRemoved {
                 let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)
-                guard !done.isEmpty else { continue }
                 let key = exercise.exerciseKey
+                guard !done.isEmpty, !excluded.contains(key) else { continue }
+                var past = history[key] ?? RecordHistory()
                 let found = PersonalRecordDetector.records(
-                    current: done, history: history[key] ?? [], inputType: exercise.inputType, kinds: kinds
+                    current: done, history: past, inputType: exercise.inputType, kinds: kinds, date: session.startedAt
                 )
                 for record in found {
                     entries.append(RecordEntry(
                         date: session.startedAt, exerciseKey: key, exerciseName: exercise.exerciseName, record: record
                     ))
                 }
-                // Sažeta povijest daje iste rekorde, a ne raste s brojem treninga.
-                history[key] = PersonalRecordDetector.condensed((history[key] ?? []) + [done])
+                past.add(done, inputType: exercise.inputType, date: session.startedAt)
+                history[key] = past
             }
         }
         return entries.reversed()
@@ -310,42 +332,21 @@ public struct StatisticsEngine {
 
     // MARK: Trend snage
 
-    /// Promjena snage po regiji: za svaku vježbu s težinom uspoređuje se najbolja procjena 1RM iz zadnjih
-    /// `weeks` tjedana s najboljom iz `weeks` tjedana prije toga. Regija dobiva prosjek promjena vježbi kojima je
-    /// glavni mišić. Broje se tvrde serije do 12 ponavljanja, jer je procjena 1RM iznad toga nepouzdana.
-    /// Regije bez vježbe u oba razdoblja nisu u popisu. Poredak: od najvećeg rasta.
+    /// Promjena snage po regiji: za svaku vježbu s težinom računa se mjesečni nagib procjene 1RM u zadnjih
+    /// `2 × weeks` tjedana (`TrendAnalysis`, otporno na jedan loš ili iznimno dobar dan). Regija dobiva prosjek
+    /// nagiba vježbi kojima je glavni mišić. Broje se pouzdane serije (do 12 ponavljanja do otkaza).
+    /// Vježba treba barem `TrendAnalysis.minimumSessions` izvođenja. Poredak: od najvećeg rasta.
     public func strengthTrends(
         weeks: Int = 4, endingAt now: Date = Date(), info: ExerciseInfoProvider,
         formula: SetMetrics.OneRepMaxFormula = .epley
     ) throws -> [StrengthTrend] {
-        let span = Double(weeks) * 7 * 24 * 3600
-        let split = now.addingTimeInterval(-span)
-        let from = split.addingTimeInterval(-span)
-        var recent: [String: Double] = [:]
-        var previous: [String: Double] = [:]
-        var regionsByExercise: [String: [String]] = [:]
-        for session in try GymQueries(context: context).finishedSessions(from: from, to: now) {
-            for exercise in session.orderedExercises where exercise.inputType == .weightReps {
-                guard let details = info(exercise.exerciseKey), !details.primaryRegions.isEmpty else { continue }
-                let best = EffectiveSets.hardSets(of: exercise)
-                    .filter { ($0.reps ?? 0) <= 12 }
-                    .compactMap { SetMetrics.estimatedOneRepMax(weightKg: $0.weightKg ?? 0, reps: $0.reps ?? 0, formula: formula) }
-                    .max()
-                guard let best else { continue }
-                let key = exercise.exerciseKey
-                regionsByExercise[key] = details.primaryRegions
-                if session.startedAt >= split {
-                    recent[key] = max(recent[key] ?? 0, best)
-                } else {
-                    previous[key] = max(previous[key] ?? 0, best)
-                }
-            }
-        }
+        let trends = try exerciseTrends(weeks: weeks * 2, endingAt: now, info: info, formula: formula)
         var changes: [String: [Double]] = [:]
-        for (key, latest) in recent {
-            guard let before = previous[key], before > 0 else { continue }
-            for region in regionsByExercise[key] ?? [] {
-                changes[region, default: []].append(latest / before - 1)
+        for trend in trends {
+            guard let monthly = trend.trend.monthlyChange, trend.trend.status != .insufficientData,
+                  let details = info(trend.key) else { continue }
+            for region in details.primaryRegions {
+                changes[region, default: []].append(monthly)
             }
         }
         return changes

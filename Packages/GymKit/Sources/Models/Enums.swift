@@ -81,6 +81,12 @@ public enum AccentChoice: String, Codable, CaseIterable, Sendable {
     case blue, green, orange, red, purple, pink, teal
 }
 
+/// Razina statistike: osnovna (pregled, status, najviše tri rekorda) ili detaljna (sve kartice i podaci).
+public enum StatsDetail: String, Codable, CaseIterable, Sendable {
+    case basic
+    case pro
+}
+
 public enum EffortScale: String, Codable, CaseIterable, Sendable {
     case rpe
     case rir

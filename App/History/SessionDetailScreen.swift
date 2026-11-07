@@ -26,6 +26,8 @@ struct SessionDetailScreen: View {
     /// Raste nakon zatvaranja uređivača. Osvježeni trening ne javlja promjenu SwiftUI-ju,
     /// pa se lista s novim `id` iscrtava iznova i čita nove vrijednosti.
     @State private var contentVersion = 0
+    @State private var comparison: SessionComparison?
+    @State private var results: [String: ExerciseResult] = [:]
 
     /// Kalorije i puls su u lokalnoj bazi podataka iz Zdravlja.
     private var health: HealthLocalStore { HealthLocalStore(context: context) }
@@ -48,6 +50,9 @@ struct SessionDetailScreen: View {
                 if let energy = health.activeEnergy(of: session) {
                     LabeledContent("Aktivne kalorije", value: "\(Int(energy.rounded())) kcal")
                 }
+                if let effort = session.sessionRPE {
+                    LabeledContent("Napor treninga", value: "\(Int(effort)) / 10")
+                }
             } footer: {
                 if session.isImportedFromWorkoutsApp {
                     Text("Uvezeno iz Zdravlja.")
@@ -55,10 +60,19 @@ struct SessionDetailScreen: View {
                     Text("Spremljeno u Zdravlje.")
                 }
             }
+            if let comparison {
+                SessionComparisonSection(comparison: comparison, unit: unit)
+            }
             ForEach(session.orderedExercises.filter { !$0.isRemoved }) { exercise in
-                Section(exercise.exerciseName) {
+                Section {
                     ForEach(Array(exercise.orderedSets.filter(\.isCompleted).enumerated()), id: \.element.id) { index, set in
                         SetLine(set: set, inputType: exercise.inputType, unit: unit, number: number(of: set, in: exercise, fallback: index))
+                    }
+                } header: {
+                    Text(exercise.exerciseName)
+                } footer: {
+                    if let result = results[exercise.exerciseKey], let oneRepMax = result.oneRepMaxKg {
+                        Text(resultText(oneRepMax: oneRepMax, change: result.change))
                     }
                 }
             }
@@ -71,6 +85,12 @@ struct SessionDetailScreen: View {
             SessionMusclesSection(session: session)
         }
         .id(contentVersion)
+        .task(id: contentVersion) {
+            let engine = StatisticsEngine(context: context)
+            comparison = try? engine.comparison(of: session)
+            let list = (try? engine.exerciseResults(of: session)) ?? []
+            results = Dictionary(list.map { ($0.key, $0) }, uniquingKeysWith: { first, _ in first })
+        }
         .navigationTitle(showsHeader ? "" : session.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -119,6 +139,13 @@ struct SessionDetailScreen: View {
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
         .onScrollVisibilityChange(threshold: 0.3) { showsHeader = $0 }
+    }
+
+    /// Npr. "Procjena 1RM 108 kg, +2,8 % prema prošlom izvođenju".
+    private func resultText(oneRepMax: Double, change: Double?) -> String {
+        let weight = WeightFormatter(unit: unit).string(fromKilograms: oneRepMax)
+        guard let change else { return String(localized: "Procjena 1RM \(weight)") }
+        return String(localized: "Procjena 1RM \(weight), \(ChangeFormat.percent(change)) prema prošlom izvođenju")
     }
 
     /// Redni broj radne serije; zagrijavanje nema broj.

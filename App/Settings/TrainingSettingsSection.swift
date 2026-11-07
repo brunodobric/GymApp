@@ -3,9 +3,14 @@ import SwiftUI
 import Training
 import Units
 
-/// Postavke treninga: jedinice, zadana pauza, RPE ili RIR, zvuk kraja odmora i rekordi.
+/// Postavke treninga: jedinice, zadana pauza, RPE ili RIR, zvuk kraja odmora, rekordi i prikaz statistike.
 struct TrainingSettingsSection: View {
     @Bindable var settings: UserSettings
+
+    private var excludedSummary: String {
+        let count = settings.prExcludedExerciseKeys.count
+        return count == 0 ? String(localized: "Sve") : String(localized: "Isključeno: \(count)")
+    }
 
     var body: some View {
         Section {
@@ -31,14 +36,33 @@ struct TrainingSettingsSection: View {
                 Text("Kad trening pokreneš na iPhoneu, Apple Watch mjeri puls i kalorije, ostaje otvoren tijekom treninga i vibrira na kraju odmora.")
             }
         }
-        Section("Rekordi") {
+        Section {
             Toggle("Rekordi (PR)", isOn: $settings.prEnabled)
             if settings.prEnabled {
                 ForEach(PRSettingOption.allCases) { option in
                     Toggle(option.title, isOn: option.binding(for: settings))
                         .padding(.leading)
                 }
+                NavigationLink {
+                    RecordExercisesScreen(settings: settings)
+                } label: {
+                    LabeledContent("Vježbe u rekordima", value: excludedSummary)
+                }
             }
+        } header: {
+            Text("Rekordi")
+        } footer: {
+            Text("Rekord se računa od četvrtog izvođenja vježbe i kad je napredak barem 1 posto. Glavni rekord je procjena 1RM, a sažetak treninga ističe najviše tri rekorda.")
+        }
+        Section {
+            Picker("Prikaz statistike", selection: $settings.statsDetail) {
+                Text("Osnovni").tag(StatsDetail.basic)
+                Text("Detaljni").tag(StatsDetail.pro)
+            }
+        } header: {
+            Text("Statistika")
+        } footer: {
+            Text("Detaljni prikaz dodaje sve prijedloge, napor i intenzitet serija, tablicu rekorda po ponavljanjima, relativnu snagu, odmor između serija i ocjenu napora treninga.")
         }
     }
 }

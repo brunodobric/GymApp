@@ -1,3 +1,4 @@
+import Catalog
 import Models
 import Stats
 import SwiftData
@@ -5,7 +6,9 @@ import SwiftUI
 import Training
 import Units
 
-/// Sažetak nakon završetka treninga: trajanje, volumen, serije, osobni rekordi i bilješka.
+/// Sažetak nakon završetka treninga: trajanje, tonaža, tvrde serije, usporedba s prošlim izvođenjem istog
+/// treninga, rezultat po vježbi, mišići, najviše tri istaknuta rekorda i bilješka. U detaljnom prikazu
+/// statistike još odmor između serija i ocjena napora treninga.
 struct WorkoutSummarySheet: View {
     let session: Session
     let summary: WorkoutSummary
@@ -13,8 +16,15 @@ struct WorkoutSummarySheet: View {
     let onClose: () -> Void
 
     @Environment(\.modelContext) private var context
+    @Environment(CatalogStore.self) private var catalogStore
+    @Query private var settingsList: [UserSettings]
+    @Query private var customExercises: [CustomExercise]
     @State private var notes: String
     @State private var heartRateText: String
+    @State private var sessionRPE: Double?
+    @State private var comparison: SessionComparison?
+    @State private var results: [ExerciseResult] = []
+    @State private var weekSets: [String: Double] = [:]
 
     init(session: Session, summary: WorkoutSummary, unit: WeightUnit, onClose: @escaping () -> Void) {
         self.session = session
@@ -23,7 +33,10 @@ struct WorkoutSummarySheet: View {
         self.onClose = onClose
         _notes = State(initialValue: session.notes)
         _heartRateText = State(initialValue: NumberInput.format(session.averageHeartRate))
+        _sessionRPE = State(initialValue: session.sessionRPE)
     }
+
+    private var isPro: Bool { UserSettings.preferred(in: settingsList)?.statsDetail == .pro }
 
     private var hasCardio: Bool {
         session.orderedExercises.contains { $0.inputType == .durationDistance || $0.inputType == .duration }
@@ -35,27 +48,33 @@ struct WorkoutSummarySheet: View {
                 Section {
                     LabeledContent("Trajanje", value: durationText(summary.durationSeconds))
                     LabeledContent("Volumen", value: WeightFormatter(unit: unit).string(fromKilograms: summary.totalVolumeKg))
-                    LabeledContent("Završene serije", value: "\(summary.completedSets)")
+                    LabeledContent("Tvrde serije", value: "\(summary.hardSets)")
                     if let meters = session.distanceMeters {
                         LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
                     }
+                } footer: {
+                    Text("Tvrde serije su radne serije bez onih s RPE ispod 6.")
                 }
-                SessionMusclesSection(session: session)
-                Section("Osobni rekordi") {
-                    if summary.records.isEmpty {
-                        Text("Danas nema novih rekorda.")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(summary.records, id: \.exerciseName) { item in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(item.exerciseName).font(.itemTitle)
-                                ForEach(item.records, id: \.kind) { record in
-                                    Label(recordText(record), systemImage: "trophy.fill")
-                                        .font(.rowValueSmall)
-                                        .foregroundStyle(.orange)
-                                }
+                if let comparison {
+                    SessionComparisonSection(comparison: comparison, unit: unit)
+                }
+                recordsSection
+                if !results.isEmpty {
+                    Section("Vježbe") {
+                        ForEach(results) { ExerciseResultRow(result: $0, unit: unit, showsRest: isPro) }
+                    }
+                }
+                SessionMusclesSection(session: session, weekSets: weekSets)
+                if isPro {
+                    Section {
+                        Picker("Napor treninga", selection: $sessionRPE) {
+                            Text("Bez ocjene").tag(Double?.none)
+                            ForEach(1...10, id: \.self) { value in
+                                Text(verbatim: "\(value)").tag(Double?.some(Double(value)))
                             }
                         }
+                    } footer: {
+                        Text("Koliko je bio težak cijeli trening, od 1 do 10. Napor puta trajanje je opterećenje treninga (Foster i sur. 2001).")
                     }
                 }
                 if hasCardio {
@@ -79,36 +98,61 @@ struct WorkoutSummarySheet: View {
                     Button("Zatvori") { close() }
                 }
             }
+            .task {
+                let engine = StatisticsEngine(context: context)
+                comparison = try? engine.comparison(of: session)
+                results = (try? engine.exerciseResults(of: session)) ?? []
+                let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
+                let week = try? engine.volumeBuckets(size: .week, count: 1, endingAt: session.startedAt, info: info)
+                weekSets = week?.last?.loads.mapValues(\.sets) ?? [:]
+            }
         }
         .interactiveDismissDisabled()
+    }
+
+    @ViewBuilder
+    private var recordsSection: some View {
+        Section {
+            if summary.records.isEmpty {
+                Text("Danas nema novih rekorda.").foregroundStyle(.secondary)
+            } else if summary.highlights.isEmpty {
+                Text("Danas nema većih rekorda.").foregroundStyle(.secondary)
+            }
+            ForEach(summary.highlights, id: \.exerciseKey) { item in
+                RecordHighlightRow(exerciseName: item.exerciseName, record: item.record, unit: unit)
+            }
+            if summary.otherRecordsCount > 0 {
+                DisclosureGroup("Još manjih rekorda: \(summary.otherRecordsCount)") {
+                    ForEach(otherRecords, id: \.offset) { _, item in
+                        RecordHighlightRow(exerciseName: item.name, record: item.record, unit: unit)
+                    }
+                }
+            }
+        } header: {
+            Text("Osobni rekordi")
+        }
+    }
+
+    /// Rekordi koji nisu istaknuti.
+    private var otherRecords: [(offset: Int, element: (name: String, record: PersonalRecord))] {
+        let shown = Set(summary.highlights.map { "\($0.exerciseKey)|\($0.record.kind.rawValue)" })
+        let rest = summary.records.flatMap { item in
+            item.records
+                .filter { !shown.contains("\(item.exerciseKey)|\($0.kind.rawValue)") }
+                .map { (name: item.exerciseName, record: $0) }
+        }
+        return Array(rest.enumerated())
     }
 
     private func close() {
         session.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
         session.averageHeartRate = NumberInput.parse(heartRateText)
+        session.sessionRPE = sessionRPE
         try? context.save()
         onClose()
     }
 
     private func durationText(_ seconds: TimeInterval) -> String {
         Duration.seconds(seconds).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
-    }
-
-    private func recordText(_ record: PersonalRecord) -> String {
-        let formatter = WeightFormatter(unit: unit)
-        switch record.kind {
-        case .maxWeight:
-            return String(localized: "Najveća težina \(formatter.string(fromKilograms: record.value))")
-        case .maxVolume:
-            return String(localized: "Najveći volumen serije \(formatter.string(fromKilograms: record.value))")
-        case .maxReps:
-            return String(localized: "Najviše ponavljanja \(Int(record.value))")
-        case .lowestAssistance:
-            return String(localized: "Najmanja pomoć \(formatter.string(fromKilograms: record.value))")
-        case .longestDuration:
-            return String(localized: "Najdulje trajanje \(DurationInput.format(Int(record.value)))")
-        case .longestDistance:
-            return String(localized: "Najveća udaljenost \(NumberInput.format(record.value / 1000)) km")
-        }
     }
 }

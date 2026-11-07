@@ -1,3 +1,4 @@
+import Catalog
 import Charts
 import Models
 import Stats
@@ -64,7 +65,12 @@ struct ExerciseProgressScreen: View {
     }
 
     @Environment(\.modelContext) private var context
+    @Environment(CatalogStore.self) private var catalogStore
     @Query private var settingsList: [UserSettings]
+    @Query private var customExercises: [CustomExercise]
+    @State private var trend: ExerciseTrendEntry?
+    @State private var repMaxes: [RepMaxEntry] = []
+    @State private var bodyWeightKg: Double?
     /// Vježbe za usporedbu, učitane jednom pri otvaranju.
     @State private var done: [DoneExercise] = []
     @State private var metric: Metric = .weight
@@ -75,6 +81,7 @@ struct ExerciseProgressScreen: View {
     @State private var comparedPoints: [ExercisePoint] = []
 
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
+    private var isPro: Bool { UserSettings.preferred(in: settingsList)?.statsDetail == .pro }
 
     private func value(_ point: ExercisePoint) -> Double? {
         let kilograms: Double?
@@ -96,12 +103,13 @@ struct ExerciseProgressScreen: View {
 
     var body: some View {
         List {
+            statusSection
             Section {
                 Picker("Prikaz", selection: $metric) {
                     ForEach(Metric.allCases) { Text($0.title).tag($0) }
                 }
                 .pickerStyle(.segmented)
-                if metric == .oneRepMax {
+                if metric == .oneRepMax && isPro {
                     Toggle("Brzycki umjesto Epley", isOn: $useBrzycki)
                 }
                 if points.count < 2 && compared == nil {
@@ -119,6 +127,22 @@ struct ExerciseProgressScreen: View {
                     .accessibilityLabel(Text(chartLabel))
                 }
                 compareMenu
+            } footer: {
+                if metric == .oneRepMax {
+                    Text("Procjena 1RM računa se iz serija do 12 ponavljanja, uz ponavljanja u rezervi kad je upisan RPE ili RIR.")
+                }
+            }
+            if isPro && !repMaxes.isEmpty {
+                Section("Najteža serija po ponavljanjima") {
+                    ForEach(repMaxes, id: \.reps) { entry in
+                        LabeledContent {
+                            Text(WeightFormatter(unit: unit).string(fromKilograms: entry.weightKg)).font(.rowValue)
+                        } label: {
+                            Text("\(entry.reps)+ ponavljanja")
+                            Text(entry.date.formatted(date: .abbreviated, time: .omitted))
+                        }
+                    }
+                }
             }
             Section("Treninzi") {
                 ForEach(Array(points.reversed().enumerated()), id: \.offset) { _, point in
@@ -140,13 +164,54 @@ struct ExerciseProgressScreen: View {
         }
         .navigationTitle(ref.name)
         .navigationBarTitleDisplayMode(.inline)
-        .task { done = (try? DoneExercises.fetch(in: context)) ?? [] }
-        .task(id: LoadKey(useBrzycki: useBrzycki, comparedKey: compared?.key)) {
+        .task {
+            done = (try? DoneExercises.fetch(in: context)) ?? []
             let engine = StatisticsEngine(context: context)
-            let formula: SetMetrics.OneRepMaxFormula = useBrzycki ? .brzycki : .epley
+            let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
+            trend = try? engine.exerciseTrend(of: ref, info: info)
+            repMaxes = (try? engine.repMaxTable(of: ref)) ?? []
+            bodyWeightKg = (try? BodyTracking(context: context).latest(of: .weight))?.value
+        }
+        .task(id: LoadKey(useBrzycki: useBrzycki && isPro, comparedKey: compared?.key)) {
+            let engine = StatisticsEngine(context: context)
+            let formula: SetMetrics.OneRepMaxFormula = useBrzycki && isPro ? .brzycki : .epley
             points = (try? engine.progress(of: ref, formula: formula)) ?? []
             comparedPoints = compared.flatMap { try? engine.progress(of: $0, formula: formula) } ?? []
         }
+    }
+
+    /// Status napretka u zadnjih 8 tjedana; u detaljnom prikazu i relativna snaga.
+    @ViewBuilder
+    private var statusSection: some View {
+        if let trend {
+            Section {
+                LabeledContent {
+                    Label(trend.trend.status.title, systemImage: trend.trend.status.systemImage)
+                        .foregroundStyle(trend.trend.status.color)
+                } label: {
+                    Text("Zadnjih 8 tjedana")
+                    if let change = trend.trend.monthlyChange {
+                        Text("\(ChangeFormat.percent(change)) mjesečno")
+                    }
+                }
+                if isPro, trend.measure == .oneRepMax, let latest = trend.trend.latest, let bodyWeightKg, bodyWeightKg > 0 {
+                    LabeledContent("Relativna snaga") {
+                        Text("\((latest / bodyWeightKg).formatted(.number.precision(.fractionLength(2)))) × tjelesna težina")
+                    }
+                }
+            } footer: {
+                Text(statusFooter(trend))
+            }
+        }
+    }
+
+    private func statusFooter(_ trend: ExerciseTrendEntry) -> String {
+        let measure = trend.measure == .oneRepMax ? String(localized: "procjena 1RM") : String(localized: "najviše ponavljanja")
+        guard trend.trend.status != .insufficientData else {
+            return String(localized: "Status se pojavi nakon 4 izvođenja u 8 tjedana. Mjeri se \(measure).")
+        }
+        let noise = trend.trend.noise.formatted(.percent.precision(.fractionLength(0)))
+        return String(localized: "Mjeri se \(measure). Napredak se računa tek kad je veći od uobičajenog kolebanja ove vježbe (oko \(noise) između treninga).")
     }
 
     private var chartLabel: String {

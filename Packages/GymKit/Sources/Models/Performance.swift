@@ -28,6 +28,8 @@ extension GymSchemaV1 {
         public var workoutPlanId: UUID?
         public var distanceMeters: Double?
         public var averageHeartRate: Double?
+        /// Napor cijelog treninga od 1 do 10 (session RPE, Foster i sur. 2001), neobavezno nakon treninga.
+        public var sessionRPE: Double?
         /// Trening vodi iPhone, a sat je za njega pokrenuo sesiju u Zdravlju (puls, kalorije). Tada trening u
         /// Zdravlje sprema sat, a iPhone ne, da u Zdravlju ne bude dvaput.
         public var healthRecordedByWatch: Bool = false
