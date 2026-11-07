@@ -5,10 +5,20 @@ import SwiftUI
 
 /// Uređivač rasporeda: niz treninga i dana odmora, trajanje, aktivnost i podsjetnici.
 ///
+/// Novi raspored ima gumb Gotovo (kvačicu). Natrag bez njega ide kroz `onLeave`, gdje roditelj pita
+/// spremiti li raspored ili izaći bez spremanja.
+///
 /// Treninzi se dodaju iz izbornika ili iz bočne ploče (inspector), gdje se mogu odabrati više odjednom
 /// ili na iPadu povući na željeno mjesto u nizu.
 struct ScheduleEditorScreen: View {
     @Bindable var schedule: Schedule
+    /// Raspored je upravo stvoren i korisnik ga još nije potvrdio gumbom Gotovo.
+    var isNew = false
+    /// Gumb Gotovo na novom rasporedu.
+    var onDone: () -> Void = {}
+    /// Natrag s novog rasporeda (zamjena za sistemski gumb natrag u compact širini).
+    var onLeave: () -> Void = {}
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var showsTemplates = false
     /// Trening stvoren iz rasporeda, otvara se u uređivaču da mu se dodaju vježbe.
     @State private var createdTemplate: WorkoutTemplate?
@@ -23,20 +33,32 @@ struct ScheduleEditorScreen: View {
         List {
             Section("Naziv") {
                 TextField("Naziv rasporeda", text: $schedule.name)
-                Toggle("Aktivan", isOn: Binding(
-                    get: { schedule.isActive },
-                    set: { try? engine.setActive($0, for: schedule); refreshReminders() }
-                ))
             }
-            nextSection
             sequenceSection
             durationSection
             reminderSection
         }
         .navigationTitle(schedule.name.isEmpty ? String(localized: "Raspored") : schedule.name)
         .navigationBarTitleDisplayMode(.inline)
+        // Sistemski natrag bi izašao bez pitanja, pa novi raspored ima svoj (i bez povlačenja s ruba).
+        .navigationBarBackButtonHidden(isNew && sizeClass == .compact)
+        .toolbar {
+            if isNew {
+                if sizeClass == .compact {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Natrag", systemImage: "chevron.left", action: onLeave)
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Gotovo", systemImage: "checkmark") {
+                        try? context.save()
+                        refreshReminders()
+                        onDone()
+                    }
+                }
+            }
+        }
         // Ploča s treninzima otvara se samo gumbom Odaberi više treninga (i ⌘K), a zatvara gumbom Zatvori.
-        .toolbar { EditButton() }
         .commandShortcut("Odaberi više treninga", key: "k") { showsTemplates = true }
         .planningPanel(isPresented: $showsTemplates, minWidth: 280, idealWidth: 320, maxWidth: 420) {
             TemplateListPanel(isPresented: $showsTemplates) { insert($0, at: nil) }
@@ -49,57 +71,11 @@ struct ScheduleEditorScreen: View {
         }
     }
 
-    // MARK: Sljedeći trening
-
-    @ViewBuilder
-    private var nextSection: some View {
-        Section("Sljedeće") {
-            if let planned = try? engine.nextWorkout(of: schedule) {
-                NavigationLink {
-                    UpcomingWorkoutScreen(schedule: schedule)
-                } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(planned.template.name)
-                        Text("Ciklus \(planned.cycle)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                // Preskočeni trening se može vratiti dok je ciklus u tijeku (podnožje Sljedećeg treninga to obećaje).
-                ForEach((try? engine.skippedWorkouts(of: schedule)) ?? []) { skipped in
-                    HStack {
-                        Label {
-                            Text("Preskočeno: \(skipped.templateName)")
-                        } icon: {
-                            Image(systemName: "forward.end")
-                        }
-                        .foregroundStyle(.secondary)
-                        Spacer()
-                        Button("Vrati") {
-                            try? engine.unskip(skipped.change, in: schedule)
-                            refreshReminders()
-                        }
-                        .buttonStyle(.borderless)
-                    }
-                }
-            } else if schedule.isActive {
-                Text("Dodaj barem jedan trening u niz.")
-                    .foregroundStyle(.secondary)
-            } else {
-                Text("Raspored nije aktivan.")
-                    .foregroundStyle(.secondary)
-                Button("Pokreni ispočetka", systemImage: "arrow.counterclockwise") {
-                    try? engine.restart(schedule)
-                    refreshReminders()
-                }
-            }
-        }
-    }
-
     // MARK: Niz
 
     private var sequenceSection: some View {
-        Section("Niz") {
+        let skipped = (try? engine.skippedWorkouts(of: schedule)) ?? []
+        return Section("Niz") {
             ForEach(schedule.orderedItems) { item in
                 HStack {
                     Image(systemName: symbol(of: item))
@@ -107,7 +83,17 @@ struct ScheduleEditorScreen: View {
                         .frame(width: 28)
                     Text(title(of: item))
                     Spacer()
-                    if isCurrent(item) {
+                    // Preskočeni trening se može vratiti dok je ciklus u tijeku (podnožje Sljedećeg treninga to obećaje).
+                    if let skipped = skipped.first(where: { $0.change.scheduleItemId == item.id }) {
+                        Text("Preskočeno")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Button("Vrati") {
+                            try? engine.unskip(skipped.change, in: schedule)
+                            refreshReminders()
+                        }
+                        .buttonStyle(.borderless)
+                    } else if isCurrent(item) {
                         Text("Sljedeće")
                             .font(.caption)
                             .padding(.horizontal, 6)
@@ -210,6 +196,17 @@ struct ScheduleEditorScreen: View {
     @ViewBuilder
     private var reminderSection: some View {
         Section {
+            Toggle("Aktivan", isOn: Binding(
+                get: { schedule.isActive },
+                set: { try? engine.setActive($0, for: schedule); refreshReminders() }
+            ))
+            // Završen ili ugašen raspored kreće od prvog treninga u nizu.
+            if !schedule.isActive {
+                Button("Pokreni ispočetka", systemImage: "arrow.counterclockwise") {
+                    try? engine.restart(schedule)
+                    refreshReminders()
+                }
+            }
             Toggle("Podsjetnici", isOn: Binding(
                 get: { schedule.reminderMinutes != nil },
                 set: {
@@ -245,7 +242,7 @@ struct ScheduleEditorScreen: View {
                 }
             }
         } header: {
-            Text("Podsjetnici")
+            Text("Aktivnost i podsjetnici")
         } footer: {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Podsjetnik se ne šalje ako je taj dan već odrađen trening iz rasporeda, niti tijekom aktivnog treninga.")
