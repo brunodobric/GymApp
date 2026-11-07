@@ -104,12 +104,7 @@ struct HomeScreen: View {
                 UpcomingWorkoutSheet(schedule: schedule) { cardioSchedule = nil }
             }
             .sheet(isPresented: $showsTemplatePicker, onDismiss: startChosenWorkout) {
-                TemplatePickerSheet(
-                    schedule: pickerSchedule,
-                    scheduled: pickerSchedule.map(workoutChoices) ?? [],
-                    nextItemID: upcoming.first { $0.schedule.id == pickerSchedule?.id }?.item.id,
-                    templates: startableTemplates
-                ) { chosenWorkout = $0 }
+                templatePicker(upcoming)
             }
             .sheet(isPresented: $showsCardEditor) {
                 DashboardEditor()
@@ -190,7 +185,7 @@ struct HomeScreen: View {
                 StartWorkoutCard(
                     planned: upcoming,
                     templateCount: startableTemplates.count,
-                    offersOtherWorkout: offersOtherWorkout,
+                    offersOtherWorkout: { offersOtherWorkout($0) },
                     onStart: { planned in
                         if planned.template.kind == .cardio {
                             cardioSchedule = planned.schedule
@@ -324,6 +319,23 @@ struct HomeScreen: View {
         TemplateStarter.startable(templates)
     }
 
+    /// List za izbor treninga: uz raspored njegovi treninzi (sljedeći označen) i ostali spremljeni, inače samo spremljeni.
+    private func templatePicker(_ upcoming: [PlannedWorkout]) -> TemplatePickerSheet {
+        var scheduled: [PlannedWorkout] = []
+        var nextItemID: UUID?
+        if let schedule = pickerSchedule {
+            scheduled = workoutChoices(schedule)
+            nextItemID = upcoming.first(where: { $0.schedule.id == schedule.id })?.item.id
+        }
+        return TemplatePickerSheet(
+            schedule: pickerSchedule,
+            scheduled: scheduled,
+            nextItemID: nextItemID,
+            templates: startableTemplates,
+            onSelect: { choice in chosenWorkout = choice }
+        )
+    }
+
     /// Treninzi rasporeda za izbor umjesto sljedećeg.
     private func workoutChoices(_ schedule: Schedule) -> [PlannedWorkout] {
         (try? ScheduleEngine(context: context).workoutChoices(of: schedule)) ?? []
@@ -338,17 +350,19 @@ struct HomeScreen: View {
         guard let choice = chosenWorkout else { return }
         chosenWorkout = nil
         do {
-            presentedSession = try PerformanceSignpost.measure("WorkoutStart") { () throws -> Session in
-                let starter = TemplateStarter(context: context)
-                switch choice {
-                case .planned(let planned): return try starter.start(planned)
-                case .template(let template): return try starter.start(template)
-                }
-            }
+            presentedSession = try PerformanceSignpost.measure("WorkoutStart") { try startSession(choice) }
             ReminderScheduler.refresh(context: context)
             if let presentedSession { PhoneWatchSync.shared.sessionStarted(presentedSession) }
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
+        }
+    }
+
+    private func startSession(_ choice: WorkoutChoice) throws -> Session {
+        let starter = TemplateStarter(context: context)
+        switch choice {
+        case .planned(let planned): return try starter.start(planned)
+        case .template(let template): return try starter.start(template)
         }
     }
 
