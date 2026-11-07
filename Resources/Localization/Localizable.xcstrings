@@ -1109,6 +1109,16 @@
         }
       }
     },
+    "Bez ocjene: %lld." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unrated: %lld."
+          }
+        }
+      }
+    },
     "Bez usporedbe" : {
       "localizations" : {
         "en" : {
@@ -4749,12 +4759,12 @@
         }
       }
     },
-    "Ponavljanja u rezervi, zadnja 4 tjedna. Za rast mišića najbolje rade serije blizu otkaza (0 do 3), a za snagu blizina otkaza manje znači (Robinson i sur. 2024). Bez ocjene: %lld." : {
+    "Ponavljanja u rezervi, zadnja 4 tjedna. Za rast mišića najbolje rade serije blizu otkaza (0 do 3), a za snagu blizina otkaza manje znači (Robinson i sur. 2024)." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reps in reserve, last 4 weeks. Sets close to failure (0 to 3) work best for muscle growth, while proximity to failure matters less for strength (Robinson et al. 2024). Unrated: %lld."
+            "value" : "Reps in reserve, last 4 weeks. Sets close to failure (0 to 3) work best for muscle growth, while proximity to failure matters less for strength (Robinson et al. 2024)."
           }
         }
       }

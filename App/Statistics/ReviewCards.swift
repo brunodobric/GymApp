@@ -114,6 +114,13 @@ struct EffortCard: View {
         ["0", "1", "2", "3", "4+"].enumerated().map { Entry(label: $1, count: distribution.counts[$0]) }
     }
 
+    private var footnote: String {
+        let research = String(
+            localized: "Ponavljanja u rezervi, zadnja 4 tjedna. Za rast mišića najbolje rade serije blizu otkaza (0 do 3), a za snagu blizina otkaza manje znači (Robinson i sur. 2024)."
+        )
+        return research + " " + String(localized: "Bez ocjene: \(distribution.unrated).")
+    }
+
     var body: some View {
         StatisticsCard(title: "Napor serija") {
             if distribution.rated == 0 {
@@ -125,7 +132,7 @@ struct EffortCard: View {
                 }
                 .chartHeight(160, regular: 220)
                 .accessibilityLabel(Text("Graf serija po ponavljanjima u rezervi"))
-                Text("Ponavljanja u rezervi, zadnja 4 tjedna. Za rast mišića najbolje rade serije blizu otkaza (0 do 3), a za snagu blizina otkaza manje znači (Robinson i sur. 2024). Bez ocjene: \(distribution.unrated).")
+                Text(footnote)
                     .font(.footnote).foregroundStyle(.secondary)
             }
         }
