@@ -50,6 +50,7 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     context.insert(templateExercise)
     templateExercise.template = template
     let templateSet = TemplateSet(orderIndex: 0, targetWeightKg: 80, targetReps: 5)
+    templateSet.targetRepsMax = 8
     context.insert(templateSet)
     templateSet.exercise = templateExercise
 
@@ -143,6 +144,8 @@ struct JSONBackupTests {
         let session = try #require(try target.fetch(FetchDescriptor<Session>()).first)
         #expect(session.orderedExercises.count == 3)
         #expect(session.orderedExercises[0].orderedSets.count == 2)
+        let templateSet = try #require(try target.fetch(FetchDescriptor<TemplateSet>()).first)
+        #expect(templateSet.targetReps == 5 && templateSet.targetRepsMax == 8)
         #expect(try GymQueries(context: target).settings().weightUnit == .pounds)
         #expect(try GymQueries(context: target).settings().bodyMapFemale)
         #expect(try GymQueries(context: target).settings().restNotificationEnabled == false)

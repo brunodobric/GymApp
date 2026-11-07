@@ -78,3 +78,30 @@ public struct OnboardingApplier {
         try context.save()
     }
 }
+
+/// Brzi odabir opreme u onboardingu i profilu: "Teretana" odabire sve jednim dodirom.
+/// Sprema se i dalje popis opreme (`UserSettings.equipment`), pa preset ne treba polje u shemi.
+public enum EquipmentPreset: String, CaseIterable, Sendable {
+    /// Teretana: sva oprema.
+    case gym
+    /// Kućna teretana: šipka sa stalkom i klupom, bučice, trake i šipka za zgibove (`.other`).
+    case homeGym
+    /// Bučice i trake.
+    case dumbbells
+    /// Bez opreme: samo vlastita težina.
+    case bodyweightOnly
+
+    public var equipment: [Equipment] {
+        switch self {
+        case .gym: Equipment.allCases
+        case .homeGym: [.barbell, .dumbbell, .bodyweight, .bands, .other]
+        case .dumbbells: [.dumbbell, .bodyweight, .bands]
+        case .bodyweightOnly: [.bodyweight]
+        }
+    }
+
+    /// Preset koji odgovara točno toj opremi, ili nil za vlastiti odabir.
+    public static func matching(_ equipment: [Equipment]) -> EquipmentPreset? {
+        allCases.first { Set($0.equipment) == Set(equipment) }
+    }
+}

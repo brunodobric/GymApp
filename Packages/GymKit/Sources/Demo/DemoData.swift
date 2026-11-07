@@ -27,15 +27,24 @@ public struct DemoDataGenerator {
     static let startingWeights: [String: Double] = [
         "barbell-bench-press": 70,
         "barbell-bent-over-row": 60,
-        "dumbbell-seated-overhead-press": 20,
+        "dumbbell-incline-bench-press": 24,
         "wide-grip-lat-pulldown": 55,
-        "dumbbell-curl": 12,
+        "dumbbell-lateral-raise": 8,
         "cable-bar-pushdown": 25,
+        "barbell-overhead-press": 40,
+        "dumbbell-bench-press": 26,
+        "machine-seated-cable-row": 55,
+        "dumbbell-curl": 12,
+        "cable-pec-fly": 15,
         "barbell-squat": 90,
         "barbell-romanian-deadlift": 80,
-        "dumbbell-alternating-forward-lunge": 16,
+        "dumbbell-bulgarian-split-squat": 14,
         "lying-leg-curl": 35,
         "standing-calf-raise-machine": 60,
+        "barbell-deadlift": 110,
+        "machine-leg-press": 140,
+        "barbell-hip-thrust": 90,
+        "machine-leg-extension": 45,
         "kneeling-cable-crunch": 30,
     ]
 
@@ -97,6 +106,8 @@ public struct DemoDataGenerator {
                 // Zadnja serija je teža, pa ponekad ide ponavljanje manje.
                 set.reps = index == sets.count - 1 && Int(progress * 10) % 2 == 1 ? max(1, target - 1) : target
                 if exercise.inputType == .weightReps { set.weightKg = weight }
+                // Plank i slično: trajanje umjesto ponavljanja.
+                if exercise.inputType == .duration { set.durationSeconds = 45 + Int(progress * 30) }
                 time = time.addingTimeInterval(150)
                 _ = try engine.completeSet(set, defaultRestSeconds: 90, now: time)
             }

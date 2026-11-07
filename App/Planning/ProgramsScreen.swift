@@ -9,6 +9,7 @@ struct ProgramsScreen: View {
     @Environment(CatalogStore.self) private var catalogStore
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Query private var settingsList: [UserSettings]
     @State private var added: String?
     @State private var errorText: String?
 
@@ -43,8 +44,10 @@ struct ProgramsScreen: View {
 
     private func install(_ program: Program) {
         do {
+            // Ponavljanja prema cilju i iskustvu, vježbe prema opremi iz profila.
+            let profile = settingsList.first.map(TrainingProfile.init(settings:)) ?? TrainingProfile()
             let schedule = try ProgramInstaller(context: context).install(
-                program, name: program.title, workoutName: \.title
+                program, profile: profile, name: program.title, workoutName: \.title
             ) { id in
                 catalogStore.catalog?.exercise(withID: id)?.displayName(language: catalogStore.language) ?? id
             }

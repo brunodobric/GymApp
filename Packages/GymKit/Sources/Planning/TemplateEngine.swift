@@ -167,6 +167,7 @@ public struct TemplateEngine {
         if let last = existing.last(where: { $0.kind == kind }) {
             set.targetWeightKg = last.targetWeightKg
             set.targetReps = last.targetReps
+            set.targetRepsMax = last.targetRepsMax
         }
         context.insert(set)
         set.exercise = exercise
@@ -188,6 +189,8 @@ public struct TemplateEngine {
     public func setTargets(_ set: TemplateSet, weightKg: Double?, reps: Int?) throws {
         set.targetWeightKg = weightKg
         set.targetReps = reps
+        // Raspon ostaje samo dok mu je gornja granica iznad novog cilja.
+        if let max = set.targetRepsMax, max <= reps ?? .max { set.targetRepsMax = nil }
         try context.save()
     }
 }

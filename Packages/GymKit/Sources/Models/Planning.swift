@@ -133,6 +133,8 @@ extension GymSchemaV1 {
         /// Ciljana težina uvijek u kilogramima.
         public var targetWeightKg: Double?
         public var targetReps: Int?
+        /// Gornja granica raspona ponavljanja (npr. 8–12, dvostruka progresija). nil znači jedan cilj, `targetReps`.
+        public var targetRepsMax: Int?
         public var exercise: TemplateExercise?
 
         public init(orderIndex: Int, kind: SetKind = .working, targetWeightKg: Double? = nil, targetReps: Int? = nil) {
