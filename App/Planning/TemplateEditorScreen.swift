@@ -92,6 +92,9 @@ struct TemplateEditorScreen: View {
         let sets = exercise.orderedSets.filter { $0.kind == .working }
         let reps = sets.first?.targetReps
         let count = sets.count
+        if let reps, let max = sets.first?.targetRepsMax, max > reps {
+            return String(localized: "\(count) serije × \(reps)–\(max)")
+        }
         if let reps { return String(localized: "\(count) serije × \(reps)") }
         return String(localized: "\(count) serije")
     }
@@ -240,5 +243,7 @@ private struct TemplateSetRow: View {
     private func apply() {
         set.targetWeightKg = NumberInput.parse(weight).map { WeightConversion.kilograms(from: $0, in: unit) }
         set.targetReps = Int(reps.trimmingCharacters(in: .whitespaces))
+        // Ručno upisan cilj iznad gornje granice raspona poništava raspon.
+        if let max = set.targetRepsMax, max <= set.targetReps ?? .max { set.targetRepsMax = nil }
     }
 }

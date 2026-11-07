@@ -177,6 +177,8 @@ struct TemplateSetDTO: Codable {
     var kindRaw: String
     var targetWeightKg: Double?
     var targetReps: Int?
+    /// Nema u starijim kopijama.
+    var targetRepsMax: Int?
 }
 
 struct TemplateExerciseDTO: Codable {
@@ -217,7 +219,7 @@ struct TemplateDTO: Codable {
                 sets: exercise.orderedSets.map {
                     TemplateSetDTO(
                         id: $0.id, orderIndex: $0.orderIndex, kindRaw: $0.kindRaw,
-                        targetWeightKg: $0.targetWeightKg, targetReps: $0.targetReps
+                        targetWeightKg: $0.targetWeightKg, targetReps: $0.targetReps, targetRepsMax: $0.targetRepsMax
                     )
                 }
             )
@@ -249,6 +251,7 @@ struct TemplateDTO: Codable {
                 templateSet.kindRaw = setItem.kindRaw
                 templateSet.targetWeightKg = setItem.targetWeightKg
                 templateSet.targetReps = setItem.targetReps
+                templateSet.targetRepsMax = setItem.targetRepsMax
                 context.insert(templateSet)
                 templateSet.exercise = exercise
             }

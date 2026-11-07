@@ -132,6 +132,7 @@ struct JSONBackupTests {
     func roundTrip() throws {
         let source = try makeContext()
         try fillSample(source)
+        try #require(try source.fetch(FetchDescriptor<TemplateSet>()).first).targetRepsMax = 8
         let first = try JSONBackup.export(from: source, now: exportTime)
 
         let target = try makeContext()
@@ -143,6 +144,8 @@ struct JSONBackupTests {
         let session = try #require(try target.fetch(FetchDescriptor<Session>()).first)
         #expect(session.orderedExercises.count == 3)
         #expect(session.orderedExercises[0].orderedSets.count == 2)
+        let templateSet = try #require(try target.fetch(FetchDescriptor<TemplateSet>()).first)
+        #expect(templateSet.targetReps == 5 && templateSet.targetRepsMax == 8)
         #expect(try GymQueries(context: target).settings().weightUnit == .pounds)
         #expect(try GymQueries(context: target).settings().bodyMapFemale)
         #expect(try GymQueries(context: target).settings().restNotificationEnabled == false)
