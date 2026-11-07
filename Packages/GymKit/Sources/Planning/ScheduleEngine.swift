@@ -440,6 +440,19 @@ public struct ScheduleEngine {
     }
 }
 
+// MARK: Novi trening iz rasporeda
+
+extension ScheduleEngine {
+    /// Odbacuje trening stvoren iz rasporeda (`addNewWorkout`) kad korisnik izađe bez spremanja:
+    /// briše njegove stavke iz niza, pa i sam trening.
+    public func discardNewWorkout(_ template: WorkoutTemplate, from schedule: Schedule) throws {
+        for item in schedule.orderedItems where item.workoutTemplateId == template.id {
+            try removeItem(item)
+        }
+        try TemplateEngine(context: context).delete(template)
+    }
+}
+
 // MARK: Odrađeni treninzi u ciklusu
 
 extension ScheduleEngine {

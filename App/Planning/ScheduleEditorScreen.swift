@@ -16,6 +16,7 @@ struct ScheduleEditorScreen: View {
     @State private var showsTemplates = false
     /// Trening stvoren iz rasporeda, otvara se u uređivaču da mu se dodaju vježbe.
     @State private var createdTemplate: WorkoutTemplate?
+    @State private var asksToSaveCreated = false
 
     @Environment(\.modelContext) private var context
     @Query(sort: \WorkoutTemplate.name) private var templates: [WorkoutTemplate]
@@ -31,12 +32,10 @@ struct ScheduleEditorScreen: View {
                     .disabled(!isEditing)
             }
             sequenceSection
-            Group {
-                durationSection
-                reminderSection
-            }
-            .disabled(!isEditing)
+            durationSection
+            reminderSection
         }
+        .planningEditMode(editing)
         .navigationTitle(schedule.name.isEmpty ? String(localized: "Raspored") : schedule.name)
         .navigationBarTitleDisplayMode(.inline)
         .planningEditToolbar(editing)
@@ -46,7 +45,33 @@ struct ScheduleEditorScreen: View {
         .planningPanel(isPresented: $showsTemplates, minWidth: 280, idealWidth: 320, maxWidth: 420) {
             TemplateListPanel(isPresented: $showsTemplates) { insert($0, at: nil) }
         }
-        .navigationDestination(item: $createdTemplate) { TemplateEditorScreen(template: $0) }
+        // Novi trening iz niza ima kvačicu kao i novi trening iz popisa, a natrag bez nje pita.
+        .navigationDestination(item: $createdTemplate) { template in
+            TemplateEditorScreen(template: template, editing: PlanningEditing(
+                isEditing: true,
+                onEdit: {},
+                onDone: {
+                    try? context.save()
+                    createdTemplate = nil
+                },
+                onLeave: { asksToSaveCreated = true },
+                replacesBackButtonAlways: true
+            ))
+            .alert("Spremiti trening?", isPresented: $asksToSaveCreated) {
+                Button("Spremi") {
+                    try? context.save()
+                    createdTemplate = nil
+                }
+                Button("Izađi bez spremanja", role: .destructive) {
+                    try? engine.discardNewWorkout(template, from: schedule)
+                    refreshReminders()
+                    createdTemplate = nil
+                }
+                Button("Odustani", role: .cancel) {}
+            } message: {
+                Text("Novi trening još nije spremljen.")
+            }
+        }
         .onChange(of: overrides.count) { _, _ in refreshReminders() }
         .onDisappear {
             try? context.save()
@@ -71,17 +96,15 @@ struct ScheduleEditorScreen: View {
                         Text("Preskočeno")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        if isEditing {
-                            Button("Vrati") {
-                                try? engine.unskip(skipped.change, in: schedule)
-                                refreshReminders()
-                            }
-                            .buttonStyle(.borderless)
+                        Button("Vrati") {
+                            try? engine.unskip(skipped.change, in: schedule)
+                            refreshReminders()
                         }
+                        .buttonStyle(.borderless)
                     }
                 }
             }
-            // U prikazu nema premještanja ni brisanja.
+            // Premještanje i brisanje samo u uređivanju (crtice i znak za brisanje).
             .onMove(perform: isEditing ? moveItems : nil)
             .onDelete(perform: isEditing ? deleteItems : nil)
             // Trening povučen iz ploče umeće se na mjesto gdje je pušten.

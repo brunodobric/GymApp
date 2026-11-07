@@ -39,19 +39,16 @@ struct CardioTemplateEditor: View {
                     ForEach(CardioLocation.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
             }
-            .disabled(!isEditing)
             OptionalGoalSection(title: "Zagrijavanje", goal: $plan.warmup)
-                .disabled(!isEditing)
             Section {
                 ForEach($plan.intervals) { $interval in
                     NavigationLink {
                         CardioIntervalEditor(interval: $interval)
-                            .disabled(!isEditing)
                     } label: {
                         Text(CardioText.interval(interval))
                     }
                 }
-                // U prikazu nema premještanja ni brisanja.
+                // Premještanje i brisanje samo u uređivanju (crtice i znak za brisanje).
                 .onMove(perform: isEditing ? moveIntervals : nil)
                 .onDelete(perform: isEditing ? deleteIntervals : nil)
                 if isEditing {
@@ -65,7 +62,6 @@ struct CardioTemplateEditor: View {
                 Text("Blok je rad i oporavak, ponovljeni zadani broj puta. Obično trčanje je jedan blok bez oporavka.")
             }
             OptionalGoalSection(title: "Hlađenje", goal: $plan.cooldown)
-                .disabled(!isEditing)
             Section {
                 Label {
                     Text("Trening se pokreće na satu u aplikaciji Workout. U rasporedu ga Apolon zakazuje na sat za termin podsjetnika.")
@@ -76,6 +72,7 @@ struct CardioTemplateEditor: View {
                 .foregroundStyle(.secondary)
             }
         }
+        .planningEditMode(editing)
         .navigationTitle(template.name.isEmpty ? String(localized: "Kardio") : template.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
