@@ -36,7 +36,7 @@ struct RootView: View {
                 HistoryScreen()
             }
             Tab("Rasporedi", systemImage: "calendar", value: Section.schedules) {
-                SchedulesScreen()
+                SchedulesScreen(isSelectedTab: selection == .schedules)
             }
             Tab("Vježbe", systemImage: "dumbbell.fill", value: Section.exercises) {
                 ExercisesScreen()

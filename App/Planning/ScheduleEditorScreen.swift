@@ -5,20 +5,14 @@ import SwiftUI
 
 /// Uređivač rasporeda: niz treninga i dana odmora, trajanje, aktivnost i podsjetnici.
 ///
-/// Novi raspored ima gumb Gotovo (kvačicu). Natrag bez njega ide kroz `onLeave`, gdje roditelj pita
-/// spremiti li raspored ili izaći bez spremanja.
+/// U kartici Rasporedi raspored se otvara samo za prikaz, a uređuje se nakon gumba Uredi (`PlanningEditing`).
 ///
 /// Treninzi se dodaju iz izbornika ili iz bočne ploče (inspector), gdje se mogu odabrati više odjednom
 /// ili na iPadu povući na željeno mjesto u nizu.
 struct ScheduleEditorScreen: View {
     @Bindable var schedule: Schedule
-    /// Raspored je upravo stvoren i korisnik ga još nije potvrdio gumbom Gotovo.
-    var isNew = false
-    /// Gumb Gotovo na novom rasporedu.
-    var onDone: () -> Void = {}
-    /// Natrag s novog rasporeda (zamjena za sistemski gumb natrag u compact širini).
-    var onLeave: () -> Void = {}
-    @Environment(\.horizontalSizeClass) private var sizeClass
+    /// Prikaz ili uređivanje. Bez toga raspored se uvijek uređuje.
+    var editing: PlanningEditing?
     @State private var showsTemplates = false
     /// Trening stvoren iz rasporeda, otvara se u uređivaču da mu se dodaju vježbe.
     @State private var createdTemplate: WorkoutTemplate?
@@ -28,38 +22,27 @@ struct ScheduleEditorScreen: View {
     @Query private var overrides: [CycleOverride]
 
     private var engine: ScheduleEngine { ScheduleEngine(context: context) }
+    private var isEditing: Bool { editing?.isEditing ?? true }
 
     var body: some View {
         List {
             Section("Naziv") {
                 TextField("Naziv rasporeda", text: $schedule.name)
+                    .disabled(!isEditing)
             }
             sequenceSection
-            durationSection
-            reminderSection
+            Group {
+                durationSection
+                reminderSection
+            }
+            .disabled(!isEditing)
         }
         .navigationTitle(schedule.name.isEmpty ? String(localized: "Raspored") : schedule.name)
         .navigationBarTitleDisplayMode(.inline)
-        // Sistemski natrag bi izašao bez pitanja, pa novi raspored ima svoj (i bez povlačenja s ruba).
-        .navigationBarBackButtonHidden(isNew && sizeClass == .compact)
-        .toolbar {
-            if isNew {
-                if sizeClass == .compact {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button("Natrag", systemImage: "chevron.left", action: onLeave)
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Gotovo", systemImage: "checkmark") {
-                        try? context.save()
-                        refreshReminders()
-                        onDone()
-                    }
-                }
-            }
-        }
+        .planningEditToolbar(editing)
         // Ploča s treninzima otvara se samo gumbom Odaberi više treninga (i ⌘K), a zatvara gumbom Zatvori.
-        .commandShortcut("Odaberi više treninga", key: "k") { showsTemplates = true }
+        .commandShortcut("Odaberi više treninga", key: "k") { if isEditing { showsTemplates = true } }
+        .onChange(of: isEditing) { _, isEditing in if !isEditing { showsTemplates = false } }
         .planningPanel(isPresented: $showsTemplates, minWidth: 280, idealWidth: 320, maxWidth: 420) {
             TemplateListPanel(isPresented: $showsTemplates) { insert($0, at: nil) }
         }
@@ -88,33 +71,32 @@ struct ScheduleEditorScreen: View {
                         Text("Preskočeno")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        Button("Vrati") {
-                            try? engine.unskip(skipped.change, in: schedule)
-                            refreshReminders()
+                        if isEditing {
+                            Button("Vrati") {
+                                try? engine.unskip(skipped.change, in: schedule)
+                                refreshReminders()
+                            }
+                            .buttonStyle(.borderless)
                         }
-                        .buttonStyle(.borderless)
-                    } else if isCurrent(item) {
-                        Text("Sljedeće")
-                            .font(.caption)
-                            .padding(.horizontal, 6)
-                            .background(Color.accentColor.opacity(0.2), in: .capsule)
                     }
                 }
             }
-            .onMove { source, destination in
-                try? engine.moveItems(in: schedule, from: source, to: destination)
-            }
-            .onDelete { offsets in
-                let list = schedule.orderedItems
-                for index in offsets { try? engine.removeItem(list[index]) }
-            }
+            // U prikazu nema premještanja ni brisanja.
+            .onMove(perform: isEditing ? moveItems : nil)
+            .onDelete(perform: isEditing ? deleteItems : nil)
             // Trening povučen iz ploče umeće se na mjesto gdje je pušten.
             .dropDestination(for: String.self) { payloads, index in
+                guard isEditing else { return }
                 insert(droppedTemplates(payloads), at: index)
             }
-            // Bez ijednog treninga gumb odmah stvara novi, jer onemogućen izbornik u listi izgleda
-            // kao da radi, a dodir ništa ne napravi.
-            if templates.isEmpty {
+            if !isEditing {
+                if schedule.orderedItems.isEmpty {
+                    Text("Još nema treninga u nizu.")
+                        .foregroundStyle(.secondary)
+                }
+            } else if templates.isEmpty {
+                // Bez ijednog treninga gumb odmah stvara novi, jer onemogućen izbornik u listi izgleda
+                // kao da radi, a dodir ništa ne napravi.
                 Button("Novi trening", systemImage: "plus") { addNewWorkout() }
             } else {
                 Menu("Dodaj trening", systemImage: "plus") {
@@ -132,8 +114,19 @@ struct ScheduleEditorScreen: View {
                         return !dropped.isEmpty
                     }
             }
-            Button("Dodaj dan odmora", systemImage: "moon.zzz") { _ = try? engine.addRestDay(to: schedule) }
+            if isEditing {
+                Button("Dodaj dan odmora", systemImage: "moon.zzz") { _ = try? engine.addRestDay(to: schedule) }
+            }
         }
+    }
+
+    private func moveItems(from source: IndexSet, to destination: Int) {
+        try? engine.moveItems(in: schedule, from: source, to: destination)
+    }
+
+    private func deleteItems(at offsets: IndexSet) {
+        let list = schedule.orderedItems
+        for index in offsets { try? engine.removeItem(list[index]) }
     }
 
     private func addNewWorkout() {
@@ -163,10 +156,6 @@ struct ScheduleEditorScreen: View {
         return template?.kind == .cardio ? (template?.cardioPlan?.activity.symbol ?? "figure.run") : "dumbbell"
     }
 
-    private func isCurrent(_ item: ScheduleItem) -> Bool {
-        guard schedule.isActive, let planned = try? engine.nextWorkout(of: schedule) else { return false }
-        return planned.item.id == item.id
-    }
 
     // MARK: Trajanje
 

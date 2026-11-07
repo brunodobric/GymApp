@@ -231,7 +231,7 @@ struct ScheduleProgressTests {
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
     }
 
-    @Test("Trening koji nije sljedeći u nizu ne pomiče raspored")
+    @Test("Trening odrađen mimo reda bilježi se kao odrađen, a sljedeći ostaje prvi neodrađeni")
     func unrelatedWorkout() throws {
         let context = try makeContext()
         let engine = ScheduleEngine(context: context)
@@ -239,8 +239,71 @@ struct ScheduleProgressTests {
         let session = try TemplateStarter(context: context).start(templates[2], now: base)
         session.scheduleId = schedule.id
         try finish(session, in: context, at: base)
+        #expect(try engine.sessionFinished(session))
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "A")
+        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        // C je već odrađen, pa iza B ciklus završava.
+        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        #expect(schedule.currentCycle == 2)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "A")
+    }
+
+    @Test("Trening koji nije u rasporedu ne mijenja raspored")
+    func workoutOutsideSchedule() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, _) = try abcSchedule(in: context, cycles: nil)
+        let other = try template("D", in: context)
+        let session = try TemplateStarter(context: context).start(other, now: base)
+        session.scheduleId = schedule.id
+        try finish(session, in: context, at: base)
         #expect(try engine.sessionFinished(session) == false)
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "A")
+    }
+
+    @Test("Trening premješten na početak novog rasporeda postaje sljedeći")
+    func movedToFrontBecomesNext() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let templates = try ["A", "B"].map { try template($0, in: context) }
+        let schedule = try engine.createSchedule(name: "Novi")
+        try engine.addWorkout(templates[0], to: schedule)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "A")
+        try engine.addWorkout(templates[1], to: schedule)
+        try engine.moveItems(in: schedule, from: IndexSet(integer: 1), to: 0)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+    }
+
+    @Test("Neodrađeni trening premješten ispred odrađenog je sljedeći, a odrađeni se ne ponavlja")
+    func movedBeforeDoneWorkout() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, _) = try abcSchedule(in: context, cycles: nil)
+        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        // A, odmor, B, C -> C, A, odmor, B
+        try engine.moveItems(in: schedule, from: IndexSet(integer: 3), to: 0)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
+        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+        try doWorkout(try #require(try engine.nextWorkout(of: schedule)), in: context, at: base)
+        #expect(schedule.currentCycle == 2)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
+    }
+
+    @Test("Napredak iz starije verzije (samo pozicija) ostaje i nakon premještanja")
+    func legacyPositionSurvivesMove() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, _) = try abcSchedule(in: context, cycles: nil)
+        // Starija verzija: A odrađen, zapisano samo pozicijom.
+        schedule.currentPosition = 1
+        try context.save()
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+        // A, odmor, B, C -> A, odmor, C, B
+        try engine.moveItems(in: schedule, from: IndexSet(integer: 3), to: 2)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
+        try engine.moveItems(in: schedule, from: IndexSet(integer: 0), to: 4)
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
     }
 
     @Test("Preskakanje trenutnog treninga i poništavanje")
@@ -369,7 +432,7 @@ struct ScheduleProgressTests {
         #expect(try engine.workoutChoices(of: schedule).isEmpty)
     }
 
-    @Test("Ponovljeni trening u izboru je onaj od pozicije rasporeda nadalje, s izmjenama ciklusa")
+    @Test("Ponovljeni trening u izboru je prvi neodrađeni, s izmjenama ciklusa")
     func workoutChoicesUseUpcomingItem() throws {
         let context = try makeContext()
         let engine = ScheduleEngine(context: context)
@@ -384,7 +447,7 @@ struct ScheduleProgressTests {
         #expect(try engine.workoutChoices(of: schedule).first?.exercises.isEmpty == true)
     }
 
-    @Test("Odabrani trening koji nije sljedeći ne pomiče raspored, a sljedeći ga pomiče")
+    @Test("Odabrani trening mimo reda je odrađen, a sljedeći ostaje prvi neodrađeni")
     func startChosenWorkout() throws {
         let context = try makeContext()
         let engine = ScheduleEngine(context: context)
@@ -394,6 +457,8 @@ struct ScheduleProgressTests {
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "A")
         try doWorkout(choices[0], in: context, at: base.addingTimeInterval(day))
         #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+        try doWorkout(choices[1], in: context, at: base.addingTimeInterval(2 * day))
+        #expect(schedule.currentCycle == 2)
     }
 }
 
@@ -588,7 +653,7 @@ struct BulkEditingTests {
         #expect(result.orderedExercises.count == 6)
     }
 
-    @Test("Umetnuti treninzi ne pomiču sljedeći trening rasporeda")
+    @Test("Umetnuti treninzi nisu odrađeni, pa je prvi od njih sljedeći")
     func insertWorkouts() throws {
         let context = try makeContext()
         let engine = ScheduleEngine(context: context)
@@ -607,7 +672,7 @@ struct BulkEditingTests {
         #expect(added.count == 2)
         #expect(sequence() == ["A", "C", "A", "-", "B", "C"])
         #expect(schedule.orderedItems.map(\.orderIndex) == [0, 1, 2, 3, 4, 5])
-        #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "C")
 
         try engine.insertWorkouts([templates[1]], into: schedule)
         #expect(sequence() == ["A", "C", "A", "-", "B", "C", "B"])
@@ -696,5 +761,64 @@ struct TemplateFromSessionTests {
         #expect(session.name == "Push")
         #expect(session.orderedExercises.count == 3)
         #expect(session.orderedExercises[0].orderedSets.count == 3)
+    }
+}
+
+@Suite("Izlazak iz uređivača bez spremanja")
+struct EditSnapshotTests {
+    @Test("Raspored se vraća na stanje prije uređivanja: polja, niz i izmjene ciklusa")
+    func restoresSchedule() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, templates) = try abcSchedule(in: context, cycles: 4)
+        try engine.skipNextWorkout(of: schedule)
+        let before = schedule.orderedItems.map(\.id)
+        let snapshot = try ScheduleSnapshot(schedule, context: context)
+
+        schedule.name = "Promijenjeno"
+        schedule.cycleCount = nil
+        schedule.reminderMinutes = 7 * 60
+        try engine.setActive(false, for: schedule)
+        try engine.removeItem(schedule.orderedItems[2])
+        try engine.addWorkout(templates[0], to: schedule)
+        try engine.moveItems(in: schedule, from: IndexSet(integer: 0), to: 3)
+        try engine.unskip(try #require(try engine.skippedWorkouts(of: schedule).first).change, in: schedule)
+
+        try snapshot.restore(schedule, in: context)
+        #expect(schedule.name == "ABC")
+        #expect(schedule.cycleCount == 4)
+        #expect(schedule.reminderMinutes == nil)
+        #expect(schedule.isActive)
+        #expect(schedule.orderedItems.map(\.id) == before)
+        #expect(try engine.skippedWorkouts(of: schedule).map(\.templateName) == ["A"])
+        #expect(try engine.nextWorkout(of: schedule)?.template.name == "B")
+        #expect(try context.fetch(FetchDescriptor<ScheduleItem>()).count == 4)
+    }
+
+    @Test("Trening se vraća na stanje prije uređivanja: naziv, vježbe i serije")
+    func restoresTemplate() throws {
+        let context = try makeContext()
+        let engine = TemplateEngine(context: context)
+        let workout = try template("Gornji dio", in: context, exercises: [bench, row])
+        let benchExercise = try #require(workout.orderedExercises.first)
+        benchExercise.orderedSets.first?.targetReps = 8
+        try context.save()
+        let setCount = benchExercise.orderedSets.count
+        let snapshot = TemplateSnapshot(workout)
+
+        workout.name = "Drugo"
+        benchExercise.orderedSets.first?.targetReps = 12
+        _ = try engine.addSet(to: benchExercise)
+        try engine.removeExercise(workout.orderedExercises[1])
+        try engine.addExercise(curl, inputType: .weightReps, to: workout)
+        try engine.moveExercises(in: workout, from: IndexSet(integer: 0), to: 2)
+
+        try snapshot.restore(workout, in: context)
+        #expect(workout.name == "Gornji dio")
+        #expect(workout.orderedExercises.map(\.exerciseName) == [bench.name, row.name])
+        let restored = try #require(workout.orderedExercises.first)
+        #expect(restored.orderedSets.count == setCount)
+        #expect(restored.orderedSets.first?.targetReps == 8)
+        #expect(try context.fetch(FetchDescriptor<TemplateExercise>()).count == 2)
     }
 }

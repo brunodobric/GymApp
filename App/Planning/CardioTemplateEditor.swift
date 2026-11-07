@@ -5,22 +5,30 @@ import Units
 
 /// Uređivač kardio treninga: vrsta, zagrijavanje, blokovi intervala i hlađenje.
 /// Kardio trening se pokreće na satu u aplikaciji Workout, a kad je u rasporedu, Apolon ga tamo zakazuje.
+///
+/// U kartici Rasporedi trening se otvara samo za prikaz, a uređuje se nakon gumba Uredi (`PlanningEditing`).
 struct CardioTemplateEditor: View {
     @Bindable var template: WorkoutTemplate
+    /// Prikaz ili uređivanje. Bez toga trening se uvijek uređuje.
+    var editing: PlanningEditing?
 
     @Environment(\.modelContext) private var context
     @State private var plan: CardioPlan
 
-    init(template: WorkoutTemplate) {
+    init(template: WorkoutTemplate, editing: PlanningEditing? = nil) {
         self.template = template
+        self.editing = editing
         _plan = State(initialValue: template.cardioPlan ?? CardioPreset.easyRun.plan)
     }
+
+    private var isEditing: Bool { editing?.isEditing ?? true }
 
     var body: some View {
         List {
             Section("Naziv") {
                 TextField("Naziv treninga", text: $template.name)
             }
+            .disabled(!isEditing)
             Section("Vrsta") {
                 Picker("Aktivnost", selection: $plan.activity) {
                     ForEach(CardioActivity.allCases, id: \.self) { activity in
@@ -31,23 +39,25 @@ struct CardioTemplateEditor: View {
                     ForEach(CardioLocation.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
             }
+            .disabled(!isEditing)
             OptionalGoalSection(title: "Zagrijavanje", goal: $plan.warmup)
+                .disabled(!isEditing)
             Section {
                 ForEach($plan.intervals) { $interval in
                     NavigationLink {
                         CardioIntervalEditor(interval: $interval)
+                            .disabled(!isEditing)
                     } label: {
                         Text(CardioText.interval(interval))
                     }
                 }
-                .onMove { plan.intervals.move(fromOffsets: $0, toOffset: $1) }
-                .onDelete { offsets in
-                    // Plan mora imati barem jedan blok.
-                    guard plan.intervals.count > offsets.count else { return }
-                    plan.intervals.remove(atOffsets: offsets)
-                }
-                Button("Dodaj blok", systemImage: "plus") {
-                    plan.intervals.append(CardioInterval(work: .time(seconds: 60), recovery: .time(seconds: 60), repeats: 4))
+                // U prikazu nema premještanja ni brisanja.
+                .onMove(perform: isEditing ? moveIntervals : nil)
+                .onDelete(perform: isEditing ? deleteIntervals : nil)
+                if isEditing {
+                    Button("Dodaj blok", systemImage: "plus") {
+                        plan.intervals.append(CardioInterval(work: .time(seconds: 60), recovery: .time(seconds: 60), repeats: 4))
+                    }
                 }
             } header: {
                 Text("Blokovi")
@@ -55,6 +65,7 @@ struct CardioTemplateEditor: View {
                 Text("Blok je rad i oporavak, ponovljeni zadani broj puta. Obično trčanje je jedan blok bez oporavka.")
             }
             OptionalGoalSection(title: "Hlađenje", goal: $plan.cooldown)
+                .disabled(!isEditing)
             Section {
                 Label {
                     Text("Trening se pokreće na satu u aplikaciji Workout. U rasporedu ga Apolon zakazuje na sat za termin podsjetnika.")
@@ -68,20 +79,39 @@ struct CardioTemplateEditor: View {
         .navigationTitle(template.name.isEmpty ? String(localized: "Kardio") : template.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu("Predložak", systemImage: "square.stack") {
-                    ForEach(CardioPreset.allCases) { preset in
-                        Button(preset.title) { plan = preset.plan }
+            if isEditing {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu("Predložak", systemImage: "square.stack") {
+                        ForEach(CardioPreset.allCases) { preset in
+                            Button(preset.title) { plan = preset.plan }
+                        }
                     }
                 }
             }
         }
+        .planningEditToolbar(editing)
         .onChange(of: plan) { _, newValue in template.cardioPlan = newValue }
+        // Izlazak bez spremanja vraća trening iz snimke, a plan na ekranu ga prati.
+        .onChange(of: template.cardioPlanRaw) { _, _ in
+            if let saved = template.cardioPlan, saved != plan { plan = saved }
+        }
         .onDisappear {
             try? context.save()
             // Promjena plana mijenja i plan zakazan na satu.
             ReminderScheduler.refresh(context: context)
         }
+    }
+}
+
+extension CardioTemplateEditor {
+    private func moveIntervals(from source: IndexSet, to destination: Int) {
+        plan.intervals.move(fromOffsets: source, toOffset: destination)
+    }
+
+    private func deleteIntervals(at offsets: IndexSet) {
+        // Plan mora imati barem jedan blok.
+        guard plan.intervals.count > offsets.count else { return }
+        plan.intervals.remove(atOffsets: offsets)
     }
 }
 
