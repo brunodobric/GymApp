@@ -10,6 +10,15 @@ struct PlanningEditing {
     var onEdit: () -> Void
     var onDone: () -> Void
     var onLeave: () -> Void
+    /// Vlastiti natrag i u regular širini: za uređivač gurnut na stog, gdje sistemski natrag postoji
+    /// u svakoj širini (u kartici Rasporedi samo u compact širini, kad se split view sklopi).
+    var replacesBackButtonAlways = false
+
+    private var replacesBackButton: Bool { isEditing }
+
+    func showsOwnBackButton(in sizeClass: UserInterfaceSizeClass?) -> Bool {
+        replacesBackButton && (replacesBackButtonAlways || sizeClass == .compact)
+    }
 }
 
 extension View {
@@ -34,10 +43,10 @@ private struct PlanningEditToolbar: ViewModifier {
         if let editing {
             content
                 // Sistemski natrag bi izašao bez pitanja, pa uređivanje ima svoj (i bez povlačenja s ruba).
-                .navigationBarBackButtonHidden(editing.isEditing && sizeClass == .compact)
+                .navigationBarBackButtonHidden(editing.showsOwnBackButton(in: sizeClass))
                 .toolbar {
                     if editing.isEditing {
-                        if sizeClass == .compact {
+                        if editing.showsOwnBackButton(in: sizeClass) {
                             ToolbarItem(placement: .topBarLeading) {
                                 Button("Natrag", systemImage: "chevron.left", action: editing.onLeave)
                             }

@@ -766,6 +766,19 @@ struct TemplateFromSessionTests {
 
 @Suite("Izlazak iz uređivača bez spremanja")
 struct EditSnapshotTests {
+    @Test("Odbačeni novi trening iz rasporeda nestaje iz niza i iz treninga")
+    func discardNewWorkout() throws {
+        let context = try makeContext()
+        let engine = ScheduleEngine(context: context)
+        let (schedule, _) = try abcSchedule(in: context, cycles: nil)
+        let created = try engine.addNewWorkout(named: "Novi", to: schedule)
+        #expect(schedule.orderedItems.count == 5)
+        try engine.discardNewWorkout(created, from: schedule)
+        #expect(schedule.orderedItems.count == 4)
+        #expect(schedule.orderedItems.map(\.orderIndex) == [0, 1, 2, 3])
+        #expect(try context.fetch(FetchDescriptor<WorkoutTemplate>()).map(\.name).sorted() == ["A", "B", "C"])
+    }
+
     @Test("Raspored se vraća na stanje prije uređivanja: polja, niz i izmjene ciklusa")
     func restoresSchedule() throws {
         let context = try makeContext()
