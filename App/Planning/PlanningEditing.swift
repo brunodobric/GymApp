@@ -2,7 +2,8 @@ import SwiftUI
 
 /// Prikaz ili uređivanje stavke iz kartice Rasporedi (raspored, trening, kardio trening).
 ///
-/// Otvorena stavka se samo prikazuje. Gumb Uredi uključuje uređivanje, a kvačica ga završava i sprema.
+/// Otvorena stavka se prikazuje, a postavke (trajanje, aktivnost, podsjetnici, serije) mijenjaju se i tada.
+/// Gumb Uredi uključuje promjenu naziva, redoslijeda, brisanje i dodavanje, a kvačica ga završava i sprema.
 /// Dok se uređuje, natrag ide kroz `onLeave`, gdje kartica pita spremiti promjene ili izaći bez spremanja.
 struct PlanningEditing {
     var isEditing: Bool
@@ -12,6 +13,12 @@ struct PlanningEditing {
 }
 
 extension View {
+    /// Dok se uređuje, lista je u načinu uređivanja: crtice za premještanje i znak za brisanje.
+    /// Postavlja se na `List` uređivača.
+    func planningEditMode(_ editing: PlanningEditing?) -> some View {
+        environment(\.editMode, .constant(editing?.isEditing == true ? .active : .inactive))
+    }
+
     /// Gumbi Uredi, kvačica i natrag za uređivač. Bez `editing` (uređivač otvoren izvan kartice Rasporedi,
     /// npr. novi trening iz rasporeda ili iz povijesti) uređivač je uvijek u uređivanju i bez tih gumba.
     func planningEditToolbar(_ editing: PlanningEditing?) -> some View {

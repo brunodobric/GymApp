@@ -31,12 +31,10 @@ struct ScheduleEditorScreen: View {
                     .disabled(!isEditing)
             }
             sequenceSection
-            Group {
-                durationSection
-                reminderSection
-            }
-            .disabled(!isEditing)
+            durationSection
+            reminderSection
         }
+        .planningEditMode(editing)
         .navigationTitle(schedule.name.isEmpty ? String(localized: "Raspored") : schedule.name)
         .navigationBarTitleDisplayMode(.inline)
         .planningEditToolbar(editing)
@@ -71,17 +69,15 @@ struct ScheduleEditorScreen: View {
                         Text("Preskočeno")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                        if isEditing {
-                            Button("Vrati") {
-                                try? engine.unskip(skipped.change, in: schedule)
-                                refreshReminders()
-                            }
-                            .buttonStyle(.borderless)
+                        Button("Vrati") {
+                            try? engine.unskip(skipped.change, in: schedule)
+                            refreshReminders()
                         }
+                        .buttonStyle(.borderless)
                     }
                 }
             }
-            // U prikazu nema premještanja ni brisanja.
+            // Premještanje i brisanje samo u uređivanju (crtice i znak za brisanje).
             .onMove(perform: isEditing ? moveItems : nil)
             .onDelete(perform: isEditing ? deleteItems : nil)
             // Trening povučen iz ploče umeće se na mjesto gdje je pušten.

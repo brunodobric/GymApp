@@ -35,9 +35,10 @@ struct TemplateEditorScreen: View {
             Section("Vježbe") {
                 ForEach(template.orderedExercises) { exercise in
                     NavigationLink(value: exercise) { row(for: exercise) }
-                        .swipeActions(edge: .leading) { if isEditing { supersetAction(for: exercise) } }
+                        // Superset povlačenjem udesno, izvan uređivanja (u njemu povlačenje ne radi).
+                        .swipeActions(edge: .leading) { supersetAction(for: exercise) }
                 }
-                // U prikazu nema premještanja ni brisanja.
+                // Premještanje i brisanje samo u uređivanju (crtice i znak za brisanje).
                 .onMove(perform: isEditing ? moveExercises : nil)
                 .onDelete(perform: isEditing ? deleteExercises : nil)
                 // Vježba povučena iz kataloga umeće se na mjesto gdje je puštena.
@@ -59,13 +60,14 @@ struct TemplateEditorScreen: View {
                 }
             }
         }
+        .planningEditMode(editing)
         .navigationTitle(template.name.isEmpty ? String(localized: "Trening") : template.name)
         .navigationBarTitleDisplayMode(.inline)
         .planningEditToolbar(editing)
         // Katalog se otvara samo gumbom Dodaj vježbe (i ⌘K), a zatvara gumbom Zatvori u ploči.
         .commandShortcut("Dodaj vježbe", key: "k") { if isEditing { showsCatalog = true } }
         .onChange(of: isEditing) { _, isEditing in if !isEditing { showsCatalog = false } }
-        .navigationDestination(for: TemplateExercise.self) { TemplateExerciseEditor(exercise: $0, isEditing: isEditing) }
+        .navigationDestination(for: TemplateExercise.self) { TemplateExerciseEditor(exercise: $0) }
         .planningPanel(isPresented: $showsCatalog, minWidth: 300, idealWidth: 360, maxWidth: 480) {
             ExerciseCatalogPanel(isPresented: $showsCatalog) { add($0, at: nil) }
         }
@@ -143,8 +145,6 @@ struct TemplateEditorScreen: View {
 /// Serije jedne vježbe u treningu: broj i vrsta serija, ciljana težina i ponavljanja, pauza.
 struct TemplateExerciseEditor: View {
     @Bindable var exercise: TemplateExercise
-    /// U prikazu treninga serije se samo gledaju.
-    var isEditing = true
 
     @Environment(\.modelContext) private var context
     // Jedinica iz upita, dostupna već pri prvom prikazu: redak serije zapamti tekst težine u jedinici
@@ -162,13 +162,10 @@ struct TemplateExerciseEditor: View {
                         // Promjena jedinice gradi redak iznova, da tekst težine bude u novoj jedinici.
                         // Id sadrži i seriju: samo `unit` bi svim retcima dao isti identitet u listi.
                         .id("\(set.id.uuidString)-\(unit.rawValue)")
-                        .disabled(!isEditing)
                 }
-                .onDelete(perform: isEditing ? deleteSets : nil)
-                if isEditing {
-                    Button("Dodaj radnu seriju", systemImage: "plus") { _ = try? engine.addSet(to: exercise) }
-                    Button("Dodaj zagrijavanje", systemImage: "flame") { _ = try? engine.addSet(to: exercise, kind: .warmUp) }
-                }
+                .onDelete(perform: deleteSets)
+                Button("Dodaj radnu seriju", systemImage: "plus") { _ = try? engine.addSet(to: exercise) }
+                Button("Dodaj zagrijavanje", systemImage: "flame") { _ = try? engine.addSet(to: exercise, kind: .warmUp) }
             }
             Group {
                 Section("Pauza") {
@@ -189,7 +186,6 @@ struct TemplateExerciseEditor: View {
                     TextField("Bilješka uz vježbu", text: $exercise.notes, axis: .vertical)
                 }
             }
-            .disabled(!isEditing)
         }
         .navigationTitle(exercise.exerciseName)
         .navigationBarTitleDisplayMode(.inline)

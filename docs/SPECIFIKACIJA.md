@@ -205,7 +205,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Ako postoji samo jedan raspored, prikazuje se s naslovom (npr. “Moj raspored”).
    * Klik na raspored otvara popis treninga unutar njega.
    * Gore desno gumb **+** za dodavanje novog rasporeda.
-   * Otvoreni raspored ili trening se samo prikazuje. Gore desno gumb **Uredi** uključuje uređivanje, a kvačica ga završava. Izlazak iz uređivanja bez kvačice pita **Spremi** ili **Izađi bez spremanja** (novi raspored ili trening se tada briše, a postojeći se vraća kakav je bio). Novi raspored i novi trening otvaraju se odmah u uređivanju.
+   * Otvoreni raspored ili trening se prikazuje, a trajanje, aktivnost, podsjetnici i serije vježbi mijenjaju se i tada. Gore desno gumb **Uredi** uključuje promjenu naziva, redoslijeda (crtice za povlačenje), brisanje (crveni znak) i dodavanje treninga ili vježbi, a kvačica ga završava. Izlazak iz uređivanja bez kvačice pita **Spremi** ili **Izađi bez spremanja** (novi raspored ili trening se tada briše, a postojeći se vraća kakav je bio). Novi raspored i novi trening otvaraju se odmah u uređivanju.
    * Odlazak na drugu karticu sprema uređivanje, a povratak na Rasporede uvijek počinje od popisa.
    * Unutar otvorenog rasporeda:
      * Gore desno gumb **+** za dodavanje novog treninga ili rest dana.
