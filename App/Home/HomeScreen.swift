@@ -185,7 +185,6 @@ struct HomeScreen: View {
                 StartWorkoutCard(
                     planned: upcoming,
                     templateCount: startableTemplates.count,
-                    offersOtherWorkout: { offersOtherWorkout($0) },
                     onStart: { planned in
                         if planned.template.kind == .cardio {
                             cardioSchedule = planned.schedule
@@ -193,6 +192,7 @@ struct HomeScreen: View {
                             start(planned)
                         }
                     },
+                    offersOtherWorkout: { offersOtherWorkout($0) },
                     onChooseTemplate: { schedule in
                         pickerSchedule = schedule
                         showsTemplatePicker = true
