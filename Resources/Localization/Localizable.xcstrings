@@ -598,6 +598,72 @@
         }
       }
     },
+    "%lld serije × %lld–%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@sets@ × %2$lld–%3$lld"
+          },
+          "substitutions" : {
+            "sets" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg set"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg sets"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@sets@ × %2$lld–%3$lld"
+          },
+          "substitutions" : {
+            "sets" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg serije"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg serija"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg serija"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld spremljenih treninga" : {
       "localizations" : {
         "en" : {
@@ -999,6 +1065,16 @@
         }
       }
     },
+    "Aktivnost i podsjetnici" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activity and reminders"
+          }
+        }
+      }
+    },
     "Aplikacija je vraćena na početno stanje." : {
       "localizations" : {
         "en" : {
@@ -1349,16 +1425,6 @@
         }
       }
     },
-    "Ciklus %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cycle %lld"
-          }
-        }
-      }
-    },
     "Ciklus završava kad su odrađeni ili preskočeni svi treninzi u nizu. Propušteni dan ništa ne pomiče." : {
       "localizations" : {
         "en" : {
@@ -1669,16 +1735,6 @@
         }
       }
     },
-    "Dodaj barem jedan trening u niz." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add at least one workout to the sequence."
-          }
-        }
-      }
-    },
     "Dodaj blok" : {
       "localizations" : {
         "en" : {
@@ -1819,12 +1875,22 @@
         }
       }
     },
-    "Donji dio tijela" : {
+    "Donji dio tijela A" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lower body"
+            "value" : "Lower body A"
+          }
+        }
+      }
+    },
+    "Donji dio tijela B" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lower body B"
           }
         }
       }
@@ -1869,12 +1935,22 @@
         }
       }
     },
-    "Dva dana gornjeg i dva dana donjeg dijela tijela tjedno." : {
+    "Dva dana gornjeg i dva dana donjeg dijela tijela tjedno, svaki mišić dvaput." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Two upper-body and two lower-body days a week."
+            "value" : "Two upper-body and two lower-body days a week, every muscle twice."
+          }
+        }
+      }
+    },
+    "Dva kratka treninga cijelog tijela tjedno. Dovoljno za zdravlje i napredak kad nema više vremena." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two short full-body workouts a week. Enough for health and progress when there is no more time."
           }
         }
       }
@@ -1969,12 +2045,12 @@
         }
       }
     },
-    "Full Body (3 dana)" : {
+    "Full body (3 dana)" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Full Body (3 days)"
+            "value" : "Full body (3 days)"
           }
         }
       }
@@ -2039,12 +2115,32 @@
         }
       }
     },
-    "Gornji dio tijela" : {
+    "Gornji dio tijela A" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Upper body"
+            "value" : "Upper body A"
+          }
+        }
+      }
+    },
+    "Gornji dio tijela B" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upper body B"
+          }
+        }
+      }
+    },
+    "Gornji i donji dio tijela, dan odmora, pa guranje, povlačenje i noge. Svaki mišić dvaput tjedno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upper and lower body, a rest day, then push, pull and legs. Every muscle twice a week."
           }
         }
       }
@@ -2159,12 +2255,12 @@
         }
       }
     },
-    "Guranje, povlačenje i noge u zasebnim danima, %lld treninga u nizu pa jedan dan odmora." : {
+    "Guranje, povlačenje i noge dvaput tjedno, s dvije varijante svakog treninga." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Push, pull and legs on separate days: %lld workouts in a row, then one rest day."
+            "value" : "Push, pull and legs twice a week, with two versions of each workout."
           }
         }
       }
@@ -2345,6 +2441,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "From Apple Health"
+          }
+        }
+      }
+    },
+    "Izađi bez spremanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave Without Saving"
           }
         }
       }
@@ -3229,12 +3335,62 @@
         }
       }
     },
+    "Novi raspored još nije spremljen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The new schedule hasn't been saved yet."
+          }
+        }
+      }
+    },
+    "Odaberi drugi trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose another workout"
+          }
+        }
+      }
+    },
     "Ostali treninzi" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Other workouts"
+          }
+        }
+      }
+    },
+    "Preskočeno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skipped"
+          }
+        }
+      }
+    },
+    "Spremi raspored" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Schedule"
+          }
+        }
+      }
+    },
+    "Spremiti raspored?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save schedule?"
           }
         }
       }
@@ -3719,6 +3875,26 @@
         }
       }
     },
+    "Noge A" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legs A"
+          }
+        }
+      }
+    },
+    "Noge B" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legs B"
+          }
+        }
+      }
+    },
     "Nova mjera" : {
       "localizations" : {
         "en" : {
@@ -4009,16 +4185,6 @@
         }
       }
     },
-    "Odaberi drugi trening" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose another workout"
-          }
-        }
-      }
-    },
     "Odaberi više treninga" : {
       "localizations" : {
         "en" : {
@@ -4275,6 +4441,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Basic"
+          }
+        }
+      }
+    },
+    "Osnovni full body (2 dana)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basic full body (2 days)"
           }
         }
       }
@@ -5089,6 +5265,16 @@
         }
       }
     },
+    "Početnički full body (3 dana)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beginner full body (3 days)"
+          }
+        }
+      }
+    },
     "Počni s praznom bazom" : {
       "localizations" : {
         "en" : {
@@ -5245,16 +5431,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A skipped workout doesn't count in this cycle. You can undo it in the schedule editor while the cycle is in progress."
-          }
-        }
-      }
-    },
-    "Preskočeno: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skipped: %@"
           }
         }
       }
@@ -5709,32 +5885,52 @@
         }
       }
     },
-    "Pull" : {
+    "Pull A" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pull"
+            "value" : "Pull A"
           }
         }
       }
     },
-    "Push" : {
+    "Pull B" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Push"
+            "value" : "Pull B"
           }
         }
       }
     },
-    "Push/Pull/Legs (%lld dana)" : {
+    "Push A" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Push/Pull/Legs (%lld days)"
+            "value" : "Push A"
+          }
+        }
+      }
+    },
+    "Push B" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push B"
+          }
+        }
+      }
+    },
+    "Push/Pull/Legs (6 dana)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push/Pull/Legs (6 days)"
           }
         }
       }
@@ -5855,16 +6051,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The schedule and workout stay unchanged for the next cycles."
-          }
-        }
-      }
-    },
-    "Raspored nije aktivan." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The schedule isn't active."
           }
         }
       }
@@ -7269,6 +7455,16 @@
         }
       }
     },
+    "Treninzi A i B naizmjence, tri puta tjedno. Malo vježbi, svaki mišić tri puta tjedno." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts A and B in turn, three times a week. Few exercises, every muscle three times a week."
+          }
+        }
+      }
+    },
     "Treninzi s iPhonea spremaju se u Zdravlje, a kardio treninzi, težina i visina uvoze se iz njega. Dozvole mijenjaš u Zdravlju: Profil > Aplikacije > Apolon." : {
       "localizations" : {
         "en" : {
@@ -7319,12 +7515,12 @@
         }
       }
     },
-    "Tri treninga cijelog tijela tjedno s danom odmora između." : {
+    "Tri različita treninga cijelog tijela tjedno, svaki mišić dva do tri puta." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Three full-body workouts a week with a rest day in between."
+            "value" : "Three different full-body workouts a week, every muscle two to three times."
           }
         }
       }
@@ -7615,6 +7811,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Upper/Lower (4 days)"
+          }
+        }
+      }
+    },
+    "Upper/Lower + PPL (5 dana)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upper/Lower + PPL (5 days)"
           }
         }
       }

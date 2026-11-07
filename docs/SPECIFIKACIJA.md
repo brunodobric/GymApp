@@ -248,7 +248,11 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Tjedne tvrde serije po mišićnoj grupi (vidi "Tvrde serije").
    * Grafovi napretka (težina, volumen, PRs) — posebno optimizirani za veći ekran iPada.
 5. **Gotovi programi i predlošci (Rasporedi):**
-   * Full Body (3 dana), Upper / Lower (4 dana), Push / Pull / Legs (3–6 dana).
+   * Osnovni full body (2 dana), Početnički full body A/B (3 dana), Full body A/B/C (3 dana), Upper / Lower (4 dana), Upper / Lower + PPL (5 dana), Push / Pull / Legs (6 dana).
+   * Vježba u programu je obrazac kretanja s izvedbama po opremi (npr. potisak sa šipkom → s bučicama → sklekovi). Pri dodavanju se bira prva izvedba za opremu iz profila; izolacijska vježba bez opreme otpada.
+   * Ponavljanja i pauze slijede iz cilja i iskustva: raspon ponavljanja (npr. 8–12, dvostruka progresija), za snagu glavne vježbe 3–6 ponavljanja. Početnik i opća kondicija rade seriju manje.
+   * Preporuka iz profila (cilj, iskustvo, oprema, dani): oprema je tvrdi filtar, a dani, iskustvo i cilj daju bodove. Prikazuju se najbolji program i dvije alternative s razlogom. Podloga i izvori: ACSM 2026, Pelland i sur. 2026, Schoenfeld i sur. 2016, 2019 i 2021.
+   * Dodani program dobiva fiksne dane podsjetnika prema broju dana tjedno (vrijeme podsjetnika postavlja korisnik).
    * Neograničeno kreiranje vlastitih rasporeda (na iPadu drag-and-drop ili multi-select za brže slaganje).
 6. **Praćenje tijela:**
    * Mjerenja: visina, težina, opseg struka, opseg prsa, ruke i noge.
