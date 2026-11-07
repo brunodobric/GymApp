@@ -51,7 +51,12 @@ jobs:
             -scheme GymApp \
             -configuration Debug \
             -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO | tail -n 60
+            CODE_SIGNING_ALLOWED=NO | tee build-ios.log | tail -n 60
+
+      # Zadnjih 60 redaka često ne sadrži samu grešku prevođenja, pa se kod pada ispišu sve greške.
+      - name: Greške iOS builda
+        if: failure()
+        run: grep -E "error:" build-ios.log | sort -u | head -n 50 || true
 
       - name: Build watchOS (simulator)
         run: |
