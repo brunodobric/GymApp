@@ -66,6 +66,8 @@ struct SettingsDTO: Codable {
     var liveActivityFollowsApp: Bool?
     var liveActivityThemeRaw: String?
     var liveActivityAccentRaw: String?
+    var prExcludedExercisesRaw: String?
+    var statsDetailRaw: String?
 
     init(_ model: UserSettings) {
         id = model.id
@@ -92,6 +94,8 @@ struct SettingsDTO: Codable {
         liveActivityFollowsApp = model.liveActivityFollowsApp
         liveActivityThemeRaw = model.liveActivityThemeRaw
         liveActivityAccentRaw = model.liveActivityAccentRaw
+        prExcludedExercisesRaw = model.prExcludedExercisesRaw
+        statsDetailRaw = model.statsDetailRaw
     }
 
     func apply(to model: UserSettings) {
@@ -119,6 +123,8 @@ struct SettingsDTO: Codable {
         model.liveActivityFollowsApp = liveActivityFollowsApp ?? true
         model.liveActivityThemeRaw = liveActivityThemeRaw ?? "system"
         model.liveActivityAccentRaw = liveActivityAccentRaw ?? "blue"
+        model.prExcludedExercisesRaw = prExcludedExercisesRaw ?? ""
+        model.statsDetailRaw = statsDetailRaw ?? StatsDetail.basic.rawValue
     }
 }
 
@@ -399,6 +405,8 @@ struct SessionDTO: Codable {
     var workoutPlanId: UUID?
     var distanceMeters: Double?
     var averageHeartRate: Double?
+    /// Napor treninga (session RPE). Nedostaje u starijim kopijama.
+    var sessionRPE: Double?
     var lastActivityAt: Date
     var exercises: [SessionExerciseDTO]
 
@@ -418,6 +426,7 @@ struct SessionDTO: Codable {
         workoutPlanId = session.workoutPlanId
         distanceMeters = session.distanceMeters
         averageHeartRate = session.averageHeartRate
+        sessionRPE = session.sessionRPE
         lastActivityAt = session.lastActivityAt
         exercises = session.orderedExercises.map { exercise in
             SessionExerciseDTO(
@@ -451,6 +460,7 @@ struct SessionDTO: Codable {
         session.workoutPlanId = workoutPlanId
         session.distanceMeters = distanceMeters
         session.averageHeartRate = averageHeartRate
+        session.sessionRPE = sessionRPE
         session.lastActivityAt = lastActivityAt
         context.insert(session)
         for item in exercises {

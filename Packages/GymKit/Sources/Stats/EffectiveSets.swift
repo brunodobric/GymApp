@@ -12,13 +12,11 @@ public enum EffectiveSets {
     /// Udio serije za regiju koja samo pomaže.
     public static let secondaryWeight = 0.5
     /// Najmanji RPE s kojim se serija broji (RPE 6 = RIR 4).
-    public static let minimumRPE = 6.0
+    public static let minimumRPE = SetMetrics.minimumHardRPE
 
     /// Je li serija dovoljno teška da se broji.
     public static func isHard(_ set: SetValues) -> Bool {
-        guard set.kind == .working else { return false }
-        if let rpe = set.rpe, rpe < minimumRPE { return false }
-        return true
+        SetMetrics.isHard(set)
     }
 
     /// Tvrde serije jedne vježbe: završene, radne, bez preslabih.

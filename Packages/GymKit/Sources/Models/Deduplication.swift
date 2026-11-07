@@ -120,6 +120,8 @@ public extension UserSettings {
             (effortScaleRaw, defaults.effortScaleRaw),
             (prEnabled, defaults.prEnabled),
             (trackedPRKindsRaw, defaults.trackedPRKindsRaw),
+            (prExcludedExercisesRaw, defaults.prExcludedExercisesRaw),
+            (statsDetailRaw, defaults.statsDetailRaw),
             (restEndSoundEnabled, defaults.restEndSoundEnabled),
             (availablePlatesRaw, defaults.availablePlatesRaw),
             (barbellWeightKg, defaults.barbellWeightKg),

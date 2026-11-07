@@ -36,6 +36,20 @@ struct MetricsTests {
         #expect(SetMetrics.estimatedOneRepMax(weightKg: 100, reps: 37, formula: .brzycki) == nil)
         #expect(SetMetrics.estimatedOneRepMax(weightKg: 0, reps: 5) == nil)
         #expect(SetMetrics.estimatedOneRepMax(weightKg: 100, reps: 0) == nil)
+        // RIR 2: računa se kao 10 ponavljanja do otkaza.
+        let reserve = try #require(SetMetrics.estimatedOneRepMax(weightKg: 100, reps: 8, rir: 2))
+        #expect(abs(reserve - 133.333) < 0.01)
+    }
+
+    @Test("Pouzdana procjena: RIR iz RPE-a, do 12 ponavljanja do otkaza, samo radne serije s teretom")
+    func strengthEstimate() {
+        #expect(SetMetrics.repsInReserve(SetValues(reps: 5, rpe: 8.5)) == 1.5)
+        #expect(SetMetrics.repsInReserve(SetValues(reps: 5)) == 0)
+        #expect(SetMetrics.strengthEstimate(work(100, 12), inputType: .weightReps) != nil)
+        #expect(SetMetrics.strengthEstimate(SetValues(weightKg: 100, reps: 10, rpe: 7), inputType: .weightReps) == nil)
+        #expect(SetMetrics.strengthEstimate(SetValues(kind: .warmUp, weightKg: 100, reps: 5), inputType: .weightReps) == nil)
+        #expect(SetMetrics.strengthEstimate(SetValues(reps: 5, extraWeightKg: 20), inputType: .weightedBodyweight) != nil)
+        #expect(SetMetrics.strengthEstimate(SetValues(reps: 5), inputType: .bodyweight) == nil)
     }
 
     @Test("Što serija treba da bi se mogla označiti")
@@ -85,107 +99,132 @@ struct PersonalRecordTests {
 
     private func kinds(_ records: [PersonalRecord]) -> Set<PRKind> { Set(records.map(\.kind)) }
 
-    @Test("Prvi trening s vježbom nema rekorda")
-    func noHistory() {
-        #expect(PersonalRecordDetector.records(current: [work(100, 5)], history: [], inputType: .weightReps).isEmpty)
+    /// Povijest s dovoljno izvođenja za rekorde: prvo izvođenje ponovljeno do kalibracije.
+    private func past(_ sessions: [[SetValues]], _ type: ExerciseInputType = .weightReps) -> RecordHistory {
+        let padding = Array(repeating: sessions[0], count: max(0, RecordHistory.calibrationSessions - sessions.count))
+        return RecordHistory(sessions: padding + sessions, inputType: type)
     }
 
-    @Test("Veća težina je rekord težine")
-    func maxWeight() {
-        let result = PersonalRecordDetector.records(
-            current: [work(85, 5)], history: [[work(80, 5)]], inputType: .weightReps
-        )
-        let record = result.first { $0.kind == .maxWeight }
-        #expect(record?.value == 85)
-        #expect(record?.previousBest == 80)
+    private func records(
+        _ current: [SetValues], _ sessions: [[SetValues]], _ type: ExerciseInputType = .weightReps
+    ) -> [PersonalRecord] {
+        PersonalRecordDetector.records(current: current, history: past(sessions, type), inputType: type)
     }
 
-    @Test("Ista težina nije rekord težine")
-    func sameWeight() {
-        let result = PersonalRecordDetector.records(current: [work(80, 5)], history: [[work(80, 5)]], inputType: .weightReps)
-        #expect(!kinds(result).contains(.maxWeight))
+    @Test("Bez povijesti i u prva tri izvođenja nema rekorda")
+    func calibration() {
+        #expect(PersonalRecordDetector.records(current: [work(100, 5)], history: RecordHistory(), inputType: .weightReps).isEmpty)
+        let two = RecordHistory(sessions: [[work(80, 5)], [work(80, 5)]], inputType: .weightReps)
+        #expect(PersonalRecordDetector.records(current: [work(100, 5)], history: two, inputType: .weightReps).isEmpty)
+        let three = RecordHistory(sessions: [[work(80, 5)], [work(80, 5)], [work(80, 5)]], inputType: .weightReps)
+        #expect(!PersonalRecordDetector.records(current: [work(100, 5)], history: three, inputType: .weightReps).isEmpty)
     }
 
-    @Test("Volumen je rekord po jednoj seriji")
-    func maxVolume() {
-        let history = [[work(80, 8), work(80, 8)]]
-        let better = PersonalRecordDetector.records(
-            current: [work(80, 8), work(80, 9)], history: history, inputType: .weightReps
-        )
-        #expect(better.first { $0.kind == .maxVolume }?.value == 720)
-        let worse = PersonalRecordDetector.records(
-            current: [work(80, 8), work(80, 8), work(80, 8)], history: history, inputType: .weightReps
-        )
-        #expect(!kinds(worse).contains(.maxVolume))
+    @Test("Procjena 1RM je glavni rekord, s pragom od 1 %")
+    func oneRepMax() {
+        // 180 × 5 = 210 kg, 185 × 5 = 215,8 kg (+2,8 %).
+        let better = records([work(185, 5)], [[work(180, 5)]])
+        let record = better.first { $0.kind == .estimatedOneRepMax }
+        #expect(abs((record?.value ?? 0) - 215.833) < 0.01)
+        #expect(abs((record?.previousBest ?? 0) - 210) < 0.01)
+        // 140 → 140,5 kg je ispod praga.
+        #expect(records([work(140.5, 5)], [[work(140, 5)]]).isEmpty)
     }
 
-    @Test("Ponavljanja su rekord samo uz istu ili veću težinu")
-    func maxReps() {
-        let history = [[work(100, 5), work(80, 12)]]
-        // 6 ponavljanja sa 100 kg je rekord, 10 sa 80 kg nije (ranije 12 sa 80).
-        let heavy = PersonalRecordDetector.records(current: [work(100, 6)], history: history, inputType: .weightReps)
-        #expect(heavy.first { $0.kind == .maxReps }?.value == 6)
-        let light = PersonalRecordDetector.records(current: [work(80, 10)], history: history, inputType: .weightReps)
-        #expect(!kinds(light).contains(.maxReps))
-        // 13 sa 80 je rekord.
-        let more = PersonalRecordDetector.records(current: [work(80, 13)], history: history, inputType: .weightReps)
-        #expect(more.first { $0.kind == .maxReps }?.value == 13)
+    @Test("RIR iz RPE-a ulazi u procjenu, a serije iznad 12 ponavljanja do otkaza ne")
+    func oneRepMaxUsesReserve() {
+        // 100 × 8 uz RPE 8 (RIR 2) je kao 10 do otkaza: 133,3 kg.
+        let withReserve = SetValues(weightKg: 100, reps: 8, rpe: 8)
+        let found = records([withReserve], [[work(100, 8)]])
+        #expect(abs((found.first { $0.kind == .estimatedOneRepMax }?.value ?? 0) - 133.333) < 0.01)
+        let tooMany = records([work(60, 20)], [[work(100, 5)]])
+        #expect(!kinds(tooMany).contains(.estimatedOneRepMax))
+    }
+
+    @Test("Rekord po rasponu ponavljanja: jedan, najviši nadmašeni raspon")
+    func repMax() {
+        let history = [[work(100, 5), work(80, 10)]]
+        let five = records([work(102.5, 5)], history)
+        let record = five.first { $0.kind == .repMax }
+        #expect(record?.reps == 5 && record?.value == 102.5 && record?.previousBest == 100)
+        #expect(five.filter { $0.kind == .repMax }.count == 1)
+        // 85 × 10 nadmašuje i raspon 10 i 8: prijavljuje se 10.
+        #expect(records([work(85, 10)], history).first { $0.kind == .repMax }?.reps == 10)
+    }
+
+    @Test("Najveća težina ide u sažetak samo uz blizu najbolju procjenu 1RM")
+    func milestone() {
+        // 185 × 4 je teže od 180 × 5, a procjena 1RM je gotovo ista (209,7 prema 210 kg): ide u sažetak.
+        let close = records([work(185, 4)], [[work(180, 5)]]).first { $0.kind == .maxWeight }
+        #expect(close?.showsInSummary == true)
+        // 190 × 1 je procjena 190 kg, 10 % ispod najbolje: samo u povijesti.
+        let far = records([work(190, 1)], [[work(180, 5)]]).first { $0.kind == .maxWeight }
+        #expect(far?.value == 190 && far?.showsInSummary == false)
+    }
+
+    @Test("Tonaža vježbe je rekord treninga, ali ne ide u sažetak")
+    func exerciseVolume() {
+        let record = records([work(80, 8), work(80, 8), work(80, 8)], [[work(80, 8), work(80, 8)]])
+            .first { $0.kind == .exerciseVolume }
+        #expect(record?.value == 1920 && record?.previousBest == 1280 && record?.showsInSummary == false)
     }
 
     @Test("Warm-up serije ne mogu biti rekord")
     func warmUpIgnored() {
         let warmUp = SetValues(kind: .warmUp, weightKg: 200, reps: 20)
-        let result = PersonalRecordDetector.records(current: [warmUp], history: [[work(80, 5)]], inputType: .weightReps)
-        #expect(result.isEmpty)
+        #expect(records([warmUp], [[work(80, 5)]]).isEmpty)
         // Ni warm-up u povijesti ne smije dizati prag.
-        let pastWarmUp = PersonalRecordDetector.records(
-            current: [work(85, 5)], history: [[warmUp, work(80, 5)]], inputType: .weightReps
-        )
+        let pastWarmUp = records([work(85, 5)], [[warmUp, work(80, 5)]])
         #expect(pastWarmUp.first { $0.kind == .maxWeight }?.value == 85)
     }
 
     @Test("Vlastita težina: samo ponavljanja")
     func bodyweight() {
-        let result = PersonalRecordDetector.records(
-            current: [SetValues(reps: 15)], history: [[SetValues(reps: 12)]], inputType: .bodyweight
-        )
-        #expect(kinds(result) == [.maxReps])
+        #expect(kinds(records([SetValues(reps: 15)], [[SetValues(reps: 12)]], .bodyweight)) == [.maxReps])
     }
 
     @Test("Potpomognuta: rekord je manja pomoć")
     func assisted() {
         let history = [[SetValues(reps: 8, extraWeightKg: 30)]]
-        let better = PersonalRecordDetector.records(
-            current: [SetValues(reps: 8, extraWeightKg: 25)], history: history, inputType: .assisted
-        )
-        #expect(better.first { $0.kind == .lowestAssistance }?.value == 25)
-        let worse = PersonalRecordDetector.records(
-            current: [SetValues(reps: 8, extraWeightKg: 35)], history: history, inputType: .assisted
-        )
-        #expect(!kinds(worse).contains(.lowestAssistance))
+        #expect(records([SetValues(reps: 8, extraWeightKg: 25)], history, .assisted).first { $0.kind == .lowestAssistance }?.value == 25)
+        #expect(!kinds(records([SetValues(reps: 8, extraWeightKg: 35)], history, .assisted)).contains(.lowestAssistance))
+        #expect(records([SetValues(reps: 10, extraWeightKg: 30)], history, .assisted).first { $0.kind == .maxReps }?.value == 10)
     }
 
     @Test("Trajanje i udaljenost: najdulje")
     func durationAndDistance() {
-        let duration = PersonalRecordDetector.records(
-            current: [SetValues(durationSeconds: 90)], history: [[SetValues(durationSeconds: 60)]], inputType: .duration
-        )
-        #expect(kinds(duration) == [.longestDuration])
-        let cardio = PersonalRecordDetector.records(
-            current: [SetValues(durationSeconds: 1800, distanceMeters: 6000)],
-            history: [[SetValues(durationSeconds: 1800, distanceMeters: 5000)]],
-            inputType: .durationDistance
+        #expect(kinds(records([SetValues(durationSeconds: 90)], [[SetValues(durationSeconds: 60)]], .duration)) == [.longestDuration])
+        let cardio = records(
+            [SetValues(durationSeconds: 1800, distanceMeters: 6000)],
+            [[SetValues(durationSeconds: 1800, distanceMeters: 5000)]],
+            .durationDistance
         )
         #expect(kinds(cardio) == [.longestDistance])
+    }
+
+    @Test("Nakon pauze od 6 tjedana prva dva izvođenja nemaju rekorda")
+    func returnAfterPause() {
+        let day: TimeInterval = 86_400
+        let start = Date(timeIntervalSince1970: 1_800_000_000)
+        var history = RecordHistory()
+        for index in 0..<4 {
+            history.add([work(80, 5)], inputType: .weightReps, date: start.addingTimeInterval(Double(index) * 7 * day))
+        }
+        let back = start.addingTimeInterval(3 * 7 * day + 50 * day)
+        #expect(!history.allowsRecords(at: back))
+        history.add([work(70, 5)], inputType: .weightReps, date: back)
+        #expect(!history.allowsRecords(at: back.addingTimeInterval(3 * day)))
+        history.add([work(75, 5)], inputType: .weightReps, date: back.addingTimeInterval(3 * day))
+        #expect(history.allowsRecords(at: back.addingTimeInterval(6 * day)))
     }
 
     @Test("Isključeni tipovi se ne prijavljuju")
     func trackedKinds() {
         let result = PersonalRecordDetector.records(
-            current: [work(90, 5)], history: [[work(80, 5)]], inputType: .weightReps,
+            current: [work(90, 5), work(90, 5)], history: past([[work(80, 5)]]), inputType: .weightReps,
             kinds: PRKind.kinds(fromSettings: ["maxVolume"])
         )
-        #expect(kinds(result) == [.maxVolume])
+        #expect(kinds(result) == [.exerciseVolume])
         #expect(PRKind.kinds(fromSettings: []).isEmpty)
     }
 
@@ -194,7 +233,7 @@ struct PersonalRecordTests {
         let settings = UserSettings()
         #expect(PRKind.tracked(by: settings) == PRKind.kinds(fromSettings: ["maxWeight", "maxVolume", "maxReps"]))
         settings.trackedPRKinds = ["maxVolume"]
-        #expect(PRKind.tracked(by: settings) == [.maxVolume])
+        #expect(PRKind.tracked(by: settings) == [.exerciseVolume])
         settings.prEnabled = false
         #expect(PRKind.tracked(by: settings).isEmpty)
         #expect(PRKind.tracked(by: nil) == Set(PRKind.allCases))
@@ -380,7 +419,8 @@ struct CondensedHistoryTests {
             reps: Int.random(in: 0...15, using: &random),
             extraWeightKg: Double(Int.random(in: 0...12, using: &random)) * 2.5,
             durationSeconds: Int.random(in: 0...600, using: &random),
-            distanceMeters: Double(Int.random(in: 0...50, using: &random)) * 100
+            distanceMeters: Double(Int.random(in: 0...50, using: &random)) * 100,
+            rpe: Int.random(in: 0..<3, using: &random) == 0 ? nil : Double(Int.random(in: 12...20, using: &random)) / 2
         )
     }
 
@@ -388,15 +428,23 @@ struct CondensedHistoryTests {
     func sameRecords() {
         var random = SeededGenerator(state: 14)
         for type in ExerciseInputType.allCases {
-            var full: [[SetValues]] = []
-            var condensed: [[SetValues]] = []
+            var all: [SetValues] = []
+            var bestVolume = 0.0
+            var sessions = 0
+            var condensed = RecordHistory()
             for _ in 0..<120 {
                 let current = (0..<Int.random(in: 1...5, using: &random)).map { _ in randomSet(&random) }
+                let full = RecordHistory(uncondensed: all, bestSessionVolume: bestVolume, sessionCount: sessions)
                 let expected = PersonalRecordDetector.records(current: current, history: full, inputType: type)
                 let actual = PersonalRecordDetector.records(current: current, history: condensed, inputType: type)
                 #expect(actual == expected, "\(type)")
-                full.append(current)
-                condensed = PersonalRecordDetector.condensed(condensed + [current])
+                let working = current.filter { $0.kind == .working }
+                if !working.isEmpty {
+                    all += working
+                    sessions += 1
+                    bestVolume = max(bestVolume, working.reduce(0) { $0 + SetMetrics.volume($1, inputType: type) })
+                }
+                condensed.add(current, inputType: type, date: nil)
             }
         }
     }
@@ -404,16 +452,14 @@ struct CondensedHistoryTests {
     @Test("Sažeta povijest ostaje mala")
     func staysSmall() {
         var random = SeededGenerator(state: 7)
-        var condensed: [[SetValues]] = []
+        var history = RecordHistory()
         for _ in 0..<500 {
-            let current = (0..<4).map { _ in randomSet(&random) }
-            condensed = PersonalRecordDetector.condensed(condensed + [current])
+            history.add((0..<4).map { _ in randomSet(&random) }, inputType: .weightReps, date: nil)
         }
         // Granica po težini ima najviše 21 razinu, pa je sažetak ograničen bez obzira na broj treninga.
-        #expect(condensed.count == 1)
-        #expect(condensed[0].count < 120)
+        #expect(history.sets.count < 120)
         #expect(PersonalRecordDetector.condensed([]).isEmpty)
-        #expect(PersonalRecordDetector.condensed([[SetValues(kind: .warmUp, weightKg: 20, reps: 10)]]).isEmpty)
+        #expect(PersonalRecordDetector.condensed([SetValues(kind: .warmUp, weightKg: 20, reps: 10)]).isEmpty)
     }
 }
 

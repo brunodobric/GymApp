@@ -70,7 +70,8 @@ public enum ExerciseInfoBuilder {
         for exercise in catalog?.exercises ?? [] {
             table["c:\(exercise.id)"] = ExerciseInfo(
                 primary: exercise.primaryMuscles, secondary: exercise.secondaryMuscles,
-                primaryRegions: exercise.primaryRegions, secondaryRegions: exercise.secondaryRegions
+                primaryRegions: exercise.primaryRegions, secondaryRegions: exercise.secondaryRegions,
+                isCompound: exercise.mechanic.map { $0 == .compound }
             )
         }
         for exercise in custom {

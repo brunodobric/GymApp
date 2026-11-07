@@ -62,6 +62,10 @@ extension GymSchemaV1 {
         public var prEnabled: Bool = true
         /// Praćeni tipovi PR-ova odvojeni zarezom.
         public var trackedPRKindsRaw: String = "maxWeight,maxVolume,maxReps"
+        /// Vježbe (`ExerciseRef.key`) koje je korisnik isključio iz rekorda, odvojene zarezom.
+        public var prExcludedExercisesRaw: String = ""
+        /// Razina statistike (`StatsDetail`): osnovna ili detaljna (Pro).
+        public var statsDetailRaw: String = StatsDetail.basic.rawValue
         public var restEndSoundEnabled: Bool = true
         /// Dostupne ploče u kilogramima, odvojene zarezom.
         public var availablePlatesRaw: String = "1.25,2.5,5,10,15,20,25"
@@ -159,6 +163,25 @@ extension GymSchemaV1 {
         public var availablePlatesKg: [Double] {
             get { availablePlatesRaw.split(separator: ",").compactMap { Double($0) } }
             set { availablePlatesRaw = newValue.map { String($0) }.joined(separator: ",") }
+        }
+
+        public var statsDetail: StatsDetail {
+            get { StatsDetail(rawValue: statsDetailRaw) ?? .basic }
+            set { statsDetailRaw = newValue.rawValue }
+        }
+
+        /// Ključevi vježbi isključenih iz rekorda.
+        public var prExcludedExerciseKeys: Set<String> {
+            get { Set(prExcludedExercisesRaw.split(separator: ",").map(String.init)) }
+            set { prExcludedExercisesRaw = newValue.sorted().joined(separator: ",") }
+        }
+
+        /// Uključuje ili isključuje vježbu iz rekorda.
+        public func setRecordsEnabled(_ enabled: Bool, forExercise key: String) {
+            guard !key.isEmpty else { return }
+            var keys = prExcludedExerciseKeys
+            if enabled { keys.remove(key) } else { keys.insert(key) }
+            prExcludedExerciseKeys = keys
         }
 
         public var trackedPRKinds: [String] {

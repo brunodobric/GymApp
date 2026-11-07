@@ -334,7 +334,10 @@ struct WorkoutEngineTests {
     @Test("Sažetak: trajanje, volumen bez warm-upa i rekordi samo prema ranijim treninzima")
     func summary() throws {
         let (engine, _) = try makeEngine()
-        try finishedWorkout(engine, at: base, sets: [(80, 8)])
+        // Rekordi kreću od četvrtog izvođenja vježbe (kalibracija).
+        for index in 0..<3 {
+            try finishedWorkout(engine, at: base.addingTimeInterval(Double(index) * 3600), sets: [(80, 8)])
+        }
 
         let start = base.addingTimeInterval(86_400)
         let session = try engine.startSession(name: "B", now: start)
@@ -354,9 +357,16 @@ struct WorkoutEngineTests {
         #expect(summary.durationSeconds == 1800)
         #expect(summary.completedSets == 2)
         #expect(summary.totalVolumeKg == 680)
+        #expect(summary.hardSets == 1)
         let records = try #require(summary.records.first)
         #expect(records.exerciseName == "Potisak s klupe")
         #expect(records.records.contains { $0.kind == .maxWeight && $0.value == 85 })
+        // Istaknut je jedan rekord vježbe (procjena 1RM), ostali su prebrojani.
+        #expect(summary.highlights.map(\.record.kind) == [.estimatedOneRepMax])
+        #expect(summary.otherRecordsCount == records.records.count - 1)
+
+        let excluded = try engine.summary(of: session, excludedExercises: [bench.key])
+        #expect(excluded.records.isEmpty && excluded.highlights.isEmpty)
     }
 
     @Test("Zadnje izvođenje koristi samo završene treninge, ne aktivni")
