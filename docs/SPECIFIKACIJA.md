@@ -258,13 +258,13 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Težina i visina se mogu vući iz HealthKit.
    * Korisnik može ručno unijeti dodatna mjerenja.
    * Prikazuje se povijest i graf za svaku mjeru.
-7. **Onboarding:**
-   * Cilj (hipertrofija / snaga / rekompozicija / opća kondicija).
-   * Jedinice (kg / lbs).
-   * Visina i težina (opcionalno).
-   * Povezivanje s Apple Health (odmah pitati da/ne).
-   * Iskustvo (početnik / srednji / napredni) — opcionalno.
-   * Dostupna oprema i broj dana tjedno — opcionalno.
+7. **Onboarding (jedna stranica):**
+   * Kratka stranica s tipkama "Preskoči" i "Spremi". Sve osim jedinica je neobavezno, a isti podaci su kasnije u Postavkama > Profil.
+   * Trening: cilj (hipertrofija / snaga / rekompozicija / opća kondicija), dani tjedno, iskustvo (početnik < 6 mj., srednji 6 mj. – 2 god., napredni > 2 god.).
+   * Gdje treniraš: Teretana (sva oprema jednim dodirom), Kućna teretana, Bučice i trake, Bez opreme ili "Prilagodi" s popisom opreme.
+   * Tijelo: jedinice (kg / lbs), visina i težina, spol (za DOTS i tijelo na prikazu mišića).
+   * Povezivanje s Apple Health (prekidač, dozvola se traži odmah).
+   * Nakon "Spremi", ako je korisnik odgovorio o treningu, nudi se gotov raspored (najbolji i dvije alternative) s tipkama "Dodaj i aktiviraj" i "Složit ću sam".
 
 ---
 

@@ -181,7 +181,7 @@ struct DotsCard: View {
     var body: some View {
         StatisticsCard(title: "DOTS bodovi") {
             if sex == nil {
-                Text("Odaberi spol u Postavkama, u dijelu Statistika, da vidiš DOTS bodove.").foregroundStyle(.secondary)
+                Text("Odaberi spol u Postavkama, u dijelu Profil, da vidiš DOTS bodove.").foregroundStyle(.secondary)
             } else if !hasBodyWeight {
                 Text("Upiši tjelesnu težinu u Tijelu da vidiš DOTS bodove.").foregroundStyle(.secondary)
             } else if let score {

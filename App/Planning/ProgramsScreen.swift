@@ -45,14 +45,8 @@ struct ProgramsScreen: View {
     private func install(_ program: Program) {
         do {
             // Ponavljanja prema cilju i iskustvu, vježbe prema opremi iz profila.
-            let profile = settingsList.first.map(TrainingProfile.init(settings:)) ?? TrainingProfile()
-            let schedule = try ProgramInstaller(context: context).install(
-                program, profile: profile, name: program.title, workoutName: \.title
-            ) { id in
-                catalogStore.catalog?.exercise(withID: id)?.displayName(language: catalogStore.language) ?? id
-            }
-            ReminderScheduler.refresh(context: context)
-            added = schedule.name
+            let profile = UserSettings.preferred(in: settingsList).map(TrainingProfile.init(settings:)) ?? TrainingProfile()
+            added = try ProgramAdder.add(program, profile: profile, context: context, catalogStore: catalogStore).name
         } catch {
             errorText = String(localized: "Program se nije mogao dodati.")
         }
