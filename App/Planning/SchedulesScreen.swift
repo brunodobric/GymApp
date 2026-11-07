@@ -20,6 +20,13 @@ struct SchedulesScreen: View {
     @State private var selection: PlanningSelection?
     @State private var showsPrograms = false
     @State private var errorText: String?
+    /// Novi raspored koji još nije potvrđen gumbom Gotovo.
+    @State private var newScheduleId: UUID?
+    /// Kamo se ide kad korisnik odgovori na pitanje o nespremljenom novom rasporedu.
+    @State private var pendingSelection: PlanningSelection?
+    /// Novi raspored stvoren dok je prethodni čekao odgovor (postaje novi tek nakon pitanja).
+    @State private var pendingNewScheduleId: UUID?
+    @State private var asksToSave = false
 
     var body: some View {
         NavigationSplitView {
@@ -40,7 +47,56 @@ struct SchedulesScreen: View {
             case nil:
                 break
             }
+            if let id = newScheduleId, !ids.contains(id) { newScheduleId = nil }
         }
+        .alert("Spremiti raspored?", isPresented: $asksToSave) {
+            Button("Spremi raspored") {
+                newScheduleId = nil
+                finishLeaving()
+            }
+            Button("Izađi bez spremanja", role: .destructive) {
+                discardNewSchedule()
+                finishLeaving()
+            }
+            Button("Odustani", role: .cancel) {
+                // Raspored stvoren dok se čekao odgovor ne smije ostati kao tihi višak.
+                if let id = pendingNewScheduleId, let schedule = schedules.first(where: { $0.id == id }) {
+                    try? ScheduleEngine(context: context).delete(schedule)
+                }
+                pendingSelection = nil
+                pendingNewScheduleId = nil
+            }
+        } message: {
+            Text("Novi raspored još nije spremljen.")
+        }
+    }
+
+    // MARK: Novi raspored
+
+    /// Odabir u popisu (i natrag) prolazi ovdje, da novi raspored ne ostane spremljen bez pitanja.
+    private func select(_ next: PlanningSelection?, newSchedule: UUID? = nil) {
+        if let id = newScheduleId, next != .schedule(id) {
+            pendingSelection = next
+            pendingNewScheduleId = newSchedule
+            asksToSave = true
+        } else {
+            selection = next
+            if newSchedule != nil { newScheduleId = newSchedule }
+        }
+    }
+
+    private func finishLeaving() {
+        selection = pendingSelection
+        newScheduleId = pendingNewScheduleId
+        pendingSelection = nil
+        pendingNewScheduleId = nil
+    }
+
+    private func discardNewSchedule() {
+        guard let id = newScheduleId, let schedule = schedules.first(where: { $0.id == id }) else { return }
+        try? ScheduleEngine(context: context).delete(schedule)
+        ReminderScheduler.refresh(context: context)
+        newScheduleId = nil
     }
 
     @ViewBuilder
@@ -48,7 +104,15 @@ struct SchedulesScreen: View {
         switch selection {
         case .schedule(let id):
             if let schedule = schedules.first(where: { $0.id == id }) {
-                ScheduleEditorScreen(schedule: schedule)
+                ScheduleEditorScreen(
+                    schedule: schedule,
+                    isNew: schedule.id == newScheduleId,
+                    onDone: {
+                        newScheduleId = nil
+                        selection = nil
+                    },
+                    onLeave: { select(nil) }
+                )
             }
         case .template(let id):
             if let template = templates.first(where: { $0.id == id }) {
@@ -68,7 +132,7 @@ struct SchedulesScreen: View {
     }
 
     private var planningList: some View {
-        List(selection: $selection) {
+        List(selection: Binding(get: { selection }, set: { select($0) })) {
             Section("Rasporedi") {
                 if schedules.isEmpty {
                     Text("Još nema rasporeda. Dodaj gotov program ili složi vlastiti.")
@@ -127,7 +191,7 @@ struct SchedulesScreen: View {
     private func newSchedule() {
         do {
             let schedule = try ScheduleEngine(context: context).createSchedule(name: String(localized: "Novi raspored"))
-            selection = .schedule(schedule.id)
+            select(.schedule(schedule.id), newSchedule: schedule.id)
         } catch {
             errorText = String(localized: "Raspored se nije mogao stvoriti.")
         }
@@ -143,7 +207,7 @@ struct SchedulesScreen: View {
     private func newCardioTemplate(_ preset: CardioPreset) {
         do {
             let template = try TemplateEngine(context: context).createCardioTemplate(name: preset.title, plan: preset.plan)
-            selection = .template(template.id)
+            select(.template(template.id))
         } catch {
             errorText = String(localized: "Trening se nije mogao stvoriti.")
         }
@@ -152,7 +216,7 @@ struct SchedulesScreen: View {
     private func newTemplate() {
         do {
             let template = try TemplateEngine(context: context).createTemplate(name: String(localized: "Novi trening"))
-            selection = .template(template.id)
+            select(.template(template.id))
         } catch {
             errorText = String(localized: "Trening se nije mogao stvoriti.")
         }

@@ -999,6 +999,16 @@
         }
       }
     },
+    "Aktivnost i podsjetnici" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activity and reminders"
+          }
+        }
+      }
+    },
     "Aplikacija je vraćena na početno stanje." : {
       "localizations" : {
         "en" : {
@@ -1349,16 +1359,6 @@
         }
       }
     },
-    "Ciklus %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cycle %lld"
-          }
-        }
-      }
-    },
     "Ciklus završava kad su odrađeni ili preskočeni svi treninzi u nizu. Propušteni dan ništa ne pomiče." : {
       "localizations" : {
         "en" : {
@@ -1665,16 +1665,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add 2 sets per week: %@"
-          }
-        }
-      }
-    },
-    "Dodaj barem jedan trening u niz." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add at least one workout to the sequence."
           }
         }
       }
@@ -2345,6 +2335,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "From Apple Health"
+          }
+        }
+      }
+    },
+    "Izađi bez spremanja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave Without Saving"
           }
         }
       }
@@ -3225,6 +3225,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Most reps"
+          }
+        }
+      }
+    },
+    "Novi raspored još nije spremljen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The new schedule hasn't been saved yet."
+          }
+        }
+      }
+    },
+    "Preskočeno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skipped"
+          }
+        }
+      }
+    },
+    "Spremi raspored" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Schedule"
+          }
+        }
+      }
+    },
+    "Spremiti raspored?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save schedule?"
           }
         }
       }
@@ -5229,16 +5269,6 @@
         }
       }
     },
-    "Preskočeno: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skipped: %@"
-          }
-        }
-      }
-    },
     "Preskoči" : {
       "localizations" : {
         "en" : {
@@ -5835,16 +5865,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The schedule and workout stay unchanged for the next cycles."
-          }
-        }
-      }
-    },
-    "Raspored nije aktivan." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The schedule isn't active."
           }
         }
       }
