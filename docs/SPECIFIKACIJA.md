@@ -141,7 +141,8 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 
 1. **Dashboard** — Početni ekran.
    * Na vrhu kartica **Započni** istog oblika kao kartice ispod, s laganom poluprozirnom pozadinom u boji akcenta da se istakne: sljedeći trening svakog rasporeda i prazan trening.
-   * Kad nijedan raspored ne nudi trening snage, a postoje spremljeni treninzi, prvi red kartice je **Odaberi trening**: otvara popis spremljenih treninga snage (s vježbama) i dodir pokreće odabrani. Prazan trening ostaje ispod. Isto radi ⌘N.
+   * Ispod sljedećeg treninga svakog rasporeda je red **Odaberi drugi trening**: otvara popis treninga tog rasporeda (sljedeći je označen, a trening koji se ponavlja nudi se jednom, s izmjenama tekućeg ciklusa) i ispod njega ostalih spremljenih treninga snage. Dodir pokreće odabrani. Raspored napreduje samo kad je odrađen njegov sljedeći trening, pa drugi trening ne pomiče niz.
+   * Kad nema aktivnog rasporeda, a postoje spremljeni treninzi, prvi red kartice je **Odaberi trening**: otvara popis spremljenih treninga snage (s vježbama) i dodir pokreće odabrani. Prazan trening ostaje ispod. Isto radi ⌘N (i kad raspored nudi samo kardio).
    * Dok trening traje, ekran treninga se povlačenjem prema dolje (ili gumbom Smanji) sažima u tu karticu. Kartica prikazuje isto što i Live Activity: vježbu i seriju, odbrojavanje odmora, težinu i ponavljanja s gumbima − i + te kvačicu za potvrdu serije. Dodir na karticu ponovno otvara cijeli ekran treninga.
    * Ispod njega kartica zadnjeg treninga (datum, trajanje, tip). Zadano je prikazana, a korisnik je može ukloniti ili premjestiti kao ostale kartice.
    * Ispod toga gumb za dodavanje widgeta.

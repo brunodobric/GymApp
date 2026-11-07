@@ -29,10 +29,12 @@ struct HomeScreen: View {
     @State private var presentedSession: Session?
     /// Kardio iz rasporeda: pregled plana s uputom za sat umjesto pokretanja treninga.
     @State private var cardioSchedule: Schedule?
-    /// Izbor spremljenog treninga kad nema rasporeda.
+    /// Izbor treninga: bez rasporeda spremljeni treninzi, ispod rasporeda njegovi treninzi i ostali spremljeni.
     @State private var showsTemplatePicker = false
+    /// Raspored iz kojeg je izbor otvoren (nil: izbor bez rasporeda).
+    @State private var pickerSchedule: Schedule?
     /// Trening odabran u listu; pokreće se tek kad se list zatvori, jer se puni ekran ne može prikazati dok se list zatvara.
-    @State private var chosenTemplate: WorkoutTemplate?
+    @State private var chosenWorkout: WorkoutChoice?
     @State private var errorText: String?
     @State private var checkedRecovery = false
     /// Prazna Početna je jednom dobila karticu zadnjeg treninga.
@@ -101,8 +103,13 @@ struct HomeScreen: View {
             .sheet(item: $cardioSchedule) { schedule in
                 UpcomingWorkoutSheet(schedule: schedule) { cardioSchedule = nil }
             }
-            .sheet(isPresented: $showsTemplatePicker, onDismiss: startChosenTemplate) {
-                TemplatePickerSheet(templates: startableTemplates) { chosenTemplate = $0 }
+            .sheet(isPresented: $showsTemplatePicker, onDismiss: startChosenWorkout) {
+                TemplatePickerSheet(
+                    schedule: pickerSchedule,
+                    scheduled: pickerSchedule.map(workoutChoices) ?? [],
+                    nextItemID: upcoming.first { $0.schedule.id == pickerSchedule?.id }?.item.id,
+                    templates: startableTemplates
+                ) { chosenWorkout = $0 }
             }
             .sheet(isPresented: $showsCardEditor) {
                 DashboardEditor()
@@ -183,6 +190,7 @@ struct HomeScreen: View {
                 StartWorkoutCard(
                     planned: upcoming,
                     templateCount: startableTemplates.count,
+                    offersOtherWorkout: offersOtherWorkout,
                     onStart: { planned in
                         if planned.template.kind == .cardio {
                             cardioSchedule = planned.schedule
@@ -190,7 +198,10 @@ struct HomeScreen: View {
                             start(planned)
                         }
                     },
-                    onChooseTemplate: { showsTemplatePicker = true },
+                    onChooseTemplate: { schedule in
+                        pickerSchedule = schedule
+                        showsTemplatePicker = true
+                    },
                     onStartEmpty: startWorkout
                 )
             }
@@ -214,7 +225,7 @@ struct HomeScreen: View {
             showsSettings = false
             showsCardEditor = false
             showsTemplatePicker = false
-            chosenTemplate = nil
+            chosenWorkout = nil
             cardioSchedule = nil
             recovery = nil
             if hadSheet {
@@ -234,6 +245,7 @@ struct HomeScreen: View {
             } else if let planned = upcomingWorkouts.first(where: { $0.template.kind != .cardio }) {
                 start(planned)
             } else if !startableTemplates.isEmpty {
+                pickerSchedule = nil
                 showsTemplatePicker = true
             } else {
                 startWorkout()
@@ -312,12 +324,26 @@ struct HomeScreen: View {
         TemplateStarter.startable(templates)
     }
 
-    private func startChosenTemplate() {
-        guard let template = chosenTemplate else { return }
-        chosenTemplate = nil
+    /// Treninzi rasporeda za izbor umjesto sljedećeg.
+    private func workoutChoices(_ schedule: Schedule) -> [PlannedWorkout] {
+        (try? ScheduleEngine(context: context).workoutChoices(of: schedule)) ?? []
+    }
+
+    /// Red "Odaberi drugi trening" ispod rasporeda: ima smisla kad postoji barem jedan trening snage osim sljedećeg.
+    private func offersOtherWorkout(_ planned: PlannedWorkout) -> Bool {
+        startableTemplates.contains { $0.id != planned.template.id }
+    }
+
+    private func startChosenWorkout() {
+        guard let choice = chosenWorkout else { return }
+        chosenWorkout = nil
         do {
-            presentedSession = try PerformanceSignpost.measure("WorkoutStart") {
-                try TemplateStarter(context: context).start(template)
+            presentedSession = try PerformanceSignpost.measure("WorkoutStart") { () throws -> Session in
+                let starter = TemplateStarter(context: context)
+                switch choice {
+                case .planned(let planned): return try starter.start(planned)
+                case .template(let template): return try starter.start(template)
+                }
             }
             ReminderScheduler.refresh(context: context)
             if let presentedSession { PhoneWatchSync.shared.sessionStarted(presentedSession) }

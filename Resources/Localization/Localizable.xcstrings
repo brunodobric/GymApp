@@ -3229,6 +3229,16 @@
         }
       }
     },
+    "Ostali treninzi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other workouts"
+          }
+        }
+      }
+    },
     "najviše ponavljanja" : {
       "localizations" : {
         "en" : {
@@ -3995,6 +4005,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose workout"
+          }
+        }
+      }
+    },
+    "Odaberi drugi trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose another workout"
           }
         }
       }
