@@ -1,0 +1,51 @@
+import SwiftUI
+
+/// Prikaz ili uređivanje stavke iz kartice Rasporedi (raspored, trening, kardio trening).
+///
+/// Otvorena stavka se samo prikazuje. Gumb Uredi uključuje uređivanje, a kvačica ga završava i sprema.
+/// Dok se uređuje, natrag ide kroz `onLeave`, gdje kartica pita spremiti promjene ili izaći bez spremanja.
+struct PlanningEditing {
+    var isEditing: Bool
+    var onEdit: () -> Void
+    var onDone: () -> Void
+    var onLeave: () -> Void
+}
+
+extension View {
+    /// Gumbi Uredi, kvačica i natrag za uređivač. Bez `editing` (uređivač otvoren izvan kartice Rasporedi,
+    /// npr. novi trening iz rasporeda ili iz povijesti) uređivač je uvijek u uređivanju i bez tih gumba.
+    func planningEditToolbar(_ editing: PlanningEditing?) -> some View {
+        modifier(PlanningEditToolbar(editing: editing))
+    }
+}
+
+private struct PlanningEditToolbar: ViewModifier {
+    let editing: PlanningEditing?
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    func body(content: Content) -> some View {
+        if let editing {
+            content
+                // Sistemski natrag bi izašao bez pitanja, pa uređivanje ima svoj (i bez povlačenja s ruba).
+                .navigationBarBackButtonHidden(editing.isEditing && sizeClass == .compact)
+                .toolbar {
+                    if editing.isEditing {
+                        if sizeClass == .compact {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button("Natrag", systemImage: "chevron.left", action: editing.onLeave)
+                            }
+                        }
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Gotovo", systemImage: "checkmark", action: editing.onDone)
+                        }
+                    } else {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button("Uredi", action: editing.onEdit)
+                        }
+                    }
+                }
+        } else {
+            content
+        }
+    }
+}

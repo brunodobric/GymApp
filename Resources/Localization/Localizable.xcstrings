@@ -2685,6 +2685,16 @@
         }
       }
     },
+    "Još nema treninga u nizu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts in the sequence yet."
+          }
+        }
+      }
+    },
     "Još nema tvrdih serija." : {
       "localizations" : {
         "en" : {
@@ -2781,6 +2791,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No entries yet."
+          }
+        }
+      }
+    },
+    "Još nema vježbi u treningu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No exercises in this workout yet."
           }
         }
       }
@@ -3061,6 +3081,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Easy run 30 min"
+          }
+        }
+      }
+    },
+    "Novi trening još nije spremljen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The new workout hasn't been saved yet."
+          }
+        }
+      }
+    },
+    "Promjene još nisu spremljene." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your changes haven't been saved yet."
+          }
+        }
+      }
+    },
+    "Spremiti promjene?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save changes?"
+          }
+        }
+      }
+    },
+    "Spremiti trening?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save workout?"
           }
         }
       }
@@ -3421,16 +3481,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skipped"
-          }
-        }
-      }
-    },
-    "Spremi raspored" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save Schedule"
           }
         }
       }
@@ -6611,16 +6661,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Next exercise"
-          }
-        }
-      }
-    },
-    "Sljedeće" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next"
           }
         }
       }

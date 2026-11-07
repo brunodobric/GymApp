@@ -152,7 +152,7 @@ struct UpcomingWorkoutScreen: View {
 
     private func currentChanges(for planned: PlannedWorkout) -> [CycleOverride] {
         ((try? engine.overrides(of: schedule, cycle: planned.cycle)) ?? [])
-            .filter { $0.scheduleItemId == planned.item.id && $0.kind != .skipWorkout }
+            .filter { $0.scheduleItemId == planned.item.id && ($0.kind == .removeExercise || $0.kind == .replaceExercise) }
     }
 
     private func label(of change: CycleOverride, in planned: PlannedWorkout) -> String {
@@ -160,7 +160,7 @@ struct UpcomingWorkoutScreen: View {
         switch change.kind {
         case .removeExercise: return String(localized: "Izbačeno: \(original)")
         case .replaceExercise: return String(localized: "\(original) → \(change.replacementName ?? "")")
-        case .skipWorkout: return ""
+        case .skipWorkout, .completedWorkout: return ""
         }
     }
 

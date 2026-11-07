@@ -10,8 +10,12 @@ import Units
 /// Vježbe se dodaju iz kataloga u bočnoj ploči (inspector), koja se otvara gumbom Dodaj vježbe: na iPadu
 /// stoji uz popis, pa se vježbe mogu odabrati više odjednom ili povući na željeno mjesto u popisu. Na iPhoneu
 /// se ploča otvara kao list.
+///
+/// U kartici Rasporedi trening se otvara samo za prikaz, a uređuje se nakon gumba Uredi (`PlanningEditing`).
 struct TemplateEditorScreen: View {
     @Bindable var template: WorkoutTemplate
+    /// Prikaz ili uređivanje. Bez toga trening se uvijek uređuje.
+    var editing: PlanningEditing?
 
     @Environment(\.modelContext) private var context
     @Environment(CatalogStore.self) private var catalogStore
@@ -20,48 +24,62 @@ struct TemplateEditorScreen: View {
     @State private var errorText: String?
 
     private var engine: TemplateEngine { TemplateEngine(context: context) }
+    private var isEditing: Bool { editing?.isEditing ?? true }
 
     var body: some View {
         List {
             Section("Naziv") {
                 TextField("Naziv treninga", text: $template.name)
+                    .disabled(!isEditing)
             }
             Section("Vježbe") {
                 ForEach(template.orderedExercises) { exercise in
                     NavigationLink(value: exercise) { row(for: exercise) }
-                        .swipeActions(edge: .leading) { supersetAction(for: exercise) }
+                        .swipeActions(edge: .leading) { if isEditing { supersetAction(for: exercise) } }
                 }
-                .onMove { source, destination in
-                    try? engine.moveExercises(in: template, from: source, to: destination)
-                }
-                .onDelete { offsets in
-                    let list = template.orderedExercises
-                    for index in offsets { try? engine.removeExercise(list[index]) }
-                }
+                // U prikazu nema premještanja ni brisanja.
+                .onMove(perform: isEditing ? moveExercises : nil)
+                .onDelete(perform: isEditing ? deleteExercises : nil)
                 // Vježba povučena iz kataloga umeće se na mjesto gdje je puštena.
                 .dropDestination(for: String.self) { payloads, index in
+                    guard isEditing else { return }
                     add(catalogStore.choices(from: payloads, custom: customExercises), at: index)
                 }
-                Button("Dodaj vježbe", systemImage: "plus") { showsCatalog = true }
-                    // Puštena na gumb (i u praznom treningu) vježba ide na kraj.
-                    .dropDestination(for: String.self) { payloads, _ in
-                        let choices = catalogStore.choices(from: payloads, custom: customExercises)
-                        add(choices, at: nil)
-                        return !choices.isEmpty
-                    }
+                if isEditing {
+                    Button("Dodaj vježbe", systemImage: "plus") { showsCatalog = true }
+                        // Puštena na gumb (i u praznom treningu) vježba ide na kraj.
+                        .dropDestination(for: String.self) { payloads, _ in
+                            let choices = catalogStore.choices(from: payloads, custom: customExercises)
+                            add(choices, at: nil)
+                            return !choices.isEmpty
+                        }
+                } else if template.orderedExercises.isEmpty {
+                    Text("Još nema vježbi u treningu.")
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .navigationTitle(template.name.isEmpty ? String(localized: "Trening") : template.name)
         .navigationBarTitleDisplayMode(.inline)
+        .planningEditToolbar(editing)
         // Katalog se otvara samo gumbom Dodaj vježbe (i ⌘K), a zatvara gumbom Zatvori u ploči.
-        .toolbar { EditButton() }
-        .commandShortcut("Dodaj vježbe", key: "k") { showsCatalog = true }
-        .navigationDestination(for: TemplateExercise.self) { TemplateExerciseEditor(exercise: $0) }
+        .commandShortcut("Dodaj vježbe", key: "k") { if isEditing { showsCatalog = true } }
+        .onChange(of: isEditing) { _, isEditing in if !isEditing { showsCatalog = false } }
+        .navigationDestination(for: TemplateExercise.self) { TemplateExerciseEditor(exercise: $0, isEditing: isEditing) }
         .planningPanel(isPresented: $showsCatalog, minWidth: 300, idealWidth: 360, maxWidth: 480) {
             ExerciseCatalogPanel(isPresented: $showsCatalog) { add($0, at: nil) }
         }
         .errorAlert($errorText)
         .onDisappear { try? context.save() }
+    }
+
+    private func moveExercises(from source: IndexSet, to destination: Int) {
+        try? engine.moveExercises(in: template, from: source, to: destination)
+    }
+
+    private func deleteExercises(at offsets: IndexSet) {
+        let list = template.orderedExercises
+        for index in offsets { try? engine.removeExercise(list[index]) }
     }
 
     private func add(_ choices: [ExerciseChoice], at index: Int?) {
@@ -125,6 +143,8 @@ struct TemplateEditorScreen: View {
 /// Serije jedne vježbe u treningu: broj i vrsta serija, ciljana težina i ponavljanja, pauza.
 struct TemplateExerciseEditor: View {
     @Bindable var exercise: TemplateExercise
+    /// U prikazu treninga serije se samo gledaju.
+    var isEditing = true
 
     @Environment(\.modelContext) private var context
     // Jedinica iz upita, dostupna već pri prvom prikazu: redak serije zapamti tekst težine u jedinici
@@ -142,36 +162,43 @@ struct TemplateExerciseEditor: View {
                         // Promjena jedinice gradi redak iznova, da tekst težine bude u novoj jedinici.
                         // Id sadrži i seriju: samo `unit` bi svim retcima dao isti identitet u listi.
                         .id("\(set.id.uuidString)-\(unit.rawValue)")
+                        .disabled(!isEditing)
                 }
-                .onDelete { offsets in
-                    let list = exercise.orderedSets
-                    for index in offsets { try? engine.removeSet(list[index]) }
+                .onDelete(perform: isEditing ? deleteSets : nil)
+                if isEditing {
+                    Button("Dodaj radnu seriju", systemImage: "plus") { _ = try? engine.addSet(to: exercise) }
+                    Button("Dodaj zagrijavanje", systemImage: "flame") { _ = try? engine.addSet(to: exercise, kind: .warmUp) }
                 }
-                Button("Dodaj radnu seriju", systemImage: "plus") { _ = try? engine.addSet(to: exercise) }
-                Button("Dodaj zagrijavanje", systemImage: "flame") { _ = try? engine.addSet(to: exercise, kind: .warmUp) }
             }
-            Section("Pauza") {
-                Toggle("Vlastita pauza", isOn: Binding(
-                    get: { exercise.restSeconds != nil },
-                    set: { try? engine.setRest($0 ? 90 : nil, for: exercise) }
-                ))
-                if let rest = exercise.restSeconds {
-                    Stepper(value: Binding(
-                        get: { rest },
-                        set: { try? engine.setRest($0, for: exercise) }
-                    ), in: 0...600, step: 15) {
-                        Text("\(rest) s")
+            Group {
+                Section("Pauza") {
+                    Toggle("Vlastita pauza", isOn: Binding(
+                        get: { exercise.restSeconds != nil },
+                        set: { try? engine.setRest($0 ? 90 : nil, for: exercise) }
+                    ))
+                    if let rest = exercise.restSeconds {
+                        Stepper(value: Binding(
+                            get: { rest },
+                            set: { try? engine.setRest($0, for: exercise) }
+                        ), in: 0...600, step: 15) {
+                            Text("\(rest) s")
+                        }
                     }
                 }
+                Section("Bilješka") {
+                    TextField("Bilješka uz vježbu", text: $exercise.notes, axis: .vertical)
+                }
             }
-            Section("Bilješka") {
-                TextField("Bilješka uz vježbu", text: $exercise.notes, axis: .vertical)
-            }
+            .disabled(!isEditing)
         }
         .navigationTitle(exercise.exerciseName)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { EditButton() }
         .onDisappear { try? context.save() }
+    }
+
+    private func deleteSets(at offsets: IndexSet) {
+        let list = exercise.orderedSets
+        for index in offsets { try? engine.removeSet(list[index]) }
     }
 }
 

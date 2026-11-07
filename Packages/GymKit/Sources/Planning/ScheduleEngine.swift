@@ -31,7 +31,11 @@ public struct PlannedWorkout {
 }
 
 /// Napredovanje kroz raspored. Osnova je redoslijed, ne kalendar: propušteni dan ništa ne pomiče.
-/// `currentPosition` je indeks sljedeće stavke koja se razmatra; rest dani i preskočeni treninzi se prelaze.
+///
+/// Sljedeći trening je prvi trening u nizu koji u tekućem ciklusu nije odrađen ni preskočen. Odrađeni
+/// treninzi pamte se kao izmjene ciklusa (`completedWorkout`), pa premještanje ili umetanje treninga ne
+/// ostavlja neodrađeni trening iza sebe. `currentPosition` je indeks iza zadnjeg odrađenog treninga prije
+/// prvog neodrađenog: sve ispred nje je odrađeno, preskočeno ili dan odmora.
 public struct ScheduleEngine {
     public let context: ModelContext
 
@@ -66,11 +70,11 @@ public struct ScheduleEngine {
     }
 
     /// Umeće više treninga odjednom (odabir više treninga ili drag & drop na iPadu), redom kojim su zadani.
-    /// Bez `index` idu na kraj niza. Pozicija rasporeda prati stavku na kojoj je stao, kao kod premještanja.
+    /// Bez `index` idu na kraj niza. Umetnuti trening nije odrađen, pa i ispred odrađenih postaje sljedeći.
     @discardableResult
     public func insertWorkouts(_ templates: [WorkoutTemplate], into schedule: Schedule, at index: Int? = nil) throws -> [ScheduleItem] {
+        try recordLegacyProgress(of: schedule)
         var ordered = schedule.orderedItems
-        let currentId = currentItem(of: schedule)?.id
         let position = min(max(index ?? ordered.count, 0), ordered.count)
         let added = templates.map { template in
             let item = ScheduleItem(orderIndex: 0, kind: .workout, workoutTemplateId: template.id)
@@ -80,9 +84,7 @@ public struct ScheduleEngine {
         }
         ordered.insert(contentsOf: added, at: position)
         for (order, item) in ordered.enumerated() { item.orderIndex = order }
-        if let currentId, let current = ordered.firstIndex(where: { $0.id == currentId }) {
-            schedule.currentPosition = current
-        }
+        try updatePosition(of: schedule, items: ordered)
         try context.save()
         return added
     }
@@ -116,15 +118,13 @@ public struct ScheduleEngine {
         if let schedule { try rollIfCycleComplete(schedule) }
     }
 
+    /// Premješta stavke. Odrađeni treninzi ostaju odrađeni, a sljedeći je prvi neodrađeni u novom redoslijedu.
     public func moveItems(in schedule: Schedule, from source: IndexSet, to destination: Int) throws {
+        try recordLegacyProgress(of: schedule)
         var ordered = schedule.orderedItems
-        let currentId = currentItem(of: schedule)?.id
         ordered.moveElements(fromOffsets: source, toOffset: destination)
         for (index, item) in ordered.enumerated() { item.orderIndex = index }
-        // Pozicija prati stavku na kojoj je raspored stao.
-        if let currentId, let index = ordered.firstIndex(where: { $0.id == currentId }) {
-            schedule.currentPosition = index
-        }
+        try updatePosition(of: schedule, items: ordered)
         try context.save()
     }
 
@@ -166,10 +166,10 @@ public struct ScheduleEngine {
     public func nextWorkoutIndex(in schedule: Schedule) throws -> Int? {
         let items = schedule.orderedItems
         guard schedule.currentPosition < items.count else { return nil }
-        let skipped = try skippedItemIds(of: schedule, cycle: schedule.currentCycle)
+        let passed = try passedItemIds(of: schedule, cycle: schedule.currentCycle)
         for index in schedule.currentPosition..<items.count {
             let item = items[index]
-            if item.kind == .workout, !skipped.contains(item.id), try isPlayable(item) { return index }
+            if item.kind == .workout, !passed.contains(item.id), try isPlayable(item) { return index }
         }
         return nil
     }
@@ -179,12 +179,12 @@ public struct ScheduleEngine {
     public func nextWorkout(of schedule: Schedule) throws -> PlannedWorkout? {
         guard schedule.isActive else { return nil }
         let items = schedule.orderedItems
-        let skipped = try skippedItemIds(of: schedule, cycle: schedule.currentCycle)
+        let passed = try passedItemIds(of: schedule, cycle: schedule.currentCycle)
         let changes = try overrides(of: schedule, cycle: schedule.currentCycle)
         var index = schedule.currentPosition
         while index < items.count {
             let item = items[index]
-            if item.kind == .workout, !skipped.contains(item.id),
+            if item.kind == .workout, !passed.contains(item.id),
                let templateId = item.workoutTemplateId, let template = try template(withID: templateId) {
                 return PlannedWorkout(
                     schedule: schedule, item: item, template: template, cycle: schedule.currentCycle,
@@ -197,19 +197,20 @@ public struct ScheduleEngine {
     }
 
     /// Treninzi aktivnog rasporeda koje korisnik može pokrenuti umjesto sljedećeg, redom kao u nizu.
-    /// Svaki predložak je jednom: kad se ponavlja u nizu, uzima se prva stavka od pozicije rasporeda
-    /// nadalje (njezine izmjene ciklusa vrijede), inače prva u nizu. Kao i izvan rasporeda, nude se samo
-    /// treninzi snage s vježbama (`TemplateStarter.startable`). Odrađeni trening pomiče raspored samo ako
-    /// je bio sljedeći (`sessionFinished`).
+    /// Svaki predložak je jednom: kad se ponavlja u nizu, uzima se prva stavka koja u ovom ciklusu još
+    /// nije odrađena (njezine izmjene ciklusa vrijede), inače prva u nizu. Kao i izvan rasporeda, nude se
+    /// samo treninzi snage s vježbama (`TemplateStarter.startable`). Odrađeni trening se u ciklusu bilježi
+    /// kao odrađen (`sessionFinished`), pa ga "Započni" više ne nudi.
     public func workoutChoices(of schedule: Schedule) throws -> [PlannedWorkout] {
         guard schedule.isActive else { return [] }
         let items = schedule.orderedItems
+        let done = try doneItemIds(of: schedule)
         var chosen: [UUID: Int] = [:]
         var order: [UUID] = []
         for (index, item) in items.enumerated() where item.kind == .workout {
             guard let templateId = item.workoutTemplateId else { continue }
             if let existing = chosen[templateId] {
-                if existing < schedule.currentPosition && index >= schedule.currentPosition {
+                if done.contains(items[existing].id) && !done.contains(item.id) {
                     chosen[templateId] = index
                 }
             } else {
@@ -237,16 +238,32 @@ public struct ScheduleEngine {
 
     // MARK: Napredovanje
 
-    /// Poziva se kad je trening završen. Napreduje samo ako je to bio sljedeći trening rasporeda.
+    /// Poziva se kad je trening završen. Bilježi trening kao odrađen u tekućem ciklusu: sljedeći trening
+    /// ako je to on, inače prvu još neodrađenu stavku s tim treningom (trening odabran mimo reda).
     /// Vraća true kad je raspored napredovao.
     @discardableResult
     public func sessionFinished(_ session: Session) throws -> Bool {
         guard let scheduleId = session.scheduleId, let templateId = session.templateId,
               let schedule = try fetchSchedule(withID: scheduleId), schedule.isActive,
-              let index = try nextWorkoutIndex(in: schedule) else { return false }
-        let item = schedule.orderedItems[index]
-        guard item.workoutTemplateId == templateId else { return false }
-        schedule.currentPosition = index + 1
+              let next = try nextWorkoutIndex(in: schedule) else { return false }
+        try recordLegacyProgress(of: schedule)
+        let items = schedule.orderedItems
+        let passed = try passedItemIds(of: schedule, cycle: schedule.currentCycle)
+        let index: Int
+        if items[next].workoutTemplateId == templateId {
+            index = next
+        } else if let other = items.indices.first(where: {
+            items[$0].kind == .workout && items[$0].workoutTemplateId == templateId && !passed.contains(items[$0].id)
+        }) {
+            index = other
+        } else {
+            return false
+        }
+        context.insert(CycleOverride(
+            scheduleId: schedule.id, cycleNumber: schedule.currentCycle, scheduleItemId: items[index].id, kind: .completedWorkout
+        ))
+        try context.save()
+        try updatePosition(of: schedule, items: items)
         try context.save()
         try rollIfCycleComplete(schedule)
         return true
@@ -279,7 +296,11 @@ public struct ScheduleEngine {
     /// Vraća preskočeni trening. Moguće samo dok je ciklus još tekući.
     public func unskip(_ change: CycleOverride, in schedule: Schedule) throws {
         guard change.kind == .skipWorkout, change.cycleNumber == schedule.currentCycle else { return }
+        try recordLegacyProgress(of: schedule)
         context.delete(change)
+        try context.save()
+        // Vraćeni trening ispred pozicije ponovno je na redu.
+        try updatePosition(of: schedule, items: schedule.orderedItems)
         try context.save()
     }
 
@@ -360,10 +381,6 @@ public struct ScheduleEngine {
 
     // MARK: Pomoćno
 
-    private func skippedItemIds(of schedule: Schedule, cycle: Int) throws -> Set<UUID> {
-        Set(try overrides(of: schedule, cycle: cycle).filter { $0.kind == .skipWorkout }.compactMap(\.scheduleItemId))
-    }
-
     private func clearOverrides(for exercise: TemplateExercise, in planned: PlannedWorkout) throws {
         let key = exercise.exercise.key
         for existing in try overrides(of: planned.schedule, cycle: planned.cycle)
@@ -420,6 +437,57 @@ public struct ScheduleEngine {
         var descriptor = FetchDescriptor<Schedule>(predicate: #Predicate { $0.id == id })
         descriptor.fetchLimit = 1
         return try context.fetch(descriptor).first
+    }
+}
+
+// MARK: Odrađeni treninzi u ciklusu
+
+extension ScheduleEngine {
+    /// Stavke koje raspored u ciklusu prelazi: odrađene i preskočene.
+    private func passedItemIds(of schedule: Schedule, cycle: Int) throws -> Set<UUID> {
+        Set(try overrides(of: schedule, cycle: cycle)
+            .filter { $0.kind == .skipWorkout || $0.kind == .completedWorkout }
+            .compactMap(\.scheduleItemId))
+    }
+
+    /// Treninzi odrađeni u tekućem ciklusu: zabilježeni i (iz starijih verzija) oni ispred pozicije.
+    private func doneItemIds(of schedule: Schedule) throws -> Set<UUID> {
+        let recorded = try overrides(of: schedule, cycle: schedule.currentCycle)
+            .filter { $0.kind == .completedWorkout }.compactMap(\.scheduleItemId)
+        let items = schedule.orderedItems
+        let beforePosition = items.prefix(min(schedule.currentPosition, items.count)).filter { $0.kind == .workout }.map(\.id)
+        return Set(recorded).union(beforePosition)
+    }
+
+    /// Starije verzije pamtile su napredak samo pozicijom. Prije promjene redoslijeda treninzi ispred
+    /// pozicije bilježe se kao odrađeni, da se ne izgube kad se poredak promijeni.
+    private func recordLegacyProgress(of schedule: Schedule) throws {
+        let items = schedule.orderedItems
+        let passed = try passedItemIds(of: schedule, cycle: schedule.currentCycle)
+        let missing = items.prefix(min(schedule.currentPosition, items.count))
+            .filter { $0.kind == .workout && !passed.contains($0.id) }
+        guard !missing.isEmpty else { return }
+        for item in missing {
+            context.insert(CycleOverride(
+                scheduleId: schedule.id, cycleNumber: schedule.currentCycle, scheduleItemId: item.id, kind: .completedWorkout
+            ))
+        }
+        try context.save()
+    }
+
+    /// Pozicija iza zadnjeg odrađenog ili preskočenog treninga prije prvog treninga koji je na redu.
+    /// Dani odmora iza odrađenog treninga ostaju ispred nje (podsjetnik ih broji).
+    private func updatePosition(of schedule: Schedule, items: [ScheduleItem]) throws {
+        let passed = try passedItemIds(of: schedule, cycle: schedule.currentCycle)
+        var position = 0
+        for (index, item) in items.enumerated() {
+            if passed.contains(item.id) {
+                position = index + 1
+            } else if try isPlayable(item) {
+                break
+            }
+        }
+        schedule.currentPosition = position
     }
 }
 

@@ -141,7 +141,7 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 
 1. **Dashboard** — Početni ekran.
    * Na vrhu kartica **Započni** istog oblika kao kartice ispod, s laganom poluprozirnom pozadinom u boji akcenta da se istakne: sljedeći trening svakog rasporeda i prazan trening.
-   * Ispod sljedećeg treninga svakog rasporeda je red **Odaberi drugi trening**: otvara popis treninga tog rasporeda (sljedeći je označen, a trening koji se ponavlja nudi se jednom, s izmjenama tekućeg ciklusa) i ispod njega ostalih spremljenih treninga snage. Dodir pokreće odabrani. Raspored napreduje samo kad je odrađen njegov sljedeći trening, pa drugi trening ne pomiče niz.
+   * Ispod sljedećeg treninga svakog rasporeda je red **Odaberi drugi trening**: otvara popis treninga tog rasporeda (sljedeći je označen, a trening koji se ponavlja nudi se jednom, s izmjenama tekućeg ciklusa) i ispod njega ostalih spremljenih treninga snage. Dodir pokreće odabrani. Odrađeni trening bilježi se kao odrađen u tekućem ciklusu, pa Započni dalje nudi prvi trening u nizu koji još nije odrađen.
    * Kad nema aktivnog rasporeda, a postoje spremljeni treninzi, prvi red kartice je **Odaberi trening**: otvara popis spremljenih treninga snage (s vježbama) i dodir pokreće odabrani. Prazan trening ostaje ispod. Isto radi ⌘N (i kad raspored nudi samo kardio).
    * Dok trening traje, ekran treninga se povlačenjem prema dolje (ili gumbom Smanji) sažima u tu karticu. Kartica prikazuje isto što i Live Activity: vježbu i seriju, odbrojavanje odmora, težinu i ponavljanja s gumbima − i + te kvačicu za potvrdu serije. Dodir na karticu ponovno otvara cijeli ekran treninga.
    * Ispod njega kartica zadnjeg treninga (datum, trajanje, tip). Zadano je prikazana, a korisnik je može ukloniti ili premjestiti kao ostale kartice.
@@ -205,6 +205,8 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Ako postoji samo jedan raspored, prikazuje se s naslovom (npr. “Moj raspored”).
    * Klik na raspored otvara popis treninga unutar njega.
    * Gore desno gumb **+** za dodavanje novog rasporeda.
+   * Otvoreni raspored ili trening se samo prikazuje. Gore desno gumb **Uredi** uključuje uređivanje, a kvačica ga završava. Izlazak iz uređivanja bez kvačice pita **Spremi** ili **Izađi bez spremanja** (novi raspored ili trening se tada briše, a postojeći se vraća kakav je bio). Novi raspored i novi trening otvaraju se odmah u uređivanju.
+   * Odlazak na drugu karticu sprema uređivanje, a povratak na Rasporede uvijek počinje od popisa.
    * Unutar otvorenog rasporeda:
      * Gore desno gumb **+** za dodavanje novog treninga ili rest dana.
      * Gore desno gumb **Postavke** rasporeda:
@@ -360,7 +362,7 @@ Korisnik gradi planove na tri razine:
   * **Notes:** Korisnik može dodati bilješke na razini cijelog treninga.  
     Unose se tijekom treninga ili nakon. Prikazuju se u sažetku i u povijesti. Nema ograničenja duljine.
 * **Raspored:** Ima ime i opcionalni opis. Sastoji se od proizvoljnog broja treninga.
-  * **Osnova je redoslijed, ne kalendar.** Raspored je niz treninga (npr. Push → Pull → Legs → Odmor). "Započni" uvijek nudi **sljedeći neodrađeni trening u nizu**, bez obzira na datum. Ciklus završava kad su odrađeni (ili izričito preskočeni) svi treninzi u nizu, i tada počinje sljedeći ciklus.
+  * **Osnova je redoslijed, ne kalendar.** Raspored je niz treninga (npr. Push → Pull → Legs → Odmor). "Započni" uvijek nudi **prvi trening u nizu koji u tekućem ciklusu nije odrađen**, bez obzira na datum. Kad se redoslijed promijeni ili se doda trening, odrađeni treninzi ostaju odrađeni, a na redu je prvi neodrađeni u novom redoslijedu. Ciklus završava kad su odrađeni (ili izričito preskočeni) svi treninzi u nizu, i tada počinje sljedeći ciklus.
   * **Propušteni dan:** ništa se ne pomiče niti preskače automatski. Ako je korisnik u utorak trebao raditi Pull i nije došao, u srijedu je i dalje na redu Pull. Korisnik može ručno preskočiti trening (privremena izmjena, vidi niže).
   * **Ciklusi:** Korisnik može definirati koliko ciklusa raspored traje (fiksni broj) ili da traje dok ga ručno ne ugasi.
   * **Rest dani:** Opcionalni elementi niza. Služe za podsjetnike u fleksibilnom načinu i za prikaz plana. "Započni" ih preskače.

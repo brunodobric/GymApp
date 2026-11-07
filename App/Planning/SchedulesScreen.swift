@@ -7,6 +7,12 @@ import SwiftUI
 enum PlanningSelection: Hashable {
     case schedule(UUID)
     case template(UUID)
+
+    var id: UUID {
+        switch self {
+        case .schedule(let id), .template(let id): id
+        }
+    }
 }
 
 /// Kartica Rasporedi: rasporedi i treninzi (predlošci), uz gotove programe.
@@ -14,18 +20,26 @@ enum PlanningSelection: Hashable {
 /// U regular širini (iPad) popis i uređivač stoje jedan pored drugog (`NavigationSplitView`).
 /// U compact širini split view se sklapa u običan stog.
 struct SchedulesScreen: View {
+    /// Kartica Rasporedi je otvorena. Kad korisnik ode na drugu karticu, uređivanje se sprema,
+    /// a povratak uvijek počinje od popisa.
+    var isSelectedTab = true
+
     @Environment(\.modelContext) private var context
     @Query(sort: \Schedule.createdAt) private var schedules: [Schedule]
     @Query(sort: \WorkoutTemplate.createdAt) private var templates: [WorkoutTemplate]
     @State private var selection: PlanningSelection?
     @State private var showsPrograms = false
     @State private var errorText: String?
-    /// Novi raspored koji još nije potvrđen gumbom Gotovo.
-    @State private var newScheduleId: UUID?
-    /// Kamo se ide kad korisnik odgovori na pitanje o nespremljenom novom rasporedu.
+    /// Stavka koja je u načinu uređivanja (Uredi, ili upravo stvorena). Ostale se samo prikazuju.
+    @State private var editing: PlanningSelection?
+    /// Stavka u uređivanju je nova: izlazak bez spremanja je briše.
+    @State private var editingIsNew = false
+    @State private var scheduleSnapshot: ScheduleSnapshot?
+    @State private var templateSnapshot: TemplateSnapshot?
+    /// Kamo se ide kad korisnik odgovori na pitanje o nespremljenim promjenama.
     @State private var pendingSelection: PlanningSelection?
-    /// Novi raspored stvoren dok je prethodni čekao odgovor (postaje novi tek nakon pitanja).
-    @State private var pendingNewScheduleId: UUID?
+    /// Stavka stvorena dok je prethodna čekala odgovor: nakon pitanja odmah je u uređivanju.
+    @State private var pendingIsNew = false
     @State private var asksToSave = false
 
     var body: some View {
@@ -47,56 +61,145 @@ struct SchedulesScreen: View {
             case nil:
                 break
             }
-            if let id = newScheduleId, !ids.contains(id) { newScheduleId = nil }
+            if let id = editing?.id, !ids.contains(id) { clearEditing() }
         }
-        .alert("Spremiti raspored?", isPresented: $asksToSave) {
-            Button("Spremi raspored") {
-                newScheduleId = nil
+        .onChange(of: isSelectedTab) { _, isSelected in
+            guard !isSelected else { return }
+            if editing != nil { finishEditing() }
+            asksToSave = false
+            pendingSelection = nil
+            pendingIsNew = false
+            selection = nil
+        }
+        .alert(saveTitle, isPresented: $asksToSave) {
+            Button("Spremi") {
+                finishEditing()
                 finishLeaving()
             }
             Button("Izađi bez spremanja", role: .destructive) {
-                discardNewSchedule()
+                discardEditing()
                 finishLeaving()
             }
             Button("Odustani", role: .cancel) {
-                // Raspored stvoren dok se čekao odgovor ne smije ostati kao tihi višak.
-                if let id = pendingNewScheduleId, let schedule = schedules.first(where: { $0.id == id }) {
-                    try? ScheduleEngine(context: context).delete(schedule)
-                }
+                // Stavka stvorena dok se čekao odgovor ne smije ostati kao tihi višak.
+                if pendingIsNew, let pendingSelection { delete(pendingSelection) }
                 pendingSelection = nil
-                pendingNewScheduleId = nil
+                pendingIsNew = false
             }
         } message: {
-            Text("Novi raspored još nije spremljen.")
+            Text(saveMessage)
         }
     }
 
-    // MARK: Novi raspored
+    // MARK: Prikaz i uređivanje
 
-    /// Odabir u popisu (i natrag) prolazi ovdje, da novi raspored ne ostane spremljen bez pitanja.
-    private func select(_ next: PlanningSelection?, newSchedule: UUID? = nil) {
-        if let id = newScheduleId, next != .schedule(id) {
+    private var saveTitle: LocalizedStringKey {
+        guard editingIsNew else { return "Spremiti promjene?" }
+        if case .schedule = editing { return "Spremiti raspored?" }
+        return "Spremiti trening?"
+    }
+
+    private var saveMessage: LocalizedStringKey {
+        guard editingIsNew else { return "Promjene još nisu spremljene." }
+        if case .schedule = editing { return "Novi raspored još nije spremljen." }
+        return "Novi trening još nije spremljen."
+    }
+
+    /// Gumbi Uredi i Gotovo te natrag za stavku u detalju.
+    private func editControls(for item: PlanningSelection) -> PlanningEditing {
+        PlanningEditing(
+            isEditing: editing == item,
+            onEdit: { beginEditing(item) },
+            onDone: { finishEditing() },
+            onLeave: { select(nil) }
+        )
+    }
+
+    private func beginEditing(_ item: PlanningSelection) {
+        switch item {
+        case .schedule(let id):
+            guard let schedule = schedules.first(where: { $0.id == id }) else { return }
+            scheduleSnapshot = try? ScheduleSnapshot(schedule, context: context)
+        case .template(let id):
+            guard let template = templates.first(where: { $0.id == id }) else { return }
+            templateSnapshot = TemplateSnapshot(template)
+        }
+        editing = item
+        editingIsNew = false
+    }
+
+    private func finishEditing() {
+        try? context.save()
+        ReminderScheduler.refresh(context: context)
+        clearEditing()
+    }
+
+    /// Izlazak bez spremanja: nova stavka se briše, postojeća se vraća na stanje prije uređivanja.
+    private func discardEditing() {
+        guard let editing else { return }
+        if editingIsNew {
+            delete(editing)
+        } else {
+            switch editing {
+            case .schedule(let id):
+                if let schedule = schedules.first(where: { $0.id == id }) {
+                    try? scheduleSnapshot?.restore(schedule, in: context)
+                }
+            case .template(let id):
+                if let template = templates.first(where: { $0.id == id }) {
+                    try? templateSnapshot?.restore(template, in: context)
+                }
+            }
+            ReminderScheduler.refresh(context: context)
+        }
+        clearEditing()
+    }
+
+    private func clearEditing() {
+        editing = nil
+        editingIsNew = false
+        scheduleSnapshot = nil
+        templateSnapshot = nil
+    }
+
+    private func delete(_ item: PlanningSelection) {
+        switch item {
+        case .schedule(let id):
+            if let schedule = schedules.first(where: { $0.id == id }) {
+                try? ScheduleEngine(context: context).delete(schedule)
+            }
+        case .template(let id):
+            if let template = templates.first(where: { $0.id == id }) {
+                try? TemplateEngine(context: context).delete(template)
+            }
+        }
+        ReminderScheduler.refresh(context: context)
+    }
+
+    /// Odabir u popisu (i natrag) prolazi ovdje, da se promjene u uređivanju ne izgube ni ne spreme bez pitanja.
+    /// `isNew`: stavka je upravo stvorena i otvara se odmah u uređivanju.
+    private func select(_ next: PlanningSelection?, isNew: Bool = false) {
+        if let editing, next != editing {
             pendingSelection = next
-            pendingNewScheduleId = newSchedule
+            pendingIsNew = isNew
             asksToSave = true
         } else {
             selection = next
-            if newSchedule != nil { newScheduleId = newSchedule }
+            if isNew, let next {
+                editing = next
+                editingIsNew = true
+            }
         }
     }
 
     private func finishLeaving() {
         selection = pendingSelection
-        newScheduleId = pendingNewScheduleId
+        if pendingIsNew, let pendingSelection {
+            editing = pendingSelection
+            editingIsNew = true
+        }
         pendingSelection = nil
-        pendingNewScheduleId = nil
-    }
-
-    private func discardNewSchedule() {
-        guard let id = newScheduleId, let schedule = schedules.first(where: { $0.id == id }) else { return }
-        try? ScheduleEngine(context: context).delete(schedule)
-        ReminderScheduler.refresh(context: context)
-        newScheduleId = nil
+        pendingIsNew = false
     }
 
     @ViewBuilder
@@ -104,22 +207,14 @@ struct SchedulesScreen: View {
         switch selection {
         case .schedule(let id):
             if let schedule = schedules.first(where: { $0.id == id }) {
-                ScheduleEditorScreen(
-                    schedule: schedule,
-                    isNew: schedule.id == newScheduleId,
-                    onDone: {
-                        newScheduleId = nil
-                        selection = nil
-                    },
-                    onLeave: { select(nil) }
-                )
+                ScheduleEditorScreen(schedule: schedule, editing: editControls(for: .schedule(id)))
             }
         case .template(let id):
             if let template = templates.first(where: { $0.id == id }) {
                 if template.kind == .cardio {
-                    CardioTemplateEditor(template: template)
+                    CardioTemplateEditor(template: template, editing: editControls(for: .template(id)))
                 } else {
-                    TemplateEditorScreen(template: template)
+                    TemplateEditorScreen(template: template, editing: editControls(for: .template(id)))
                 }
             }
         case nil:
@@ -191,7 +286,7 @@ struct SchedulesScreen: View {
     private func newSchedule() {
         do {
             let schedule = try ScheduleEngine(context: context).createSchedule(name: String(localized: "Novi raspored"))
-            select(.schedule(schedule.id), newSchedule: schedule.id)
+            select(.schedule(schedule.id), isNew: true)
         } catch {
             errorText = String(localized: "Raspored se nije mogao stvoriti.")
         }
@@ -207,7 +302,7 @@ struct SchedulesScreen: View {
     private func newCardioTemplate(_ preset: CardioPreset) {
         do {
             let template = try TemplateEngine(context: context).createCardioTemplate(name: preset.title, plan: preset.plan)
-            select(.template(template.id))
+            select(.template(template.id), isNew: true)
         } catch {
             errorText = String(localized: "Trening se nije mogao stvoriti.")
         }
@@ -216,7 +311,7 @@ struct SchedulesScreen: View {
     private func newTemplate() {
         do {
             let template = try TemplateEngine(context: context).createTemplate(name: String(localized: "Novi trening"))
-            select(.template(template.id))
+            select(.template(template.id), isNew: true)
         } catch {
             errorText = String(localized: "Trening se nije mogao stvoriti.")
         }

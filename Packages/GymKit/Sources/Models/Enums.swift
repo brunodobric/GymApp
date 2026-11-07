@@ -38,6 +38,9 @@ public enum CycleOverrideKind: String, Codable, CaseIterable, Sendable {
     case skipWorkout
     case removeExercise
     case replaceExercise
+    /// Trening iz niza odrađen u ovom ciklusu. Starije verzije ga čitaju kao preskakanje,
+    /// što za njih znači isto: raspored ga prelazi.
+    case completedWorkout
 }
 
 public enum BodyMeasurementKind: String, Codable, CaseIterable, Sendable {
