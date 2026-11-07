@@ -260,3 +260,53 @@ struct ProStatisticsTests {
         #expect(IntensityDistribution.zone(of: 0.9) == 3)
     }
 }
+
+@Suite("DOTS")
+struct DotsTests {
+    @Test("Formula daje poznate vrijednosti za muškarce i žene")
+    func formula() throws {
+        let male = try #require(Dots.points(totalKg: 600, bodyWeightKg: 100, sex: .male))
+        let female = try #require(Dots.points(totalKg: 300, bodyWeightKg: 60, sex: .female))
+        #expect(abs(male - 369.31) < 0.01)
+        #expect(abs(female - 332.56) < 0.01)
+        #expect(Dots.points(totalKg: 0, bodyWeightKg: 80, sex: .male) == nil)
+        #expect(Dots.points(totalKg: 500, bodyWeightKg: 0, sex: .female) == nil)
+    }
+
+    @Test("Masa izvan raspona formule uzima se kao granica")
+    func clampsBodyWeight() {
+        #expect(Dots.points(totalKg: 600, bodyWeightKg: 250, sex: .male) == Dots.points(totalKg: 600, bodyWeightKg: 210, sex: .male))
+        #expect(Dots.points(totalKg: 300, bodyWeightKg: 30, sex: .female) == Dots.points(totalKg: 300, bodyWeightKg: 40, sex: .female))
+    }
+
+    @Test("Zbroj je iz najbolje procjene 1RM triju dizanja u razdoblju")
+    func scoreFromHistory() throws {
+        let context = try makeContext()
+        let squat = ExerciseRef(catalogId: "barbell-squat", name: "Čučanj")
+        let bench = ExerciseRef(catalogId: "barbell-bench-press", name: "Potisak")
+        let deadlift = ExerciseRef(catalogId: "barbell-deadlift", name: "Mrtvo")
+        try addSession(context, ref: squat, daysAgo: 10, sets: [(150, 1, nil)])
+        try addSession(context, ref: squat, daysAgo: 3, sets: [(140, 1, nil)])
+        try addSession(context, ref: bench, daysAgo: 5, sets: [(100, 1, nil)])
+        // Izvan 12 tjedana: ne ulazi.
+        try addSession(context, ref: deadlift, daysAgo: 100, sets: [(250, 1, nil)])
+        let engine = StatisticsEngine(context: context)
+
+        let partial = try #require(try engine.dotsScore(bodyWeightKg: 90, sex: .male, endingAt: now))
+        #expect(partial.missingLifts == ["barbell-deadlift"])
+        #expect(partial.totalKg == nil && partial.points == nil)
+
+        try addSession(context, ref: deadlift, daysAgo: 2, sets: [(200, 1, nil)])
+        let score = try #require(try engine.dotsScore(bodyWeightKg: 90, sex: .male, endingAt: now))
+        let total = [150.0, 100, 200].map { SetMetrics.estimatedOneRepMax(weightKg: $0, reps: 1) ?? 0 }.reduce(0, +)
+        #expect(abs((score.totalKg ?? 0) - total) < 0.001)
+        #expect(score.points == Dots.points(totalKg: total, bodyWeightKg: 90, sex: .male))
+    }
+
+    @Test("Bez ijednog od tri dizanja nema rezultata")
+    func noLifts() throws {
+        let context = try makeContext()
+        try addSession(context, daysAgo: 2, sets: [(80, 5, nil)])
+        #expect(try StatisticsEngine(context: context).dotsScore(bodyWeightKg: 80, sex: .female, endingAt: now) == nil)
+    }
+}

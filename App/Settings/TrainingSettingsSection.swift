@@ -59,10 +59,15 @@ struct TrainingSettingsSection: View {
                 Text("Osnovni").tag(StatsDetail.basic)
                 Text("Detaljni").tag(StatsDetail.pro)
             }
+            Picker("Spol", selection: $settings.sex) {
+                Text("Bez odgovora").tag(Sex?.none)
+                ForEach(Sex.allCases, id: \.self) { Text($0.title).tag(Sex?.some($0)) }
+            }
         } header: {
             Text("Statistika")
         } footer: {
-            Text("Detaljni prikaz dodaje sve prijedloge, napor i intenzitet serija, tablicu rekorda po ponavljanjima, relativnu snagu, odmor između serija i ocjenu napora treninga.")
+            Text("Detaljni prikaz dodaje sve prijedloge, napor i intenzitet serija, tablicu rekorda po ponavljanjima, relativnu snagu, DOTS bodove, odmor između serija i ocjenu napora treninga.")
+                + Text(verbatim: " ") + Text("Spol treba samo za DOTS bodove.")
         }
     }
 }

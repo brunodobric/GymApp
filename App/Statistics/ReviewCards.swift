@@ -2,6 +2,7 @@ import Charts
 import Models
 import Stats
 import SwiftUI
+import Units
 
 /// Tjedni pregled: četiri dijela (snaga, volumen, redovitost, napor) i prijedlog za dalje. Osnovni prikaz
 /// pokazuje jedan prijedlog, detaljni sve s objašnjenjem i zbroj dobrih dijelova.
@@ -166,6 +167,66 @@ struct IntensityCard: View {
                 Text("Težina serije prema najboljoj procjeni 1RM vježbe, zadnja 4 tjedna. Iznad 85 posto je trening maksimalne snage.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
+        }
+    }
+}
+
+/// DOTS bodovi iz čučnja, potiska s klupe i mrtvog dizanja (detaljni prikaz). Trebaju spol i tjelesnu težinu.
+struct DotsCard: View {
+    let score: DotsScore?
+    let sex: Sex?
+    let hasBodyWeight: Bool
+    let unit: WeightUnit
+
+    var body: some View {
+        StatisticsCard(title: "DOTS bodovi") {
+            if sex == nil {
+                Text("Odaberi spol u Postavkama, u dijelu Statistika, da vidiš DOTS bodove.").foregroundStyle(.secondary)
+            } else if !hasBodyWeight {
+                Text("Upiši tjelesnu težinu u Tijelu da vidiš DOTS bodove.").foregroundStyle(.secondary)
+            } else if let score {
+                if let points = score.points {
+                    Text(points.formatted(.number.precision(.fractionLength(0))))
+                        .font(.largeTitle.weight(.bold)).monospacedDigit()
+                }
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(Dots.lifts, id: \.self) { lift in
+                        LabeledContent(Self.title(of: lift)) {
+                            if let kilograms = score.liftsKg[lift] {
+                                Text(WeightFormatter(unit: unit).string(fromKilograms: kilograms)).font(.rowValueSmall)
+                            } else {
+                                Text("Nije rađeno").foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    if let total = score.totalKg {
+                        LabeledContent("Zbroj") {
+                            Text(WeightFormatter(unit: unit).string(fromKilograms: total)).font(.rowValueSmall)
+                        }
+                    }
+                }
+                Text(footnote(score)).font(.footnote).foregroundStyle(.secondary)
+            } else {
+                Text("DOTS se pojavi kad u zadnjih 12 tjedana radiš čučanj, potisak s klupe ili mrtvo dizanje sa šipkom.")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private func footnote(_ score: DotsScore) -> String {
+        let weight = WeightFormatter(unit: unit).string(fromKilograms: score.bodyWeightKg)
+        let explanation = String(
+            localized: "Zbroj najbolje procjene 1RM triju dizanja u zadnjih 12 tjedana, prilagođen tjelesnoj težini (\(weight)). Služi za usporedbu s drugima; za vlastiti napredak gledaj trend vježbe."
+        )
+        guard score.points == nil else { return explanation }
+        return String(localized: "Bodovi se računaju kad su u razdoblju rađena sva tri dizanja.") + " " + explanation
+    }
+
+    static func title(of lift: String) -> LocalizedStringKey {
+        switch lift {
+        case "barbell-squat": "Čučanj"
+        case "barbell-bench-press": "Potisak s klupe"
+        default: "Mrtvo dizanje"
         }
     }
 }

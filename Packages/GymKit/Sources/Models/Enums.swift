@@ -87,6 +87,12 @@ public enum StatsDetail: String, Codable, CaseIterable, Sendable {
     case pro
 }
 
+/// Spol za izračune koji ga trebaju (DOTS bodovi). Neobavezan: nil znači da korisnik nije odgovorio.
+public enum Sex: String, Codable, CaseIterable, Sendable {
+    case female
+    case male
+}
+
 public enum EffortScale: String, Codable, CaseIterable, Sendable {
     case rpe
     case rir

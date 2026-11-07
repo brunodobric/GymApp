@@ -30,6 +30,8 @@ struct StatisticsScreen: View {
     @State private var suggestions: [Suggestion] = []
     @State private var effort = EffortDistribution()
     @State private var intensity = IntensityDistribution()
+    @State private var dots: DotsScore?
+    @State private var hasBodyWeight = false
 
     private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
     private var isPro: Bool { settings?.statsDetail == .pro }
@@ -51,6 +53,8 @@ struct StatisticsScreen: View {
         var customCount: Int
         var goal: TrainingGoal?
         var plannedPerWeek: Int?
+        var sex: Sex?
+        var isPro: Bool
     }
 
     private struct RecordsKey: Equatable {
@@ -83,6 +87,7 @@ struct StatisticsScreen: View {
                         if isPro {
                             EffortCard(distribution: effort)
                             IntensityCard(distribution: intensity)
+                            DotsCard(score: dots, sex: settings?.sex, hasBodyWeight: hasBodyWeight, unit: unit)
                         }
                     }
                     ProgressCard()
@@ -94,7 +99,7 @@ struct StatisticsScreen: View {
             .navigationTitle("Statistika")
             .task(id: LoadKey(
                 sessionCount: sessionCount, setsWeeks: setsWeeks, heatmapDays: heatmapDays, customCount: customExercises.count,
-                goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek
+                goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek, sex: settings?.sex, isPro: isPro
             )) { load() }
             // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
             .task(id: RecordsKey(sessionCount: sessionCount, kinds: trackedKinds, excluded: excludedExercises)) { loadRecords() }
@@ -125,6 +130,16 @@ struct StatisticsScreen: View {
         let monthStart = now.addingTimeInterval(-28 * 24 * 3600)
         effort = (try? engine.effortDistribution(from: monthStart, until: end)) ?? EffortDistribution()
         intensity = (try? engine.intensityDistribution(from: monthStart, until: end)) ?? IntensityDistribution()
+        loadDots(engine: engine, endingAt: end)
+    }
+
+    /// DOTS samo u detaljnom prikazu, uz spol i zadnju upisanu tjelesnu težinu.
+    private func loadDots(engine: StatisticsEngine, endingAt end: Date) {
+        guard isPro else { dots = nil; return }
+        let bodyWeight = (try? BodyTracking(context: context).latest(of: .weight))?.value
+        hasBodyWeight = (bodyWeight ?? 0) > 0
+        guard let sex = settings?.sex, let bodyWeight, bodyWeight > 0 else { dots = nil; return }
+        dots = try? engine.dotsScore(bodyWeightKg: bodyWeight, sex: sex, endingAt: end)
     }
 
     private func loadRecords() {

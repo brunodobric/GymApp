@@ -122,6 +122,7 @@ public extension UserSettings {
             (trackedPRKindsRaw, defaults.trackedPRKindsRaw),
             (prExcludedExercisesRaw, defaults.prExcludedExercisesRaw),
             (statsDetailRaw, defaults.statsDetailRaw),
+            (sexRaw, defaults.sexRaw),
             (restEndSoundEnabled, defaults.restEndSoundEnabled),
             (availablePlatesRaw, defaults.availablePlatesRaw),
             (barbellWeightKg, defaults.barbellWeightKg),

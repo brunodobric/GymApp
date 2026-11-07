@@ -24,6 +24,15 @@ extension TrainingGoal {
     }
 }
 
+extension Sex {
+    var title: LocalizedStringKey {
+        switch self {
+        case .female: "Žensko"
+        case .male: "Muško"
+        }
+    }
+}
+
 extension ExperienceLevel {
     var title: LocalizedStringKey {
         switch self {
@@ -132,8 +141,8 @@ struct OnboardingScreen: View {
 
     private var bodyStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Visina i težina").font(.cardTitle)
-            Text("Neobavezno. Služi za praćenje mjera tijela; možeš ih unijeti i kasnije.")
+            Text("Visina, težina i spol").font(.cardTitle)
+            Text("Neobavezno. Visina i težina služe za praćenje mjera tijela, a spol za DOTS bodove i tijelo na prikazu mišića. Sve možeš unijeti i kasnije.")
                 .font(.footnote).foregroundStyle(.secondary)
             LabeledContent("Visina") {
                 HStack {
@@ -145,6 +154,13 @@ struct OnboardingScreen: View {
                 HStack {
                     TextField("Neobavezno", text: $weightText).keyboardType(.decimalPad).multilineTextAlignment(.trailing)
                     Text(answers.unit.symbol).foregroundStyle(.secondary)
+                }
+            }
+            ForEach(Sex.allCases, id: \.self) { sex in
+                ChoiceRow(isSelected: answers.sex == sex) {
+                    answers.sex = answers.sex == sex ? nil : sex
+                } label: {
+                    Text(sex.title)
                 }
             }
         }
