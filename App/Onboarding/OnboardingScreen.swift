@@ -1,5 +1,6 @@
 import Catalog
 import Models
+import Planning
 import SwiftData
 import SwiftUI
 import Units
@@ -11,15 +12,6 @@ extension TrainingGoal {
         case .strength: "Snaga"
         case .recomposition: "Rekompozicija"
         case .generalFitness: "Opća kondicija"
-        }
-    }
-
-    var detail: LocalizedStringKey {
-        switch self {
-        case .hypertrophy: "Veći mišići"
-        case .strength: "Veća maksimalna težina"
-        case .recomposition: "Manje masti, više mišića"
-        case .generalFitness: "Zdravlje i forma"
         }
     }
 }
@@ -43,107 +35,67 @@ extension ExperienceLevel {
     }
 }
 
-/// Prvo pokretanje: nekoliko kratkih pitanja. Sve osim jedinica i odgovora o Apple Zdravlju je neobavezno,
-/// a cijeli se onboarding može preskočiti. Odgovori se mogu kasnije promijeniti u Postavkama.
+/// Prvo pokretanje: jedna kratka stranica. Sve osim jedinica je neobavezno, a sve se može preskočiti i
+/// kasnije upisati u Postavkama > Profil. Nakon spremanja, ako je korisnik odgovorio o treningu, nudi se
+/// gotov raspored prema cilju, danima, iskustvu i opremi.
 struct OnboardingScreen: View {
-    private enum Step: Int, CaseIterable {
-        case goal, units, body, health, experience, equipment
-    }
-
     @Environment(\.modelContext) private var context
+    @Environment(CatalogStore.self) private var catalogStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var step = Step.goal
     @State private var answers = OnboardingAnswers()
     @State private var heightText = ""
     @State private var weightText = ""
+    @State private var showsRecommendation = false
     @State private var errorText: String?
 
-    private var isLast: Bool { step == Step.allCases.last }
+    private var profile: TrainingProfile { TrainingProfile(answers: answers) }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Korak \(step.rawValue + 1) od \(Step.allCases.count)")
-                        .font(.footnote).foregroundStyle(.secondary)
-                    content
-                }
-                .padding()
-                .frame(maxWidth: 600, alignment: .leading)
-                .frame(maxWidth: .infinity)
-            }
-            .navigationTitle(title)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Preskoči sve") { skipAll() }
+            Group {
+                if showsRecommendation {
+                    recommendationPage
+                } else {
+                    profilePage
                 }
             }
-            .safeAreaInset(edge: .bottom) { bottomBar }
             .errorAlert($errorText)
         }
         .interactiveDismissDisabled()
     }
 
-    private var title: LocalizedStringKey {
-        switch step {
-        case .goal: "Dobro došao"
-        case .units: "Jedinice"
-        case .body: "Tijelo"
-        case .health: "Apple Zdravlje"
-        case .experience: "Iskustvo"
-        case .equipment: "Oprema i dani"
+    // MARK: Profil
+
+    private var profilePage: some View {
+        Form {
+            Section {
+                Text("Nekoliko pitanja za prijedlog treninga. Sve je neobavezno i možeš promijeniti u Postavkama > Profil.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+            }
+            TrainingProfileSections(
+                goal: $answers.goal, daysPerWeek: $answers.daysPerWeek,
+                experience: $answers.experience, equipment: $answers.equipment
+            )
+            bodySection
+            healthSection
         }
-    }
-
-    @ViewBuilder
-    private var content: some View {
-        switch step {
-        case .goal: goalStep
-        case .units: unitsStep
-        case .body: bodyStep
-        case .health: healthStep
-        case .experience: experienceStep
-        case .equipment: equipmentStep
-        }
-    }
-
-    // MARK: Koraci
-
-    private var goalStep: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Što je tvoj cilj?").font(.cardTitle)
-            ForEach(TrainingGoal.allCases, id: \.self) { goal in
-                ChoiceRow(isSelected: answers.goal == goal) {
-                    answers.goal = answers.goal == goal ? nil : goal
-                } label: {
-                    VStack(alignment: .leading) {
-                        Text(goal.title)
-                        Text(goal.detail).font(.footnote).foregroundStyle(.secondary)
-                    }
-                }
+        .navigationTitle("Dobro došli")
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Preskoči") { skipAll() }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Spremi") { save() }
             }
         }
     }
 
-    private var unitsStep: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("U kojoj jedinici bilježiš težinu?").font(.cardTitle)
-            ChoiceRow(isSelected: answers.unit == .kilograms) { answers.unit = .kilograms } label: {
-                Text("Kilogrami (kg)")
+    private var bodySection: some View {
+        Section {
+            Picker("Jedinice", selection: $answers.unit) {
+                Text("Kilogrami (kg)").tag(WeightUnit.kilograms)
+                Text("Funte (lbs)").tag(WeightUnit.pounds)
             }
-            ChoiceRow(isSelected: answers.unit == .pounds) { answers.unit = .pounds } label: {
-                Text("Funte (lbs)")
-            }
-            Text("Težina se interno uvijek sprema u kilogramima, pa jedinicu možeš kasnije promijeniti u Postavkama.")
-                .font(.footnote).foregroundStyle(.secondary)
-        }
-    }
-
-    private var bodyStep: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Visina, težina i spol").font(.cardTitle)
-            Text("Neobavezno. Visina i težina služe za praćenje mjera tijela, a spol za DOTS bodove i tijelo na prikazu mišića. Sve možeš unijeti i kasnije.")
-                .font(.footnote).foregroundStyle(.secondary)
             LabeledContent("Visina") {
                 HStack {
                     TextField("Neobavezno", text: $heightText).keyboardType(.decimalPad).multilineTextAlignment(.trailing)
@@ -156,107 +108,73 @@ struct OnboardingScreen: View {
                     Text(answers.unit.symbol).foregroundStyle(.secondary)
                 }
             }
-            ForEach(Sex.allCases, id: \.self) { sex in
-                ChoiceRow(isSelected: answers.sex == sex) {
-                    answers.sex = answers.sex == sex ? nil : sex
-                } label: {
-                    Text(sex.title)
+            Picker("Spol", selection: $answers.sex) {
+                Text("Bez odgovora").tag(Sex?.none)
+                ForEach(Sex.allCases, id: \.self) { Text($0.title).tag(Sex?.some($0)) }
+            }
+        } header: {
+            Text("Tijelo")
+        } footer: {
+            Text("Visina i težina služe za praćenje mjera tijela, a spol za DOTS bodove i tijelo na prikazu mišića.")
+        }
+    }
+
+    private var healthSection: some View {
+        Section {
+            Toggle("Poveži s Apple Zdravljem", isOn: Binding(
+                get: { answers.wantsHealthKit },
+                set: { isOn in
+                    answers.wantsHealthKit = isOn
+                    // Sistemski list s dozvolama odmah, dok je objašnjenje na zaslonu.
+                    if isOn { Task { await HealthService.shared.requestAuthorization() } }
                 }
+            ))
+        } footer: {
+            Text("Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove, a kardio treninzi, težina i visina dolaze iz njega. Aplikacija radi i bez toga.")
+        }
+    }
+
+    // MARK: Prijedlog
+
+    private var recommendationPage: some View {
+        Form {
+            Section {
+                Text("Prema tvojim odgovorima. Treninge i raspored možeš poslije mijenjati, a svi programi su i u kartici Rasporedi.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+            }
+            ProgramRecommendationSections(profile: profile) { program in finish(adding: program) }
+            Section {
+                Button("Složit ću sam") { finish(adding: nil) }
+            }
+        }
+        .navigationTitle("Prijedlog rasporeda")
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Natrag") { withAnimation(reduceMotion ? nil : .default) { showsRecommendation = false } }
             }
         }
     }
 
-    private var healthStep: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Povezati s Apple Zdravljem?").font(.cardTitle)
-            Text("Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove, a kardio treninzi, težina i visina dolaze iz njega. Aplikacija radi i bez toga, a odluku mijenjaš u Postavkama.")
-                .font(.subheadline).foregroundStyle(.secondary)
-            ChoiceRow(isSelected: answers.wantsHealthKit) {
-                answers.wantsHealthKit = true
-                // Sistemski list s dozvolama odmah, dok je objašnjenje na zaslonu.
-                Task { await HealthService.shared.requestAuthorization() }
-            } label: {
-                Text("Da, poveži")
-            }
-            ChoiceRow(isSelected: !answers.wantsHealthKit) { answers.wantsHealthKit = false } label: {
-                Text("Ne sada")
-            }
-        }
-    }
+    // MARK: Spremanje
 
-    private var experienceStep: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Koliko dugo treniraš?").font(.cardTitle)
-            ForEach(ExperienceLevel.allCases, id: \.self) { level in
-                ChoiceRow(isSelected: answers.experience == level) {
-                    answers.experience = answers.experience == level ? nil : level
-                } label: {
-                    Text(level.title)
-                }
-            }
-        }
-    }
-
-    private var equipmentStep: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Dostupna oprema").font(.cardTitle)
-            ForEach(Equipment.allCases, id: \.self) { item in
-                ChoiceRow(isSelected: answers.equipment.contains(item), isMultiple: true) {
-                    if answers.equipment.contains(item) {
-                        answers.equipment.removeAll { $0 == item }
-                    } else {
-                        answers.equipment.append(item)
-                    }
-                } label: {
-                    Text(item.title)
-                }
-            }
-            Text("Koliko dana tjedno treniraš?").font(.cardTitle).padding(.top, 8)
-            HStack {
-                ForEach(OnboardingAnswers.daysPerWeekRange, id: \.self) { days in
-                    Button {
-                        answers.daysPerWeek = answers.daysPerWeek == days ? nil : days
-                    } label: {
-                        Text("\(days)")
-                            .frame(width: 36, height: 36)
-                            .background(answers.daysPerWeek == days ? Color.accentColor : Color(.secondarySystemFill), in: Circle())
-                            .foregroundStyle(answers.daysPerWeek == days ? Color.white : Color.primary)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityAddTraits(answers.daysPerWeek == days ? .isSelected : [])
-                }
-            }
-        }
-    }
-
-    // MARK: Navigacija
-
-    private var bottomBar: some View {
-        HStack {
-            if step != .goal {
-                Button("Natrag") { go(-1) }
-                    .buttonStyle(.bordered)
-            }
-            Spacer()
-            Button(isLast ? "Gotovo" : "Dalje") { isLast ? finish() : go(1) }
-                .buttonStyle(.borderedProminent)
-        }
-        .controlSize(.large)
-        .padding()
-        .background(.bar)
-    }
-
-    private func go(_ delta: Int) {
-        guard let next = Step(rawValue: step.rawValue + delta) else { return }
-        // Uz "Smanji kretanje" korak se mijenja bez animacije.
-        withAnimation(reduceMotion ? nil : .default) { step = next }
-    }
-
-    private func finish() {
+    private func save() {
         answers.heightCm = NumberInput.parse(heightText)
         answers.weight = NumberInput.parse(weightText)
+        // Prijedlog samo kad ima na temelju čega: inače se odmah sprema i onboarding završava.
+        if profile.hasAnswers {
+            withAnimation(reduceMotion ? nil : .default) { showsRecommendation = true }
+        } else {
+            finish(adding: nil)
+        }
+    }
+
+    /// Sprema odgovore (onboarding je time obavljen i zaslon se zatvara) i po želji dodaje program.
+    private func finish(adding program: Program?) {
         do {
             try OnboardingApplier(context: context).apply(answers)
+            if let program {
+                try ProgramAdder.add(program, profile: profile, context: context, catalogStore: catalogStore)
+            }
             if answers.wantsHealthKit {
                 Task { await HealthService.shared.importNewData(context: context) }
             }
@@ -271,29 +189,5 @@ struct OnboardingScreen: View {
         } catch {
             errorText = String(localized: "Odgovori se nisu mogli spremiti.")
         }
-    }
-}
-
-/// Redak izbora s kvačicom (jedan izbor) ili kućicom (više izbora).
-private struct ChoiceRow<Label: View>: View {
-    let isSelected: Bool
-    var isMultiple = false
-    let action: () -> Void
-    @ViewBuilder var label: Label
-
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                label
-                Spacer()
-                Image(systemName: isSelected ? (isMultiple ? "checkmark.square.fill" : "checkmark.circle.fill") : (isMultiple ? "square" : "circle"))
-                    .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
-            }
-            .padding()
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.inner))
-            .foregroundStyle(.primary)
-        }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

@@ -4,10 +4,11 @@ import SwiftUI
 
 /// Kategorije postavki: svaka je redak na prvom ekranu i otvara vlastitu stranicu.
 enum SettingsCategory: Hashable, CaseIterable {
-    case appearance, training, plates, notifications, health, sync, data, about
+    case profile, appearance, training, plates, notifications, health, sync, data, about
 
     var title: LocalizedStringKey {
         switch self {
+        case .profile: "Profil"
         case .appearance: "Prikaz"
         case .training: "Trening"
         case .plates: "Ploče i šipka"
@@ -21,6 +22,7 @@ enum SettingsCategory: Hashable, CaseIterable {
 
     var systemImage: String {
         switch self {
+        case .profile: "person.crop.circle"
         case .appearance: "paintbrush"
         case .training: "dumbbell"
         case .plates: "scalemass"
@@ -32,8 +34,9 @@ enum SettingsCategory: Hashable, CaseIterable {
         }
     }
 
-    /// Grupe na prvom ekranu: trening i izgled, veze sa sustavom, podaci te podaci o aplikaciji.
+    /// Grupe na prvom ekranu: profil, trening i izgled, veze sa sustavom, podaci te podaci o aplikaciji.
     static let groups: [[SettingsCategory]] = [
+        [.profile],
         [.appearance, .training, .plates],
         [.notifications, .health, .sync],
         [.data],
@@ -92,6 +95,8 @@ struct SettingsScreen: View {
     @ViewBuilder
     private func destination(for category: SettingsCategory) -> some View {
         switch category {
+        case .profile:
+            UserSettingsPage(category) { ProfileSettingsSection(settings: $0) }
         case .appearance:
             UserSettingsPage(category) { AppearanceSettingsSection(settings: $0) }
         case .training:
