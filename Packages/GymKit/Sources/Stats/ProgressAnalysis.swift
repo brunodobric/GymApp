@@ -28,6 +28,8 @@ public struct EffortDistribution: Equatable, Sendable {
     public var unrated = 0
 
     public var rated: Int { counts.reduce(0, +) }
+
+    public init() {}
 }
 
 /// Raspodjela radnih serija po težini u odnosu na najbolju procjenu 1RM vježbe.
@@ -37,6 +39,8 @@ public struct IntensityDistribution: Equatable, Sendable {
     public var counts: [Int] = Array(repeating: 0, count: 4)
 
     public var total: Int { counts.reduce(0, +) }
+
+    public init() {}
 
     public static func zone(of share: Double) -> Int {
         bounds.firstIndex { share < $0 } ?? bounds.count
