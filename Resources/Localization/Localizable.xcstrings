@@ -3145,6 +3145,26 @@
         }
       }
     },
+    "Prosječna brzina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average speed"
+          }
+        }
+      }
+    },
+    "Prosječni tempo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average pace"
+          }
+        }
+      }
+    },
     "Spremiti promjene?" : {
       "localizations" : {
         "en" : {
@@ -3181,6 +3201,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add your own exercise with the + button."
+          }
+        }
+      }
+    },
+    "Vrijeme kardija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cardio time"
           }
         }
       }

@@ -9,6 +9,8 @@ import Units
 /// Sažetak nakon završetka treninga: trajanje, tonaža, tvrde serije, usporedba s prošlim izvođenjem istog
 /// treninga, rezultat po vježbi, mišići, najviše tri istaknuta rekorda i bilješka. U detaljnom prikazu
 /// statistike još odmor između serija i ocjena napora treninga.
+/// Podaci snage koji su nula (tonaža, tvrde serije) se ne prikazuju. Kardio trening umjesto njih ima
+/// vrijeme kardija, udaljenost, tempo i brzinu.
 struct WorkoutSummarySheet: View {
     let session: Session
     let summary: WorkoutSummary
@@ -39,7 +41,12 @@ struct WorkoutSummarySheet: View {
     private var isPro: Bool { UserSettings.preferred(in: settingsList)?.statsDetail == .pro }
 
     private var hasCardio: Bool {
-        session.orderedExercises.contains { $0.inputType == .durationDistance || $0.inputType == .duration }
+        summary.cardio != nil
+            || session.orderedExercises.contains { $0.inputType == .durationDistance || $0.inputType == .duration }
+    }
+
+    private var isCardio: (String) -> Bool {
+        ExerciseInfoBuilder.isCardio(ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises))
     }
 
     var body: some View {
@@ -47,21 +54,28 @@ struct WorkoutSummarySheet: View {
             Form {
                 Section {
                     LabeledContent("Trajanje", value: durationText(summary.durationSeconds))
-                    LabeledContent("Volumen", value: WeightFormatter(unit: unit).string(fromKilograms: summary.totalVolumeKg))
-                    LabeledContent("Tvrde serije", value: "\(summary.hardSets)")
-                    if let cardio = summary.cardio {
-                        LabeledContent("Kardio", value: CardioText.part(cardio))
+                    if summary.totalVolumeKg > 0 {
+                        LabeledContent("Volumen", value: WeightFormatter(unit: unit).string(fromKilograms: summary.totalVolumeKg))
                     }
-                    if let meters = session.distanceMeters {
+                    if summary.hardSets > 0 {
+                        LabeledContent("Tvrde serije", value: "\(summary.hardSets)")
+                    }
+                    cardioRows
+                    if summary.cardio?.meters == nil, let meters = session.distanceMeters {
                         LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
                     }
                 } footer: {
-                    Text("Tvrde serije su radne serije bez onih s RPE ispod 6. Kardio vježbe se ne broje u serije.")
+                    if summary.hardSets > 0 {
+                        Text("Tvrde serije su radne serije bez onih s RPE ispod 6. Kardio vježbe se ne broje u serije.")
+                    }
                 }
                 if let comparison {
                     SessionComparisonSection(comparison: comparison, unit: unit)
                 }
-                recordsSection
+                // Bez rekorda kardio trening nema što reći u ovom odjeljku.
+                if !summary.records.isEmpty || summary.hardSets > 0 {
+                    recordsSection
+                }
                 if !results.isEmpty {
                     Section("Vježbe") {
                         ForEach(results) { ExerciseResultRow(result: $0, unit: unit, showsRest: isPro) }
@@ -103,7 +117,7 @@ struct WorkoutSummarySheet: View {
             }
             .task {
                 let engine = StatisticsEngine(context: context)
-                comparison = try? engine.comparison(of: session)
+                comparison = try? engine.comparison(of: session, isCardio: isCardio)
                 results = (try? engine.exerciseResults(of: session)) ?? []
                 let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
                 let week = try? engine.volumeBuckets(size: .week, count: 1, endingAt: session.startedAt, info: info)
@@ -111,6 +125,32 @@ struct WorkoutSummarySheet: View {
             }
         }
         .interactiveDismissDisabled()
+    }
+
+    /// Kardio dio: vrijeme kardio vježbi, udaljenost, tempo i brzina. Prazan redak (nula, bez udaljenosti)
+    /// se ne prikazuje.
+    @ViewBuilder
+    private var cardioRows: some View {
+        if let cardio = summary.cardio {
+            // Trening sa samo kardio vježbama već ima ukupno trajanje gore; ovdje je vrijeme samih vježbi.
+            if cardio.seconds > 0 {
+                let time = CardioText.duration(Double(cardio.seconds))
+                if summary.hardSets > 0 {
+                    LabeledContent("Kardio", value: time)
+                } else {
+                    LabeledContent("Vrijeme kardija", value: time)
+                }
+            }
+            if let meters = cardio.meters {
+                LabeledContent("Udaljenost", value: CardioText.distance(meters))
+            }
+            if let pace = CardioText.pace(cardio) {
+                LabeledContent("Prosječni tempo", value: pace)
+            }
+            if let speed = CardioText.speed(cardio) {
+                LabeledContent("Prosječna brzina", value: speed)
+            }
+        }
     }
 
     @ViewBuilder

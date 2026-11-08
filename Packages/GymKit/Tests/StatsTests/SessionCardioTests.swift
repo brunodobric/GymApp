@@ -132,6 +132,33 @@ struct SessionCardioTests {
         #expect(summary.cardio == CardioPart(seconds: 900, meters: 2500))
     }
 
+    @Test("Usporedba s prošlim treningom: kardio nije serija, a vrijeme i udaljenost se uspoređuju")
+    func comparison() throws {
+        let context = try makeContext()
+        let template = UUID()
+        let previous = try makeSession(context, [Entry(ref: treadmill, inputType: .durationDistance, seconds: 1200, meters: 3000)])
+        previous.templateId = template
+        previous.startedAt = start.addingTimeInterval(-7 * 86_400)
+        previous.endedAt = previous.startedAt.addingTimeInterval(1800)
+        let current = try makeSession(context, [run])
+        current.templateId = template
+        try context.save()
+
+        let result = try #require(try StatisticsEngine(context: context).comparison(of: current, isCardio: isCardio))
+        #expect(result.hardSets == 0 && result.previousHardSets == 0)
+        #expect(result.cardio == CardioPart(seconds: 900, meters: 2500))
+        #expect(result.previousCardio == CardioPart(seconds: 1200, meters: 3000))
+    }
+
+    @Test("Kardio dio postoji i za trening sa samo kardio vježbama")
+    func cardioOnlyPart() throws {
+        let context = try makeContext()
+        let session = try makeSession(context, [run])
+        let summary = try WorkoutEngine(context: context).summary(of: session, trackedKinds: [], isCardio: isCardio)
+        #expect(summary.hardSets == 0 && summary.totalVolumeKg == 0)
+        #expect(summary.cardio == CardioPart(seconds: 900, meters: 2500))
+    }
+
     @Test("Vlastita vježba u kategoriji kardio je kardio")
     func customCardio() throws {
         let context = try makeContext()

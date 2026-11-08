@@ -42,10 +42,9 @@ public enum SessionCardio {
         }
     }
 
-    /// Kardio dio treninga snage; nil kad trening nema odrađenu kardio vježbu.
-    /// Kardio trening (iz plana ili Zdravlja) nema kardio dio: cijeli je kardio.
+    /// Zbroj odrađenih kardio vježbi treninga; nil kad ih nema (npr. trening snage bez kardija ili kardio
+    /// uvezen iz Zdravlja, koji nema vježbe).
     public static func part(of session: Session, isCardio: (String) -> Bool) -> CardioPart? {
-        guard session.kind == .strength else { return nil }
         let cardio = doneExercises(in: session).filter { isCardio($0.exerciseKey) }
         guard !cardio.isEmpty else { return nil }
         let sets = cardio.flatMap(\.orderedSets).filter(\.isCompleted)
