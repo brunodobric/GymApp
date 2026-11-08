@@ -59,7 +59,7 @@ struct HomeCard<Content: View>: View {
 // MARK: - Ovaj tjedan
 
 /// Tekući tjedan: odrađeni treninzi prema cilju iz onboardinga (dani tjedno), dani s vrstom treninga,
-/// tvrde serije, kardio i ukupno vrijeme te niz tjedana s ispunjenim ciljem. Dodir otvara pregled tjedna.
+/// tvrde serije, kardio i ukupno vrijeme te niz tjedana s ispunjenim ciljem. Dodir otvara Pregled na tekućem tjednu.
 struct ThisWeekCard: View {
     @Environment(\.modelContext) private var context
     @Environment(CatalogStore.self) private var catalogStore
@@ -73,9 +73,9 @@ struct ThisWeekCard: View {
     private var goal: Int? { UserSettings.preferred(in: settingsList)?.trainingDaysPerWeek }
 
     var body: some View {
-        // Dodir otvara pregled tjedna u statistici.
+        // Dodir otvara Pregled (tekući tjedan) iz statistike.
         NavigationLink {
-            WeekScreen()
+            OverviewScreen()
         } label: {
             card
         }

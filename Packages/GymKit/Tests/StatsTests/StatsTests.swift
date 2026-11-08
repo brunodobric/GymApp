@@ -765,3 +765,112 @@ struct WeekProgressTests {
         #expect(withGoal.streakWeeks == 0)
     }
 }
+
+@Suite("Pregled razdoblja")
+struct PeriodOverviewTests {
+    private let isCardio: (String) -> Bool = { _ in false }
+    private let three = [Work(weight: 100, reps: 5), Work(weight: 100, reps: 5), Work(weight: 100, reps: 5)]
+    /// 1. 1. 2027., 00:00 UTC.
+    private var january: Date { calendar.dateInterval(of: .month, for: base)!.start }
+
+    @Test("Tjedan, mjesec i godina prema kalendaru i pomak na susjedno razdoblje")
+    func intervals() {
+        let monday = base.addingTimeInterval(-4 * day - 8 * 3600)
+        #expect(OverviewPeriod.week.interval(containing: base, calendar: calendar).start == monday)
+        #expect(OverviewPeriod.month.interval(containing: base, calendar: calendar) == DateInterval(start: january, duration: 31 * day))
+        #expect(OverviewPeriod.year.interval(containing: base, calendar: calendar).duration == 365 * day)
+        let december = OverviewPeriod.month.shift(base, by: -1, calendar: calendar)
+        #expect(calendar.component(.month, from: december) == 12)
+        #expect(calendar.component(.year, from: OverviewPeriod.year.shift(base, by: 1, calendar: calendar)) == 2028)
+    }
+
+    @Test("Mjesec: treninzi, dani, tvrde serije, a treninzi izvan mjeseca i nezavršeni se ne broje")
+    func month() throws {
+        let context = try makeContext()
+        var sessions: [Session] = []
+        sessions.append(try addSession(context, at: january.addingTimeInterval(3 * day + 9 * 3600), lifts: [Lift(ref: squat, sets: three)]))
+        sessions.append(try addSession(context, at: base, kind: .cardio, lifts: []))
+        sessions.append(try addSession(context, at: january.addingTimeInterval(-3600), lifts: [Lift(ref: squat, sets: three)]))
+        sessions.append(try addSession(context, at: january.addingTimeInterval(31 * day), lifts: [Lift(ref: squat, sets: three)]))
+        let active = try addSession(context, at: base, lifts: [Lift(ref: squat, sets: three)])
+        active.state = .active
+        sessions.append(active)
+
+        let summary = PeriodSummary.make(
+            sessions: sessions, period: .month, containing: base, now: base, goal: 3, calendar: calendar, isCardio: isCardio
+        )
+        #expect(summary.sessions == 2)
+        #expect(summary.hardSets == 3)
+        #expect(summary.cardioSeconds == 3600)
+        #expect(summary.totalSeconds == 2 * 3600)
+        #expect(summary.days.count == 31)
+        #expect(summary.trainedDays == 2)
+        #expect(summary.days[3].mix == .strength)
+        #expect(summary.days[14].mix == .cardio)
+        #expect(summary.months.isEmpty)
+        #expect(summary.weeklyGoal == 3)
+        // Tekući mjesec broji tjedne do sada: 14 dana i 8 sati.
+        #expect(abs(summary.weeks - (14 * day + 8 * 3600) / (7 * day)) < 0.0001)
+        #expect(abs(summary.sessionsPerWeek - 2 / summary.weeks) < 0.0001)
+
+        let byDay = summary.sessionsByDay(sessions, calendar: calendar)
+        #expect(byDay.count == 2)
+        #expect(byDay[january.addingTimeInterval(3 * day)]?.count == 1)
+    }
+
+    @Test("Godina: dvanaest mjeseci s treninzima, prosjek od prvog treninga")
+    func year() throws {
+        let context = try makeContext()
+        let first = january.addingTimeInterval(9 * day)
+        let sessions = [
+            try addSession(context, at: first, lifts: [Lift(ref: squat, sets: three)]),
+            try addSession(context, at: base, lifts: [Lift(ref: bench, sets: three)]),
+            try addSession(context, at: january.addingTimeInterval(40 * day), lifts: []),
+        ]
+        let now = january.addingTimeInterval(400 * day)
+        let summary = PeriodSummary.make(
+            sessions: sessions, period: .year, containing: base, now: now, since: first, goal: nil,
+            calendar: calendar, isCardio: isCardio
+        )
+        #expect(summary.days.count == 365)
+        #expect(summary.months.count == 12)
+        #expect(summary.months.map(\.sessions) == [2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        #expect(summary.months[0].hardSets == 6)
+        #expect(summary.weeklyGoal == nil)
+        // Prošla godina: tjedni od prvog treninga do kraja godine.
+        #expect(abs(summary.weeks - 356.0 / 7) < 0.0001)
+    }
+
+    @Test("Tjedni za prosjek: najmanje jedan, tekuće razdoblje do sada")
+    func weeks() {
+        let interval = DateInterval(start: january, duration: 31 * day)
+        #expect(PeriodSummary.weeks(in: interval, now: january.addingTimeInterval(day), since: nil) == 1)
+        #expect(abs(PeriodSummary.weeks(in: interval, now: january.addingTimeInterval(90 * day), since: nil) - 31.0 / 7) < 0.0001)
+        #expect(PeriodSummary.weeks(in: interval, now: january.addingTimeInterval(90 * day), since: january.addingTimeInterval(60 * day)) == 1)
+    }
+
+    @Test("Serije po mišiću: tjedan u ukupnim serijama, mjesec u prosjeku tjedno uz mjesec prije")
+    func volume() throws {
+        let context = try makeContext()
+        let december = january.addingTimeInterval(-21 * day)
+        try addSession(context, at: december, lifts: [Lift(ref: bench, sets: three)])
+        try addSession(context, at: base, lifts: [Lift(ref: squat, sets: three + [Work(weight: 100, reps: 5)])])
+        let engine = StatisticsEngine(context: context)
+        let now = january.addingTimeInterval(40 * day)
+
+        let month = try #require(try engine.periodVolume(.month, containing: base, now: now, calendar: calendar, info: infoProvider))
+        let quads = try #require(month.muscles.first { $0.region == "quads" })
+        #expect(abs(quads.currentSets - 4 / (31.0 / 7)) < 0.0001)
+        let chest = try #require(month.muscles.first { $0.region == "chest" })
+        // Prosinac se broji od prvog treninga (11. 12.) do kraja mjeseca: 3 tjedna.
+        #expect(abs(chest.previousSets - 1) < 0.0001)
+        #expect(month.currentSets == 4 && month.previousSets == 3)
+
+        let week = try #require(try engine.periodVolume(.week, containing: base, now: now, calendar: calendar, info: infoProvider))
+        #expect(week.muscles.first { $0.region == "quads" }?.currentSets == 4)
+
+        let summary = try engine.periodSummary(.month, containing: base, now: now, goal: nil, calendar: calendar, isCardio: { _ in false })
+        #expect(summary.sessions == 1)
+        #expect(abs(summary.weeks - 31.0 / 7) < 0.0001)
+    }
+}

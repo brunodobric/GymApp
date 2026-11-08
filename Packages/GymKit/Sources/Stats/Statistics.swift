@@ -87,6 +87,27 @@ public struct VolumeBucket: Equatable, Sendable {
     }
 }
 
+extension VolumeBucket {
+    /// Dodaje tvrde serije snage iz treninga: tonaža i ukupan broj serija jednom po seriji, regije prema
+    /// `EffectiveSets` (pomoćne upola). Kardio vježbe se preskaču.
+    mutating func add(_ session: Session, info: ExerciseInfoProvider) {
+        for exercise in session.orderedExercises where !exercise.isRemoved {
+            guard let details = info(exercise.exerciseKey), !details.isCardio else { continue }
+            let sets = EffectiveSets.hardSets(of: exercise)
+            guard !sets.isEmpty else { continue }
+            let volume = sets.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
+            totalVolumeKg += volume
+            totalSets += sets.count
+            for (region, share) in EffectiveSets.regionCounts(hardSets: sets.count, info: details) {
+                var load = loads[region] ?? MuscleLoad()
+                load.sets += share.weighted
+                if share.primary > 0 { load.volumeKg += volume }
+                loads[region] = load
+            }
+        }
+    }
+}
+
 public struct FrequencyPoint: Equatable, Sendable {
     public let weekStart: Date
     public let sessions: Int
@@ -209,20 +230,7 @@ public struct StatisticsEngine {
         for session in try GymQueries(context: context).finishedSessions(from: first, to: end) {
             guard let start = interval(of: size, containing: session.startedAt, calendar: calendar)?.start,
                   var bucket = buckets[start] else { continue }
-            for exercise in session.orderedExercises where !exercise.isRemoved {
-                guard let details = info(exercise.exerciseKey), !details.isCardio else { continue }
-                let sets = EffectiveSets.hardSets(of: exercise)
-                guard !sets.isEmpty else { continue }
-                let volume = sets.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
-                bucket.totalVolumeKg += volume
-                bucket.totalSets += sets.count
-                for (region, share) in EffectiveSets.regionCounts(hardSets: sets.count, info: details) {
-                    var load = bucket.loads[region] ?? MuscleLoad()
-                    load.sets += share.weighted
-                    if share.primary > 0 { load.volumeKg += volume }
-                    bucket.loads[region] = load
-                }
-            }
+            bucket.add(session, info: info)
             buckets[start] = bucket
         }
         return starts.compactMap { buckets[$0] }
@@ -329,13 +337,7 @@ public struct StatisticsEngine {
 
     /// Broj tjedana razdoblja za prosjek, najmanje 1. Počinje najranije s prvim treningom u aplikaciji.
     func weeksCovered(from start: Date, until end: Date) throws -> Double {
-        let finished = SessionState.finished.rawValue
-        var descriptor = FetchDescriptor<Session>(
-            predicate: #Predicate { $0.stateRaw == finished },
-            sortBy: [SortDescriptor(\.startedAt)]
-        )
-        descriptor.fetchLimit = 1
-        let first = try context.fetch(descriptor).first?.startedAt ?? start
+        let first = try firstSessionDate() ?? start
         let from = max(start, first)
         return max(1, end.timeIntervalSince(from) / (7 * 24 * 3600))
     }
