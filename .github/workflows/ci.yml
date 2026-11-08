@@ -103,7 +103,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO | tail -n 40
 
       - name: Promjene u katalogu nakon izvoza
-        run: git diff --stat -- Resources/Localization App WatchApp
+        run: git diff --stat -- Resources/Localization App WatchApp && git diff -- App/AppShortcuts.xcstrings
 
       - name: Provjera prijevoda
         run: python3 Tools/Localization/check_catalog.py
