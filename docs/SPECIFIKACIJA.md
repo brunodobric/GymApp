@@ -159,6 +159,7 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 
 - **iPhone:** Standardni bottom tab bar.
 - **iPad:** Sidebar (NavigationSplitView) s istim sekcijama.
+- Odlazak na drugi tab čuva stanje navigacije svakog taba. Ponovni dodir na tab koji je već otvoren vraća ga na korijen (Apple HIG).
 
 ### Postavke (pristup s Dashboarda)
 Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju stranicu: **Prikaz, Trening, Ploče i šipka** · **Obavijesti, Zdravlje, iCloud** · **Podaci** · **O aplikaciji**. Na iPadu je isti list s istim stranicama.
@@ -211,7 +212,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Klik na raspored otvara popis treninga unutar njega.
    * Gore desno gumb **+** za dodavanje novog rasporeda.
    * Otvoreni raspored ili trening se prikazuje, a trajanje, aktivnost, podsjetnici i serije vježbi mijenjaju se i tada. Gore desno gumb **Uredi** uključuje promjenu naziva, redoslijeda (crtice za povlačenje), brisanje (crveni znak) i dodavanje treninga ili vježbi, a kvačica ga završava. Izlazak iz uređivanja bez kvačice pita **Spremi** ili **Izađi bez spremanja** (novi raspored ili trening se tada briše, a postojeći se vraća kakav je bio). Novi raspored i novi trening otvaraju se odmah u uređivanju.
-   * Odlazak na drugu karticu sprema uređivanje, a povratak na Rasporede uvijek počinje od popisa.
+   * Odlazak na drugi tab čuva stanje: povratak na Rasporede nastavlja gdje je korisnik stao, i usred uređivanja. Ponovni dodir na tab Rasporedi vraća popis (uređivanje u tijeku prvo pita Spremi ili Izađi bez spremanja).
    * Unutar otvorenog rasporeda:
      * Gore desno gumb **+** za dodavanje novog treninga ili rest dana.
      * Gore desno gumb **Postavke** rasporeda:

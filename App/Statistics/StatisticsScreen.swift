@@ -9,6 +9,9 @@ import Units
 
 /// Statistika: kartice s grafovima. Na iPadu se kartice slažu u više stupaca, a grafovi su viši.
 struct StatisticsScreen: View {
+    /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: stog navigacije se vraća na korijen.
+    var rootReset = 0
+
     @Environment(\.modelContext) private var context
     @Environment(CatalogStore.self) private var catalogStore
     @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }) private var ownSessions: [Session]
@@ -106,6 +109,8 @@ struct StatisticsScreen: View {
             // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
             .task(id: RecordsKey(sessionCount: sessionCount, kinds: trackedKinds, excluded: excludedExercises)) { loadRecords() }
         }
+        // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
+        .id(rootReset)
     }
 
     private func load() {

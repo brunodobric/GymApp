@@ -30,6 +30,9 @@ enum ExerciseListRoute: Hashable {
 /// Tab Vježbe. Početna su kartice vrsta (zagrijavanje, snaga, istezanje, kardio) i poveznice na sve
 /// i vlastite vježbe. Pretraga ili filter odmah prikazuju rezultate iz cijelog kataloga.
 struct ExercisesScreen: View {
+    /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: stog navigacije se vraća na korijen.
+    var rootReset = 0
+
     @Environment(CatalogStore.self) private var catalogStore
     @Query(sort: \CustomExercise.name) private var customExercises: [CustomExercise]
 
@@ -69,6 +72,8 @@ struct ExercisesScreen: View {
                 CustomExerciseEditor(exercise: nil)
             }
         }
+        // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
+        .id(rootReset)
     }
 }
 

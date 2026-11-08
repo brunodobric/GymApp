@@ -11,6 +11,9 @@ import Units
 /// U regular širini (iPad) popis i detalji treninga stoje jedan pored drugog (`NavigationSplitView`).
 /// U compact širini split view se sklapa u običan stog, pa se iPhone ponaša kao prije.
 struct HistoryScreen: View {
+    /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: vraća se popis treninga.
+    var rootReset = 0
+
     @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }) private var ownSessions: [Session]
     /// Kardio iz Zdravlja je u lokalnoj bazi (ne sinkronizira se), a u povijesti stoji uz vlastite treninge.
     @Query private var healthWorkouts: [HealthWorkout]
@@ -73,6 +76,7 @@ struct HistoryScreen: View {
         .onChange(of: lists.all.map(\.id)) { _, ids in
             if let selectedId, !ids.contains(selectedId) { self.selectedId = nil }
         }
+        .onChange(of: rootReset) { selectedId = nil }
     }
 
     private func sessionList(_ lists: Lists) -> some View {
