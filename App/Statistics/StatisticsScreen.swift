@@ -191,6 +191,8 @@ struct StatisticsCard<Content: View>: View {
 private struct SetsCard: View {
     @Binding var weeks: Int
     let loads: [String: RegionLoad]
+    /// Visina retka raste s Dynamic Typeom, da veći nazivi mišića imaju mjesta.
+    @ScaledMetric(relativeTo: .caption) private var rowHeight: CGFloat = 26
 
     /// Redak grafa. Id je regija, da graf ne crta sve iznova pri svakom iscrtavanju.
     private struct Entry: Identifiable {
@@ -220,12 +222,23 @@ private struct SetsCard: View {
                 RectangleMark(xStart: .value("Serije tjedno", 10.0), xEnd: .value("Serije tjedno", 20.0))
                     .foregroundStyle(Color.secondary.opacity(0.15))
                 ForEach(rows) { entry in
-                    BarMark(x: .value("Serije tjedno", entry.sets), y: .value("Mišić", entry.name))
-                        .foregroundStyle(BodyRegion.color(entry.region))
+                    BarMark(
+                        x: .value("Serije tjedno", entry.sets),
+                        y: .value("Mišić", entry.name),
+                        height: .ratio(0.5)
+                    )
+                    .foregroundStyle(BodyRegion.color(entry.region))
                 }
             }
             .chartXScale(domain: 0.0...max(22.0, (rows.map(\.sets).max() ?? 0) + 2))
-            .frame(height: CGFloat(rows.count) * 26 + 30)
+            // Nazivi mišića lijevo od grafa, izvan područja crtanja i bez vodoravnih crta,
+            // da se ne preklapaju sa stupcima ni s mrežom.
+            .chartYAxis {
+                AxisMarks(position: .leading) {
+                    AxisValueLabel(horizontalSpacing: 8)
+                }
+            }
+            .frame(height: CGFloat(rows.count) * rowHeight + 30)
             .accessibilityLabel(Text("Graf tvrdih serija tjedno po mišićima"))
             Text("Siva zona je 10 do 20 tvrdih serija tjedno, raspon u kojem istraživanja nalaze najbolji rast mišića. Serija u kojoj mišić pomaže broji se kao pola.")
                 .font(.footnote).foregroundStyle(.secondary)
