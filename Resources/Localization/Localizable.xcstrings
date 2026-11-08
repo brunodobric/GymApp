@@ -1075,16 +1075,6 @@
         }
       }
     },
-    "Aktivnost" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Activity"
-          }
-        }
-      }
-    },
     "Aktivnost i podsjetnici" : {
       "localizations" : {
         "en" : {
@@ -1135,16 +1125,6 @@
         }
       }
     },
-    "Apple Watch" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple Watch"
-          }
-        }
-      }
-    },
     "Apple Zdravlje" : {
       "localizations" : {
         "en" : {
@@ -1171,16 +1151,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "It's archived and hidden from selection."
-          }
-        }
-      }
-    },
-    "Bez cilja" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No goal"
           }
         }
       }
@@ -1255,16 +1225,6 @@
         }
       }
     },
-    "Bicikl" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cycling"
-          }
-        }
-      }
-    },
     "Bilješka" : {
       "localizations" : {
         "en" : {
@@ -1291,36 +1251,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notes"
-          }
-        }
-      }
-    },
-    "Blok" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Block"
-          }
-        }
-      }
-    },
-    "Blok je rad i oporavak, ponovljeni zadani broj puta. Obično trčanje je jedan blok bez oporavka." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A block is work and recovery, repeated a set number of times. A regular run is one block with no recovery."
-          }
-        }
-      }
-    },
-    "Blokovi" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blocks"
           }
         }
       }
@@ -1775,16 +1705,6 @@
         }
       }
     },
-    "Dodaj blok" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add block"
-          }
-        }
-      }
-    },
     "Dodaj dan odmora" : {
       "localizations" : {
         "en" : {
@@ -1971,16 +1891,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DOTS appears when you do the barbell squat, bench press or deadlift in the last 12 weeks."
-          }
-        }
-      }
-    },
-    "Dozvola" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Permission"
           }
         }
       }
@@ -2375,16 +2285,6 @@
         }
       }
     },
-    "Hlađenje" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cooldown"
-          }
-        }
-      }
-    },
     "Hodanje" : {
       "localizations" : {
         "en" : {
@@ -2431,26 +2331,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Set intensity"
-          }
-        }
-      }
-    },
-    "Intervali 6 × 400 m" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intervals 6 × 400 m"
-          }
-        }
-      }
-    },
-    "Intervali 8 × 1 min" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intervals 8 × 1 min"
           }
         }
       }
@@ -3105,16 +2985,6 @@
         }
       }
     },
-    "Lagano trčanje 30 min" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Easy run 30 min"
-          }
-        }
-      }
-    },
     "Moje vježbe" : {
       "localizations" : {
         "en" : {
@@ -3185,6 +3055,16 @@
         }
       }
     },
+    "Odabrano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected"
+          }
+        }
+      }
+    },
     "Osobni rekord" : {
       "localizations" : {
         "en" : {
@@ -3221,6 +3101,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Average pace"
+          }
+        }
+      }
+    },
+    "Rezultati" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Results"
           }
         }
       }
@@ -3405,16 +3295,6 @@
         }
       }
     },
-    "Minute: %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minutes: %lld"
-          }
-        }
-      }
-    },
     "Mišić" : {
       "localizations" : {
         "en" : {
@@ -3465,16 +3345,6 @@
         }
       }
     },
-    "Mjesto" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Location"
-          }
-        }
-      }
-    },
     "Može bolje" : {
       "localizations" : {
         "en" : {
@@ -3521,16 +3391,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "On Home"
-          }
-        }
-      }
-    },
-    "Na satu: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On watch: %@"
           }
         }
       }
@@ -3645,16 +3505,6 @@
         }
       }
     },
-    "Najviše planova" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maximum plans"
-          }
-        }
-      }
-    },
     "Najviše ponavljanja" : {
       "localizations" : {
         "en" : {
@@ -3731,16 +3581,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The measurement appears in the list after you add its first value."
-          }
-        }
-      }
-    },
-    "Nakon zakazivanja otvori aplikaciju Workout na satu i provjeri pojavljuje li se plan i može li se pokrenuti." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "After scheduling, open the Workout app on the watch and check that the plan appears and can be started."
           }
         }
       }
@@ -4235,16 +4075,6 @@
         }
       }
     },
-    "Novi kardio trening" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New cardio workout"
-          }
-        }
-      }
-    },
     "Novi raspored" : {
       "localizations" : {
         "en" : {
@@ -4635,16 +4465,6 @@
         }
       }
     },
-    "Odrađeno na satu. Trening se upisuje u povijest kad stigne iz Zdravlja." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Done on the watch. The workout is added to your history when it arrives from Health."
-          }
-        }
-      }
-    },
     "Odustani" : {
       "localizations" : {
         "en" : {
@@ -4691,16 +4511,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Description (optional)"
-          }
-        }
-      }
-    },
-    "Oporavak" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recovery"
           }
         }
       }
@@ -4965,36 +4775,6 @@
         }
       }
     },
-    "Plan" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plan"
-          }
-        }
-      }
-    },
-    "Plan još nije na satu." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The plan isn't on the watch yet."
-          }
-        }
-      }
-    },
-    "Plan nije potpun. Uredi trening i dodaj barem jedan blok." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The plan is incomplete. Edit the workout and add at least one block."
-          }
-        }
-      }
-    },
     "Planinarenje" : {
       "localizations" : {
         "en" : {
@@ -5155,16 +4935,6 @@
         }
       }
     },
-    "Podržano" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supported"
-          }
-        }
-      }
-    },
     "Podsjetnici" : {
       "localizations" : {
         "en" : {
@@ -5211,16 +4981,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start over"
-          }
-        }
-      }
-    },
-    "Pokreni na satu u aplikaciji Workout, pod nazivom „%@”." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start it on the watch in the Workout app, named “%@”."
           }
         }
       }
@@ -5371,16 +5131,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reps, duration and distance"
-          }
-        }
-      }
-    },
-    "Ponavljanja: %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reps: %lld"
           }
         }
       }
@@ -5661,16 +5411,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Body tracking"
-          }
-        }
-      }
-    },
-    "Predložak" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Template"
           }
         }
       }
@@ -6385,16 +6125,6 @@
         }
       }
     },
-    "Rad" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Work"
-          }
-        }
-      }
-    },
     "Radna serija" : {
       "localizations" : {
         "en" : {
@@ -6631,16 +6361,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Secondary"
-          }
-        }
-      }
-    },
-    "Sekunde: %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seconds: %lld"
           }
         }
       }
@@ -7785,26 +7505,6 @@
         }
       }
     },
-    "Trening se pokreće na satu u aplikaciji Workout. Kad ga završiš, Apolon ga uvozi iz Zdravlja i raspored ide dalje." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The workout starts on the watch in the Workout app. When you finish it, Apolon imports it from Health and the schedule moves on."
-          }
-        }
-      }
-    },
-    "Trening se pokreće na satu u aplikaciji Workout. U rasporedu ga Apolon zakazuje na sat za termin podsjetnika." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The workout starts on the watch in the Workout app. In a schedule, Apolon schedules it on the watch at the reminder time."
-          }
-        }
-      }
-    },
     "Trening snage" : {
       "localizations" : {
         "en" : {
@@ -7975,16 +7675,6 @@
         }
       }
     },
-    "Trčanje 5 km" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Run 5 km"
-          }
-        }
-      }
-    },
     "Tvrde serije su radne serije bez onih s RPE ispod 6. Kardio vježbe se ne broje u serije." : {
       "localizations" : {
         "en" : {
@@ -8095,16 +7785,6 @@
         }
       }
     },
-    "Ukloni sve zakazano" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove all scheduled"
-          }
-        }
-      }
-    },
     "Ukloniti vježbu?" : {
       "localizations" : {
         "en" : {
@@ -8141,16 +7821,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Input"
-          }
-        }
-      }
-    },
-    "Unutra" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Indoor"
           }
         }
       }
@@ -8431,16 +8101,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import workouts"
-          }
-        }
-      }
-    },
-    "Vani" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Outdoor"
           }
         }
       }
@@ -8845,16 +8505,6 @@
         }
       }
     },
-    "Vrijeme za trening: %@. Pokreni ga na satu u aplikaciji Workout." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Time to work out: %@. Start it on your watch in the Workout app."
-          }
-        }
-      }
-    },
     "Vrsta" : {
       "localizations" : {
         "en" : {
@@ -8871,26 +8521,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The input type determines the fields in a set row and how volume is calculated."
-          }
-        }
-      }
-    },
-    "WorkoutKit" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WorkoutKit"
-          }
-        }
-      }
-    },
-    "WorkoutKit zakazivanje" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WorkoutKit scheduling"
           }
         }
       }
@@ -8931,16 +8561,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No workouts on the selected day."
-          }
-        }
-      }
-    },
-    "Za ovaj trening treba Apple Watch uparen s ovim iPhoneom." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This workout needs an Apple Watch paired with this iPhone."
           }
         }
       }
@@ -9065,66 +8685,6 @@
         }
       }
     },
-    "Zakazano (%lld)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scheduled (%lld)"
-          }
-        }
-      }
-    },
-    "Zakazano na satu" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scheduled on watch"
-          }
-        }
-      }
-    },
-    "Zakazivanje nije uspjelo. Provjeri je li sat uparen i je li Apollu dopušteno zakazivanje treninga." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scheduling failed. Check that the watch is paired and that Apolon is allowed to schedule workouts."
-          }
-        }
-      }
-    },
-    "Zakaži na satu" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schedule on watch"
-          }
-        }
-      }
-    },
-    "Zakaži trčanje za 24 h" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schedule a run in 24 h"
-          }
-        }
-      }
-    },
-    "Zakaži trčanje za 5 min" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schedule a run in 5 min"
-          }
-        }
-      }
-    },
     "Zamijeni" : {
       "localizations" : {
         "en" : {
@@ -9165,16 +8725,6 @@
         }
       }
     },
-    "Zapis" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log"
-          }
-        }
-      }
-    },
     "Započni" : {
       "localizations" : {
         "en" : {
@@ -9211,16 +8761,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hangs"
-          }
-        }
-      }
-    },
-    "Zatraži dozvolu" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Request permission"
           }
         }
       }
@@ -9361,16 +8901,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "End-of-rest sound"
-          }
-        }
-      }
-    },
-    "bez cilja" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "no goal"
           }
         }
       }
@@ -9531,32 +9061,12 @@
         }
       }
     },
-    "km" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "km"
-          }
-        }
-      }
-    },
     "min:s" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "min:s"
-          }
-        }
-      }
-    },
-    "oporavak %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "recovery %@"
           }
         }
       }

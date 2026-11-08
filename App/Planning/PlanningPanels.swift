@@ -24,6 +24,14 @@ extension CatalogStore {
         ExerciseSearch.apply(filter, to: summaries + custom.map(\.summary), labels: .app)
     }
 
+    /// Rezultati pretrage s odabranim vježbama na vrhu (`ExerciseSearch.pinningSelected`).
+    func pinningSelected(
+        _ selected: [String], results: [ExerciseSummary], custom: [CustomExercise]
+    ) -> (selected: [ExerciseSummary], others: [ExerciseSummary]) {
+        guard !selected.isEmpty else { return ([], results) }
+        return ExerciseSearch.pinningSelected(selected, results: results, all: summaries + custom.map(\.summary))
+    }
+
     /// Način unosa vježbe iz popisa (službene iz kataloga, vlastite iz baze).
     func inputType(of summary: ExerciseSummary, custom: [CustomExercise]) -> ExerciseInputType {
         switch summary.source {
@@ -148,21 +156,30 @@ struct ExerciseCatalogPanel: View {
     var body: some View {
         // Pretraga se računa jednom po iscrtavanju (oko 800 vježbi).
         let results = catalogStore.search(filter, custom: customExercises)
+        // Tijekom pretrage odabrane vježbe stoje na vrhu, da korisnik vidi što je već odabrao.
+        let isQuerying = !filter.query.trimmingCharacters(in: .whitespaces).isEmpty
+        let pinned = isQuerying
+            ? catalogStore.pinningSelected(selected, results: results, custom: customExercises)
+            : (selected: [], others: results)
         NavigationStack {
-            List(results) { summary in
-                SelectableRow(isSelected: selected.contains(summary.id), toggle: { toggle(summary) }) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(summary.name)
-                        if let category = summary.category {
-                            Text(category.title).font(.subheadline).foregroundStyle(.secondary)
-                        }
+            List {
+                if pinned.selected.isEmpty {
+                    rows(pinned.others)
+                } else {
+                    Section("Odabrano") { rows(pinned.selected) }
+                    if !pinned.others.isEmpty {
+                        Section("Rezultati") { rows(pinned.others) }
                     }
                 }
-                .panelDraggable(summary.id, enabled: sizeClass == .regular, title: summary.name, systemImage: "dumbbell")
             }
             .accessibilityIdentifier("planningPanel.list")
             .overlay {
-                if results.isEmpty { ContentUnavailableView.search(text: filter.query) }
+                if results.isEmpty && pinned.selected.isEmpty { ContentUnavailableView.search(text: filter.query) }
+            }
+            .safeAreaInset(edge: .bottom) {
+                CatalogPanelBottomBar(
+                    selectedCount: selected.count, showsDragHint: sizeClass == .regular, add: add
+                )
             }
             .navigationTitle("Katalog")
             .navigationBarTitleDisplayMode(.inline)
@@ -178,16 +195,20 @@ struct ExerciseCatalogPanel: View {
                         .accessibilityIdentifier("planningPanel.add")
                 }
             }
-            .safeAreaInset(edge: .bottom) {
-                if sizeClass == .regular {
-                    Text("Odaberi vježbe ili ih povuci u popis.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity)
-                        .padding(8)
-                        .background(.bar)
+        }
+    }
+
+    private func rows(_ summaries: [ExerciseSummary]) -> some View {
+        ForEach(summaries) { summary in
+            SelectableRow(isSelected: selected.contains(summary.id), toggle: { toggle(summary) }) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(summary.name)
+                    if let category = summary.category {
+                        Text(category.title).font(.subheadline).foregroundStyle(.secondary)
+                    }
                 }
             }
+            .panelDraggable(summary.id, enabled: sizeClass == .regular, title: summary.name, systemImage: "dumbbell")
         }
     }
 
@@ -204,6 +225,41 @@ struct ExerciseCatalogPanel: View {
         selected = []
         // Na iPhoneu je ploča list, pa se nakon dodavanja zatvara; na iPadu ostaje otvorena za daljnje slaganje.
         if sizeClass != .regular { isPresented = false }
+    }
+}
+
+/// Donja traka kataloga. Dok je pretraga aktivna, sustav skriva navigacijsku traku s gumbom Dodaj,
+/// pa se gumb tada prikazuje ovdje, iznad tipkovnice. Na iPadu traka nosi i uputu za povlačenje.
+private struct CatalogPanelBottomBar: View {
+    let selectedCount: Int
+    let showsDragHint: Bool
+    let add: () -> Void
+
+    @Environment(\.isSearching) private var isSearching
+
+    var body: some View {
+        if isSearching || showsDragHint {
+            VStack(spacing: 8) {
+                if isSearching {
+                    Button(action: add) {
+                        Label(selectedCount == 0 ? "Dodaj" : "Dodaj (\(selectedCount))", systemImage: "checkmark")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .disabled(selectedCount == 0)
+                    .accessibilityIdentifier("planningPanel.addWhileSearching")
+                }
+                if showsDragHint {
+                    Text("Odaberi vježbe ili ih povuci u popis.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(8)
+            .background(.bar)
+        }
     }
 }
 
@@ -226,8 +282,7 @@ struct TemplateListPanel: View {
                         Text(template.name)
                     } icon: {
                         WorkoutKindIcon(
-                            mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises)),
-                            cardioSymbol: template.cardioPlanSymbol
+                            mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises))
                         )
                     }
                 }

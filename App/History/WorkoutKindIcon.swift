@@ -18,19 +18,17 @@ extension SessionMix {
     }
 }
 
-/// Ikona vrste treninga. Snaga je bučica, kardio trčanje (ili aktivnost kardio plana za sat), a snaga
+/// Ikona vrste treninga. Snaga je bučica, kardio trčanje, a snaga
 /// s kardiom bučica s malom oznakom trčanja u kutu.
 struct WorkoutKindIcon: View {
     let mix: SessionMix
-    /// Simbol aktivnosti kardio plana (npr. bicikl); bez njega trčanje.
-    var cardioSymbol: String?
 
     var body: some View {
         switch mix {
         case .strength:
             Image(systemName: WorkoutKind.strength.symbol)
         case .cardio:
-            Image(systemName: cardioSymbol ?? WorkoutKind.cardio.symbol)
+            Image(systemName: WorkoutKind.cardio.symbol)
         case .mixed:
             Image(systemName: WorkoutKind.strength.symbol)
                 .overlay(alignment: .bottomTrailing) {
@@ -49,12 +47,5 @@ extension CatalogStore {
     /// Je li vježba kardio, po ključu `ExerciseRef.key` (katalog i vlastite vježbe).
     func isCardio(custom: [CustomExercise]) -> (String) -> Bool {
         ExerciseInfoBuilder.isCardio(ExerciseInfoBuilder.provider(catalog: catalog, custom: custom))
-    }
-}
-
-extension WorkoutTemplate {
-    /// Simbol aktivnosti kardio plana za sat; nil za trening s vježbama.
-    var cardioPlanSymbol: String? {
-        kind == .cardio ? (cardioPlan?.activity.symbol ?? WorkoutKind.cardio.symbol) : nil
     }
 }

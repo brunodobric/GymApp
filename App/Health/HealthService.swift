@@ -6,7 +6,6 @@ import Models
 import OSLog
 import Stats
 import SwiftData
-import WorkoutKit
 
 /// Veza s Apple Zdravljem (specifikacija, odjeljak 6).
 ///
@@ -156,15 +155,7 @@ final class HealthService {
         let key = "health.anchor.workouts"
         let descriptor = HKAnchoredObjectQueryDescriptor(predicates: [.workout(predicate)], anchor: Self.anchor(forKey: key))
         let result = try await descriptor.result(for: store)
-        var records: [HealthWorkoutRecord] = []
-        for workout in result.addedSamples {
-            var item = record(from: workout)
-            // Plan iz WorkoutKita po kojem je trening odrađen na satu. Samo za Appleove kardio treninge.
-            if item.isFromApple, item.activity.isCardio, let plan = try? await workout.workoutPlan {
-                item.workoutPlanId = plan.id
-            }
-            records.append(item)
-        }
+        let records = result.addedSamples.map { record(from: $0) }
         return Batch(items: records) { Self.store(result.newAnchor, forKey: key) }
     }
 

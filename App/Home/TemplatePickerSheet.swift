@@ -91,8 +91,7 @@ private struct TemplatePickerRow: View {
         let exercises = template.orderedExercises
         HStack(spacing: 12) {
             WorkoutKindIcon(
-                mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises)),
-                cardioSymbol: template.cardioPlanSymbol
+                mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises))
             )
             .foregroundStyle(.tint)
             .frame(width: 28)

@@ -96,7 +96,7 @@ final class SyncMonitor {
             do {
                 let removed = try Deduplication.removeAllDuplicates(in: AppServices.container.mainContext)
                 if removed > 0 { self?.logger.info("Nakon sinkronizacije uklonjeno duplikata: \(removed)") }
-                AppServices.migrateCatalogIds()
+                AppServices.migrateStoredData()
             } catch {
                 self?.logger.error("Uklanjanje duplikata nije uspjelo: \(String(describing: error))")
             }
