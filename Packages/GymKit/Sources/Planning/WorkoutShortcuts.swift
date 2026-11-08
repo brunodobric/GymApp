@@ -76,7 +76,8 @@ public struct WorkoutShortcuts {
         } catch WorkoutError.nothingCompleted {
             return .nothingCompleted(session)
         }
-        try ScheduleEngine(context: context).sessionFinished(session)
+        // Kao na ekranu treninga: trening je spremljen i kad napredovanje rasporeda ne uspije.
+        _ = try? ScheduleEngine(context: context).sessionFinished(session)
         return .finished(session)
     }
 
