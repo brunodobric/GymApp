@@ -19,7 +19,7 @@ Ovaj dokument sadrži ažuriranu i proširenu specifikaciju moderne iOS (Swift) 
 
 ### Kategorizacija i Strukturiranje
 * **Kategorije / Anatomija:** Prsa, Leđa, Ramena, Ruke, Noge, Core/Trbuh, Kardio.
-* **Vrsta vježbe:** neovisno o dijelu tijela svaka vježba kataloga ima vrstu (`kind`): zagrijavanje (dinamični pokreti prije treninga), snaga, istezanje (statično, nakon treninga) ili kardio. Kardio ide uz kategoriju Kardio, istezanje dolazi iz MoveKit obrasca `Stretch` (ili riječi "stretch" u id-ju), zagrijavanje iz obrasca `Mobility`, a sve ostalo je snaga (`kinds` u `mapping.json`, iznimke u `overrides.json`). Vlastita vježba dobiva vrstu po kategoriji (kardio ili snaga). Početna kataloga grupira vježbe po vrsti.
+* **Vrsta vježbe:** neovisno o dijelu tijela svaka vježba kataloga ima vrstu (`kind`): zagrijavanje (dinamični pokreti prije treninga), snaga, istezanje (statično, nakon treninga) ili kardio. Kardio ide uz kategoriju Kardio, istezanje dolazi iz MoveKit obrasca `Stretch` (ili riječi "stretch" u id-ju), zagrijavanje iz obrasca `Mobility`, a sve ostalo je snaga (`kinds` u `mapping.json`, iznimke u `overrides.json`). Kod vlastite vježbe korisnik bira vrstu u obrascu (kardio kategorija znači i kardio vrstu), a vlastita vježba spremljena prije toga dobiva vrstu po kategoriji (kardio ili snaga). Početna kataloga grupira vježbe po vrsti.
 * **Mapiranje kategorija:** MoveKit koristi vlastite nazive mišića, opreme i obrazaca pokreta (npr. `primaryMuscles: ["Quadriceps"]`, `movementPattern: ["Squat"]`). Ručna tablica `Tools/CatalogBuilder/mapping.json` prevodi ih na naše kategorije, mišićne skupine, opremu i regije body heatmapa, a `overrides.json` ispravlja pojedine vježbe. Obje su dio repozitorija i koriste se pri izgradnji kataloga.
 * **Mišićne skupine:** Primarni i sekundarni mišići s mapiranjem na body heatmap.
 * **Oprema:** Bučice, Šipka, Sprave/Kablovi, Vlastita težina (Bodyweight), Kettlebell, Trake, itd.
@@ -505,7 +505,7 @@ Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening**
 * **CatalogExercise:** `catalogId` (MoveKit slug), nazivi po jeziku, upute i česte greške po jeziku (iz privatnog dodatka), kategorija, vrsta (zagrijavanje/snaga/istezanje/kardio), primarni i sekundarni mišići, oprema, razina, mehanika (isolation/compound), tip pokreta (push/pull/legs), vrsta unosa (vidi tablicu u odjeljku 2), klip i poster (putanje u MoveKit dodatku).
 
 ### Korisnička baza (sinkronizira se)
-* **CustomExercise:** `id`, naziv, opis, kategorija, mišići, oprema, vrsta unosa, slika (opcionalno, kao `externalStorage`), `isArchived`.
+* **CustomExercise:** `id`, naziv, opis, vrsta (`kindRaw`), kategorija, mišići, oprema, vrsta unosa, slika (opcionalno, kao `externalStorage`), `isArchived`.
 * **ExerciseRef** (ugrađena vrijednost, ne zaseban model): `catalogId` ili `customExerciseId`, plus spremljeni naziv za prikaz ako vježba nestane.
 
 **Planiranje**

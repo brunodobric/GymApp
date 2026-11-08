@@ -180,13 +180,20 @@ struct SessionCardioTests {
         #expect(SessionCardio.mix(of: try template([], kind: .cardio), isCardio: isCardio) == .cardio)
     }
 
-    @Test("Vlastita vježba u kategoriji kardio je kardio")
+    @Test("Vlastita vježba: kardio po odabranoj vrsti, a bez vrste po kategoriji")
     func customCardio() throws {
         let context = try makeContext()
-        let custom = CustomExercise(name: "Veslanje u parku")
-        custom.category = .cardio
-        context.insert(custom)
-        let provider = ExerciseInfoBuilder.provider(catalog: nil, custom: [custom])
-        #expect(provider("u:\(custom.id.uuidString)")?.isCardio == true)
+        let byCategory = CustomExercise(name: "Veslanje u parku")
+        byCategory.category = .cardio
+        let byKind = CustomExercise(name: "Penjanje uz stube")
+        byKind.category = .legs
+        byKind.kind = .cardio
+        let strength = CustomExercise(name: "Iskorak s ruksakom")
+        strength.category = .legs
+        for exercise in [byCategory, byKind, strength] { context.insert(exercise) }
+        let provider = ExerciseInfoBuilder.provider(catalog: nil, custom: [byCategory, byKind, strength])
+        #expect(provider("u:\(byCategory.id.uuidString)")?.isCardio == true)
+        #expect(provider("u:\(byKind.id.uuidString)")?.isCardio == true)
+        #expect(provider("u:\(strength.id.uuidString)")?.isCardio == false)
     }
 }

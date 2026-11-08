@@ -9,6 +9,7 @@ extension CustomExercise {
             source: .custom(id: id),
             name: name,
             category: category,
+            kind: kind,
             muscles: muscles,
             equipment: equipment,
             isArchived: isArchived

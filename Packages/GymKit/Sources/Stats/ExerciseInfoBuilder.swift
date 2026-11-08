@@ -83,7 +83,7 @@ public enum ExerciseInfoBuilder {
             }
             table["u:\(exercise.id.uuidString)"] = ExerciseInfo(
                 primary: muscles, primaryRegions: regions,
-                isCardio: ExerciseKind.fallback(for: exercise.category) == .cardio
+                isCardio: exercise.kind == .cardio
             )
         }
         return { table[$0] }
