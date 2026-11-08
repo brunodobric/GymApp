@@ -110,7 +110,12 @@ struct SchedulesScreen: View {
         PlanningEditing(
             isEditing: editing == item,
             onEdit: { beginEditing(item) },
-            onDone: { finishEditing() },
+            onDone: {
+                // Nova stavka se nakon kvačice sprema i vraća na popis rasporeda i treninga.
+                let wasNew = editingIsNew
+                finishEditing()
+                if wasNew { selection = nil }
+            },
             onLeave: { select(nil) }
         )
     }
