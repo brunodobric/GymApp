@@ -504,7 +504,8 @@
   "equipment": "bodyweight"
  },
  "cossack-squat": {
-  "inputType": "bodyweight"
+  "inputType": "bodyweight",
+  "kind": "strength"
  },
  "crunches": {
   "inputType": "bodyweight",
@@ -523,6 +524,9 @@
   ],
   "secondaryMuscles": [],
   "equipment": "bodyweight"
+ },
+ "dead-hang": {
+  "kind": "strength"
  },
  "decline-barbell-bench-press": {
   "inputType": "weightReps",
@@ -614,7 +618,8 @@
   "equipment": "dumbbell"
  },
  "dumbbell-cossack-squat": {
-  "inputType": "weightReps"
+  "inputType": "weightReps",
+  "kind": "strength"
  },
  "dumbbell-curl": {
   "inputType": "weightReps",
@@ -856,7 +861,8 @@
   "equipment": "dumbbell"
  },
  "dumbbell-turkish-get-up": {
-  "inputType": "weightReps"
+  "inputType": "weightReps",
+  "kind": "strength"
  },
  "dumbbell-wrist-curl": {
   "inputType": "weightReps",
@@ -1064,7 +1070,8 @@
   "inputType": "weightReps"
  },
  "kettlebell-turkish-get-up": {
-  "inputType": "weightReps"
+  "inputType": "weightReps",
+  "kind": "strength"
  },
  "kneeling-cable-crunch": {
   "inputType": "weightReps",
@@ -1707,7 +1714,8 @@
   "equipment": "machine"
  },
  "turkish-get-up": {
-  "inputType": "bodyweight"
+  "inputType": "bodyweight",
+  "kind": "strength"
  },
  "underhand-barbell-row": {
   "inputType": "weightReps",

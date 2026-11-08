@@ -16,7 +16,7 @@ Uvjeti koji određuju kako radimo:
 * **Sirove datoteke ne smiju biti javno dostupne ni preuzimljive.** Repozitorij je javan, pa u njega ne idu klipovi, posteri, `metadata.json` ni MoveKit tekstovi (upute, česte greške, opisi), ni naši hrvatski prijevodi tih tekstova. Nema javnih poveznica na datoteke, a aplikacija nema izvoz klipova.
 * **Licenca i certifikat čuvaju se uz pakete** (`~/Documents/MoveKit/LICENSE.txt` i e-mail s potvrdom). License ID se ne piše u repozitorij.
 
-U repozitoriju su samo naši podaci: pravila mapiranja (`Tools/CatalogBuilder/mapping.json`), ispravke po vježbi (`overrides.json`), hrvatski nazivi (`names-hr.json`), tablica starih id-jeva (`legacy-ids.json`) i iz njih izgrađen `Resources/Catalog/catalog.json` (id, nazivi, kategorija, mišići, oprema, vrsta unosa, regije mape mišića).
+U repozitoriju su samo naši podaci: pravila mapiranja (`Tools/CatalogBuilder/mapping.json`), ispravke po vježbi (`overrides.json`), hrvatski nazivi (`names-hr.json`), tablica starih id-jeva (`legacy-ids.json`) i iz njih izgrađen `Resources/Catalog/catalog.json` (id, nazivi, kategorija, vrsta vježbe, mišići, oprema, vrsta unosa, regije mape mišića).
 
 ## Gdje je što
 

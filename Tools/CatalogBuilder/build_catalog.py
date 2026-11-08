@@ -3,7 +3,7 @@
 
 MoveKit sadržaj ne smije u javni repozitorij, pa build ima dva izlaza:
 
-* javni `Resources/Catalog/catalog.json`: naši podaci o vježbama (id, nazivi, kategorija, mišići,
+* javni `Resources/Catalog/catalog.json`: naši podaci o vježbama (id, nazivi, kategorija, vrsta, mišići,
   oprema, vrsta unosa, regije mape mišića) i tablica starih id-jeva. Bez MoveKit tekstova i medija.
 * privatna mapa (zadano `<MoveKit paket>/GymApp`): `texts.json` s uputama i čestim greškama te
   `Media/` s pretvorenim klipovima (HEVC) i posterima (JPEG). `scripts/movekit.sh` je kopira u
@@ -105,6 +105,15 @@ def infer_input_type(raw: dict, equipment: str, mapping: dict) -> str:
     return "weightReps"
 
 
+def infer_kind(patterns: list[str], category: str, mapping: dict) -> str:
+    """Vrsta vježbe (snaga, kardio, mobilnost) iz obrazaca pokreta. Kardio prati kategoriju."""
+    if category == "cardio":
+        return "cardio"
+    if set(patterns) & set(mapping["mobilityPatterns"]):
+        return "mobility"
+    return "strength"
+
+
 def regions_for(muscles: list[str], mapping: dict, slug: str) -> list[str]:
     regions = []
     for muscle in muscles:
@@ -128,6 +137,7 @@ def convert(raw: dict, mapping: dict, override: dict, hr_name: str | None) -> di
     patterns = raw["movementPattern"]
     is_cardio = "Cardio" in patterns
     category = override.get("category") or ("cardio" if is_cardio else mapping["category"][primary[0]])
+    kind = override.get("kind") or infer_kind(patterns, category, mapping)
 
     movement = None
     if not is_cardio:
@@ -156,6 +166,7 @@ def convert(raw: dict, mapping: dict, override: dict, hr_name: str | None) -> di
         "id": slug,
         "name": names,
         "category": category,
+        "kind": kind,
         "primaryMuscles": primary,
         "secondaryMuscles": secondary,
         "equipment": equipment,

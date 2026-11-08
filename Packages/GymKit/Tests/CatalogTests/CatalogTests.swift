@@ -203,6 +203,34 @@ struct CatalogDataTests {
         #expect(catalog.resolve("ne-postoji") == .unknown)
     }
 
+    @Test("Svaka vježba ima vrstu: kardio točno u kategoriji kardio, istezanja su mobilnost")
+    func kinds() throws {
+        let (catalog, _) = try Self.loadBundledCatalog()
+        for exercise in catalog.exercises {
+            #expect((exercise.kind == .cardio) == (exercise.category == .cardio), "\(exercise.id): vrsta i kategorija kardija")
+        }
+        let counts = Dictionary(grouping: catalog.exercises, by: \.kind).mapValues(\.count)
+        #expect(counts == [.strength: 502, .cardio: 38, .mobility: 42])
+        #expect(catalog.exercise(withID: "worlds-greatest-stretch")?.kind == .mobility)
+        #expect(catalog.exercise(withID: "turkish-get-up")?.kind == .strength)
+        #expect(catalog.exercise(withID: "treadmill-run")?.kind == .cardio)
+    }
+
+    @Test("Stariji catalog.json bez vrste: kardio po kategoriji, inače snaga")
+    func kindFallback() throws {
+        let json = #"""
+        {"version": 2, "source": {"name": "MoveKit", "url": "https://movekit.com", "license": "L"}, "exercises": [
+          {"id": "run", "name": {"en": "Run"}, "category": "cardio", "primaryMuscles": ["quadriceps"], "secondaryMuscles": [],
+           "equipment": "bodyweight", "level": "beginner", "inputType": "durationDistance", "primaryRegions": [], "secondaryRegions": []},
+          {"id": "press", "name": {"en": "Press"}, "category": "chest", "primaryMuscles": ["chest"], "secondaryMuscles": [],
+           "equipment": "barbell", "level": "beginner", "inputType": "weightReps", "primaryRegions": [], "secondaryRegions": []}
+        ]}
+        """#
+        let catalog = try ExerciseCatalog(data: Data(json.utf8))
+        #expect(catalog.exercise(withID: "run")?.kind == .cardio)
+        #expect(catalog.exercise(withID: "press")?.kind == .strength)
+    }
+
     @Test("Prikaz vraća engleski kad prijevoda nema")
     func languageFallback() throws {
         let (catalog, _) = try Self.loadBundledCatalog()

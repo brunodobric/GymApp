@@ -202,6 +202,7 @@
     "hr": "Prebacivanje kukova 90/90"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "glutes"
    ],
@@ -225,6 +226,7 @@
     "hr": "Istezanje trbuha, varijanta 4"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -248,6 +250,7 @@
     "hr": "Istezanje trbuha, varijanta 1"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -271,6 +274,7 @@
     "hr": "Istezanje trbuha, varijanta 3"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -294,6 +298,7 @@
     "hr": "Istezanje trbuha, varijanta 2"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -317,6 +322,7 @@
     "hr": "Istezanje aduktora i prepona"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "adductors"
    ],
@@ -344,6 +350,7 @@
     "hr": "Naizmjenični čekić pregibi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -371,6 +378,7 @@
     "hr": "Anti-gravity potisak"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -398,6 +406,7 @@
     "hr": "Arc trenažer"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -429,6 +438,7 @@
     "hr": "Strijelac sklekovi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -460,6 +470,7 @@
     "hr": "Kruženje rukama naprijed i natrag"
    },
    "category": "shoulders",
+   "kind": "mobility",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -483,6 +494,7 @@
     "hr": "Arnoldov potisak"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -510,6 +522,7 @@
     "hr": "Air bike (Assault)"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -543,6 +556,7 @@
     "hr": "Ekstenzija leđa u B-stavu"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lower back"
    ],
@@ -572,6 +586,7 @@
     "hr": "Hip thrust u B-stavu"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -601,6 +616,7 @@
     "hr": "Ekstenzija leđa"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lower back"
    ],
@@ -630,6 +646,7 @@
     "hr": "Pregib s ruksakom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -657,6 +674,7 @@
     "hr": "Veslanje s ruksakom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -686,6 +704,7 @@
     "hr": "Plivanje leđno"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "lats",
     "middle back"
@@ -721,6 +740,7 @@
     "hr": "Zgibovi uz pomoć trake"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -750,6 +770,7 @@
     "hr": "Pregib s trakom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -773,6 +794,7 @@
     "hr": "Vanjska rotacija s trakom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -802,6 +824,7 @@
     "hr": "Glute most s trakom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -831,6 +854,7 @@
     "hr": "Good morning s trakom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings"
@@ -862,6 +886,7 @@
     "hr": "Face pull s trakom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -889,6 +914,7 @@
     "hr": "Abdukcija kuka s trakom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -912,6 +938,7 @@
     "hr": "Povlačenje trake klečeći"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -939,6 +966,7 @@
     "hr": "Bočno podizanje s trakom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -962,6 +990,7 @@
     "hr": "Pregib nogu s trakom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -991,6 +1020,7 @@
     "hr": "Potisak iznad glave s trakom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -1022,6 +1052,7 @@
     "hr": "Pull through s trakom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -1051,6 +1082,7 @@
     "hr": "Pullover s trakom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -1074,6 +1106,7 @@
     "hr": "Rumunjsko mrtvo dizanje s trakom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings"
@@ -1103,6 +1136,7 @@
     "hr": "Veslanje s trakom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -1130,6 +1164,7 @@
     "hr": "Povlačenje trake sjedeći"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -1157,6 +1192,7 @@
     "hr": "Prebacivanje trake preko ramena"
    },
    "category": "shoulders",
+   "kind": "mobility",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -1184,6 +1220,7 @@
     "hr": "Slijeganje ramenima s trakom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -1207,6 +1244,7 @@
     "hr": "Jednoručno bočno podizanje s trakom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -1230,6 +1268,7 @@
     "hr": "Čučanj s trakom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -1261,6 +1300,7 @@
     "hr": "Povlačenje trake ravnim rukama"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -1290,6 +1330,7 @@
     "hr": "Zamah za triceps s trakom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -1313,6 +1354,7 @@
     "hr": "Drvosječa s trakom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -1336,6 +1378,7 @@
     "hr": "Mobilizacija gležnja s trakom"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "calves"
    ],
@@ -1359,6 +1402,7 @@
     "hr": "Školjka s trakom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -1386,6 +1430,7 @@
     "hr": "Ekscentrično podizanje stopala s trakom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -1409,6 +1454,7 @@
     "hr": "Čučanj sa šipkom i trakama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -1436,6 +1482,7 @@
     "hr": "Slijeganje ramenima sa šipkom iza leđa"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -1459,6 +1506,7 @@
     "hr": "Potisak šipkom s klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -1488,6 +1536,7 @@
     "hr": "Veslanje šipkom u pretklonu"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -1519,6 +1568,7 @@
     "hr": "Veslanje šipkom u pretklonu nathvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back",
     "traps"
@@ -1552,6 +1602,7 @@
     "hr": "Nabačaj i izbačaj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes",
@@ -1589,6 +1640,7 @@
     "hr": "Nabačaj i potisak"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -1632,6 +1684,7 @@
     "hr": "Potisak šipkom uskim hvatom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -1661,6 +1714,7 @@
     "hr": "Pregib šipkom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -1688,6 +1742,7 @@
     "hr": "Mrtvo dizanje"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings",
@@ -1725,6 +1780,7 @@
     "hr": "Drag pregib šipkom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -1752,6 +1808,7 @@
     "hr": "Potisak šipkom s poda"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -1781,6 +1838,7 @@
     "hr": "Penjanje na klupu sa šipkom naprijed i podizanjem koljena"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -1808,6 +1866,7 @@
     "hr": "Glute most sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -1835,6 +1894,7 @@
     "hr": "Hack čučanj sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -1868,6 +1928,7 @@
     "hr": "Potisak šipkom s jako kose klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -1897,6 +1958,7 @@
     "hr": "Hip thrust sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -1924,6 +1986,7 @@
     "hr": "Potisak šipkom s kose klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -1953,6 +2016,7 @@
     "hr": "Veslanje landmine šipkom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -1986,6 +2050,7 @@
     "hr": "Iskorak sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -2015,6 +2080,7 @@
     "hr": "Muscle snatch"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals",
     "glutes",
@@ -2042,6 +2108,7 @@
     "hr": "Vojnički potisak stojeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -2069,6 +2136,7 @@
     "hr": "Power snatch"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals",
     "glutes",
@@ -2096,6 +2164,7 @@
     "hr": "Pullover šipkom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -2119,6 +2188,7 @@
     "hr": "Mrtvo dizanje iz stalka"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lower back",
     "glutes"
@@ -2152,6 +2222,7 @@
     "hr": "Veslanje šipkom za stražnja ramena"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -2183,6 +2254,7 @@
     "hr": "Stražnji iskorak sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -2216,6 +2288,7 @@
     "hr": "Rumunjsko mrtvo dizanje"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -2245,6 +2318,7 @@
     "hr": "Slijeganje ramenima sa šipkom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -2268,6 +2342,7 @@
     "hr": "Skull crusher šipkom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -2291,6 +2366,7 @@
     "hr": "Snatch"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -2330,6 +2406,7 @@
     "hr": "Jefferson pregib sa šipkom"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -2353,6 +2430,7 @@
     "hr": "Split čučanj sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -2378,6 +2456,7 @@
     "hr": "Čučanj sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -2409,6 +2488,7 @@
     "hr": "Penjanje na klupu sa šipkom i podizanjem koljena"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -2436,6 +2516,7 @@
     "hr": "Mrtvo dizanje s ravnim nogama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -2465,6 +2546,7 @@
     "hr": "Thruster sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "shoulders",
@@ -2492,6 +2574,7 @@
     "hr": "Veslanje šipkom uz tijelo"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -2519,6 +2602,7 @@
     "hr": "Hodajući iskoraci sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -2548,6 +2632,7 @@
     "hr": "Pregib zapešća šipkom podhvatom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -2571,6 +2656,7 @@
     "hr": "Battle ropes"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "shoulders",
     "abdominals"
@@ -2606,6 +2692,7 @@
     "hr": "Bayesian pregib na kablu"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -2633,6 +2720,7 @@
     "hr": "Medvjeđe puzanje"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -2664,6 +2752,7 @@
     "hr": "Potisak iza glave"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -2695,6 +2784,7 @@
     "hr": "Čučanj s pojasom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -2726,6 +2816,7 @@
     "hr": "Propadanja na klupi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -2755,6 +2846,7 @@
     "hr": "Jednoručno veslanje landmine šipkom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -2786,6 +2878,7 @@
     "hr": "Veslanje bučicama u pretklonu neutralnim hvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back",
     "traps"
@@ -2817,6 +2910,7 @@
     "hr": "Podizanje na prste savijenih koljena"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -2840,6 +2934,7 @@
     "hr": "Bicikl trbušnjaci"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -2863,6 +2958,7 @@
     "hr": "Bird dog"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals",
     "lower back"
@@ -2894,6 +2990,7 @@
     "hr": "Naizmjenični bočni iskoraci"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -2919,6 +3016,7 @@
     "hr": "Naizmjenični stražnji iskoraci"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -2944,6 +3042,7 @@
     "hr": "Čučanj na kutiju"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -2969,6 +3068,7 @@
     "hr": "Mrtvo dizanje bez tereta"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -2996,6 +3096,7 @@
     "hr": "Stražnji iskorak s povišenja"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -3027,6 +3128,7 @@
     "hr": "Donkey podizanje na prste"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -3050,6 +3152,7 @@
     "hr": "Sklekovi s povišenim nogama na klupi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -3077,6 +3180,7 @@
     "hr": "Abdukcija kuka ležeći"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -3100,6 +3204,7 @@
     "hr": "Sklekovi na koljenima"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -3127,6 +3232,7 @@
     "hr": "Stražnji iskorak"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -3152,6 +3258,7 @@
     "hr": "Ruski twist"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -3179,6 +3286,7 @@
     "hr": "Jefferson pregib bez tereta"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -3202,6 +3310,7 @@
     "hr": "Čučanj s vlastitom težinom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -3229,6 +3338,7 @@
     "hr": "Iz čučnja u stav"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -3262,6 +3372,7 @@
     "hr": "Skokovi u daljinu iz koraka"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -3293,6 +3404,7 @@
     "hr": "Skok na kutiju"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -3318,6 +3430,7 @@
     "hr": "Bradford potisak"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -3347,6 +3460,7 @@
     "hr": "Plivanje prsno"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "lats",
     "middle back",
@@ -3384,6 +3498,7 @@
     "hr": "Skok u dalj s mjesta"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -3417,6 +3532,7 @@
     "hr": "Prebacivanje štapa preko ramena"
    },
    "category": "shoulders",
+   "kind": "mobility",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -3444,6 +3560,7 @@
     "hr": "Bugarski čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -3469,6 +3586,7 @@
     "hr": "Burpee"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals",
     "chest"
@@ -3498,6 +3616,7 @@
     "hr": "Plivanje leptir"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "lats",
     "middle back",
@@ -3535,6 +3654,7 @@
     "hr": "Slijeganje ramenima na kablu"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -3558,6 +3678,7 @@
     "hr": "Pregib na kablu stojeći"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -3581,6 +3702,7 @@
     "hr": "Face pull šipkom na kablu"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -3604,6 +3726,7 @@
     "hr": "Potisak za triceps na kablu"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -3627,6 +3750,7 @@
     "hr": "Razvlačenje kablovima na klupi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -3650,6 +3774,7 @@
     "hr": "Potisak na kablovima s klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -3677,6 +3802,7 @@
     "hr": "Zamah ravnom nogom na kablu s klupe"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -3704,6 +3830,7 @@
     "hr": "Potisak na kablovima"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -3733,6 +3860,7 @@
     "hr": "Sjeckanje na kablu"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -3756,6 +3884,7 @@
     "hr": "Potisak na kablovima s negativne klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -3783,6 +3912,7 @@
     "hr": "Vanjska rotacija na kablu"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -3812,6 +3942,7 @@
     "hr": "Prednje podizanje na kablu"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -3841,6 +3972,7 @@
     "hr": "Prekrižavanje kablova"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -3868,6 +4000,7 @@
     "hr": "Abdukcija kuka na kablu"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -3895,6 +4028,7 @@
     "hr": "Potisak na kablovima s kose klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -3922,6 +4056,7 @@
     "hr": "Zamah nogom unatrag na kablu"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -3949,6 +4084,7 @@
     "hr": "Jednoručno bočno podizanje na kablu"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -3978,6 +4114,7 @@
     "hr": "Prekrižavanje kablova odozdo"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -4005,6 +4142,7 @@
     "hr": "Potisak iznad glave na kablovima"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -4032,6 +4170,7 @@
     "hr": "Ekstenzija tricepsa iznad glave šipkom na kablu"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -4055,6 +4194,7 @@
     "hr": "Pallof potisak na kablu"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -4084,6 +4224,7 @@
     "hr": "Razvlačenje kablovima"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -4107,6 +4248,7 @@
     "hr": "Pull through na kablu"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -4136,6 +4278,7 @@
     "hr": "Face pull"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -4163,6 +4306,7 @@
     "hr": "Čekić pregibi na kablu s užetom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -4186,6 +4330,7 @@
     "hr": "Face pull s užetom klečeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -4213,6 +4358,7 @@
     "hr": "Ekstenzija tricepsa iznad glave s užetom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -4236,6 +4382,7 @@
     "hr": "Pullover s užetom na kablu"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -4267,6 +4414,7 @@
     "hr": "Potisak za triceps s užetom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -4290,6 +4438,7 @@
     "hr": "Veslanje šipkom na kablu stojeći"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -4317,6 +4466,7 @@
     "hr": "Face pull s užetom sjedeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -4340,6 +4490,7 @@
     "hr": "Bočni pregib na kablu"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -4363,6 +4514,7 @@
     "hr": "Jednoručno veslanje na kablu neutralnim hvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -4390,6 +4542,7 @@
     "hr": "Jednoručno veslanje na kablu za stražnja ramena"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -4419,6 +4572,7 @@
     "hr": "Jednoručni potisak za triceps s užetom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -4442,6 +4596,7 @@
     "hr": "Jednoručno veslanje na kablu podhvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -4469,6 +4624,7 @@
     "hr": "Jednonožni pregib nogu na kablu ležeći"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -4496,6 +4652,7 @@
     "hr": "Drvosječa na kablu odozdo prema gore"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -4519,6 +4676,7 @@
     "hr": "Jednoručni potisak na kablu stojeći"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -4548,6 +4706,7 @@
     "hr": "Veslanje na kablu s rotacijom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -4575,6 +4734,7 @@
     "hr": "Zamah za triceps na kablu"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -4598,6 +4758,7 @@
     "hr": "Drvosječa na kablu"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -4625,6 +4786,7 @@
     "hr": "Pregib zapešća na kablu"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -4648,6 +4810,7 @@
     "hr": "Podizanje na prste na horizontalnoj spravi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -4671,6 +4834,7 @@
     "hr": "Podizanje koljena na razboju"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -4694,6 +4858,7 @@
     "hr": "Mačka i deva"
    },
    "category": "back",
+   "kind": "mobility",
    "primaryMuscles": [
     "lower back",
     "abdominals"
@@ -4719,6 +4884,7 @@
     "hr": "Veslanje bučicama s osloncem prsa"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back",
     "traps"
@@ -4750,6 +4916,7 @@
     "hr": "Veslanje T-šipkom ležeći"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -4779,6 +4946,7 @@
     "hr": "Zgibovi podhvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -4810,6 +4978,7 @@
     "hr": "Pregib šipkom uskim hvatom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -4837,6 +5006,7 @@
     "hr": "Sklekovi uskim hvatom na bučici"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -4866,6 +5036,7 @@
     "hr": "Pronacija i supinacija podlaktice"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -4889,6 +5060,7 @@
     "hr": "Kopenhaški plank"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "adductors"
    ],
@@ -4916,6 +5088,7 @@
     "hr": "Kozački čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "adductors"
@@ -4949,6 +5122,7 @@
     "hr": "Ekstenzija tricepsa na kablu preko tijela"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -4972,6 +5146,7 @@
     "hr": "Čekić pregib preko tijela"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -4999,6 +5174,7 @@
     "hr": "Trbušnjaci"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -5022,6 +5198,7 @@
     "hr": "Kubanski potisak"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -5051,6 +5228,7 @@
     "hr": "Bicikl, hlađenje"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -5082,6 +5260,7 @@
     "hr": "Bicikl, intervali"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -5113,6 +5292,7 @@
     "hr": "Bicikl, sprint"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -5144,6 +5324,7 @@
     "hr": "Bicikl, zagrijavanje"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -5175,6 +5356,7 @@
     "hr": "Dead bug"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -5198,6 +5380,7 @@
     "hr": "Dead bug s utegom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -5221,6 +5404,7 @@
     "hr": "Visenje na šipki"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -5254,6 +5438,7 @@
     "hr": "Potisak šipkom s negativne klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -5283,6 +5468,7 @@
     "hr": "Trbušnjaci na negativnoj klupi"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -5306,6 +5492,7 @@
     "hr": "Potisak prsa na spravi s negativnim nagibom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -5335,6 +5522,7 @@
     "hr": "Sklekovi s povišenim nogama"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -5364,6 +5552,7 @@
     "hr": "Trbušnjaci s podizanjem trupa na negativnoj klupi"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -5391,6 +5580,7 @@
     "hr": "Mrtvo dizanje s povišenja"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings",
@@ -5428,6 +5618,7 @@
     "hr": "Rumunjsko mrtvo dizanje bučicama s povišenja"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -5463,6 +5654,7 @@
     "hr": "Dijamantni sklekovi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -5486,6 +5678,7 @@
     "hr": "Iskoraci s bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -5515,6 +5708,7 @@
     "hr": "Ekstenzija leđa s bučicom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lower back"
    ],
@@ -5544,6 +5738,7 @@
     "hr": "Potisak bučicama s klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -5573,6 +5768,7 @@
     "hr": "Bugarski čučanj s bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -5602,6 +5798,7 @@
     "hr": "Razvlačenje bučicama na klupi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -5625,6 +5822,7 @@
     "hr": "Koncentracijski pregib"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -5652,6 +5850,7 @@
     "hr": "Kozački čučanj s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "adductors"
@@ -5685,6 +5884,7 @@
     "hr": "Rumunjsko mrtvo dizanje bučicom preko tijela"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings"
@@ -5714,6 +5914,7 @@
     "hr": "Pregib bučicama"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -5741,6 +5942,7 @@
     "hr": "Mrtvo dizanje bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -5778,6 +5980,7 @@
     "hr": "Potisak bučicama s negativne klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -5805,6 +6008,7 @@
     "hr": "Razvlačenje bučicama na negativnoj klupi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -5828,6 +6032,7 @@
     "hr": "Trbušnjaci s bučicom na negativnoj klupi"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -5851,6 +6056,7 @@
     "hr": "Skull crusher bučicama na negativnoj klupi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -5874,6 +6080,7 @@
     "hr": "Farmerovo nošenje bučica"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms",
     "traps"
@@ -5905,6 +6112,7 @@
     "hr": "Glute most s bučicom i povišenim nogama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -5928,6 +6136,7 @@
     "hr": "Hip thrust s bučicom u položaju četvorke"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -5951,6 +6160,7 @@
     "hr": "Prednje podizanje bučica"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -5974,6 +6184,7 @@
     "hr": "Prednji čučanj s bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -6009,6 +6220,7 @@
     "hr": "Prednji čučanj s bučicama, tempo"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -6044,6 +6256,7 @@
     "hr": "Naizmjenični naklon iskorak s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -6071,6 +6284,7 @@
     "hr": "Bugarski čučanj s bučicom na prsima"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -6096,6 +6310,7 @@
     "hr": "Iskorak naprijed s bučicom na prsima"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -6121,6 +6336,7 @@
     "hr": "Stražnji iskorak s bučicom na prsima"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -6146,6 +6362,7 @@
     "hr": "Split čučanj s bučicom na prsima"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -6171,6 +6388,7 @@
     "hr": "Goblet čučanj s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -6196,6 +6414,7 @@
     "hr": "Halo s bučicom"
    },
    "category": "shoulders",
+   "kind": "mobility",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6225,6 +6444,7 @@
     "hr": "Čekić pregibi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -6248,6 +6468,7 @@
     "hr": "Čekić pregib na Scott klupi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -6275,6 +6496,7 @@
     "hr": "Hip thrust s bučicom i povišenim petama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -6298,6 +6520,7 @@
     "hr": "Potisak bučicama s kose klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -6327,6 +6550,7 @@
     "hr": "Razvlačenje bučicama na kosoj klupi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -6354,6 +6578,7 @@
     "hr": "Pregib bučicama na kosoj klupi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -6377,6 +6602,7 @@
     "hr": "Prednje podizanje bučica na kosoj klupi"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6400,6 +6626,7 @@
     "hr": "Čekić pregib na kosoj klupi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -6423,6 +6650,7 @@
     "hr": "Veslanje bučicama na kosoj klupi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -6456,6 +6684,7 @@
     "hr": "Bočni iskorak s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "adductors"
@@ -6491,6 +6720,7 @@
     "hr": "Bočno podizanje bučica"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6514,6 +6744,7 @@
     "hr": "Obrnuto razvlačenje bučicama ležeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6537,6 +6768,7 @@
     "hr": "Pregib nogu s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -6560,6 +6792,7 @@
     "hr": "Jednoručno podizanje za stražnje rame ležeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6587,6 +6820,7 @@
     "hr": "Potisak bučicama s jako kose klupe neutralnim hvatom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -6616,6 +6850,7 @@
     "hr": "Čučanj s bučicom iznad glave"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -6651,6 +6886,7 @@
     "hr": "Pregib bučicom na Scott klupi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -6674,6 +6910,7 @@
     "hr": "Pullover bučicom sa savijenim rukama"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -6705,6 +6942,7 @@
     "hr": "Push press bučicama"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6736,6 +6974,7 @@
     "hr": "Obrnuto razvlačenje bučicama"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6759,6 +6998,7 @@
     "hr": "Stražnji iskorak s bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -6788,6 +7028,7 @@
     "hr": "Veslanje s dvije bučice u pretklonu"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -6819,6 +7060,7 @@
     "hr": "Jednoručno veslanje bučicom u pretklonu"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps",
     "middle back"
@@ -6848,6 +7090,7 @@
     "hr": "Ruski twist s bučicom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -6871,6 +7114,7 @@
     "hr": "Puno bočno podizanje bučica sjedeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6898,6 +7142,7 @@
     "hr": "Bočno podizanje bučica sjedeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6921,6 +7166,7 @@
     "hr": "Potisak bučicama za ramena sjedeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6948,6 +7194,7 @@
     "hr": "Ekstenzija tricepsa bučicom sjedeći"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -6971,6 +7218,7 @@
     "hr": "Obrnuto razvlačenje bučicama sjedeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -6994,6 +7242,7 @@
     "hr": "Slijeganje ramenima s bučicama sjedeći"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -7017,6 +7266,7 @@
     "hr": "Slijeganje ramenima s bučicama"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -7040,6 +7290,7 @@
     "hr": "Bočni pregib s bučicom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -7063,6 +7314,7 @@
     "hr": "Bočni plank s bučicom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -7092,6 +7344,7 @@
     "hr": "Jednoručni potisak bučicom za prsa"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -7119,6 +7372,7 @@
     "hr": "Jednoručni nabačaj i potisak bučicom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals",
     "glutes",
@@ -7146,6 +7400,7 @@
     "hr": "Jednoručni potisak bučicom iznad glave neutralnim hvatom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -7177,6 +7432,7 @@
     "hr": "Jednoručno veslanje bučicom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -7208,6 +7464,7 @@
     "hr": "Jednoručno veslanje bučicom uz tijelo"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders",
     "traps"
@@ -7237,6 +7494,7 @@
     "hr": "Podizanje na prste jednom nogom s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -7260,6 +7518,7 @@
     "hr": "Jednonožni hip thrust s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -7289,6 +7548,7 @@
     "hr": "Trbušnjaci s bučicom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -7312,6 +7572,7 @@
     "hr": "Ekstenzija tricepsa bučicom ležeći"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -7341,6 +7602,7 @@
     "hr": "Jefferson pregib s bučicom"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -7364,6 +7626,7 @@
     "hr": "Čučanj s bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -7397,6 +7660,7 @@
     "hr": "Jednoručni pregib bučicom stojeći"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -7420,6 +7684,7 @@
     "hr": "Jednoručni čekić pregib stojeći"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -7443,6 +7708,7 @@
     "hr": "Penjanje na klupu s bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -7472,6 +7738,7 @@
     "hr": "Jednoručno nošenje bučice"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -7503,6 +7770,7 @@
     "hr": "Sumo čučanj s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -7532,6 +7800,7 @@
     "hr": "Superman s bučicom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -7555,6 +7824,7 @@
     "hr": "Thruster s bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "shoulders",
@@ -7582,6 +7852,7 @@
     "hr": "Podizanje stopala s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -7605,6 +7876,7 @@
     "hr": "Zamah bučicom za triceps"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -7628,6 +7900,7 @@
     "hr": "Veslanje bučicama uz tijelo"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -7651,6 +7924,7 @@
     "hr": "Hodajući iskoraci s bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -7686,6 +7960,7 @@
     "hr": "Vjetrenjača s bučicom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals",
     "shoulders"
@@ -7719,6 +7994,7 @@
     "hr": "Pregib zapešća bučicom sjedeći"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -7742,6 +8018,7 @@
     "hr": "Ekstenzija zapešća bučicom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -7765,6 +8042,7 @@
     "hr": "Ekscentrično spuštanje peta"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -7788,6 +8066,7 @@
     "hr": "Bočni plank"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -7815,6 +8094,7 @@
     "hr": "Eliptični trenažer"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -7846,6 +8126,7 @@
     "hr": "Pregib na Scott klupi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -7869,6 +8150,7 @@
     "hr": "Obrnuti pregib EZ šipkom na Scott klupi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps",
     "forearms"
@@ -7894,6 +8176,7 @@
     "hr": "Skull crusher EZ šipkom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -7921,6 +8204,7 @@
     "hr": "Hidrant"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -7948,6 +8232,7 @@
     "hr": "Potisak bučicama s poda"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest",
     "triceps"
@@ -7977,6 +8262,7 @@
     "hr": "Iskorak naprijed"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -8002,6 +8288,7 @@
     "hr": "Plivanje kraul"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "lats",
     "middle back",
@@ -8039,6 +8326,7 @@
     "hr": "Žablji glute most"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -8062,6 +8350,7 @@
     "hr": "Žablje njihanje unatrag"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "adductors"
    ],
@@ -8085,6 +8374,7 @@
     "hr": "Plank"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -8108,6 +8398,7 @@
     "hr": "Prednje podizanje i pullover"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -8139,6 +8430,7 @@
     "hr": "Prednji čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -8170,6 +8462,7 @@
     "hr": "Split čučanj s povišenom prednjom nogom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -8203,6 +8496,7 @@
     "hr": "Glute most"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -8232,6 +8526,7 @@
     "hr": "Zamah nogom unatrag na spravi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -8259,6 +8554,7 @@
     "hr": "Goblet čučanj s otvaranjem kukova"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "quadriceps",
     "adductors"
@@ -8290,6 +8586,7 @@
     "hr": "Good morning"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -8319,6 +8616,7 @@
     "hr": "Istezanje pregibača kuka u poluklečećem stavu"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -8348,6 +8646,7 @@
     "hr": "Visoko veslanje na spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -8375,6 +8674,7 @@
     "hr": "Jednostrano veslanje na spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back",
     "traps"
@@ -8406,6 +8706,7 @@
     "hr": "Pregib nogu"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -8433,6 +8734,7 @@
     "hr": "Plank na dlanovima"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -8456,6 +8758,7 @@
     "hr": "Hang clean"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -8495,6 +8798,7 @@
     "hr": "Hang power clean"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes",
@@ -8534,6 +8838,7 @@
     "hr": "Hang snatch"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes",
@@ -8573,6 +8878,7 @@
     "hr": "Podizanje koljena u visu"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -8596,6 +8902,7 @@
     "hr": "Hodanje na petama i prstima"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "calves"
    ],
@@ -8619,6 +8926,7 @@
     "hr": "Prednji čučanj s bučicama i povišenim petama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -8650,6 +8958,7 @@
     "hr": "Planinarenje"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -8687,6 +8996,7 @@
     "hr": "Uspon uzbrdo, ponavljanja"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -8718,6 +9028,7 @@
     "hr": "Kruženje kukovima"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "glutes",
     "adductors"
@@ -8747,6 +9058,7 @@
     "hr": "Vježba pregiba u kuku"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -8776,6 +9088,7 @@
     "hr": "Brzo rumunjsko mrtvo dizanje"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -8809,6 +9122,7 @@
     "hr": "Razvlačenje bučicama na kosoj klupi s rotacijom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -8838,6 +9152,7 @@
     "hr": "Kosi potisak prsa na spravi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -8867,6 +9182,7 @@
     "hr": "Sklekovi s povišenim rukama"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -8896,6 +9212,7 @@
     "hr": "Sklekovi s povišenim rukama uskim hvatom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -8925,6 +9242,7 @@
     "hr": "Eksplozivni sklekovi s povišenim rukama"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -8954,6 +9272,7 @@
     "hr": "Sklekovi s povišenim rukama podhvatom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -8983,6 +9302,7 @@
     "hr": "Sklekovi s povišenim rukama širokim hvatom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -9014,6 +9334,7 @@
     "hr": "Hodanje na traci uzbrdo"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -9045,6 +9366,7 @@
     "hr": "Sobni bicikl"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -9076,6 +9398,7 @@
     "hr": "Obrnuto veslanje"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -9103,6 +9426,7 @@
     "hr": "JM potisak"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -9132,6 +9456,7 @@
     "hr": "Preskakanje užeta"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -9161,6 +9486,7 @@
     "hr": "Skokovi iz čučnja"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -9186,6 +9512,7 @@
     "hr": "Jumping jack"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "shoulders"
@@ -9219,6 +9546,7 @@
     "hr": "Naizmjenični naklon iskorak s kettlebellom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -9246,6 +9574,7 @@
     "hr": "Bugarski čučanj s kettlebellom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -9271,6 +9600,7 @@
     "hr": "Potisak kettlebellima s klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -9298,6 +9628,7 @@
     "hr": "Podizanje na prste s kettlebellom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -9321,6 +9652,7 @@
     "hr": "Nabačaj i potisak s dva kettlebella"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders",
     "glutes"
@@ -9354,6 +9686,7 @@
     "hr": "Pregib kettlebellom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -9377,6 +9710,7 @@
     "hr": "Farmerovo nošenje kettlebella"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -9400,6 +9734,7 @@
     "hr": "Prednje podizanje kettlebella"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -9423,6 +9758,7 @@
     "hr": "Goblet pregib kettlebellom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -9446,6 +9782,7 @@
     "hr": "Goblet čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -9475,6 +9812,7 @@
     "hr": "Gorila veslanje kettlebellima"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -9502,6 +9840,7 @@
     "hr": "Halo s kettlebellom"
    },
    "category": "shoulders",
+   "kind": "mobility",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -9531,6 +9870,7 @@
     "hr": "Hip thrust s kettlebellom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -9554,6 +9894,7 @@
     "hr": "Potisak kettlebellima s kose klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -9583,6 +9924,7 @@
     "hr": "Push press kettlebellom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -9610,6 +9952,7 @@
     "hr": "Renegade veslanje kettlebellima"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -9641,6 +9984,7 @@
     "hr": "Rumunjsko mrtvo dizanje s kettlebellom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings"
@@ -9670,6 +10014,7 @@
     "hr": "Veslanje kettlebellima"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -9697,6 +10042,7 @@
     "hr": "Jednoručno veslanje kettlebellom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps",
     "middle back"
@@ -9726,6 +10072,7 @@
     "hr": "Potisak kettlebellima iznad glave sjedeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -9753,6 +10100,7 @@
     "hr": "Slijeganje ramenima s kettlebellima"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -9776,6 +10124,7 @@
     "hr": "Jednoručno veslanje kettlebellom u pretklonu"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -9803,6 +10152,7 @@
     "hr": "Jefferson pregib s kettlebellom"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -9826,6 +10176,7 @@
     "hr": "Jednoručno nošenje kettlebella"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -9857,6 +10208,7 @@
     "hr": "Sumo mrtvo dizanje s kettlebellom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -9886,6 +10238,7 @@
     "hr": "Zamah kettlebellom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings"
@@ -9915,6 +10268,7 @@
     "hr": "Thruster s kettlebellima"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "shoulders",
@@ -9942,6 +10296,7 @@
     "hr": "Turski ustanak s kettlebellom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals",
     "shoulders",
@@ -9981,6 +10336,7 @@
     "hr": "Hodajući iskoraci s kettlebellima"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -10012,6 +10368,7 @@
     "hr": "Vjetrenjača s kettlebellom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -10035,6 +10392,7 @@
     "hr": "Rumunjsko mrtvo dizanje bučicom u kickstand stavu"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -10068,6 +10426,7 @@
     "hr": "Trbušnjaci na kablu"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -10091,6 +10450,7 @@
     "hr": "Landmine potisak"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -10122,6 +10482,7 @@
     "hr": "Veslanje T-šipkom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -10151,6 +10512,7 @@
     "hr": "Povlačenje na lat spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -10184,6 +10546,7 @@
     "hr": "Bočno podizanje na kablu u nagibu"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -10213,6 +10576,7 @@
     "hr": "Jednoručno bočno podizanje bučice u nagibu"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -10240,6 +10604,7 @@
     "hr": "Listovi na spravi za potisak nogu"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -10263,6 +10628,7 @@
     "hr": "Zamasi nogom naprijed i natrag"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -10292,6 +10658,7 @@
     "hr": "Široko povlačenje na spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -10321,6 +10688,7 @@
     "hr": "Ekscentrična ekstenzija zapešća s utegom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -10344,6 +10712,7 @@
     "hr": "Ekscentrični pregib zapešća s utegom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -10367,6 +10736,7 @@
     "hr": "Dugo trčanje"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "calves",
     "quadriceps"
@@ -10400,6 +10770,7 @@
     "hr": "Sprint iz iskoraka"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -10431,6 +10802,7 @@
     "hr": "Veslanje zakrivljenom šipkom ležeći"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -10462,6 +10834,7 @@
     "hr": "Pregib nogu ležeći"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -10485,6 +10858,7 @@
     "hr": "Jednoručno bočno podizanje ležeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -10508,6 +10882,7 @@
     "hr": "Hiperekstenzije"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lower back"
    ],
@@ -10537,6 +10912,7 @@
     "hr": "Zgibovi na spravi uz pomoć"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -10568,6 +10944,7 @@
     "hr": "Ekstenzija leđa na spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lower back"
    ],
@@ -10595,6 +10972,7 @@
     "hr": "Potisak za triceps V-ručkom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -10618,6 +10996,7 @@
     "hr": "Potisak prsa na spravi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -10647,6 +11026,7 @@
     "hr": "Trbušnjaci na spravi"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -10670,6 +11050,7 @@
     "hr": "Propadanja na spravi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -10699,6 +11080,7 @@
     "hr": "Sissy čučanj na spravi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -10728,6 +11110,7 @@
     "hr": "Hack čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -10757,6 +11140,7 @@
     "hr": "Abduktor sprava"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "abductors"
    ],
@@ -10784,6 +11168,7 @@
     "hr": "Adduktor sprava"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "adductors"
    ],
@@ -10813,6 +11198,7 @@
     "hr": "Hip thrust na spravi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -10842,6 +11228,7 @@
     "hr": "Horizontalni potisak nogama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -10877,6 +11264,7 @@
     "hr": "Pullover na spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -10906,6 +11294,7 @@
     "hr": "Bočno podizanje na spravi"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -10929,6 +11318,7 @@
     "hr": "Ekstenzija nogu"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -10952,6 +11342,7 @@
     "hr": "Potisak nogama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -10981,6 +11372,7 @@
     "hr": "Veslanje na spravi neutralnim hvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -11004,6 +11396,7 @@
     "hr": "Leptir sprava"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -11027,6 +11420,7 @@
     "hr": "Potisak za ramena na spravi s pločama"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -11050,6 +11444,7 @@
     "hr": "Ekstenzija nogu na spravi s pločama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -11073,6 +11468,7 @@
     "hr": "Veslanje T-šipkom na spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -11096,6 +11492,7 @@
     "hr": "Pregib na Scott spravi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -11119,6 +11516,7 @@
     "hr": "Povlačenje na spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -11146,6 +11544,7 @@
     "hr": "Veslanje na kablu sjedeći"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -11177,6 +11576,7 @@
     "hr": "Ekstenzija tricepsa na spravi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -11200,6 +11600,7 @@
     "hr": "Veslanje na spravi podhvatom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps",
     "lats"
@@ -11225,6 +11626,7 @@
     "hr": "Man maker"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "shoulders",
@@ -11264,6 +11666,7 @@
     "hr": "Bacanje medicinke"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -11295,6 +11698,7 @@
     "hr": "Meadows veslanje"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -11328,6 +11732,7 @@
     "hr": "Penjač"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -11357,6 +11762,7 @@
     "hr": "Muscle-up"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats",
     "chest",
@@ -11394,6 +11800,7 @@
     "hr": "Povlačenje na lat spravi uskim hvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -11425,6 +11832,7 @@
     "hr": "Pregib vrata"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "neck"
    ],
@@ -11448,6 +11856,7 @@
     "hr": "Ekstenzija vrata"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -11471,6 +11880,7 @@
     "hr": "Potisak bučicama s klupe neutralnim hvatom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -11500,6 +11910,7 @@
     "hr": "Povlačenje na lat spravi V-ručkom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -11531,6 +11942,7 @@
     "hr": "Zgibovi neutralnim hvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -11562,6 +11974,7 @@
     "hr": "Nordijski pregib"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -11593,6 +12006,7 @@
     "hr": "Jednoručni potisak bučicom s klupe"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -11622,6 +12036,7 @@
     "hr": "Jednonožni čučanj sa šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -11653,6 +12068,7 @@
     "hr": "Jednoručno bočno podizanje na kosoj klupi"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -11676,6 +12092,7 @@
     "hr": "Jednoručni vojnički potisak kettlebellom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -11705,6 +12122,7 @@
     "hr": "Rotacija otvorena knjiga"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -11734,6 +12152,7 @@
     "hr": "Rotacije otvorena knjiga"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -11763,6 +12182,7 @@
     "hr": "Pallof potisak"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -11794,6 +12214,7 @@
     "hr": "Propadanja na razboju"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -11823,6 +12244,7 @@
     "hr": "Čučanj s pauzom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -11856,6 +12278,7 @@
     "hr": "Pendlay veslanje"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back",
     "traps"
@@ -11889,6 +12312,7 @@
     "hr": "Pendulum čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -11920,6 +12344,7 @@
     "hr": "Pike sklekovi"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -11951,6 +12376,7 @@
     "hr": "Pištolj čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -11986,6 +12412,7 @@
     "hr": "Pištolj čučanj uz pomoć"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -12019,6 +12446,7 @@
     "hr": "Iskorak naprijed s pločom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -12046,6 +12474,7 @@
     "hr": "Prednje podizanje ploče"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -12073,6 +12502,7 @@
     "hr": "Držanje ploča prstima"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -12096,6 +12526,7 @@
     "hr": "Pliometrijski sklekovi na kettlebellu"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -12127,6 +12558,7 @@
     "hr": "Pogo skokovi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -12154,6 +12586,7 @@
     "hr": "Power clean"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -12197,6 +12630,7 @@
     "hr": "Trbušnjaci s potiskom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -12226,6 +12660,7 @@
     "hr": "Bočno podizanje ležeći na trbuhu"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -12253,6 +12688,7 @@
     "hr": "Y-T podizanje ležeći na trbuhu"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps",
     "shoulders"
@@ -12282,6 +12718,7 @@
     "hr": "Goblet čučanj s njihanjem"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -12311,6 +12748,7 @@
     "hr": "Zgibovi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -12340,6 +12778,7 @@
     "hr": "Push jerk"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders",
     "quadriceps"
@@ -12375,6 +12814,7 @@
     "hr": "Sklekovi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -12404,6 +12844,7 @@
     "hr": "Sklekovi širokim hvatom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -12435,6 +12876,7 @@
     "hr": "Rotacija prsne kralježnice u četveronožnom položaju"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -12466,6 +12908,7 @@
     "hr": "Obrnuti trbušnjaci"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -12489,6 +12932,7 @@
     "hr": "Obrnuti pregib šipkom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -12516,6 +12960,7 @@
     "hr": "Obrnuti hack čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings"
@@ -12549,6 +12994,7 @@
     "hr": "Obrnuta hiperekstenzija"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings"
@@ -12578,6 +13024,7 @@
     "hr": "Obrnuti leptir"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -12601,6 +13048,7 @@
     "hr": "Potisak šipkom s klupe podhvatom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -12632,6 +13080,7 @@
     "hr": "Potisak za triceps podhvatom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -12655,6 +13104,7 @@
     "hr": "RKC plank"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -12684,6 +13134,7 @@
     "hr": "Rumunjsko mrtvo dizanje s povišenja"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -12719,6 +13170,7 @@
     "hr": "Zamasi za stražnju ložu"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -12752,6 +13204,7 @@
     "hr": "Veslanje, intervali"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "middle back"
@@ -12787,6 +13240,7 @@
     "hr": "Veslanje, sprint"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "middle back"
@@ -12822,6 +13276,7 @@
     "hr": "Trčanje, hlađenje"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "glutes",
@@ -12855,6 +13310,7 @@
     "hr": "Trčanje, intervali"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "glutes",
@@ -12888,6 +13344,7 @@
     "hr": "Zgibovi lopaticama"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -12915,6 +13372,7 @@
     "hr": "Seal veslanje"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back",
     "traps"
@@ -12946,6 +13404,7 @@
     "hr": "Kruženje gležnjevima sjedeći"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "calves"
    ],
@@ -12969,6 +13428,7 @@
     "hr": "Potisak šipkom iznad glave sjedeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -12998,6 +13458,7 @@
     "hr": "Podizanje na prste sjedeći"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -13021,6 +13482,7 @@
     "hr": "Uvlačenje brade sjedeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "neck"
    ],
@@ -13044,6 +13506,7 @@
     "hr": "Pregib bučicama sjedeći"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -13067,6 +13530,7 @@
     "hr": "Bočni nagib vrata sjedeći"
    },
    "category": "shoulders",
+   "kind": "mobility",
    "primaryMuscles": [
     "neck"
    ],
@@ -13094,6 +13558,7 @@
     "hr": "Pregib nogu sjedeći"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -13117,6 +13582,7 @@
     "hr": "Naginjanje zdjelice sjedeći"
    },
    "category": "core",
+   "kind": "mobility",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -13146,6 +13612,7 @@
     "hr": "Kruženje ramenima i stiskanje lopatica"
    },
    "category": "back",
+   "kind": "mobility",
    "primaryMuscles": [
     "traps"
    ],
@@ -13173,6 +13640,7 @@
     "hr": "Ekstenzija prsne kralježnice sjedeći"
    },
    "category": "back",
+   "kind": "mobility",
    "primaryMuscles": [
     "lower back"
    ],
@@ -13200,6 +13668,7 @@
     "hr": "Istezanje pregibača zapešća"
    },
    "category": "arms",
+   "kind": "mobility",
    "primaryMuscles": [
     "forearms"
    ],
@@ -13223,6 +13692,7 @@
     "hr": "Potisak za ramena na spravi"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -13250,6 +13720,7 @@
     "hr": "Rotacija trupa na spravi"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -13273,6 +13744,7 @@
     "hr": "Boks u prazno"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "shoulders",
     "triceps"
@@ -13308,6 +13780,7 @@
     "hr": "Bočno pa prednje podizanje bučica"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -13331,6 +13804,7 @@
     "hr": "Bočni plank s bočnim podizanjem"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -13360,6 +13834,7 @@
     "hr": "Glute most na jednoj nozi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -13387,6 +13862,7 @@
     "hr": "Jednonožno rumunjsko mrtvo dizanje"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings"
@@ -13416,6 +13892,7 @@
     "hr": "Jednoručno razvlačenje na kablu"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -13447,6 +13924,7 @@
     "hr": "Jednoručni potisak bučicom iznad glave"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -13478,6 +13956,7 @@
     "hr": "Jednoručni pregib bučicom preko naslona kose klupe"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -13505,6 +13984,7 @@
     "hr": "Jednoručni landmine potisak"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -13536,6 +14016,7 @@
     "hr": "Jednoručno povlačenje na lat spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -13565,6 +14046,7 @@
     "hr": "Jednoručna ekstenzija tricepsa iznad glave na kablu"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -13588,6 +14070,7 @@
     "hr": "Jednoručna ekstenzija tricepsa"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -13611,6 +14094,7 @@
     "hr": "Ravnoteža na jednoj nozi"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -13646,6 +14130,7 @@
     "hr": "Ravnoteža na jednoj nozi s dosezanjem"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -13679,6 +14164,7 @@
     "hr": "Jednonožni skokovi u dalj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -13710,6 +14196,7 @@
     "hr": "Jednonožno rumunjsko mrtvo dizanje s bučicom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -13741,6 +14228,7 @@
     "hr": "Jednonožno rumunjsko mrtvo dizanje s povišenja"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -13772,6 +14260,7 @@
     "hr": "Jednonožni hip thrust"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -13803,6 +14292,7 @@
     "hr": "Poskoci na jednoj nozi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -13834,6 +14324,7 @@
     "hr": "Jednonožni potisak nogama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -13867,6 +14358,7 @@
     "hr": "Podizanje na prste jednom nogom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -13890,6 +14382,7 @@
     "hr": "Spuštanje s klupe na jednoj nozi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -13921,6 +14414,7 @@
     "hr": "Sissy čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -13950,6 +14444,7 @@
     "hr": "Trbušnjaci s podizanjem trupa"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -13977,6 +14472,7 @@
     "hr": "Klizačevi skokovi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -14010,6 +14506,7 @@
     "hr": "Ski erg"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "lats",
     "middle back",
@@ -14049,6 +14546,7 @@
     "hr": "Vuča saonica"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -14086,6 +14584,7 @@
     "hr": "Guranje saonica"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -14119,6 +14618,7 @@
     "hr": "Pregib nogu na klizačima"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -14150,6 +14650,7 @@
     "hr": "Potisak s klupe na Smith spravi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -14179,6 +14680,7 @@
     "hr": "Veslanje u pretklonu na Smith spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats",
     "traps"
@@ -14212,6 +14714,7 @@
     "hr": "Podizanje na prste na Smith spravi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -14235,6 +14738,7 @@
     "hr": "Potisak uskim hvatom na Smith spravi"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -14262,6 +14766,7 @@
     "hr": "Potisak s negativne klupe na Smith spravi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -14291,6 +14796,7 @@
     "hr": "Prednji čučanj na Smith spravi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -14324,6 +14830,7 @@
     "hr": "Potisak s kose klupe na Smith spravi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -14353,6 +14860,7 @@
     "hr": "Potisak iznad glave na Smith spravi stojeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -14380,6 +14888,7 @@
     "hr": "Potisak za ramena na Smith spravi"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -14407,6 +14916,7 @@
     "hr": "Čučanj na Smith spravi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -14436,6 +14946,7 @@
     "hr": "Slijeganje ramenima na Smith spravi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -14459,6 +14970,7 @@
     "hr": "Sumo rumunjsko mrtvo dizanje na Smith spravi"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -14486,6 +14998,7 @@
     "hr": "Brzi spust u doskok"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -14515,6 +15028,7 @@
     "hr": "Snatch povlačenje"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps",
     "glutes",
@@ -14554,6 +15068,7 @@
     "hr": "Mrtvo dizanje snatch hvatom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes",
@@ -14591,6 +15106,7 @@
     "hr": "Visoko povlačenje snatch hvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps",
     "shoulders"
@@ -14628,6 +15144,7 @@
     "hr": "Spider pregib"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -14655,6 +15172,7 @@
     "hr": "Spiderman istezanje"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -14680,6 +15198,7 @@
     "hr": "Split jerk"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "shoulders"
@@ -14715,6 +15234,7 @@
     "hr": "Izometrijski split čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -14748,6 +15268,7 @@
     "hr": "Squat thrust"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -14779,6 +15300,7 @@
     "hr": "Pregib nogu na lopti"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -14808,6 +15330,7 @@
     "hr": "Stepenice (Stairmaster)"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -14839,6 +15362,7 @@
     "hr": "Naizmjenični potisak bučicama stojeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -14866,6 +15390,7 @@
     "hr": "Abdukcija kuka na kablu stojeći"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes"
    ],
@@ -14893,6 +15418,7 @@
     "hr": "Podizanje na prste stojeći"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -14916,6 +15442,7 @@
     "hr": "Potisak bučicama za ramena stojeći"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -14943,6 +15470,7 @@
     "hr": "Potisak bučicama stojeći neutralnim hvatom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -14970,6 +15498,7 @@
     "hr": "Istezanje ramena uz zid"
    },
    "category": "shoulders",
+   "kind": "mobility",
    "primaryMuscles": [
     "shoulders",
     "chest"
@@ -14995,6 +15524,7 @@
     "hr": "Bicikl, ravnomjerno"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -15028,6 +15558,7 @@
     "hr": "Veslački trenažer"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -15065,6 +15596,7 @@
     "hr": "Spuštanje s klupe u ravnotežu"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -15092,6 +15624,7 @@
     "hr": "Mrtvo dizanje s ravnim nogama s bučicama"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -15121,6 +15654,7 @@
     "hr": "Povlačenje ravnim rukama s užetom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -15144,6 +15678,7 @@
     "hr": "Veslanje ravnom šipkom na klupi"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -15175,6 +15710,7 @@
     "hr": "Povlačenje ravnim rukama"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -15198,6 +15734,7 @@
     "hr": "Sumo mrtvo dizanje"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "glutes",
     "hamstrings"
@@ -15233,6 +15770,7 @@
     "hr": "Superman"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -15256,6 +15794,7 @@
     "hr": "Plivanje, vježba nogu"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -15289,6 +15828,7 @@
     "hr": "Plivanje, vježba ruku"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "lats",
     "middle back",
@@ -15324,6 +15864,7 @@
     "hr": "Plivanje, sprint intervali"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "lats",
     "middle back",
@@ -15361,6 +15902,7 @@
     "hr": "Tate potisak"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "triceps"
    ],
@@ -15390,6 +15932,7 @@
     "hr": "Tempo trčanje"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "glutes",
@@ -15423,6 +15966,7 @@
     "hr": "Ekstenzija prsne kralježnice na valjku"
    },
    "category": "back",
+   "kind": "mobility",
    "primaryMuscles": [
     "lats",
     "middle back"
@@ -15448,6 +15992,7 @@
     "hr": "Podizanje stopala uz zid"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "calves"
    ],
@@ -15471,6 +16016,7 @@
     "hr": "Prsti do šipke"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -15506,6 +16052,7 @@
     "hr": "Veslanje ručnikom na dovratniku"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -15535,6 +16082,7 @@
     "hr": "Izometrijski pregib s ručnikom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -15562,6 +16110,7 @@
     "hr": "Pregib nogu s ručnikom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -15593,6 +16142,7 @@
     "hr": "Trčanje ili hodanje u prirodi"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -15624,6 +16174,7 @@
     "hr": "Nošenje trap šipke"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms",
     "traps"
@@ -15657,6 +16208,7 @@
     "hr": "Mrtvo dizanje s trap šipkom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -15690,6 +16242,7 @@
     "hr": "Slijeganje ramenima s trap šipkom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "traps"
    ],
@@ -15717,6 +16270,7 @@
     "hr": "Trčanje na traci"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -15748,6 +16302,7 @@
     "hr": "TRX veslanje"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -15779,6 +16334,7 @@
     "hr": "TRX čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -15808,6 +16364,7 @@
     "hr": "Skokovi s privlačenjem koljena"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes",
@@ -15841,6 +16398,7 @@
     "hr": "Turski ustanak"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals",
     "shoulders",
@@ -15878,6 +16436,7 @@
     "hr": "Turski ustanak s bučicom"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders",
     "abdominals"
@@ -15909,6 +16468,7 @@
     "hr": "Vojnički potisak s dva kettlebella"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -15936,6 +16496,7 @@
     "hr": "Veslanje šipkom podhvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -15967,6 +16528,7 @@
     "hr": "V trbušnjaci"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -15994,6 +16556,7 @@
     "hr": "VersaClimber"
    },
    "category": "cardio",
+   "kind": "cardio",
    "primaryMuscles": [
     "quadriceps",
     "glutes",
@@ -16033,6 +16596,7 @@
     "hr": "Privlačenje koljena u hodu"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "glutes"
    ],
@@ -16062,6 +16626,7 @@
     "hr": "Hodajući iskoraci"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -16091,6 +16656,7 @@
     "hr": "Hodajući iskoraci s rotacijom"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -16120,6 +16686,7 @@
     "hr": "Wall ball"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes",
@@ -16157,6 +16724,7 @@
     "hr": "Sjed uza zid"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -16180,6 +16748,7 @@
     "hr": "Podizanje ravnih nogu na razboju s utegom"
    },
    "category": "core",
+   "kind": "strength",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -16203,6 +16772,7 @@
     "hr": "Zgibovi s dodatnim teretom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -16232,6 +16802,7 @@
     "hr": "Široki sklekovi"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -16263,6 +16834,7 @@
     "hr": "Potisak šipkom s klupe širokim hvatom"
    },
    "category": "chest",
+   "kind": "strength",
    "primaryMuscles": [
     "chest"
    ],
@@ -16292,6 +16864,7 @@
     "hr": "Pregib šipkom širokim hvatom"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
@@ -16319,6 +16892,7 @@
     "hr": "Povlačenje na lat spravi širokim hvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -16350,6 +16924,7 @@
     "hr": "Zgibovi širokim hvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "lats"
    ],
@@ -16383,6 +16958,7 @@
     "hr": "Veslanje na kablu sjedeći širokim hvatom"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back",
     "traps"
@@ -16416,6 +16992,7 @@
     "hr": "Najbolje istezanje na svijetu"
    },
    "category": "legs",
+   "kind": "mobility",
    "primaryMuscles": [
     "glutes"
    ],
@@ -16449,6 +17026,7 @@
     "hr": "Kolut za podlaktice"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "forearms"
    ],
@@ -16476,6 +17054,7 @@
     "hr": "Yates veslanje"
    },
    "category": "back",
+   "kind": "strength",
    "primaryMuscles": [
     "middle back"
    ],
@@ -16507,6 +17086,7 @@
     "hr": "Z potisak"
    },
    "category": "shoulders",
+   "kind": "strength",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -16540,6 +17120,7 @@
     "hr": "Zercher čučanj"
    },
    "category": "legs",
+   "kind": "strength",
    "primaryMuscles": [
     "quadriceps",
     "glutes"
@@ -16577,6 +17158,7 @@
     "hr": "Zottman pregib"
    },
    "category": "arms",
+   "kind": "strength",
    "primaryMuscles": [
     "biceps"
    ],
