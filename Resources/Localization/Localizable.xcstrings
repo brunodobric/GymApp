@@ -2475,6 +2475,16 @@
         }
       }
     },
+    "Istezanje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stretching"
+          }
+        }
+      }
+    },
     "Isti trening %@." : {
       "localizations" : {
         "en" : {
@@ -3085,6 +3095,26 @@
         }
       }
     },
+    "Moje vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My exercises"
+          }
+        }
+      }
+    },
+    "Nema vlastitih vježbi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No custom exercises"
+          }
+        }
+      }
+    },
     "Novi trening još nije spremljen." : {
       "localizations" : {
         "en" : {
@@ -3121,6 +3151,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save workout?"
+          }
+        }
+      }
+    },
+    "Sve vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All exercises"
+          }
+        }
+      }
+    },
+    "Vlastitu vježbu dodaj gumbom +." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add your own exercise with the + button."
           }
         }
       }

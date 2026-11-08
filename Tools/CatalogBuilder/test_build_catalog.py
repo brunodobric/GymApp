@@ -69,10 +69,13 @@ class ConvertTests(unittest.TestCase):
         jacks = bc.convert(raw(name="Jumping Jacks", movementPattern=["Cardio"], equipment=["Bodyweight"]), MAPPING, {}, None)
         self.assertEqual(jacks["inputType"], "duration")
 
-    def test_mobility_and_stretch_kind(self):
-        for pattern in ("Mobility", "Stretch"):
-            result = bc.convert(raw(name="Cat Camel", movementPattern=[pattern], equipment=["Bodyweight"]), MAPPING, {}, None)
-            self.assertEqual(result["kind"], "mobility")
+    def test_warm_up_and_stretching_kind(self):
+        warm_up = bc.convert(raw(slug="cat-camel", movementPattern=["Mobility"], equipment=["Bodyweight"]), MAPPING, {}, None)
+        self.assertEqual(warm_up["kind"], "warmUp")
+        stretch = bc.convert(raw(slug="hip-hold", movementPattern=["Mobility", "Stretch"]), MAPPING, {}, None)
+        self.assertEqual(stretch["kind"], "stretching")
+        by_name = bc.convert(raw(slug="abdominals-stretch", movementPattern=["Mobility"]), MAPPING, {}, None)
+        self.assertEqual(by_name["kind"], "stretching")
         cardio = bc.convert(raw(movementPattern=["Cardio", "Mobility"]), MAPPING, {}, None)
         self.assertEqual(cardio["kind"], "cardio")
         get_up = bc.convert(raw(movementPattern=["Core", "Mobility"]), MAPPING, {"kind": "strength"}, None)
@@ -153,7 +156,7 @@ class PublicFilesTests(unittest.TestCase):
 
     def test_every_exercise_has_kind(self):
         for exercise in self.catalog["exercises"]:
-            self.assertIn(exercise.get("kind"), {"strength", "cardio", "mobility"}, exercise["id"])
+            self.assertIn(exercise.get("kind"), {"strength", "cardio", "warmUp", "stretching"}, exercise["id"])
             self.assertEqual(exercise["kind"] == "cardio", exercise["category"] == "cardio", exercise["id"])
 
     def test_overrides_name_existing_exercises(self):

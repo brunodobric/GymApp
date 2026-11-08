@@ -48,8 +48,8 @@
   "_noMechanic": "Obrasci bez mehanike (nisu ni izolacijske ni višezglobne vježbe snage).",
   "noMechanic": ["Cardio", "Mobility", "Stretch"],
 
-  "_mobilityPatterns": "Obrasci po kojima je vježba mobilnost ili istezanje, a ne snaga (polje kind). Iznimke su u overrides.json.",
-  "mobilityPatterns": ["Mobility", "Stretch"],
+  "_kinds": "Vrsta vježbe (polje kind) kad nije kardio: istezanje po obrascu Stretch ili riječi u id-ju, zagrijavanje po obrascu Mobility, inače snaga. Iznimke su u overrides.json.",
+  "kinds": { "stretchingPatterns": ["Stretch"], "stretchingWords": ["stretch"], "warmUpPatterns": ["Mobility"] },
 
   "_inputType": "Vrsta unosa kad je nema u overrides.json. Pravila se provjeravaju redom.",
   "distanceCardioWords": ["run", "walk", "hik", "swim", "cycl", "ride", "bike", "rowing", "ski erg", "elliptical", "arc trainer", "stair", "versaclimber"],

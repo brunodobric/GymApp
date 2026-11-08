@@ -202,7 +202,7 @@
     "hr": "Prebacivanje kukova 90/90"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "glutes"
    ],
@@ -226,7 +226,7 @@
     "hr": "Istezanje trbuha, varijanta 4"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -250,7 +250,7 @@
     "hr": "Istezanje trbuha, varijanta 1"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -274,7 +274,7 @@
     "hr": "Istezanje trbuha, varijanta 3"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -298,7 +298,7 @@
     "hr": "Istezanje trbuha, varijanta 2"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -322,7 +322,7 @@
     "hr": "Istezanje aduktora i prepona"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "adductors"
    ],
@@ -470,7 +470,7 @@
     "hr": "Kruženje rukama naprijed i natrag"
    },
    "category": "shoulders",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -1192,7 +1192,7 @@
     "hr": "Prebacivanje trake preko ramena"
    },
    "category": "shoulders",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -1378,7 +1378,7 @@
     "hr": "Mobilizacija gležnja s trakom"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "calves"
    ],
@@ -2406,7 +2406,7 @@
     "hr": "Jefferson pregib sa šipkom"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -3286,7 +3286,7 @@
     "hr": "Jefferson pregib bez tereta"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -3338,7 +3338,7 @@
     "hr": "Iz čučnja u stav"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -3532,7 +3532,7 @@
     "hr": "Prebacivanje štapa preko ramena"
    },
    "category": "shoulders",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -4858,7 +4858,7 @@
     "hr": "Mačka i deva"
    },
    "category": "back",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "lower back",
     "abdominals"
@@ -6414,7 +6414,7 @@
     "hr": "Halo s bučicom"
    },
    "category": "shoulders",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -7602,7 +7602,7 @@
     "hr": "Jefferson pregib s bučicom"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -8350,7 +8350,7 @@
     "hr": "Žablje njihanje unatrag"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "adductors"
    ],
@@ -8554,7 +8554,7 @@
     "hr": "Goblet čučanj s otvaranjem kukova"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "quadriceps",
     "adductors"
@@ -8616,7 +8616,7 @@
     "hr": "Istezanje pregibača kuka u poluklečećem stavu"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -8902,7 +8902,7 @@
     "hr": "Hodanje na petama i prstima"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "calves"
    ],
@@ -9028,7 +9028,7 @@
     "hr": "Kruženje kukovima"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "glutes",
     "adductors"
@@ -9840,7 +9840,7 @@
     "hr": "Halo s kettlebellom"
    },
    "category": "shoulders",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "shoulders"
    ],
@@ -10152,7 +10152,7 @@
     "hr": "Jefferson pregib s kettlebellom"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -10628,7 +10628,7 @@
     "hr": "Zamasi nogom naprijed i natrag"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -12122,7 +12122,7 @@
     "hr": "Rotacija otvorena knjiga"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -12152,7 +12152,7 @@
     "hr": "Rotacije otvorena knjiga"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -12718,7 +12718,7 @@
     "hr": "Goblet čučanj s njihanjem"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -12876,7 +12876,7 @@
     "hr": "Rotacija prsne kralježnice u četveronožnom položaju"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -13170,7 +13170,7 @@
     "hr": "Zamasi za stražnju ložu"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "hamstrings"
    ],
@@ -13404,7 +13404,7 @@
     "hr": "Kruženje gležnjevima sjedeći"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "calves"
    ],
@@ -13530,7 +13530,7 @@
     "hr": "Bočni nagib vrata sjedeći"
    },
    "category": "shoulders",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "neck"
    ],
@@ -13582,7 +13582,7 @@
     "hr": "Naginjanje zdjelice sjedeći"
    },
    "category": "core",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "abdominals"
    ],
@@ -13612,7 +13612,7 @@
     "hr": "Kruženje ramenima i stiskanje lopatica"
    },
    "category": "back",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "traps"
    ],
@@ -13640,7 +13640,7 @@
     "hr": "Ekstenzija prsne kralježnice sjedeći"
    },
    "category": "back",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "lower back"
    ],
@@ -13668,7 +13668,7 @@
     "hr": "Istezanje pregibača zapešća"
    },
    "category": "arms",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "forearms"
    ],
@@ -14094,7 +14094,7 @@
     "hr": "Ravnoteža na jednoj nozi"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "glutes",
     "quadriceps"
@@ -14130,7 +14130,7 @@
     "hr": "Ravnoteža na jednoj nozi s dosezanjem"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "quadriceps"
    ],
@@ -15172,7 +15172,7 @@
     "hr": "Spiderman istezanje"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "hamstrings",
     "glutes"
@@ -15498,7 +15498,7 @@
     "hr": "Istezanje ramena uz zid"
    },
    "category": "shoulders",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "shoulders",
     "chest"
@@ -15966,7 +15966,7 @@
     "hr": "Ekstenzija prsne kralježnice na valjku"
    },
    "category": "back",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "lats",
     "middle back"
@@ -16596,7 +16596,7 @@
     "hr": "Privlačenje koljena u hodu"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "warmUp",
    "primaryMuscles": [
     "glutes"
    ],
@@ -16992,7 +16992,7 @@
     "hr": "Najbolje istezanje na svijetu"
    },
    "category": "legs",
-   "kind": "mobility",
+   "kind": "stretching",
    "primaryMuscles": [
     "glutes"
    ],

@@ -11,7 +11,7 @@ public struct CatalogExercise: Codable, Hashable, Identifiable, Sendable {
     public var instructions: [String: [String]]
     public var commonMistakes: [String: [String]]
     public let category: ExerciseCategory
-    /// Vrsta vježbe (snaga, kardio, mobilnost), računa je CatalogBuilder.
+    /// Vrsta vježbe (zagrijavanje, snaga, istezanje, kardio), računa je CatalogBuilder.
     public let kind: ExerciseKind
     public let primaryMuscles: [Muscle]
     public let secondaryMuscles: [Muscle]
@@ -177,6 +177,7 @@ public struct ExerciseCatalog: Codable, Sendable {
                 name: exercise.displayName(language: language),
                 alternativeNames: Array(exercise.name.values),
                 category: exercise.category,
+                kind: exercise.kind,
                 muscles: exercise.primaryMuscles,
                 equipment: exercise.equipment,
                 isArchived: false

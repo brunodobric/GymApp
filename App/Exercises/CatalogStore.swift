@@ -73,6 +73,15 @@ final class CatalogStore {
         exercise.illustration { mediaURL($0) != nil }
     }
 
+    /// Sličice za karticu vrste na početnoj kataloga: posteri odabranih vježbi te vrste.
+    /// Prazno u buildu bez MoveKit dodatka.
+    func featuredThumbnails(_ kind: ExerciseKind) -> [ExerciseThumbnail.Source] {
+        guard let catalog else { return [] }
+        return catalog
+            .featured(kind) { exercise in exercise.poster.flatMap(mediaURL) != nil }
+            .compactMap { $0.poster.flatMap(mediaURL).map(ExerciseThumbnail.Source.file) }
+    }
+
     /// Sličica vježbe: poster klipa za službenu vježbu, fotografija za vlastitu.
     /// Nil kad slike nema (vježba bez postera, build bez MoveKit dodatka ili vlastita vježba bez fotografije).
     func thumbnail(for source: ExerciseSummary.Source?, customExercises: [CustomExercise]) -> ExerciseThumbnail.Source? {

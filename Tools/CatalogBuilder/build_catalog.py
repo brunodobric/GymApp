@@ -105,12 +105,15 @@ def infer_input_type(raw: dict, equipment: str, mapping: dict) -> str:
     return "weightReps"
 
 
-def infer_kind(patterns: list[str], category: str, mapping: dict) -> str:
-    """Vrsta vježbe (snaga, kardio, mobilnost) iz obrazaca pokreta. Kardio prati kategoriju."""
+def infer_kind(slug: str, patterns: list[str], category: str, mapping: dict) -> str:
+    """Vrsta vježbe (snaga, kardio, zagrijavanje, istezanje) iz obrazaca pokreta. Kardio prati kategoriju."""
     if category == "cardio":
         return "cardio"
-    if set(patterns) & set(mapping["mobilityPatterns"]):
-        return "mobility"
+    rules = mapping["kinds"]
+    if set(patterns) & set(rules["stretchingPatterns"]) or any(w in slug for w in rules["stretchingWords"]):
+        return "stretching"
+    if set(patterns) & set(rules["warmUpPatterns"]):
+        return "warmUp"
     return "strength"
 
 
@@ -137,7 +140,7 @@ def convert(raw: dict, mapping: dict, override: dict, hr_name: str | None) -> di
     patterns = raw["movementPattern"]
     is_cardio = "Cardio" in patterns
     category = override.get("category") or ("cardio" if is_cardio else mapping["category"][primary[0]])
-    kind = override.get("kind") or infer_kind(patterns, category, mapping)
+    kind = override.get("kind") or infer_kind(slug, patterns, category, mapping)
 
     movement = None
     if not is_cardio:

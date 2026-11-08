@@ -10,6 +10,7 @@ public struct ExerciseSummary: Identifiable, Hashable, Sendable {
     public let source: Source
     public let name: String
     public let category: ExerciseCategory?
+    public let kind: ExerciseKind
     public let muscles: [Muscle]
     public let equipment: Equipment?
     public let isArchived: Bool
@@ -26,12 +27,14 @@ public struct ExerciseSummary: Identifiable, Hashable, Sendable {
         if case .custom = source { true } else { false }
     }
 
+    /// Vrsta se računa iz kategorije kad je izvor ne zna (vlastite vježbe).
     /// `alternativeNames` su nazivi na drugim jezicima: pretraga pronalazi vježbu i po engleskom i po hrvatskom nazivu.
     public init(
         source: Source,
         name: String,
         alternativeNames: [String] = [],
         category: ExerciseCategory?,
+        kind: ExerciseKind? = nil,
         muscles: [Muscle],
         equipment: Equipment?,
         isArchived: Bool
@@ -39,6 +42,7 @@ public struct ExerciseSummary: Identifiable, Hashable, Sendable {
         self.source = source
         self.name = name
         self.category = category
+        self.kind = kind ?? .fallback(for: category)
         self.muscles = muscles
         self.equipment = equipment
         self.isArchived = isArchived
@@ -52,6 +56,8 @@ public struct ExerciseFilter: Equatable, Sendable {
     }
 
     public var query = ""
+    /// Vrsta vježbe (stranica vrste na početnoj kataloga). Nije dio `isActive`: postavlja je ekran, a ne list s filterima.
+    public var kinds: Set<ExerciseKind> = []
     public var categories: Set<ExerciseCategory> = []
     public var muscles: Set<Muscle> = []
     public var equipment: Set<Equipment> = []
@@ -62,6 +68,26 @@ public struct ExerciseFilter: Equatable, Sendable {
 
     public var isActive: Bool {
         !categories.isEmpty || !muscles.isEmpty || !equipment.isEmpty || origin != .all
+    }
+
+    /// Razlikuje li se filter od početnog filtera popisa (`base`), ne gledajući upit.
+    public func differs(from base: ExerciseFilter) -> Bool {
+        var compared = self
+        compared.query = base.query
+        return compared != base
+    }
+
+    /// Vraća početni filter popisa, a zadržava upit.
+    public mutating func reset(to base: ExerciseFilter) {
+        let query = query
+        self = base
+        self.query = query
+    }
+
+    public init(query: String = "", kinds: Set<ExerciseKind>, origin: Origin = .all) {
+        self.query = query
+        self.kinds = kinds
+        self.origin = origin
     }
 }
 
@@ -105,6 +131,13 @@ public enum ExerciseSearch {
             .folding(options: [.diacriticInsensitive, .caseInsensitive, .widthInsensitive], locale: nil)
     }
 
+    /// Broj vježbi po vrsti, bez arhiviranih (kartice na početnoj kataloga).
+    public static func countsByKind(_ items: [ExerciseSummary]) -> [ExerciseKind: Int] {
+        items.reduce(into: [:]) { counts, item in
+            if !item.isArchived { counts[item.kind, default: 0] += 1 }
+        }
+    }
+
     /// Filtrira i poredava: najprije nazivi koji počinju upitom, zatim riječi koje počinju upitom, pa ostalo,
     /// a na kraju vježbe koje upitu odgovaraju tek po kategoriji, mišiću ili opremi.
     /// Svaka riječ upita mora se pojaviti u nazivu ili u `labels`. Bez upita rezultat je abecedni.
@@ -121,6 +154,7 @@ public enum ExerciseSearch {
             case .official: if item.isCustom { continue }
             case .custom: if !item.isCustom { continue }
             }
+            if !filter.kinds.isEmpty && !filter.kinds.contains(item.kind) { continue }
             if !filter.categories.isEmpty {
                 guard let category = item.category, filter.categories.contains(category) else { continue }
             }

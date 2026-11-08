@@ -203,15 +203,16 @@ struct CatalogDataTests {
         #expect(catalog.resolve("ne-postoji") == .unknown)
     }
 
-    @Test("Svaka vježba ima vrstu: kardio točno u kategoriji kardio, istezanja su mobilnost")
+    @Test("Svaka vježba ima vrstu: kardio točno u kategoriji kardio")
     func kinds() throws {
         let (catalog, _) = try Self.loadBundledCatalog()
         for exercise in catalog.exercises {
             #expect((exercise.kind == .cardio) == (exercise.category == .cardio), "\(exercise.id): vrsta i kategorija kardija")
         }
         let counts = Dictionary(grouping: catalog.exercises, by: \.kind).mapValues(\.count)
-        #expect(counts == [.strength: 502, .cardio: 38, .mobility: 42])
-        #expect(catalog.exercise(withID: "worlds-greatest-stretch")?.kind == .mobility)
+        #expect(counts == [.strength: 502, .cardio: 38, .warmUp: 26, .stretching: 16])
+        #expect(catalog.exercise(withID: "worlds-greatest-stretch")?.kind == .stretching)
+        #expect(catalog.exercise(withID: "arm-circles-front-back")?.kind == .warmUp)
         #expect(catalog.exercise(withID: "turkish-get-up")?.kind == .strength)
         #expect(catalog.exercise(withID: "treadmill-run")?.kind == .cardio)
     }
@@ -229,6 +230,48 @@ struct CatalogDataTests {
         let catalog = try ExerciseCatalog(data: Data(json.utf8))
         #expect(catalog.exercise(withID: "run")?.kind == .cardio)
         #expect(catalog.exercise(withID: "press")?.kind == .strength)
+    }
+
+    @Test("Kartica vrste: odabrane vježbe postoje i odgovaraju vrsti, bez slike nema sličica")
+    func featured() throws {
+        let (catalog, _) = try Self.loadBundledCatalog()
+        for kind in ExerciseKind.allCases {
+            let ids = try #require(ExerciseCatalog.featuredIDs[kind])
+            #expect(catalog.featured(kind) { _ in true }.map(\.id) == ids)
+            #expect(catalog.featured(kind) { _ in false }.isEmpty)
+        }
+        let withoutSquat = catalog.featured(.strength) { $0.id != "barbell-squat" }
+        #expect(withoutSquat.count == 4)
+        #expect(withoutSquat.allSatisfy { $0.kind == .strength && $0.id != "barbell-squat" })
+        #expect(catalog.featured(.stretching, count: 20) { _ in true }.count == 16)
+    }
+
+    @Test("Filter po vrsti; vlastita vježba dobiva vrstu po kategoriji; poništavanje vraća početni filter")
+    func kindFilter() throws {
+        let (catalog, _) = try Self.loadBundledCatalog()
+        let custom = ExerciseSummary(
+            source: .custom(id: UUID()), name: "Moje trčanje", category: .cardio, muscles: [], equipment: nil, isArchived: false
+        )
+        #expect(custom.kind == .cardio)
+        let archived = ExerciseSummary(
+            source: .custom(id: UUID()), name: "Stara", category: .cardio, muscles: [], equipment: nil, isArchived: true
+        )
+        let counts = ExerciseSearch.countsByKind(catalog.summaries(language: "hr") + [custom, archived])
+        #expect(counts == [.strength: 502, .cardio: 39, .warmUp: 26, .stretching: 16])
+        var filter = ExerciseFilter(kinds: [.cardio])
+        filter.categories = [.cardio]
+        #expect(!ExerciseFilter(kinds: [.cardio]).isActive)
+        let result = ExerciseSearch.apply(filter, to: catalog.summaries(language: "hr") + [custom])
+        #expect(result.count == 39)
+        #expect(result.allSatisfy { $0.kind == .cardio })
+        let base = ExerciseFilter(kinds: [.cardio])
+        #expect(filter.differs(from: base))
+        filter.query = "trc"
+        filter.reset(to: base)
+        #expect(filter.categories.isEmpty && filter.kinds == [.cardio] && filter.query == "trc")
+        #expect(!filter.differs(from: base))
+        let onlyCustom = ExerciseFilter(kinds: [], origin: .custom)
+        #expect(!onlyCustom.differs(from: onlyCustom) && onlyCustom.differs(from: ExerciseFilter()))
     }
 
     @Test("Prikaz vraća engleski kad prijevoda nema")

@@ -8,18 +8,20 @@ public enum ExerciseCategory: String, Codable, CaseIterable, Sendable {
     case chest, back, shoulders, arms, legs, core, cardio
 }
 
-/// Vrsta vježbe, neovisno o dijelu tijela. Zasad samo podatak u pozadini (ne prikazuje se),
-/// za kasnije grupiranje i filtriranje kataloga. Kardio vježbe su uvijek i u kategoriji `cardio`.
+/// Vrsta vježbe, neovisno o dijelu tijela. Početna kataloga grupira vježbe po vrsti.
+/// Kardio vježbe su uvijek i u kategoriji `cardio`. Redoslijed slučajeva je redoslijed prikaza.
 public enum ExerciseKind: String, Codable, CaseIterable, Sendable {
-    /// Vježbe snage (sve što nije kardio ni mobilnost).
+    /// Dinamične vježbe pokretljivosti prije treninga (MoveKit obrazac Mobility).
+    case warmUp
+    /// Vježbe snage (sve što nije kardio, zagrijavanje ni istezanje).
     case strength
+    /// Statično istezanje (MoveKit obrazac Stretch).
+    case stretching
     case cardio
-    /// Mobilnost i istezanje (MoveKit obrasci Mobility i Stretch), npr. za zagrijavanje i hlađenje.
-    case mobility
 
     /// Vrsta kad je izvor ne navodi (stariji catalog.json, vlastite vježbe): kardio po kategoriji,
     /// inače snaga.
-    public static func fallback(for category: ExerciseCategory) -> ExerciseKind {
+    public static func fallback(for category: ExerciseCategory?) -> ExerciseKind {
         category == .cardio ? .cardio : .strength
     }
 }

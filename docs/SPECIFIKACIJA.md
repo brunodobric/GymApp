@@ -19,7 +19,7 @@ Ovaj dokument sadrži ažuriranu i proširenu specifikaciju moderne iOS (Swift) 
 
 ### Kategorizacija i Strukturiranje
 * **Kategorije / Anatomija:** Prsa, Leđa, Ramena, Ruke, Noge, Core/Trbuh, Kardio.
-* **Vrsta vježbe:** neovisno o dijelu tijela svaka vježba kataloga ima vrstu (`kind`): snaga, kardio ili mobilnost (istezanje i vježbe pokretljivosti, npr. za zagrijavanje i hlađenje). Kardio vrsta ide uz kategoriju Kardio, mobilnost dolazi iz MoveKit obrazaca `Mobility` i `Stretch` (`mobilityPatterns` u `mapping.json`, iznimke u `overrides.json`), a sve ostalo je snaga. Zasad je samo podatak u pozadini i ne prikazuje se u aplikaciji.
+* **Vrsta vježbe:** neovisno o dijelu tijela svaka vježba kataloga ima vrstu (`kind`): zagrijavanje (dinamični pokreti prije treninga), snaga, istezanje (statično, nakon treninga) ili kardio. Kardio ide uz kategoriju Kardio, istezanje dolazi iz MoveKit obrasca `Stretch` (ili riječi "stretch" u id-ju), zagrijavanje iz obrasca `Mobility`, a sve ostalo je snaga (`kinds` u `mapping.json`, iznimke u `overrides.json`). Vlastita vježba dobiva vrstu po kategoriji (kardio ili snaga). Početna kataloga grupira vježbe po vrsti.
 * **Mapiranje kategorija:** MoveKit koristi vlastite nazive mišića, opreme i obrazaca pokreta (npr. `primaryMuscles: ["Quadriceps"]`, `movementPattern: ["Squat"]`). Ručna tablica `Tools/CatalogBuilder/mapping.json` prevodi ih na naše kategorije, mišićne skupine, opremu i regije body heatmapa, a `overrides.json` ispravlja pojedine vježbe. Obje su dio repozitorija i koriste se pri izgradnji kataloga.
 * **Mišićne skupine:** Primarni i sekundarni mišići s mapiranjem na body heatmap.
 * **Oprema:** Bučice, Šipka, Sprave/Kablovi, Vlastita težina (Bodyweight), Kettlebell, Trake, itd.
@@ -216,7 +216,9 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Unutar otvorenog treninga:
      * Gore desno gumb **+** za dodavanje nove vježbe ili superseta.
 4. **Katalog vježbi** — Pregled, pretraga i dodavanje vježbi (predefinirane + custom).
-   * Lista vježbi prikazuje samo nazive.
+   * Početna su četiri kartice vrsta (Zagrijavanje, Snaga, Istezanje, Kardio), na iPhoneu u mreži 2 × 2. Kartica ima četiri sličice vježbi te vrste, naziv i broj vježbi. Ispod su retci **Sve vježbe** i **Moje vježbe**.
+   * Kartica otvara popis vježbi te vrste s brzim odabirom dijela tijela (Sve, Prsa, Leđa…) iznad popisa. Pretraga i filteri na početnoj odmah prikazuju rezultate iz cijelog kataloga.
+   * Lista vježbi prikazuje naziv, sličicu, kategoriju i opremu.
    * Gore je defaultni search bar.
    * Gore desno gumb za **filtere** (kategorije, mišićna skupina, dio tijela, oprema, custom/predefinirane).
    * Gore desno gumb **+** za dodavanje custom vježbe.
@@ -499,7 +501,7 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening** (ono što je stvarno izvedeno) su odvojeni modeli. Odrađeni trening kopira potrebne podatke iz predloška pri pokretanju i nakon toga je neovisan. Zato privremene izmjene, zamjene vježbi i kasnije promjene predloška nikad ne mijenjaju povijest.
 
 ### Katalog (zasebna baza, ne sinkronizira se)
-* **CatalogExercise:** `catalogId` (MoveKit slug), nazivi po jeziku, upute i česte greške po jeziku (iz privatnog dodatka), kategorija, vrsta (snaga/kardio/mobilnost), primarni i sekundarni mišići, oprema, razina, mehanika (isolation/compound), tip pokreta (push/pull/legs), vrsta unosa (vidi tablicu u odjeljku 2), klip i poster (putanje u MoveKit dodatku).
+* **CatalogExercise:** `catalogId` (MoveKit slug), nazivi po jeziku, upute i česte greške po jeziku (iz privatnog dodatka), kategorija, vrsta (zagrijavanje/snaga/istezanje/kardio), primarni i sekundarni mišići, oprema, razina, mehanika (isolation/compound), tip pokreta (push/pull/legs), vrsta unosa (vidi tablicu u odjeljku 2), klip i poster (putanje u MoveKit dodatku).
 
 ### Korisnička baza (sinkronizira se)
 * **CustomExercise:** `id`, naziv, opis, kategorija, mišići, oprema, vrsta unosa, slika (opcionalno, kao `externalStorage`), `isArchived`.
