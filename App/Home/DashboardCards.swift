@@ -59,7 +59,7 @@ struct HomeCard<Content: View>: View {
 // MARK: - Ovaj tjedan
 
 /// Tekući tjedan: odrađeni treninzi prema cilju iz onboardinga (dani tjedno), dani s vrstom treninga,
-/// tvrde serije, kardio i ukupno vrijeme te niz tjedana s ispunjenim ciljem.
+/// tvrde serije, kardio i ukupno vrijeme te niz tjedana s ispunjenim ciljem. Dodir otvara pregled tjedna.
 struct ThisWeekCard: View {
     @Environment(\.modelContext) private var context
     @Environment(CatalogStore.self) private var catalogStore
@@ -73,6 +73,19 @@ struct ThisWeekCard: View {
     private var goal: Int? { UserSettings.preferred(in: settingsList)?.trainingDaysPerWeek }
 
     var body: some View {
+        // Dodir otvara pregled tjedna u statistici.
+        NavigationLink {
+            WeekScreen()
+        } label: {
+            card
+        }
+        .buttonStyle(.plain)
+        .task(id: RefreshKey(sessions: sessions.count, health: healthWorkouts.count, goal: goal, day: Calendar.current.startOfDay(for: .now))) {
+            load()
+        }
+    }
+
+    private var card: some View {
         HomeCard(title: DashboardCardKind.thisWeek.title, symbol: DashboardCardKind.thisWeek.symbol) {
             if let progress {
                 summary(progress)
@@ -85,9 +98,6 @@ struct ThisWeekCard: View {
                     figures(progress)
                 }
             }
-        }
-        .task(id: RefreshKey(sessions: sessions.count, health: healthWorkouts.count, goal: goal, day: Calendar.current.startOfDay(for: .now))) {
-            load()
         }
     }
 

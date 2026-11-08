@@ -21,7 +21,7 @@ struct StatisticsScreen: View {
     @State private var setsWeeks = 4
     @State private var heatmapDays = 30
     @State private var weeklySets: [String: RegionLoad] = [:]
-    @State private var buckets: [VolumeBucket] = []
+    @State private var week: WeekProgress?
     @State private var frequency: [FrequencyPoint] = []
     @State private var heatmap: [String: RegionLoad] = [:]
     @State private var trends: [StrengthTrend] = []
@@ -79,7 +79,9 @@ struct StatisticsScreen: View {
                             WeeklyReviewCard(review: review, suggestions: suggestions, isPro: isPro)
                         }
                         SetsCard(weeks: $setsWeeks, loads: weeklySets)
-                        ComparisonCard(comparison: VolumeComparison(buckets: buckets))
+                        if let week {
+                            WeekLinkCard(progress: week)
+                        }
                         HeatmapCard(days: $heatmapDays, heatmap: heatmap, female: UserSettings.preferred(in: settingsList)?.bodyMapFemale ?? false)
                         StrengthTrendCard(trends: trends, isPro: isPro)
                         FrequencyCard(points: frequency)
@@ -117,7 +119,9 @@ struct StatisticsScreen: View {
         let end = now.addingTimeInterval(1)
         let setsStart = Calendar.current.date(byAdding: .day, value: -7 * setsWeeks, to: now) ?? now
         weeklySets = (try? engine.heatmap(from: setsStart, until: end, info: info)) ?? [:]
-        buckets = (try? engine.volumeBuckets(size: .week, count: 2, info: info)) ?? []
+        week = try? engine.weekProgress(
+            now: now, goal: settings?.trainingDaysPerWeek, isCardio: ExerciseInfoBuilder.isCardio(info)
+        )
         frequency = (try? engine.frequency(weeks: 12)) ?? []
         let start = Calendar.current.date(byAdding: .day, value: -heatmapDays, to: now) ?? now
         heatmap = (try? engine.heatmap(from: start, until: end, info: info)) ?? [:]
@@ -315,70 +319,6 @@ private struct SetsBarList: View {
     }
 }
 
-// MARK: - Usporedba s prethodnim tjednom
-
-private struct ComparisonCard: View {
-    let comparison: VolumeComparison?
-
-    /// Stupac grafa. Id je stabilan (mišić i razdoblje), da graf ne crta sve iznova pri svakom iscrtavanju.
-    private struct Entry: Identifiable {
-        let muscle: String
-        let series: String
-        let sets: Double
-        var id: String { "\(muscle)|\(series)" }
-    }
-
-    private var currentTitle: String { String(localized: "Ovaj tjedan") }
-    private var previousTitle: String { String(localized: "Prošli tjedan") }
-
-    /// Šest mišića s najviše serija, svaki s dva stupca (ovaj i prošli tjedan).
-    private var entries: [Entry] {
-        guard let comparison else { return [] }
-        return comparison.muscles.prefix(6).flatMap { item in
-            let name = BodyRegion.title(item.region)
-            return [
-                Entry(muscle: name, series: previousTitle, sets: item.previousSets),
-                Entry(muscle: name, series: currentTitle, sets: item.currentSets),
-            ]
-        }
-    }
-
-    var body: some View {
-        StatisticsCard(title: "Usporedba s prethodnim") {
-            if let comparison, !entries.isEmpty {
-                Text(summary(comparison))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Chart(entries) { entry in
-                    BarMark(
-                        x: .value("Mišić", entry.muscle),
-                        y: .value("Tvrde serije", entry.sets)
-                    )
-                    .foregroundStyle(by: .value("Razdoblje", entry.series))
-                    .position(by: .value("Razdoblje", entry.series))
-                }
-                .chartForegroundStyleScale([previousTitle: Color.secondary.opacity(0.5), currentTitle: Color.accentColor])
-                .chartHeight(220, regular: 320)
-                .accessibilityLabel(Text("Graf usporedbe serija po mišićima s prošlim tjednom"))
-            } else {
-                Text("Usporedba se pojavi kad u ovom ili prethodnom razdoblju postoji trening.")
-                    .foregroundStyle(.secondary)
-            }
-        }
-    }
-
-    /// Npr. "Ovaj tjedan dosad: 38 tvrdih serija. 8 % više nego prošli tjedan."
-    private func summary(_ comparison: VolumeComparison) -> String {
-        let current = String(localized: "Ovaj tjedan dosad: \(comparison.currentSets) tvrdih serija.")
-        guard let change = comparison.change else { return current }
-        let percent = abs(change).formatted(.percent.precision(.fractionLength(0)))
-        let difference = change >= 0
-            ? String(localized: "\(percent) više nego prošli tjedan.")
-            : String(localized: "\(percent) manje nego prošli tjedan.")
-        return current + " " + difference
-    }
-}
-
 // MARK: - Trend snage
 
 /// Mjesečna promjena procjene 1RM po mišiću u zadnjih 8 tjedana. Osnovni prikaz pokazuje najviše tri mišića
@@ -517,7 +457,7 @@ private struct HeatmapCard: View {
 }
 
 /// Legenda fiksne skale heatmapa (`LoadScale.weeklyLevel`): četiri razine boje.
-private struct HeatmapLegend: View {
+struct HeatmapLegend: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Tvrde serije tjedno").font(.caption).foregroundStyle(.secondary)

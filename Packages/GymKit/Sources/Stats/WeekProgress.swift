@@ -37,6 +37,8 @@ public struct WeekProgress: Equatable, Sendable {
     public var hardSets = 0
     /// Vrijeme kardija: kardio treninzi cijeli, a u treningu snage odrađene kardio vježbe.
     public var cardioSeconds = 0
+    /// Udaljenost kardija u metrima (kardio iz Zdravlja i kardio vježbe s udaljenošću).
+    public var cardioMeters: Double = 0
     /// Zbroj trajanja svih treninga.
     public var totalSeconds: TimeInterval = 0
     /// Uzastopni tjedni s ispunjenim ciljem (bez cilja: s barem jednim treningom), do prošlog tjedna,
@@ -68,17 +70,12 @@ public struct WeekProgress: Equatable, Sendable {
 
         for session in finished where session.startedAt >= week.start {
             progress.sessions += 1
-            let duration = max(0, (session.endedAt ?? session.lastActivityAt).timeIntervalSince(session.startedAt))
-            progress.totalSeconds += duration
+            let figures = SessionFigures(session: session, isCardio: isCardio)
+            progress.totalSeconds += figures.durationSeconds
+            progress.hardSets += figures.hardSets
+            progress.cardioSeconds += figures.cardioSeconds
+            progress.cardioMeters += figures.cardioMeters ?? 0
             let mix = SessionCardio.mix(of: session, isCardio: isCardio)
-            if session.kind == .cardio {
-                progress.cardioSeconds += Int(duration)
-            } else {
-                progress.cardioSeconds += SessionCardio.part(of: session, isCardio: isCardio)?.seconds ?? 0
-                for exercise in session.orderedExercises where !exercise.isRemoved && !isCardio(exercise.exerciseKey) {
-                    progress.hardSets += exercise.orderedSets.filter(\.isCompleted).map(\.values).filter(SetMetrics.isHard).count
-                }
-            }
             if let index = progress.days.firstIndex(where: { calendar.isDate($0.date, inSameDayAs: session.startedAt) }) {
                 if mix.kinds.contains(.strength) { progress.days[index].strength = true }
                 if mix.kinds.contains(.cardio) { progress.days[index].cardio = true }
@@ -87,6 +84,15 @@ public struct WeekProgress: Equatable, Sendable {
         progress.streakWeeks = streak(of: finished, before: week.start, current: progress.sessions,
                                       target: progress.weeklyTarget, calendar: calendar)
         return progress
+    }
+
+    /// Treninzi po danima tjedna (poravnato s `days`), svaki dan od ranijeg prema kasnijem.
+    /// Nezavršeni treninzi i treninzi izvan tjedna se preskaču.
+    public func sessionsByDay(_ sessions: [Session], calendar: Calendar = .current) -> [[Session]] {
+        let sorted = sessions.filter { $0.state == .finished }.sorted { $0.startedAt < $1.startedAt }
+        return days.map { day in
+            sorted.filter { calendar.isDate($0.startedAt, inSameDayAs: day.date) }
+        }
     }
 
     private static func streak(of sessions: [Session], before weekStart: Date, current: Int, target: Int, calendar: Calendar) -> Int {
@@ -109,6 +115,39 @@ public struct WeekProgress: Equatable, Sendable {
     }
 }
 
+/// Brojke jednog treninga za pregled tjedna: trajanje, tvrde serije snage i kardio.
+public struct SessionFigures: Equatable, Sendable {
+    public var durationSeconds: TimeInterval
+    /// Tvrde serije snage (`SetMetrics.isHard`); kardio vježbe se ne broje.
+    public var hardSets = 0
+    /// Kardio trening cijeli, a u treningu snage zbroj odrađenih kardio vježbi.
+    public var cardioSeconds = 0
+    /// Udaljenost kardija; nil kad je nema.
+    public var cardioMeters: Double?
+
+    public init(durationSeconds: TimeInterval, hardSets: Int = 0, cardioSeconds: Int = 0, cardioMeters: Double? = nil) {
+        self.durationSeconds = durationSeconds
+        self.hardSets = hardSets
+        self.cardioSeconds = cardioSeconds
+        self.cardioMeters = cardioMeters
+    }
+
+    public init(session: Session, isCardio: (String) -> Bool) {
+        durationSeconds = max(0, (session.endedAt ?? session.lastActivityAt).timeIntervalSince(session.startedAt))
+        if session.kind == .cardio {
+            cardioSeconds = Int(durationSeconds)
+            cardioMeters = session.distanceMeters.flatMap { $0 > 0 ? $0 : nil }
+        } else {
+            let part = SessionCardio.part(of: session, isCardio: isCardio)
+            cardioSeconds = part?.seconds ?? 0
+            cardioMeters = part?.meters
+            for exercise in session.orderedExercises where !exercise.isRemoved && !isCardio(exercise.exerciseKey) {
+                hardSets += exercise.orderedSets.filter(\.isCompleted).map(\.values).filter(SetMetrics.isHard).count
+            }
+        }
+    }
+}
+
 extension StatisticsEngine {
     /// Tekući tjedan s nizom tjedana, iz vlastitih treninga i treninga iz Zdravlja.
     public func weekProgress(
@@ -119,5 +158,11 @@ extension StatisticsEngine {
         let to = calendar.date(byAdding: .weekOfYear, value: 1, to: weekStart) ?? now
         let sessions = try GymQueries(context: context).finishedSessions(from: from, to: to)
         return WeekProgress.make(sessions: sessions, now: now, goal: goal, calendar: calendar, isCardio: isCardio)
+    }
+
+    /// Treninzi tjedna koji počinje s `start` (vlastiti i iz Zdravlja).
+    public func sessions(inWeekStarting start: Date, calendar: Calendar = .current) throws -> [Session] {
+        let end = calendar.date(byAdding: .weekOfYear, value: 1, to: start) ?? start
+        return try GymQueries(context: context).finishedSessions(from: start, to: end)
     }
 }

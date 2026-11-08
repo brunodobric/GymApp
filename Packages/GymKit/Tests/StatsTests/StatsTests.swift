@@ -716,6 +716,38 @@ struct WeekProgressTests {
         #expect(progress.streakWeeks == 3)
     }
 
+    @Test("Brojke treninga: snaga s kardiom, kardio iz Zdravlja s udaljenošću")
+    func sessionFigures() throws {
+        let context = try makeContext()
+        let mixed = SessionFigures(session: try addMixed(context, at: monday), isCardio: isCardio)
+        #expect(mixed == SessionFigures(durationSeconds: 3600, hardSets: 2, cardioSeconds: 1200, cardioMeters: nil))
+
+        let run = try addSession(context, at: monday, kind: .cardio, lifts: [])
+        run.distanceMeters = 7200
+        let cardio = SessionFigures(session: run, isCardio: isCardio)
+        #expect(cardio == SessionFigures(durationSeconds: 3600, hardSets: 0, cardioSeconds: 3600, cardioMeters: 7200))
+
+        let progress = WeekProgress.make(sessions: [run], now: base, goal: nil, calendar: calendar, isCardio: isCardio)
+        #expect(progress.cardioMeters == 7200)
+    }
+
+    @Test("Treninzi po danima: poravnato s danima tjedna, od ranijeg, bez nezavršenih")
+    func sessionsByDay() throws {
+        let context = try makeContext()
+        let evening = try addSession(context, at: monday.addingTimeInterval(10 * 3600), lifts: [])
+        let morning = try addSession(context, at: monday, lifts: [])
+        let friday = try addSession(context, at: base, kind: .cardio, lifts: [])
+        let active = try addSession(context, at: base, lifts: [])
+        active.state = .active
+        let sessions = [evening, morning, friday, active]
+        let progress = WeekProgress.make(sessions: sessions, now: base, goal: nil, calendar: calendar, isCardio: isCardio)
+        let days = progress.sessionsByDay(sessions, calendar: calendar)
+        #expect(days.count == 7)
+        #expect(days[0].map(\.id) == [morning.id, evening.id])
+        #expect(days[4].map(\.id) == [friday.id])
+        #expect(days[1].isEmpty && days[6].isEmpty)
+    }
+
     @Test("Bez cilja se broji tjedan s barem jednim treningom, a nedovršen tjedan ne prekida niz")
     func streakWithoutGoal() throws {
         let context = try makeContext()
