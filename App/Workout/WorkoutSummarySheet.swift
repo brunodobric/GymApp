@@ -49,11 +49,14 @@ struct WorkoutSummarySheet: View {
                     LabeledContent("Trajanje", value: durationText(summary.durationSeconds))
                     LabeledContent("Volumen", value: WeightFormatter(unit: unit).string(fromKilograms: summary.totalVolumeKg))
                     LabeledContent("Tvrde serije", value: "\(summary.hardSets)")
+                    if let cardio = summary.cardio {
+                        LabeledContent("Kardio", value: CardioText.part(cardio))
+                    }
                     if let meters = session.distanceMeters {
                         LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
                     }
                 } footer: {
-                    Text("Tvrde serije su radne serije bez onih s RPE ispod 6.")
+                    Text("Tvrde serije su radne serije bez onih s RPE ispod 6. Kardio vježbe se ne broje u serije.")
                 }
                 if let comparison {
                     SessionComparisonSection(comparison: comparison, unit: unit)

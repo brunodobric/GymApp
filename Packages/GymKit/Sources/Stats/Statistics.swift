@@ -12,16 +12,20 @@ public struct ExerciseInfo: Equatable, Sendable {
     public var secondaryRegions: [String]
     /// Složena (više zglobova) ili izolacijska vježba iz kataloga. Nil kad se ne zna (vlastita vježba).
     public var isCompound: Bool?
+    /// Kardio vježba (`ExerciseKind.cardio`). Ne broji se u serije po mišiću: 20 minuta trake nije serija
+    /// za kvadricepse. Njezino vrijeme i udaljenost idu u kardio dio treninga (`SessionCardio`).
+    public var isCardio: Bool
 
     public init(
         primary: [Muscle] = [], secondary: [Muscle] = [], primaryRegions: [String] = [], secondaryRegions: [String] = [],
-        isCompound: Bool? = nil
+        isCompound: Bool? = nil, isCardio: Bool = false
     ) {
         self.primary = primary
         self.secondary = secondary
         self.primaryRegions = primaryRegions
         self.secondaryRegions = secondaryRegions
         self.isCompound = isCompound
+        self.isCardio = isCardio
     }
 }
 
@@ -200,7 +204,7 @@ public struct StatisticsEngine {
             guard let start = interval(of: size, containing: session.startedAt, calendar: calendar)?.start,
                   var bucket = buckets[start] else { continue }
             for exercise in session.orderedExercises where !exercise.isRemoved {
-                guard let details = info(exercise.exerciseKey) else { continue }
+                guard let details = info(exercise.exerciseKey), !details.isCardio else { continue }
                 let sets = EffectiveSets.hardSets(of: exercise)
                 guard !sets.isEmpty else { continue }
                 let volume = sets.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
@@ -285,7 +289,7 @@ public struct StatisticsEngine {
             var shares: [String: RegionShare] = [:]
             var volumes: [String: Double] = [:]
             for exercise in session.orderedExercises where !exercise.isRemoved {
-                guard let details = info(exercise.exerciseKey) else { continue }
+                guard let details = info(exercise.exerciseKey), !details.isCardio else { continue }
                 let sets = EffectiveSets.hardSets(of: exercise)
                 guard !sets.isEmpty else { continue }
                 let volume = sets.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }

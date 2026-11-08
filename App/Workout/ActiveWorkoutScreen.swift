@@ -367,7 +367,7 @@ struct ActiveWorkoutScreen: View {
             let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
             finishedSummary = SummaryBox(summary: try engine.summary(
                 of: session, trackedKinds: tracked, excludedExercises: settings?.prExcludedExerciseKeys ?? [],
-                isCompound: { info($0)?.isCompound }
+                isCompound: { info($0)?.isCompound }, isCardio: ExerciseInfoBuilder.isCardio(info)
             ))
             Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {

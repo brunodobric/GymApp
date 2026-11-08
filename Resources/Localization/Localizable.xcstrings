@@ -300,6 +300,16 @@
         }
       }
     },
+    "%lld min kardio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min cardio"
+          }
+        }
+      }
+    },
     "%lld od %lld glavnih mišića ima %lld do %lld tvrdih serija tjedno." : {
       "localizations" : {
         "en" : {
@@ -7815,12 +7825,12 @@
         }
       }
     },
-    "Tvrde serije su radne serije bez onih s RPE ispod 6." : {
+    "Tvrde serije su radne serije bez onih s RPE ispod 6. Kardio vježbe se ne broje u serije." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hard sets are working sets, excluding those with RPE below 6."
+            "value" : "Hard sets are working sets, excluding those with RPE below 6. Cardio exercises don't count as sets."
           }
         }
       }

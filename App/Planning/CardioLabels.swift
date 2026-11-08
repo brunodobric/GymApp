@@ -1,5 +1,6 @@
 import Foundation
 import Models
+import Training
 import Units
 
 // Tekstovi za prikaz kardio plana. Udaljenost je uvijek metrička (km i m), kao u unosu kardija na treningu.
@@ -65,6 +66,21 @@ enum CardioText {
     static func distance(_ meters: Double) -> String {
         if meters >= 1_000 { return NumberInput.format(meters / 1_000) + " km" }
         return "\(Int(meters.rounded())) m"
+    }
+
+    /// Kardio dio treninga snage u sažetku: "15 min · 3,2 km".
+    static func part(_ part: CardioPart) -> String {
+        var text = duration(Double(part.seconds))
+        if let meters = part.meters { text += " · " + distance(meters) }
+        return text
+    }
+
+    /// Kardio dio u retku povijesti, samo minute: "15 min kardio". Kardio bez trajanja (npr. guranje
+    /// saonica s težinom) je samo "Kardio".
+    static func historyLine(_ part: CardioPart) -> String {
+        let minutes = Int((Double(part.seconds) / 60).rounded())
+        guard minutes > 0 else { return String(localized: "Kardio") }
+        return String(localized: "\(minutes) min kardio")
     }
 
     /// Npr. "8 × 1 min, oporavak 1 min" ili "5 km".
