@@ -1,6 +1,8 @@
 import Models
 import Planning
+import SwiftData
 import SwiftUI
+import Training
 
 /// Trening odabran u `TemplatePickerSheet`: trening rasporeda (s izmjenama ciklusa) ili spremljeni trening.
 enum WorkoutChoice {
@@ -82,9 +84,19 @@ private struct TemplatePickerRow: View {
     /// Sljedeći trening rasporeda.
     let isNext: Bool
 
+    @Environment(CatalogStore.self) private var catalogStore
+    @Query private var customExercises: [CustomExercise]
+
     var body: some View {
         let exercises = template.orderedExercises
         HStack(spacing: 12) {
+            WorkoutKindIcon(
+                mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises)),
+                cardioSymbol: template.cardioPlanSymbol
+            )
+            .foregroundStyle(.tint)
+            .frame(width: 28)
+            .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text(template.name)

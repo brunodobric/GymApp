@@ -2,6 +2,7 @@ import Models
 import Planning
 import SwiftData
 import SwiftUI
+import Training
 
 /// Uređivač rasporeda: niz treninga i dana odmora, trajanje, aktivnost i podsjetnici.
 ///
@@ -20,6 +21,8 @@ struct ScheduleEditorScreen: View {
 
     @Environment(\.modelContext) private var context
     @Query(sort: \WorkoutTemplate.name) private var templates: [WorkoutTemplate]
+    @Query private var customExercises: [CustomExercise]
+    @Environment(CatalogStore.self) private var catalogStore
     @Query private var overrides: [CycleOverride]
 
     private var engine: ScheduleEngine { ScheduleEngine(context: context) }
@@ -86,7 +89,7 @@ struct ScheduleEditorScreen: View {
         return Section("Niz") {
             ForEach(schedule.orderedItems) { item in
                 HStack {
-                    Image(systemName: symbol(of: item))
+                    icon(of: item)
                         .foregroundStyle(.secondary)
                         .frame(width: 28)
                     Text(title(of: item))
@@ -173,10 +176,19 @@ struct ScheduleEditorScreen: View {
         return templates.first { $0.id == item.workoutTemplateId }?.name ?? String(localized: "Obrisan trening")
     }
 
-    private func symbol(of item: ScheduleItem) -> String {
-        if item.kind == .restDay { return "moon.zzz" }
-        let template = templates.first { $0.id == item.workoutTemplateId }
-        return template?.kind == .cardio ? (template?.cardioPlan?.activity.symbol ?? "figure.run") : "dumbbell"
+    /// Dan odmora je mjesec, trening ikona svoje vrste (`WorkoutKindIcon`).
+    @ViewBuilder
+    private func icon(of item: ScheduleItem) -> some View {
+        if item.kind == .restDay {
+            Image(systemName: "moon.zzz")
+        } else if let template = templates.first(where: { $0.id == item.workoutTemplateId }) {
+            WorkoutKindIcon(
+                mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises)),
+                cardioSymbol: template.cardioPlanSymbol
+            )
+        } else {
+            Image(systemName: WorkoutKind.strength.symbol)
+        }
     }
 
 

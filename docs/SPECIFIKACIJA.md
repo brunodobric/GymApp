@@ -185,7 +185,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (npr. zadnji trening, Plate Calculator, sljedeći trening, tjedni volumen) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u popisu "Kasnije").
 2. **Odrađeni treninzi** — Povijest svih završenih treninga s filterima i detaljima.
    * Lista treninga prikazuje: datum, tip i trajanje.
-     * Trening snage s barem jednom odrađenom kardio vježbom ima bučicu s malom oznakom trčanja i redak "15 min kardio", a u filteru je i pod snagom i pod kardiom. Trening snage u kojem su odrađene samo kardio vježbe prikazuje se kao kardio. Vrsta se računa iz vježbi i ne sprema se.
+     * Trening snage s barem jednom odrađenom kardio vježbom ima bučicu s malom oznakom trčanja i redak "15 min kardio", a u filteru je i pod snagom i pod kardiom. Trening snage u kojem su odrađene samo kardio vježbe prikazuje se kao kardio. Vrsta se računa iz vježbi i ne sprema se. Isto pravilo vrijedi za predloške (samo snaga, samo kardio ili snaga + kardio), pa je ikona ista svugdje gdje se trening prikazuje: povijest, Početna, rasporedi, popis treninga i izbor treninga. Kardio plan za sat je uvijek kardio s ikonom svoje aktivnosti.
    * Klik na trening otvara detalje:
      * Sve vježbe
      * Sve serije po vježbi

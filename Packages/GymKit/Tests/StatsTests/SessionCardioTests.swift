@@ -159,6 +159,27 @@ struct SessionCardioTests {
         #expect(summary.cardio == CardioPart(seconds: 900, meters: 2500))
     }
 
+    @Test("Vrsta predloška iz vježbi; kardio plan za sat ostaje kardio")
+    func templateMix() throws {
+        let context = try makeContext()
+        func template(_ refs: [ExerciseRef], kind: WorkoutKind = .strength) throws -> WorkoutTemplate {
+            let template = WorkoutTemplate(name: "Trening", kind: kind)
+            context.insert(template)
+            for (index, ref) in refs.enumerated() {
+                let exercise = TemplateExercise(orderIndex: index, exercise: ref)
+                context.insert(exercise)
+                exercise.template = template
+            }
+            try context.save()
+            return template
+        }
+        #expect(SessionCardio.mix(of: try template([press]), isCardio: isCardio) == .strength)
+        #expect(SessionCardio.mix(of: try template([press, bike]), isCardio: isCardio) == .mixed)
+        #expect(SessionCardio.mix(of: try template([treadmill, bike]), isCardio: isCardio) == .cardio)
+        #expect(SessionCardio.mix(of: try template([]), isCardio: isCardio) == .strength)
+        #expect(SessionCardio.mix(of: try template([], kind: .cardio), isCardio: isCardio) == .cardio)
+    }
+
     @Test("Vlastita vježba u kategoriji kardio je kardio")
     func customCardio() throws {
         let context = try makeContext()

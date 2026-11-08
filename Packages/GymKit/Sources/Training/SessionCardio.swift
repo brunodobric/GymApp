@@ -53,6 +53,16 @@ public enum SessionCardio {
         return CardioPart(seconds: seconds, meters: distances.isEmpty ? nil : distances.reduce(0, +))
     }
 
+    /// Vrsta predloška za prikaz, iz njegovih vježbi: samo snaga, samo kardio ili oboje. Kardio plan za sat
+    /// (`WorkoutKind.cardio`) je uvijek kardio. Predložak bez vježbi je snaga (novi, još prazan trening).
+    public static func mix(of template: WorkoutTemplate, isCardio: (String) -> Bool) -> SessionMix {
+        guard template.kind == .strength else { return .cardio }
+        let exercises = template.orderedExercises
+        let cardio = exercises.filter { isCardio($0.exercise.key) }.count
+        if cardio == 0 { return .strength }
+        return cardio == exercises.count ? .cardio : .mixed
+    }
+
     /// Vrsta za prikaz. Trening snage u kojem su odrađene samo kardio vježbe prikazuje se kao kardio.
     public static func mix(of session: Session, isCardio: (String) -> Bool) -> SessionMix {
         guard session.kind == .strength else { return .cardio }

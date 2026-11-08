@@ -3,6 +3,7 @@ import Planning
 import Stats
 import SwiftData
 import SwiftUI
+import Training
 import Units
 
 extension DashboardCardKind {
@@ -29,12 +30,20 @@ extension DashboardCardKind {
 struct HomeCard<Content: View>: View {
     let title: LocalizedStringKey
     let symbol: String
+    /// Vrsta treninga: naslov tada ima ikonu vrste (`WorkoutKindIcon`) umjesto `symbol`.
+    var mix: SessionMix?
     @ViewBuilder var content: Content
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             // Naslov kartice je u boji svoje ikone (akcent iz Postavki).
-            Label(title, systemImage: symbol)
+            Group {
+                if let mix {
+                    Label { Text(title) } icon: { WorkoutKindIcon(mix: mix) }
+                } else {
+                    Label(title, systemImage: symbol)
+                }
+            }
                 .font(.cardHeading)
                 .textCase(.uppercase)
                 .foregroundStyle(.tint)
@@ -51,6 +60,9 @@ struct LastWorkoutCard: View {
     let session: Session
     let unit: WeightUnit
 
+    @Environment(CatalogStore.self) private var catalogStore
+    @Query private var customExercises: [CustomExercise]
+
     private var duration: String? {
         guard let end = session.endedAt else { return nil }
         return Duration.seconds(max(0, end.timeIntervalSince(session.startedAt)))
@@ -61,13 +73,14 @@ struct LastWorkoutCard: View {
         NavigationLink {
             SessionDetailScreen(session: session, unit: unit)
         } label: {
-            HomeCard(title: "Zadnji trening", symbol: session.kind.symbol) {
+            let mix = SessionCardio.mix(of: session, isCardio: catalogStore.isCardio(custom: customExercises))
+            HomeCard(title: "Zadnji trening", symbol: session.kind.symbol, mix: mix) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(session.name).font(.cardTitle).foregroundStyle(.primary)
                     Text(session.startedAt.formatted(date: .complete, time: .shortened))
                         .font(.subheadline).foregroundStyle(.secondary)
                     HStack {
-                        Text(session.kind.title)
+                        Text(mix.title)
                         if let duration { Text("·"); Text(duration) }
                     }
                     .font(.subheadline).foregroundStyle(.secondary)
@@ -99,6 +112,9 @@ struct PlateCalculatorCard: View {
 struct NextWorkoutCard: View {
     let planned: [PlannedWorkout]
 
+    @Environment(CatalogStore.self) private var catalogStore
+    @Query private var customExercises: [CustomExercise]
+
     var body: some View {
         HomeCard(title: DashboardCardKind.nextWorkout.title, symbol: DashboardCardKind.nextWorkout.symbol) {
             if planned.isEmpty {
@@ -111,6 +127,13 @@ struct NextWorkoutCard: View {
                     UpcomingWorkoutScreen(schedule: workout.schedule)
                 } label: {
                     HStack {
+                        WorkoutKindIcon(
+                            mix: SessionCardio.mix(of: workout.template, isCardio: catalogStore.isCardio(custom: customExercises)),
+                            cardioSymbol: workout.template.cardioPlanSymbol
+                        )
+                        .foregroundStyle(.tint)
+                        .frame(width: 28)
+                        .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(workout.template.name).font(.cardTitle).foregroundStyle(.primary)
                             Text(workout.schedule.name).font(.subheadline).foregroundStyle(.secondary)

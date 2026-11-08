@@ -3165,6 +3165,16 @@
         }
       }
     },
+    "Snaga + kardio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strength + cardio"
+          }
+        }
+      }
+    },
     "Spremiti promjene?" : {
       "localizations" : {
         "en" : {

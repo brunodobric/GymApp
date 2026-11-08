@@ -3,6 +3,7 @@ import Models
 import Planning
 import SwiftData
 import SwiftUI
+import Training
 
 // Bočne ploče za slaganje treninga i rasporeda (faza 11). Na iPadu stoje uz uređivač kao inspector,
 // a na iPhoneu se otvaraju kao list. Stavke se mogu odabrati više odjednom, a na iPadu i povući u uređivač.
@@ -213,13 +214,22 @@ struct TemplateListPanel: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Query(sort: \WorkoutTemplate.name) private var templates: [WorkoutTemplate]
+    @Query private var customExercises: [CustomExercise]
+    @Environment(CatalogStore.self) private var catalogStore
     @State private var selected: [UUID] = []
 
     var body: some View {
         NavigationStack {
             List(templates) { template in
                 SelectableRow(isSelected: selected.contains(template.id), toggle: { toggle(template) }) {
-                    Label(template.name, systemImage: template.kind == .cardio ? "figure.run" : "dumbbell")
+                    Label {
+                        Text(template.name)
+                    } icon: {
+                        WorkoutKindIcon(
+                            mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises)),
+                            cardioSymbol: template.cardioPlanSymbol
+                        )
+                    }
                 }
                 .panelDraggable(
                     PlanningDrag.template(template), enabled: sizeClass == .regular,
