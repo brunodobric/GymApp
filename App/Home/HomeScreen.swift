@@ -35,8 +35,11 @@ struct HomeScreen: View {
     @State private var chosenWorkout: WorkoutChoice?
     @State private var errorText: String?
     @State private var checkedRecovery = false
-    /// Prazna Početna je jednom dobila karticu zadnjeg treninga.
-    @AppStorage("dashboard.lastWorkoutSeeded") private var lastWorkoutSeeded = false
+    /// Prazna Početna je jednom dobila zadane kartice (ključ je ostao od kartice zadnjeg treninga).
+    @AppStorage("dashboard.lastWorkoutSeeded") private var defaultsSeeded = false
+    /// Početna je jednom prešla na karticu Ovaj tjedan (`DashboardLayout.upgradeToWeekCard`).
+    @AppStorage("dashboard.weekCardUpgraded") private var weekCardUpgraded = false
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var recovery: RecoveryPrompt?
     #if DEBUG
     @State private var showsPrototypes = false
@@ -64,10 +67,13 @@ struct HomeScreen: View {
             ScrollView {
                 VStack(spacing: 16) {
                     startSection(upcoming)
-                    ForEach(visibleCards) { card in
-                        if let kind = card.kind {
-                            cardView(kind, upcoming: upcoming)
+                    ForEach(cardRows, id: \.self) { row in
+                        HStack(alignment: .top, spacing: 12) {
+                            ForEach(row, id: \.self) { kind in
+                                cardView(kind)
+                            }
                         }
+                        .fixedSize(horizontal: false, vertical: true)
                     }
                     Button("Uredi kartice", systemImage: "square.grid.2x2") { showsCardEditor = true }
                         .buttonStyle(.bordered)
@@ -114,7 +120,7 @@ struct HomeScreen: View {
             }
             // Uz sinkronizaciju se čeka prvi uvoz s iClouda: na novom uređaju kartice tek stižu s drugih uređaja.
             .task(id: SyncMonitor.shared.tracker.lastImport) {
-                seedLastWorkoutCard()
+                prepareCards()
             }
             // `initial`: pri hladnom pokretanju iz Live Activityja zahtjev stigne prije nego što se Početna prikaže.
             .onChange(of: request, initial: true) { _, newValue in
@@ -152,21 +158,26 @@ struct HomeScreen: View {
         Session.merged(finishedSessions, health: healthWorkouts).first
     }
 
-    private var visibleCards: [DashboardCard] {
+    /// Redovi kartica: dvije uzastopne male kartice dijele red, a uz veliki tekst svaka je u svom redu.
+    private var cardRows: [[DashboardCardKind]] {
         _ = dashboardCards.map(\.orderIndex)
-        return (try? DashboardLayout(context: context).cards()) ?? []
+        var kinds = ((try? DashboardLayout(context: context).cards()) ?? []).compactMap(\.kind)
+        // Bez odrađenog treninga kartica zadnjeg treninga nema što pokazati.
+        if lastSession == nil { kinds.removeAll { $0 == .lastWorkout } }
+        if dynamicTypeSize.isAccessibilitySize { return kinds.map { [$0] } }
+        return DashboardLayout.rows(kinds)
     }
 
     @ViewBuilder
-    private func cardView(_ kind: DashboardCardKind, upcoming: [PlannedWorkout]) -> some View {
+    private func cardView(_ kind: DashboardCardKind) -> some View {
         switch kind {
+        case .thisWeek: ThisWeekCard()
         case .lastWorkout:
             if let last = lastSession {
                 LastWorkoutCard(session: last, unit: unit)
             }
+        case .bodyWeight: BodyWeightCard(unit: unit)
         case .plateCalculator: PlateCalculatorCard(unit: unit)
-        case .nextWorkout: NextWorkoutCard(planned: upcoming)
-        case .weeklyVolume: WeeklyVolumeCard(unit: unit)
         }
     }
 
@@ -236,13 +247,23 @@ struct HomeScreen: View {
         }
     }
 
-    /// Prazna Početna dobiva karticu zadnjeg treninga (jednom po uređaju).
-    private func seedLastWorkoutCard() {
-        guard !lastWorkoutSeeded else { return }
+    /// Jednom po uređaju: prazna Početna dobiva zadane kartice, a postojeća prelazi na karticu Ovaj tjedan
+    /// (tjedni volumen postaje Ovaj tjedan, sljedeći trening se uklanja).
+    private func prepareCards() {
+        guard !defaultsSeeded || !weekCardUpgraded else { return }
         if AppServices.isSyncRunning && SyncMonitor.shared.tracker.lastImport == nil { return }
+        let layout = DashboardLayout(context: context)
         do {
-            try DashboardLayout(context: context).seedLastWorkout()
-            lastWorkoutSeeded = true
+            if !defaultsSeeded {
+                // Na praznoj Početnoj zadane kartice već imaju Ovaj tjedan, pa prijelaz nije potreban.
+                let seeded = try layout.seedDefaults()
+                defaultsSeeded = true
+                if !seeded.isEmpty { weekCardUpgraded = true }
+            }
+            if !weekCardUpgraded {
+                try layout.upgradeToWeekCard()
+                weekCardUpgraded = true
+            }
         } catch {
             // Pokušava se opet pri sljedećem otvaranju Početne.
         }

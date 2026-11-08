@@ -313,6 +313,19 @@ struct BodyTrackingTests {
         #expect(try tracking.measurements(of: .weight).count == 1)
     }
 
+    @Test("Promjena u zadnjih 30 dana: prema mjerenju starom barem 30 dana, inače prema prvom")
+    func recentChange() throws {
+        let tracking = BodyTracking(context: try makeContext())
+        try tracking.add(.weight, value: 85, date: base)
+        #expect(try tracking.recentChange(of: .weight) == nil)
+        try tracking.add(.weight, value: 84, date: base.addingTimeInterval(10 * day))
+        #expect(try tracking.recentChange(of: .weight) == -1)
+        try tracking.add(.weight, value: 83, date: base.addingTimeInterval(20 * day))
+        try tracking.add(.weight, value: 82.5, date: base.addingTimeInterval(45 * day))
+        // Zadnje mjerenje je 45. dan: referenca je 10. dan (zadnje do 15. dana), ne prvo.
+        #expect(try tracking.recentChange(of: .weight) == -1.5)
+    }
+
     @Test("Neispravne vrijednosti se odbijaju")
     func validation() throws {
         let tracking = BodyTracking(context: try makeContext())
@@ -645,5 +658,78 @@ struct DoneExercisesTests {
         let done = try DoneExercises.fetch(in: context)
         #expect(done.map(\.name) == ["Čučanj", "Potisak s klupe"])
         #expect(done.first?.ref?.key == squat.key)
+    }
+}
+
+@Suite("Ovaj tjedan")
+struct WeekProgressTests {
+    private let run = ExerciseRef(catalogId: "run", name: "Trčanje")
+    private let isCardio: (String) -> Bool = { $0 == "c:run" }
+    /// Ponedjeljak tjedna u kojem je `base` (petak).
+    private var monday: Date { base.addingTimeInterval(-4 * day) }
+
+    /// Trening snage s kardio vježbom od 20 minuta.
+    private func addMixed(_ context: ModelContext, at date: Date) throws -> Session {
+        let session = try addSession(context, at: date, lifts: [Lift(ref: bench, sets: [Work(weight: 80, reps: 8), Work(weight: 80, reps: 8)])])
+        let exercise = SessionExercise(orderIndex: 1, exercise: run, inputType: .duration)
+        context.insert(exercise)
+        exercise.session = session
+        let set = SetLog(orderIndex: 0)
+        set.durationSeconds = 1200
+        set.completedAt = date
+        context.insert(set)
+        set.exercise = exercise
+        try context.save()
+        return session
+    }
+
+    @Test("Treninzi, dani, tvrde serije, kardio i niz tjedana")
+    func currentWeek() throws {
+        let context = try makeContext()
+        var sessions: [Session] = []
+        let three = [Work(weight: 100, reps: 5), Work(weight: 100, reps: 5), Work(weight: 100, reps: 5)]
+        sessions.append(try addSession(context, at: monday, lifts: [Lift(ref: squat, sets: three)]))
+        sessions.append(try addSession(context, at: monday.addingTimeInterval(2 * day), kind: .cardio, lifts: []))
+        sessions.append(try addMixed(context, at: monday.addingTimeInterval(3 * day)))
+        // Nezavršeni trening i trening idućeg tjedna se ne broje.
+        let active = try addSession(context, at: monday.addingTimeInterval(day), lifts: [Lift(ref: squat, sets: three)])
+        active.state = .active
+        sessions.append(active)
+        sessions.append(try addSession(context, at: monday.addingTimeInterval(8 * day), lifts: [Lift(ref: squat, sets: three)]))
+        // Prošla dva tjedna po tri treninga, a tjedan prije njih samo jedan.
+        for week in 1...2 {
+            for offset in 0..<3 {
+                let date = monday.addingTimeInterval(-Double(week) * 7 * day + Double(offset) * day)
+                sessions.append(try addSession(context, at: date, lifts: [Lift(ref: bench, sets: three)]))
+            }
+        }
+        sessions.append(try addSession(context, at: monday.addingTimeInterval(-20 * day), lifts: [Lift(ref: bench, sets: three)]))
+
+        let progress = WeekProgress.make(sessions: sessions, now: base, goal: 3, calendar: calendar, isCardio: isCardio)
+        #expect(progress.start == monday.addingTimeInterval(-8 * 3600))
+        #expect(progress.sessions == 3)
+        #expect(progress.goalFraction == 1)
+        #expect(progress.hardSets == 5)
+        #expect(progress.cardioSeconds == 3600 + 1200)
+        #expect(progress.totalSeconds == 3 * 3600)
+        #expect(progress.days.map(\.mix) == [.strength, nil, .cardio, .mixed, nil, nil, nil])
+        #expect(progress.streakWeeks == 3)
+    }
+
+    @Test("Bez cilja se broji tjedan s barem jednim treningom, a nedovršen tjedan ne prekida niz")
+    func streakWithoutGoal() throws {
+        let context = try makeContext()
+        var sessions: [Session] = []
+        for week in 1...4 {
+            sessions.append(try addSession(context, at: monday.addingTimeInterval(-Double(week) * 7 * day), lifts: []))
+        }
+        let progress = WeekProgress.make(sessions: sessions, now: base, goal: nil, calendar: calendar, isCardio: isCardio)
+        #expect(progress.sessions == 0)
+        #expect(progress.goalFraction == nil)
+        #expect(progress.streakWeeks == 4)
+
+        let withGoal = WeekProgress.make(sessions: sessions, now: base, goal: 2, calendar: calendar, isCardio: isCardio)
+        #expect(withGoal.goalFraction == 0)
+        #expect(withGoal.streakWeeks == 0)
     }
 }

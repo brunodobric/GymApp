@@ -77,6 +77,16 @@
         }
       }
     },
+    "%@ u 30 dana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ in 30 days"
+          }
+        }
+      }
+    },
     "%@ · %@" : {
       "shouldTranslate" : false
     },
@@ -172,12 +182,32 @@
         }
       }
     },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@"
+          }
+        }
+      }
+    },
     "%@: %lld dana bez treninga" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@: %lld days without training"
+          }
+        }
+      }
+    },
+    "%@: bez treninga" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: no workout"
           }
         }
       }
@@ -506,6 +536,52 @@
         }
       }
     },
+    "%lld serija" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld set"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sets"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld serije"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld serija"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld serija"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld serije" : {
       "localizations" : {
         "en" : {
@@ -723,6 +799,98 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld spremljenih treninga"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld tjedana zaredom" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld week in a row"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld weeks in a row"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tjedna zaredom"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tjedan zaredom"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tjedana zaredom"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld treninga" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld workout"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld workouts"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld treninga"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld trening"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld treninga"
                 }
               }
             }
@@ -2915,16 +3083,6 @@
         }
       }
     },
-    "Koje ploče staviti na svaku stranu šipke." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Which plates to load on each side of the bar."
-          }
-        }
-      }
-    },
     "Koliko je bio težak cijeli trening, od 1 do 10. Napor puta trajanje je opterećenje treninga (Foster i sur. 2001)." : {
       "localizations" : {
         "en" : {
@@ -3051,6 +3209,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The new workout hasn't been saved yet."
+          }
+        }
+      }
+    },
+    "od %lld treninga" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "of %lld workout"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "of %lld workouts"
+                }
+              }
+            }
           }
         }
       }
@@ -3185,6 +3365,16 @@
         }
       }
     },
+    "Tjelesna težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body weight"
+          }
+        }
+      }
+    },
     "Tvoja povijest" : {
       "localizations" : {
         "en" : {
@@ -3201,6 +3391,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "workouts"
+          }
+        }
+      }
+    },
+    "Ukupno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total"
+          }
+        }
+      }
+    },
+    "Upiši težinu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log your weight"
           }
         }
       }
@@ -3811,16 +4021,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A few questions for a workout suggestion. Everything is optional and you can change it in Settings > Profile."
-          }
-        }
-      }
-    },
-    "Nema aktivnog rasporeda. Raspored složiš u tabu Rasporedi." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No active schedule. You can build one in the Schedules tab."
           }
         }
       }
@@ -5975,16 +6175,6 @@
         }
       }
     },
-    "Prošli tjedan: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last week: %@"
-          }
-        }
-      }
-    },
     "Prsa" : {
       "localizations" : {
         "en" : {
@@ -7211,16 +7401,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Week"
-          }
-        }
-      }
-    },
-    "Tjedni volumen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weekly volume"
           }
         }
       }

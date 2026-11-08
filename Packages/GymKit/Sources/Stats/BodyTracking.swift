@@ -48,6 +48,20 @@ public struct BodyTracking {
         return last.value - first.value
     }
 
+    /// Promjena zadnje vrijednosti u zadnjih `days` dana: prema zadnjem mjerenju starom barem `days` dana
+    /// (gledano od zadnjeg), a bez njega prema prvom mjerenju. Nil kad ima manje od dva unosa.
+    public func recentChange(of kind: BodyMeasurementKind, days: Int = 30) throws -> Double? {
+        Self.recentChange(in: try measurements(of: kind), days: days)
+    }
+
+    /// `measurements` od najstarijeg prema najnovijem.
+    static func recentChange(in measurements: [BodyMeasurement], days: Int) -> Double? {
+        guard measurements.count >= 2, let last = measurements.last else { return nil }
+        let limit = last.date.addingTimeInterval(-Double(days) * 86_400)
+        let reference = measurements.last { $0.date <= limit } ?? measurements[0]
+        return last.value - reference.value
+    }
+
     /// Nazivi vlastitih mjera koje korisnik prati.
     public func customNames() throws -> [String] {
         let all = try context.fetch(FetchDescriptor<BodyMeasurement>())

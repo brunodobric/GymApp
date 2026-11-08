@@ -63,16 +63,16 @@ struct SyncMergeTests {
     @Test("Ista vrsta kartice ostaje jednom, a redoslijed se zatvara")
     func dashboardCards() throws {
         let context = try makeContext()
-        context.insert(DashboardCard(kindRaw: DashboardCardKind.nextWorkout.rawValue, orderIndex: 0))
-        context.insert(DashboardCard(kindRaw: DashboardCardKind.weeklyVolume.rawValue, orderIndex: 1))
-        context.insert(DashboardCard(kindRaw: DashboardCardKind.nextWorkout.rawValue, orderIndex: 2))
+        context.insert(DashboardCard(kindRaw: DashboardCardKind.thisWeek.rawValue, orderIndex: 0))
+        context.insert(DashboardCard(kindRaw: DashboardCardKind.lastWorkout.rawValue, orderIndex: 1))
+        context.insert(DashboardCard(kindRaw: DashboardCardKind.thisWeek.rawValue, orderIndex: 2))
         context.insert(DashboardCard(kindRaw: "futureCard", orderIndex: 3))
         context.insert(DashboardCard(kindRaw: "futureCard", orderIndex: 4))
         try context.save()
 
         #expect(try Deduplication.removeDuplicateDashboardCards(in: context) == 1)
         let cards = try DashboardLayout(context: context).allCards()
-        #expect(cards.map(\.kindRaw) == ["nextWorkout", "weeklyVolume", "futureCard", "futureCard"])
+        #expect(cards.map(\.kindRaw) == ["thisWeek", "lastWorkout", "futureCard", "futureCard"])
         #expect(cards.map(\.orderIndex) == [0, 1, 2, 3])
     }
 
