@@ -1905,6 +1905,16 @@
         }
       }
     },
+    "Dodir otvara cijeli trening." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a workout to open it."
+          }
+        }
+      }
+    },
     "Dodirni broj za upis tipkovnicom" : {
       "localizations" : {
         "en" : {
@@ -3115,6 +3125,46 @@
         }
       }
     },
+    "najdalje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "farthest"
+          }
+        }
+      }
+    },
+    "najdulje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "longest"
+          }
+        }
+      }
+    },
+    "najteža serija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "heaviest set"
+          }
+        }
+      }
+    },
+    "Napredak i rekordi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progress and records"
+          }
+        }
+      }
+    },
     "Nema vlastitih vježbi" : {
       "localizations" : {
         "en" : {
@@ -3131,6 +3181,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The new workout hasn't been saved yet."
+          }
+        }
+      }
+    },
+    "Osobni rekord" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal record"
           }
         }
       }
@@ -3195,12 +3255,62 @@
         }
       }
     },
+    "Sva izvođenja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All workouts"
+          }
+        }
+      }
+    },
+    "Sva izvođenja (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All workouts (%lld)"
+          }
+        }
+      }
+    },
     "Sve vježbe" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "All exercises"
+          }
+        }
+      }
+    },
+    "Težine su u %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weights are in %@."
+          }
+        }
+      }
+    },
+    "Tvoja povijest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your history"
+          }
+        }
+      }
+    },
+    "u treninzima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "workouts"
           }
         }
       }
@@ -8941,6 +9051,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Warm-up"
+          }
+        }
+      }
+    },
+    "Zagrijavanje se ne prikazuje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warm-up sets are not shown."
           }
         }
       }

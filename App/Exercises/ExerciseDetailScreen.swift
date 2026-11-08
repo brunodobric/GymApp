@@ -1,5 +1,6 @@
 import Catalog
 import Models
+import Stats
 import SwiftData
 import SwiftUI
 
@@ -27,7 +28,7 @@ struct ExerciseDetailScreen: View {
         switch source {
         case .catalog(let id):
             if let exercise = catalogStore.catalog?.exercise(withID: id) {
-                CatalogExerciseDetail(exercise: exercise)
+                CatalogExerciseDetail(exercise: exercise, linksToSessions: allowsRemoving)
             } else {
                 missing
             }
@@ -47,7 +48,15 @@ struct ExerciseDetailScreen: View {
 
 private struct CatalogExerciseDetail: View {
     let exercise: CatalogExercise
+    /// Iz aktivnog treninga retci povijesti ne vode na stare treninge.
+    let linksToSessions: Bool
     @Environment(CatalogStore.self) private var catalogStore
+    @Environment(\.modelContext) private var context
+    @State private var history: ExerciseHistory?
+
+    private var ref: ExerciseRef {
+        ExerciseRef(catalogId: exercise.id, name: exercise.displayName(language: catalogStore.language))
+    }
 
     var body: some View {
         let language = catalogStore.language
@@ -122,9 +131,14 @@ private struct CatalogExerciseDetail: View {
                     }
                 }
             }
+
+            if let history {
+                ExerciseHistorySection(ref: ref, history: history, linksToSessions: linksToSessions)
+            }
         }
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
+        .task { history = ExerciseHistoryLoader.load(ref, context: context) }
     }
 }
 
@@ -137,6 +151,7 @@ private struct CustomExerciseDetail: View {
     @State private var showsEditor = false
     @State private var showsRemoveConfirmation = false
     @State private var errorText: String?
+    @State private var history: ExerciseHistory?
 
     var body: some View {
         List {
@@ -183,9 +198,15 @@ private struct CustomExerciseDetail: View {
                 }
                 LabeledContent("Unos") { Text(exercise.inputType.title) }
             }
+
+            if let history {
+                // Iz aktivnog treninga (bez uklanjanja) retci ne vode na stare treninge.
+                ExerciseHistorySection(ref: exercise.summary.ref, history: history, linksToSessions: allowsRemoving)
+            }
         }
         .navigationTitle(exercise.name)
         .navigationBarTitleDisplayMode(.inline)
+        .task { history = ExerciseHistoryLoader.load(exercise.summary.ref, context: context) }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 if allowsRemoving {

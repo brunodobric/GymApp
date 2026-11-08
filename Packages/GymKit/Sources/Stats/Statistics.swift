@@ -36,6 +36,7 @@ public struct ExercisePoint: Equatable, Sendable {
     public let date: Date
     /// Najveća težina radne serije (kg); 0 kad vježba nema težinu.
     public let bestWeightKg: Double
+    /// Ponavljanja najteže serije (uz istu težinu ona s najviše ponavljanja). Bez težine najviše ponavljanja.
     public let bestReps: Int
     /// Najbolja pouzdana procjena 1RM (s RIR-om, do 12 ponavljanja do otkaza); nil bez takve serije.
     public let estimatedOneRepMaxKg: Double?
@@ -174,8 +175,13 @@ public struct StatisticsEngine {
         var bestReps = 0
         var oneRepMax: Double?
         for set in sets {
-            bestWeight = max(bestWeight, SetMetrics.load(set, inputType: type) ?? 0)
-            bestReps = max(bestReps, set.reps ?? 0)
+            // Težina i ponavljanja iz iste serije, da redak ne pokaže "85 kg × 7" kad je 85 kg dignuto 5 puta.
+            let load = SetMetrics.load(set, inputType: type) ?? 0
+            let reps = set.reps ?? 0
+            if load > bestWeight || (load == bestWeight && reps > bestReps) {
+                bestWeight = load
+                bestReps = reps
+            }
             // Samo pouzdane serije (do 12 ponavljanja do otkaza), s RIR-om iz RPE-a.
             if let estimate = SetMetrics.strengthEstimate(set, inputType: type, formula: formula) {
                 oneRepMax = max(oneRepMax ?? 0, estimate)

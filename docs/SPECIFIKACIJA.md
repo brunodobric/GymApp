@@ -16,6 +16,7 @@ Ovaj dokument sadrži ažuriranu i proširenu specifikaciju moderne iOS (Swift) 
 * **Količina:** svih 582 vježbi iz paketa.
 * **Vizualni sadržaj:** animirani klip u petlji i poster za svaku vježbu, korak-po-korak upute i česte greške. Body heatmap (primarni i sekundarni mišići) za vizualni prikaz.
 * **Animacija vježbe:** na detalju vježbe MoveKit klip se vrti u petlji bez zvuka, a gumb u kutu pauzira i nastavlja. Klip stoji dok nije na ekranu ili je aplikacija u pozadini i ne prekida glazbu koju korisnik sluša. Uz Smanji kretanje klip ne kreće sam: prikazuje se poster, a korisnik ga može pokrenuti gumbom. U mreži kataloga prikazuje se poster. Build bez MoveKit paketa (CI, klon repozitorija) nema klipove ni upute, pa detalj vježbe prikazuje samo mišiće i detalje.
+* **Povijest vježbe:** na dnu detalja vježbe (katalog i vlastite vježbe) sekcija "Tvoja povijest" pojavi se kad je vježba barem jednom odrađena u završenom treningu. Prikazuje broj treninga s vježbom, najtežu seriju i procjenu 1RM (ili najviše ponavljanja, najdulje trajanje i najdalju udaljenost, ovisno o vrsti unosa), a ispod zadnja tri izvođenja s nazivom treninga, datumom, svim radnim serijama i oznakom rekorda. Dodir na izvođenje otvara taj trening. "Sva izvođenja" daje cijeli popis po mjesecima, a "Napredak i rekordi" vodi na graf napretka vježbe iz Statistike. Kad se detalj otvori iz aktivnog treninga, izvođenja ne vode na stare treninge.
 
 ### Kategorizacija i Strukturiranje
 * **Kategorije / Anatomija:** Prsa, Leđa, Ramena, Ruke, Noge, Core/Trbuh, Kardio.
