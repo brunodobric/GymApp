@@ -473,6 +473,16 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
    * Broj serija
    * Gumb Zatvori
 
+### Prečaci, Siri i Action button (App Intents)
+Aplikacija nudi akcije koje se same pojave u Prečacima, Spotlightu i na Action buttonu (`AppShortcutsProvider`), pa se mogu koristiti i u automatizacijama (npr. "kad stignem u teretanu").
+
+* **Započni trening:** spremljeni trening (parametar) ili prazan trening. Trening iz aktivnog rasporeda pokreće se kao trening rasporeda, pa raspored napreduje. Otvara aplikaciju na ekranu treninga.
+* **Započni sljedeći trening:** sljedeći trening aktivnog rasporeda, kao prvi gumb na Početnoj. Otvara aplikaciju.
+* **Završi trening:** završava i sprema trening u tijeku, kao gumb "Završi". Radi u pozadini. Trening koji vodi Apple Watch završava se na satu, a trening bez završene serije se ne sprema.
+* **Upiši tjelesnu težinu:** sprema današnju težinu u jedinici iz postavki (kg ili lbs), u rasponu 20 do 400 kg. Radi u pozadini.
+* Dok je trening u tijeku, akcije za pokretanje ne pokreću novi, nego otvaraju postojeći.
+* Logika je u GymKitu (`WorkoutShortcuts`, `BodyTracking.addShortcutWeight`), intenti su u `App/Shortcuts/`, a fraze na hrvatskom i engleskom u `App/AppShortcuts.xcstrings`. Siri ne podržava hrvatski, pa glasovne fraze rade samo kad je Siri na engleskom; u Prečacima i Spotlightu akcije rade na oba jezika.
+
 ### Widgeti i kontrole (iPhone i iPad)
 * **Sljedeći trening** (mali i srednji, pravokutnik i redak iznad sata na zaključanom zaslonu): trening koji je na redu u rasporedu, broj vježbi i u srednjem prve tri vježbe s planom ("4 × 8 · 80 kg"). Gumb ▶ otvara aplikaciju i pokreće ga, isto kao ⌘N. Dok trening traje, widget pokazuje trening u tijeku i koliko traje.
 * **Ovaj tjedan** (mali, srednji, krug na zaključanom zaslonu): krug do tjednog cilja, niz tjedana zaredom, dani s vrstom treninga, tvrde serije, kardio i ukupno vrijeme. Isti podaci kao kartica na Početnoj. Novi tjedan počinje prazan i kad aplikacija nije otvorena.

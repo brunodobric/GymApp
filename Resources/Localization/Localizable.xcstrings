@@ -10303,6 +10303,219 @@
           }
         }
       }
+    },
+    "Započni sljedeći trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start next workout"
+          }
+        }
+      }
+    },
+    "Upiši tjelesnu težinu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log body weight"
+          }
+        }
+      }
+    },
+    "Pokreće spremljeni trening ili prazan trening i otvara ga u aplikaciji." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts a saved workout or an empty workout and opens it in the app."
+          }
+        }
+      }
+    },
+    "Spremljeni trening. Bez njega se pokreće prazan trening." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A saved workout. Without one, an empty workout starts."
+          }
+        }
+      }
+    },
+    "Pokreće sljedeći trening iz aktivnog rasporeda i otvara ga u aplikaciji." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts the next workout from the active schedule and opens it in the app."
+          }
+        }
+      }
+    },
+    "Završava i sprema trening u tijeku. Nezavršene serije se brišu, kao kad trening završiš na ekranu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finishes and saves the workout in progress. Uncompleted sets are removed, just like when you finish the workout on screen."
+          }
+        }
+      }
+    },
+    "Sprema današnju tjelesnu težinu u jedinici iz postavki aplikacije (kg ili lbs)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saves today's body weight in the unit from the app's settings (kg or lbs)."
+          }
+        }
+      }
+    },
+    "Tjelesna težina u jedinici iz postavki aplikacije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body weight in the unit from the app's settings."
+          }
+        }
+      }
+    },
+    "Kolika je tvoja težina?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What is your weight?"
+          }
+        }
+      }
+    },
+    "Taj trening više ne postoji ili nema vježbi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That workout no longer exists or has no exercises."
+          }
+        }
+      }
+    },
+    "Radnja nije uspjela. Pokušaj u aplikaciji." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The action didn't work. Try it in the app."
+          }
+        }
+      }
+    },
+    "Nijedan trening nije u tijeku." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workout is in progress."
+          }
+        }
+      }
+    },
+    "Trening vodi Apple Watch. Završi ga na satu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Watch is leading this workout. Finish it on your watch."
+          }
+        }
+      }
+    },
+    "Trening još nema nijednu završenu seriju, pa se ne može spremiti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout has no completed sets yet, so it can't be saved."
+          }
+        }
+      }
+    },
+    "Trening %@ je spremljen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout %@ saved."
+          }
+        }
+      }
+    },
+    "Težina %@ je spremljena." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight %@ saved."
+          }
+        }
+      }
+    },
+    "Trening %@ je već u tijeku." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout %@ is already in progress."
+          }
+        }
+      }
+    },
+    "Trening %@ je započet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout %@ started."
+          }
+        }
+      }
+    },
+    "Nemaš aktivan raspored sa sljedećim treningom." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You don't have an active schedule with a next workout."
+          }
+        }
+      }
+    },
+    "%@" : {
+      "shouldTranslate" : false
+    },
+    "Težina mora biti između 20 i 400 kg." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight must be between 20 and 400 kg."
+          }
+        }
+      }
+    },
+    "Prvo otvori aplikaciju i dovrši uvod." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the app and finish the setup first."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

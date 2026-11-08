@@ -297,6 +297,19 @@ struct StatisticsTests {
 @Suite("Praćenje tijela")
 struct BodyTrackingTests {
 
+    @Test("Težina iz Prečaca: sprema se u kg, a broj izvan razumnog raspona se odbija")
+    func shortcutWeight() throws {
+        let tracking = BodyTracking(context: try makeContext())
+        let saved = try tracking.addShortcutWeight(kilograms: 81.4, date: base)
+        #expect(saved.kind == .weight)
+        #expect(saved.value == 81.4)
+        #expect(saved.source == .manual)
+        #expect(throws: BodyTrackingError.invalidValue) { try tracking.addShortcutWeight(kilograms: 8, date: base) }
+        #expect(throws: BodyTrackingError.invalidValue) { try tracking.addShortcutWeight(kilograms: 800, date: base) }
+        #expect(throws: BodyTrackingError.invalidValue) { try tracking.addShortcutWeight(kilograms: .nan, date: base) }
+        #expect(try tracking.measurements(of: .weight).count == 1)
+    }
+
     @Test("Unos, povijest, promjena i brisanje")
     func basics() throws {
         let context = try makeContext()
