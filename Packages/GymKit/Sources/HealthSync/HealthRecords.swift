@@ -99,17 +99,51 @@ public struct HealthBodySample: Sendable, Equatable {
     }
 }
 
-/// Trening koji treba spremiti u Zdravlje.
-public struct HealthWorkoutExport: Sendable, Equatable {
-    public var sessionId: UUID
+/// Jedan trening u Zdravlju. Trening iz aplikacije može biti više njih jedan za drugim (snaga pa kardio),
+/// jer jedan HealthKit trening ne može miješati vrste aktivnosti (osim triatlona).
+public struct HealthWorkoutSegment: Sendable, Equatable {
     public var activity: HealthActivity
     public var start: Date
     public var end: Date
 
+    public init(activity: HealthActivity, start: Date, end: Date) {
+        self.activity = activity
+        self.start = start
+        self.end = end
+    }
+
+    public var duration: TimeInterval { end.timeIntervalSince(start) }
+}
+
+/// Trening koji treba spremiti u Zdravlje.
+public struct HealthWorkoutExport: Sendable, Equatable {
+    public var sessionId: UUID
+    /// Treninzi u Zdravlju redom po vremenu; uvijek barem jedan. Bez kardio vježbi jedan trening za cijeli trening.
+    public var segments: [HealthWorkoutSegment]
+
+    /// Vrsta glavnog treninga.
+    public var activity: HealthActivity { segments[primaryIndex].activity }
+    public var start: Date { segments.first?.start ?? .distantPast }
+    public var end: Date { segments.last?.end ?? .distantPast }
+    /// Glavni trening: najdulji trening snage, a bez snage najdulji trening. Njegov id ide u `Session`.
+    public var primaryIndex: Int {
+        let strength = segments.indices.filter { !segments[$0].activity.isCardio }
+        let candidates = strength.isEmpty ? Array(segments.indices) : strength
+        return candidates.max { segments[$0].duration < segments[$1].duration } ?? 0
+    }
+
+    /// Kardio blokovi razmaknuti najviše ovoliko su jedan kardio trening (prijelaz sa sprave na spravu).
+    public static let cardioJoinGap: TimeInterval = 5 * 60
+    /// Kraći dio od ovoga ne ide u Zdravlje kao zaseban trening.
+    public static let minimumSegment: TimeInterval = 60
+
     /// Spremaju se samo završeni treninzi koje je vodio iPhone, koji još nisu u Zdravlju i nisu iz njega uvezeni.
     /// Trening koji vodi sat sprema sam sat (`HKWorkoutSession`, faza 8), a isto i trening s iPhonea
     /// za koji je sat pokrenuo sesiju u Zdravlju (`Session.healthRecordedByWatch`).
-    public static func make(for session: Session) -> HealthWorkoutExport? {
+    ///
+    /// Kardio vježbe (`isCardio` po ključu `ExerciseRef.key`) postaju zasebni kardio treninzi u vremenu
+    /// svojih serija (kvačica minus trajanje serije), a snaga ostaje u razmacima između njih.
+    public static func make(for session: Session, isCardio: (String) -> Bool = { _ in false }) -> HealthWorkoutExport? {
         guard session.state == .finished,
               session.controllingDevice == .phone,
               !session.healthRecordedByWatch,
@@ -118,8 +152,66 @@ public struct HealthWorkoutExport: Sendable, Equatable {
               let end = session.endedAt, end > session.startedAt
         else { return nil }
         return HealthWorkoutExport(
-            sessionId: session.id, activity: .forExport(of: session.kind), start: session.startedAt, end: end
+            sessionId: session.id,
+            segments: segments(of: session, start: session.startedAt, end: end, isCardio: isCardio)
         )
+    }
+
+    static func segments(
+        of session: Session, start: Date, end: Date, isCardio: (String) -> Bool
+    ) -> [HealthWorkoutSegment] {
+        let whole = [HealthWorkoutSegment(activity: .forExport(of: session.kind), start: start, end: end)]
+        guard session.kind == .strength else { return whole }
+
+        var cardio: [(start: Date, end: Date)] = []
+        var strengthSets: [Date] = []
+        for exercise in session.orderedExercises where !exercise.isRemoved {
+            let done = exercise.orderedSets.filter(\.isCompleted)
+            guard isCardio(exercise.exerciseKey) else {
+                strengthSets += done.compactMap(\.completedAt)
+                continue
+            }
+            for set in done {
+                guard let finished = set.completedAt, let seconds = set.durationSeconds, seconds > 0 else { continue }
+                let from = max(start, finished.addingTimeInterval(-TimeInterval(seconds)))
+                let to = min(end, finished)
+                if to > from { cardio.append((from, to)) }
+            }
+        }
+        guard !cardio.isEmpty else { return whole }
+        guard !strengthSets.isEmpty else {
+            return [HealthWorkoutSegment(activity: .mixedCardio, start: start, end: end)]
+        }
+
+        // Kardio blokovi: bliski se spajaju, a blok blizu početka ili kraja treninga dobiva i taj rub.
+        var blocks: [(start: Date, end: Date)] = []
+        for interval in cardio.sorted(by: { $0.start < $1.start }) {
+            if let last = blocks.last, interval.start.timeIntervalSince(last.end) <= cardioJoinGap {
+                blocks[blocks.count - 1].end = max(last.end, interval.end)
+            } else {
+                blocks.append(interval)
+            }
+        }
+        if let first = blocks.first, first.start.timeIntervalSince(start) <= cardioJoinGap { blocks[0].start = start }
+        if let last = blocks.last, end.timeIntervalSince(last.end) <= cardioJoinGap { blocks[blocks.count - 1].end = end }
+
+        // Snaga je u razmacima između kardio blokova, ako je u razmaku označena barem jedna serija snage.
+        var result: [HealthWorkoutSegment] = []
+        var cursor = start
+        func addStrength(until limit: Date) {
+            guard limit.timeIntervalSince(cursor) >= minimumSegment,
+                  strengthSets.contains(where: { $0 > cursor && $0 <= limit }) else { return }
+            result.append(HealthWorkoutSegment(activity: .traditionalStrengthTraining, start: cursor, end: limit))
+        }
+        for block in blocks {
+            addStrength(until: block.start)
+            if block.end.timeIntervalSince(block.start) >= minimumSegment {
+                result.append(HealthWorkoutSegment(activity: .mixedCardio, start: block.start, end: block.end))
+            }
+            cursor = max(cursor, block.end)
+        }
+        addStrength(until: end)
+        return result.isEmpty ? whole : result
     }
 }
 
