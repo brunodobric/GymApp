@@ -56,14 +56,14 @@ private struct LastWorkoutView: View {
 
     /// "Snaga + kardio · 1 h 4 min · 18 serija".
     private func detail(_ last: WidgetSnapshot.LastWorkout) -> Text {
-        var text = Text(last.mix.title)
+        var parts = [Text(last.mix.title)]
         if let seconds = last.durationSeconds, seconds >= 60 {
-            text = text + Text(verbatim: " · \(WidgetText.duration(seconds))")
+            parts.append(Text(WidgetText.duration(seconds)))
         }
         if last.hardSets > 0 {
-            text = text + Text(verbatim: " · ") + Text("\(last.hardSets) serija")
+            parts.append(Text("\(last.hardSets) serija"))
         }
-        return text
+        return parts.dropFirst().reduce(parts[0]) { $0 + Text(verbatim: " · ") + $1 }
     }
 }
 

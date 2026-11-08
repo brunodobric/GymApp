@@ -267,69 +267,6 @@ struct HomeScreen: View {
         }
     }
 
-    private func startNextWorkout() {
-        guard presentedSession == nil else { return }
-        if let active = activeSessions.first {
-            presentedSession = active
-        } else if let planned = upcomingWorkouts.first {
-            start(planned)
-        } else if !startableTemplates.isEmpty {
-            pickerSchedule = nil
-            showsTemplatePicker = true
-        } else {
-            startWorkout()
-        }
-    }
-
-    /// Je li preko Početne otvoren list ili dijalog. Novi list ili puni ekran treninga mora čekati da se zatvori.
-    private var hasPresentedSheet: Bool {
-        showsSettings || showsCardEditor || showsTemplatePicker || widgetSheet != nil || recovery != nil
-    }
-
-    /// Zatvara listove i dijalog oporavka preko Početne (dodir na widget vodi na čistu Početnu ili na jedan list).
-    /// Trening u tijeku ostaje na kartici, pa se oporavak može nastaviti i odande.
-    private func dismissSheets() {
-        showsSettings = false
-        showsCardEditor = false
-        showsTemplatePicker = false
-        chosenWorkout = nil
-        widgetSheet = nil
-        recovery = nil
-    }
-
-    /// Otvara list iz widgeta. Ako je nešto već otvoreno, prvo se zatvara, jer se novi list ne može prikazati
-    /// dok se stari zatvara.
-    private func openWidgetSheet(_ sheet: WidgetSheet) {
-        let hadSheet = hasPresentedSheet
-        dismissSheets()
-        if hadSheet {
-            Task {
-                try? await Task.sleep(for: .milliseconds(500))
-                widgetSheet = sheet
-            }
-        } else {
-            widgetSheet = sheet
-        }
-    }
-
-    @ViewBuilder
-    private func widgetSheetContent(_ sheet: WidgetSheet) -> some View {
-        NavigationStack {
-            Group {
-                switch sheet {
-                case .week: OverviewScreen()
-                case .bodyWeight: BodyScreen()
-                case .session(let session): SessionDetailScreen(session: session, unit: unit)
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Gotovo") { widgetSheet = nil }
-                }
-            }
-        }
-    }
-
     /// Jednom po uređaju: prazna Početna dobiva zadane kartice, a postojeća prelazi na karticu Ovaj tjedan
     /// (tjedni volumen postaje Ovaj tjedan, sljedeći trening se uklanja).
     private func prepareCards() {
@@ -465,6 +402,74 @@ struct HomeScreen: View {
             if let presentedSession { PhoneWatchSync.shared.sessionStarted(presentedSession) }
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
+        }
+    }
+}
+
+// MARK: - Widgeti
+
+/// Zahtjevi iz widgeta i kontrole: pokretanje treninga i listovi preko Početne.
+extension HomeScreen {
+    private func startNextWorkout() {
+        guard presentedSession == nil else { return }
+        if let active = activeSessions.first {
+            presentedSession = active
+        } else if let planned = upcomingWorkouts.first {
+            start(planned)
+        } else if !startableTemplates.isEmpty {
+            pickerSchedule = nil
+            showsTemplatePicker = true
+        } else {
+            startWorkout()
+        }
+    }
+
+    /// Je li preko Početne otvoren list ili dijalog. Novi list ili puni ekran treninga mora čekati da se zatvori.
+    private var hasPresentedSheet: Bool {
+        showsSettings || showsCardEditor || showsTemplatePicker || widgetSheet != nil || recovery != nil
+    }
+
+    /// Zatvara listove i dijalog oporavka preko Početne (dodir na widget vodi na čistu Početnu ili na jedan list).
+    /// Trening u tijeku ostaje na kartici, pa se oporavak može nastaviti i odande.
+    private func dismissSheets() {
+        showsSettings = false
+        showsCardEditor = false
+        showsTemplatePicker = false
+        chosenWorkout = nil
+        widgetSheet = nil
+        recovery = nil
+    }
+
+    /// Otvara list iz widgeta. Ako je nešto već otvoreno, prvo se zatvara, jer se novi list ne može prikazati
+    /// dok se stari zatvara.
+    private func openWidgetSheet(_ sheet: WidgetSheet) {
+        let hadSheet = hasPresentedSheet
+        dismissSheets()
+        if hadSheet {
+            Task {
+                try? await Task.sleep(for: .milliseconds(500))
+                widgetSheet = sheet
+            }
+        } else {
+            widgetSheet = sheet
+        }
+    }
+
+    @ViewBuilder
+    private func widgetSheetContent(_ sheet: WidgetSheet) -> some View {
+        NavigationStack {
+            Group {
+                switch sheet {
+                case .week: OverviewScreen()
+                case .bodyWeight: BodyScreen()
+                case .session(let session): SessionDetailScreen(session: session, unit: unit)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Gotovo") { widgetSheet = nil }
+                }
+            }
         }
     }
 }

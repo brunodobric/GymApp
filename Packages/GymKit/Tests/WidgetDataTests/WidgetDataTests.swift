@@ -140,7 +140,7 @@ struct WidgetWeekTests {
 struct WidgetLinkTests {
     @Test("Svaka poveznica se pročita natrag", arguments: [
         WidgetLink.home, .startWorkout, .activeWorkout, .week, .bodyWeight, .lastWorkout,
-        .session(UUID(uuidString: "6E1F2A3B-4C5D-4E6F-8A9B-0C1D2E3F4A5B")!),
+        .session(UUID(uuidString: "6E1F2A3B-4C5D-4E6F-8A9B-0C1D2E3F4A5B")!)
     ])
     func roundTrip(_ link: WidgetLink) {
         #expect(WidgetLink(url: link.url) == link)

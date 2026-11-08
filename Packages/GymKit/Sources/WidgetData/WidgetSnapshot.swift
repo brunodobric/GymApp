@@ -53,7 +53,7 @@ public struct WidgetSnapshot: Codable, Equatable, Sendable {
             nextWorkout: NextWorkout(name: "Push", scheduleName: "Push / Pull / Legs", exerciseCount: 6, exercises: [
                 .init(name: "Bench press", workingSets: 4, reps: 8, weightKg: 80),
                 .init(name: "Military press", workingSets: 3, reps: 10, weightKg: 45),
-                .init(name: "Dips", workingSets: 3, reps: 12),
+                .init(name: "Dips", workingSets: 3, reps: 12)
             ]),
             week: week,
             bodyWeight: BodyWeight(latestKg: 82.4, date: now, changeKg: -0.6, points: [83.2, 83.0, 83.1, 82.8, 82.9, 82.6, 82.7, 82.4]),
