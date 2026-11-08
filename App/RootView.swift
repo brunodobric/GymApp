@@ -24,6 +24,7 @@ struct RootView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
     @Query private var settingsList: [UserSettings]
+    @Query private var templates: [WorkoutTemplate]
 
     private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
 
@@ -63,6 +64,14 @@ struct RootView: View {
             selection = .home
             homeRequest = .activeWorkout
         }
+        // Trening pokrenut iz Prečaca, Sirija ili Action buttona otvara se kao dodir na Live Activity.
+        // `initial`: pri hladnom pokretanju akcija može završiti prije nego što se prozor prikaže.
+        .onChange(of: IntentRouter.shared.opensActiveWorkout, initial: true) { _, opens in
+            guard opens else { return }
+            IntentRouter.shared.opensActiveWorkout = false
+            selection = .home
+            homeRequest = .activeWorkout
+        }
         .tint(settings?.accent.color ?? AccentChoice.blue.color)
         .preferredColorScheme(settings?.theme.colorScheme)
         .fullScreenCover(isPresented: $showsOnboarding) {
@@ -88,6 +97,10 @@ struct RootView: View {
             PhoneWatchSync.shared.refreshContext()
             await LegacyCardioPlans.removeFromWatch()
             await HealthService.shared.importNewData(context: context)
+        }
+        // Prečaci nude spremljene treninge kao parametar fraze ("Započni Push u Apolonu").
+        .task(id: templates.count) {
+            GymAppShortcuts.updateAppShortcutParameters()
         }
         .onChange(of: scenePhase) { _, phase in
             // Satu se šalju svježi treninzi i postavke, i kad korisnik izađe iz aplikacije nakon izmjena.

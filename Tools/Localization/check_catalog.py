@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Provjera String Cataloga (Resources/Localization/Localizable.xcstrings).
+"""Provjera String Cataloga (Localizable.xcstrings, InfoPlist.xcstrings i fraze za Prečace u AppShortcuts.xcstrings).
 
 Izvorni jezik je hrvatski: ključ je hrvatski tekst iz koda. Svaki ključ koji se
 prevodi mora imati prevedeni engleski tekst s istim formatnim argumentima.
@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CATALOGS = [
     ROOT / "Resources" / "Localization" / "Localizable.xcstrings",
     ROOT / "App" / "InfoPlist.xcstrings",
+    ROOT / "App" / "AppShortcuts.xcstrings",
     ROOT / "WatchApp" / "InfoPlist.xcstrings",
 ]
 REQUIRED_LANGUAGE = "en"

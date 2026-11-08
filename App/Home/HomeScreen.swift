@@ -219,8 +219,9 @@ struct HomeScreen: View {
         guard presentedSession == nil else { return }
         switch request {
         case .activeWorkout:
-            // Iz Live Activityja: zatvara se ono što je otvoreno preko Početne i otvara puni ekran treninga.
-            guard let active = activeSessions.first else { return }
+            // Iz Live Activityja ili Prečaca: zatvara se ono što je otvoreno preko Početne i otvara puni ekran treninga.
+            // Trening pokrenut iz Prečaca je u bazi i prije nego što ga @Query pokaže.
+            guard let active = activeSessions.first ?? (try? GymQueries(context: context).activeSession()) else { return }
             let hadSheet = showsSettings || showsCardEditor || showsTemplatePicker
             showsSettings = false
             showsCardEditor = false

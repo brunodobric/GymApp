@@ -1,0 +1,56 @@
+{
+  "sourceLanguage" : "hr",
+  "strings" : {
+    "Započni trening u ${applicationName}" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start a workout in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Započni ${workout} u ${applicationName}" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start ${workout} in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Započni sljedeći trening u ${applicationName}" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start my next workout in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Završi trening u ${applicationName}" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish my workout in ${applicationName}"
+          }
+        }
+      }
+    },
+    "Upiši težinu u ${applicationName}" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log my weight in ${applicationName}"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
