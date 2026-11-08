@@ -1,6 +1,7 @@
 import Models
 import SwiftData
 import SwiftUI
+import WidgetData
 
 /// Glavna navigacija: pet tabova (specifikacija, odjeljak 3).
 ///
@@ -57,11 +58,22 @@ struct RootView: View {
                 homeRequest = request
             }
         ))
-        // Dodir na Live Activity otvara Početnu i preko nje puni ekran aktivnog treninga.
+        // Dodir na Live Activity otvara Početnu i preko nje puni ekran aktivnog treninga,
+        // a widgeti otvaraju Početnu, pregled tjedna, težinu ili zadnji trening.
         .onOpenURL { url in
-            guard LiveActivityLink.isActiveWorkout(url) else { return }
+            guard let link = WidgetLink(url: url) else { return }
             selection = .home
-            homeRequest = .activeWorkout
+            homeRequest = HomeRequest(link)
+        }
+        // Gumb ▶ na widgetu i kontrola "Započni trening" (intent se izvršava u aplikaciji).
+        .onChange(of: AppRequestRouter.shared.pending, initial: true) {
+            guard let pending = AppRequestRouter.shared.take() else { return }
+            selection = .home
+            homeRequest = pending
+        }
+        // Podaci s drugih uređaja (iCloud) ne prolaze kroz spremanje u ovoj aplikaciji: widgeti se osvježe nakon uvoza.
+        .onChange(of: SyncMonitor.shared.tracker.lastImport) {
+            WidgetRefresher.shared.scheduleRefresh()
         }
         // Trening pokrenut iz Prečaca, Sirija ili Action buttona otvara se kao dodir na Live Activity.
         // `initial`: pri hladnom pokretanju akcija može završiti prije nego što se prozor prikaže.
@@ -104,8 +116,11 @@ struct RootView: View {
             // Prečaci nude spremljene treninge kao parametar fraze ("Započni Push u Apolonu"). Osvježava se
             // pri izlasku iz aplikacije, pa vrijede i novi, preimenovani i obrisani treninzi.
             if phase == .background { GymAppShortcuts.updateAppShortcutParameters() }
+            // Widgeti dobivaju svježu snimku i kad se nije ništa spremilo (npr. novi dan dok je aplikacija bila zatvorena).
+            if phase == .background { WidgetRefresher.shared.refresh() }
             guard phase == .active else { return }
             ReminderScheduler.refresh(context: context)
+            WidgetRefresher.shared.scheduleRefresh()
             // Trening započet na satu dok je iPhone bio zaključan dobiva Live Activity tek sad:
             // sustav je dopušta pokrenuti samo dok je aplikacija otvorena.
             WorkoutLiveUpdates.shared.refresh()

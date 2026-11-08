@@ -2995,6 +2995,26 @@
         }
       }
     },
+    "Još nema odrađenih treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No workouts yet."
+          }
+        }
+      }
+    },
+    "Još nema rekorda." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No records yet."
+          }
+        }
+      }
+    },
     "Još nema treninga u nizu." : {
       "localizations" : {
         "en" : {
@@ -3425,6 +3445,16 @@
         }
       }
     },
+    "Najnoviji osobni rekord." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your most recent personal record."
+          }
+        }
+      }
+    },
     "najteža serija" : {
       "localizations" : {
         "en" : {
@@ -3537,6 +3567,26 @@
         }
       }
     },
+    "Otvara Apolon i pokreće sljedeći trening iz rasporeda." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens Apolon and starts the next workout in your schedule."
+          }
+        }
+      }
+    },
+    "Otvara Apolon za početak treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens Apolon to start a workout."
+          }
+        }
+      }
+    },
     "Ova godina" : {
       "localizations" : {
         "en" : {
@@ -3573,6 +3623,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "By month"
+          }
+        }
+      }
+    },
+    "Pokreće sljedeći trening iz rasporeda." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts the next workout in your schedule."
           }
         }
       }
@@ -3873,6 +3933,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Body weight"
+          }
+        }
+      }
+    },
+    "Trening koji je na redu u rasporedu, s gumbom za početak." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The next workout in your schedule, with a button to start it."
+          }
+        }
+      }
+    },
+    "Treninzi ovog tjedna prema tvom cilju i tjedni niz." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This week's workouts against your goal, and your weekly streak."
+          }
+        }
+      }
+    },
+    "Treninzi ovog tjedna prema tvom cilju." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This week's workouts against your goal."
           }
         }
       }
@@ -9307,6 +9397,26 @@
         }
       }
     },
+    "Zadnja izmjerena težina i promjena u 30 dana." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your latest weight and the change over 30 days."
+          }
+        }
+      }
+    },
+    "Zadnja izmjerena težina." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your latest weight."
+          }
+        }
+      }
+    },
     "Zadnja sinkronizacija: %@" : {
       "localizations" : {
         "en" : {
@@ -9323,6 +9433,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The last three workouts at the same weight had 4 or more reps in reserve. Add one weight step."
+          }
+        }
+      }
+    },
+    "Zadnji odrađeni trening i rekordi iz njega." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your latest workout and its records."
+          }
+        }
+      }
+    },
+    "Zadnji rekord" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latest Record"
           }
         }
       }

@@ -92,6 +92,8 @@ enum ShortcutActions {
             ReminderScheduler.refresh(context: context)
             await WorkoutLiveUpdates.shared.refreshAndWait()
             await HealthService.shared.saveWorkout(of: session, context: context)
+            // Akcija radi u pozadini, pa se widgeti osvježavaju odmah, ne nakon odgode.
+            WidgetRefresher.shared.refresh()
             return "Trening \(session.name) je spremljen."
         }
     }
@@ -108,6 +110,8 @@ enum ShortcutActions {
             logger.error("Težina iz Prečaca nije spremljena: \(String(describing: error))")
             throw ShortcutIntentError.failed
         }
+        // Akcija radi u pozadini, pa se widgeti osvježavaju odmah, ne nakon odgode.
+        WidgetRefresher.shared.refresh()
         let text = WeightFormatter(unit: unit).string(fromKilograms: kilograms)
         return "Težina \(text) je spremljena."
     }

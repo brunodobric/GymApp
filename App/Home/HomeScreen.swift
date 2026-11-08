@@ -44,6 +44,8 @@ struct HomeScreen: View {
     @AppStorage("dashboard.weekCardUpgraded") private var weekCardUpgraded = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var recovery: RecoveryPrompt?
+    /// Ekran koji je otvorio widget (pregled tjedna, težina, zadnji trening), kao list preko Početne.
+    @State private var widgetSheet: WidgetSheet?
     #if DEBUG
     @State private var showsPrototypes = false
     #endif
@@ -112,6 +114,9 @@ struct HomeScreen: View {
             }
             .sheet(isPresented: $showsCardEditor) {
                 DashboardEditor()
+            }
+            .sheet(item: $widgetSheet) { sheet in
+                widgetSheetContent(sheet)
             }
             .fullScreenCover(item: $presentedSession) { session in
                 ActiveWorkoutScreen(session: session)
@@ -222,12 +227,8 @@ struct HomeScreen: View {
             // Iz Live Activityja ili Prečaca: zatvara se ono što je otvoreno preko Početne i otvara puni ekran treninga.
             // Trening pokrenut iz Prečaca je u bazi i prije nego što ga @Query pokaže.
             guard let active = activeSessions.first ?? (try? GymQueries(context: context).activeSession()) else { return }
-            let hadSheet = showsSettings || showsCardEditor || showsTemplatePicker
-            showsSettings = false
-            showsCardEditor = false
-            showsTemplatePicker = false
-            chosenWorkout = nil
-            recovery = nil
+            let hadSheet = hasPresentedSheet
+            dismissSheets()
             if hadSheet {
                 // Puni ekran se ne može prikazati dok se list još zatvara.
                 Task {
@@ -239,16 +240,30 @@ struct HomeScreen: View {
             }
         case .settings:
             showsSettings = true
+        case .home:
+            dismissSheets()
+        case .week:
+            openWidgetSheet(.week)
+        case .bodyWeight:
+            openWidgetSheet(.bodyWeight)
+        case .lastWorkout:
+            guard let last = lastSession else { return }
+            openWidgetSheet(.session(last))
+        case .session(let id):
+            var descriptor = FetchDescriptor<Session>(predicate: #Predicate { $0.id == id })
+            descriptor.fetchLimit = 1
+            guard let session = try? context.fetch(descriptor).first else { return }
+            openWidgetSheet(.session(session))
         case .startWorkout:
-            if let active = activeSessions.first {
-                presentedSession = active
-            } else if let planned = upcomingWorkouts.first {
-                start(planned)
-            } else if !startableTemplates.isEmpty {
-                pickerSchedule = nil
-                showsTemplatePicker = true
+            // Iz widgeta ili kontrole aplikacija može imati otvoren list: puni ekran treninga čeka da se zatvori.
+            if hasPresentedSheet {
+                dismissSheets()
+                Task {
+                    try? await Task.sleep(for: .milliseconds(500))
+                    startNextWorkout()
+                }
             } else {
-                startWorkout()
+                startNextWorkout()
             }
         }
     }
@@ -388,6 +403,89 @@ struct HomeScreen: View {
             if let presentedSession { PhoneWatchSync.shared.sessionStarted(presentedSession) }
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
+        }
+    }
+}
+
+// MARK: - Widgeti
+
+/// Zahtjevi iz widgeta i kontrole: pokretanje treninga i listovi preko Početne.
+extension HomeScreen {
+    private func startNextWorkout() {
+        guard presentedSession == nil else { return }
+        if let active = activeSessions.first {
+            presentedSession = active
+        } else if let planned = upcomingWorkouts.first {
+            start(planned)
+        } else if !startableTemplates.isEmpty {
+            pickerSchedule = nil
+            showsTemplatePicker = true
+        } else {
+            startWorkout()
+        }
+    }
+
+    /// Je li preko Početne otvoren list ili dijalog. Novi list ili puni ekran treninga mora čekati da se zatvori.
+    private var hasPresentedSheet: Bool {
+        showsSettings || showsCardEditor || showsTemplatePicker || widgetSheet != nil || recovery != nil
+    }
+
+    /// Zatvara listove i dijalog oporavka preko Početne (dodir na widget vodi na čistu Početnu ili na jedan list).
+    /// Trening u tijeku ostaje na kartici, pa se oporavak može nastaviti i odande.
+    private func dismissSheets() {
+        showsSettings = false
+        showsCardEditor = false
+        showsTemplatePicker = false
+        chosenWorkout = nil
+        widgetSheet = nil
+        recovery = nil
+    }
+
+    /// Otvara list iz widgeta. Ako je nešto već otvoreno, prvo se zatvara, jer se novi list ne može prikazati
+    /// dok se stari zatvara.
+    private func openWidgetSheet(_ sheet: WidgetSheet) {
+        let hadSheet = hasPresentedSheet
+        dismissSheets()
+        if hadSheet {
+            Task {
+                try? await Task.sleep(for: .milliseconds(500))
+                widgetSheet = sheet
+            }
+        } else {
+            widgetSheet = sheet
+        }
+    }
+
+    @ViewBuilder
+    private func widgetSheetContent(_ sheet: WidgetSheet) -> some View {
+        NavigationStack {
+            Group {
+                switch sheet {
+                case .week: OverviewScreen()
+                case .bodyWeight: BodyScreen()
+                case .session(let session): SessionDetailScreen(session: session, unit: unit)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Gotovo") { widgetSheet = nil }
+                }
+            }
+        }
+    }
+}
+
+/// List koji otvara widget.
+private enum WidgetSheet: Identifiable {
+    case week
+    case bodyWeight
+    case session(Session)
+
+    var id: String {
+        switch self {
+        case .week: "week"
+        case .bodyWeight: "bodyWeight"
+        case .session(let session): "session-\(session.id.uuidString)"
         }
     }
 }

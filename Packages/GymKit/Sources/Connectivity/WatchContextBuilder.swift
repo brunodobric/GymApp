@@ -40,6 +40,15 @@ public struct WatchContextBuilder {
         )
     }
 
+    /// Samo sljedeći trening prvog aktivnog rasporeda, s planiranim serijama (za widgete na iPhoneu).
+    public func nextWorkout() throws -> PlannedWorkoutPayload? {
+        guard let planned = try ScheduleEngine(context: context).upcomingWorkouts().first else { return nil }
+        return try payload(
+            template: planned.template, exercises: planned.exercises,
+            scheduleId: planned.schedule.id, scheduleName: planned.schedule.name
+        )
+    }
+
     func payload(
         template: WorkoutTemplate, exercises: [PlannedExercise], scheduleId: UUID?, scheduleName: String?
     ) throws -> PlannedWorkoutPayload {

@@ -103,6 +103,8 @@ enum AppServices {
         // Stari id-jevi vježbi (katalog prije MoveKita) prelaze na nove, a stari kardio planovi u treninge.
         migrateStoredData()
         PhoneWatchSync.shared.start(container: container)
+        // Widgeti i komplikacije: nova snimka nakon svakog spremanja baze.
+        WidgetRefresher.shared.start(container: container)
         SyncMonitor.shared.start()
         // Rušenja, zastoji i performanse (MetricKit), samo u lokalni dnevnik.
         MetricsReporter.shared.start()

@@ -35,7 +35,8 @@ extension ComplicationState {
         let timer = restTimer.flatMap { $0.isExpired(at: Date()) ? nil : $0 }
         let state = ComplicationState(
             nextWorkoutName: next?.name, nextScheduleName: next?.scheduleName, activeWorkoutName: active?.name,
-            restStartedAt: timer?.startedAt, restEndsAt: timer?.endsAt
+            restStartedAt: timer?.startedAt, restEndsAt: timer?.endsAt,
+            week: context.week, bodyWeightKg: context.bodyWeightKg, weightUnit: context.weightUnit
         )
         if state.save() { WidgetCenter.shared.reloadAllTimelines() }
     }

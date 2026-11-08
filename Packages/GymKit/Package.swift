@@ -23,6 +23,8 @@ let package = Package(
         .library(name: "HealthSync", targets: ["HealthSync"]),
         .library(name: "Diagnostics", targets: ["Diagnostics"]),
         .library(name: "Demo", targets: ["Demo"]),
+        .library(name: "WidgetData", targets: ["WidgetData"]),
+        .library(name: "WidgetSync", targets: ["WidgetSync"]),
     ],
     targets: [
         .target(name: "Units"),
@@ -57,7 +59,7 @@ let package = Package(
         // Veza iPhone ↔ Watch: snimke treninga, naredbe, kontekst za sat i logika treninga na satu.
         .target(
             name: "Connectivity",
-            dependencies: ["Models", "Catalog", "Training", "Planning", "Units"],
+            dependencies: ["Models", "Catalog", "Training", "Planning", "Units", "WidgetData"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .target(
@@ -78,7 +80,21 @@ let package = Package(
             dependencies: ["Demo", "Models", "Planning", "Stats", "Training", "Catalog"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
+        // Snimka za widgete (iPhone, iPad, sat): bez baze, da je widget extension može čitati.
+        .target(name: "WidgetData", dependencies: ["Units"]),
+        // Slaže snimku za widgete iz baze (u aplikaciji na iPhoneu).
+        .target(
+            name: "WidgetSync",
+            dependencies: ["WidgetData", "Models", "Stats", "Training", "Connectivity", "Units"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .testTarget(name: "UnitsTests", dependencies: ["Units"]),
+        .testTarget(name: "WidgetDataTests", dependencies: ["WidgetData", "Units"]),
+        .testTarget(
+            name: "WidgetSyncTests",
+            dependencies: ["WidgetSync", "WidgetData", "Models", "Planning", "Stats", "Training", "Catalog"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .testTarget(name: "DiagnosticsTests", dependencies: ["Diagnostics"]),
         .testTarget(
             name: "ConnectivityTests",

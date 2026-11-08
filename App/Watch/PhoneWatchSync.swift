@@ -141,6 +141,9 @@ final class PhoneWatchSync {
         if lastContext == nil, let context {
             lastContext = try? WatchContextBuilder(context: context).make()
         }
+        // Tjedni cilj i težina za komplikacije na satu, iz iste snimke kao widgeti na iPhoneu.
+        lastContext?.week = WidgetRefresher.shared.latest?.week
+        lastContext?.bodyWeightKg = WidgetRefresher.shared.latest?.bodyWeight?.latestKg
         transport.updateContext(ApplicationContextPayload(watchContext: lastContext, session: session))
     }
 

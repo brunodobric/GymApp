@@ -1,3 +1,6 @@
 #include "Shared.xcconfig"
 
+// App Group: snimka za widgete koju sprema aplikacija (WidgetSnapshotStore).
+CODE_SIGN_ENTITLEMENTS = Widgets/GymAppWidgets.entitlements
+
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) $(GYMAPP_EXTRA_CONDITIONS)

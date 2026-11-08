@@ -55,7 +55,7 @@ targets:
         buildPhase: resources
     dependencies:
       - package: GymKit
-        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup, HealthSync, Diagnostics, Demo]
+        products: [Units, Connectivity, Catalog, Models, Training, Planning, Stats, Backup, HealthSync, Diagnostics, Demo, WidgetData, WidgetSync]
       - target: GymAppWatch
       - target: GymAppWidgets
     info:
@@ -77,7 +77,7 @@ targets:
           - UIInterfaceOrientationLandscapeRight
         UIBackgroundModes: [remote-notification]
         NSSupportsLiveActivities: true
-        # Dodir na Live Activity otvara aktivni trening (Shared/LiveActivity/LiveActivityLink.swift).
+        # Dodir na Live Activity i widgete otvara aplikaciju (WidgetLink u paketu WidgetData, RootView.onOpenURL).
         CFBundleURLTypes:
           - CFBundleURLName: com.brunodobric.gymapp
             CFBundleURLSchemes: [apolon]
@@ -124,7 +124,7 @@ targets:
       - path: Resources/Localization
     dependencies:
       - package: GymKit
-        products: [Units, Catalog, Connectivity, Models, Training]
+        products: [Units, Catalog, Connectivity, Models, Training, WidgetData]
       - target: GymAppWatchWidgets
     info:
       path: WatchApp/Info.plist
@@ -148,7 +148,8 @@ targets:
         GENERATE_INFOPLIST_FILE: NO
     scheme: {}
 
-  # Widget extension: Live Activity (faza 9). Za sada samo kostur.
+  # Widget extension: Live Activity, widgeti na početnom i zaključanom zaslonu i kontrola "Započni trening".
+  # Podatke čita iz snimke u App Groupu (WidgetData), bez baze.
   GymAppWidgets:
     type: app-extension
     platform: iOS
@@ -158,6 +159,9 @@ targets:
       - Shared/LiveActivity
       # Zajednički String Catalog (hr i en) za sve targete.
       - path: Resources/Localization
+    dependencies:
+      - package: GymKit
+        products: [Units, WidgetData]
     info:
       path: Widgets/Info.plist
       properties:
@@ -172,7 +176,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp.widgets
         GENERATE_INFOPLIST_FILE: NO
 
-  # Complications na satu (WidgetKit za watchOS): sljedeći trening i aktivni odmor.
+  # Complications na satu (WidgetKit za watchOS): sljedeći trening, aktivni odmor, tjedni cilj, brzi početak i težina.
   GymAppWatchWidgets:
     type: app-extension
     platform: watchOS
@@ -181,6 +185,9 @@ targets:
       - Shared/WatchComplication
       # Zajednički String Catalog (hr i en) za sve targete.
       - path: Resources/Localization
+    dependencies:
+      - package: GymKit
+        products: [Units, WidgetData]
     info:
       path: WatchWidgets/Info.plist
       properties:

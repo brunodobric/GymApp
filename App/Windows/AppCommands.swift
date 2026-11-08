@@ -1,4 +1,6 @@
+import Foundation
 import SwiftUI
+import WidgetData
 
 /// Zahtjev Početnoj iz tipkovničkog prečaca (pokretanje treninga ili Postavke iz bilo kojeg taba).
 enum HomeRequest: Equatable {
@@ -6,6 +8,31 @@ enum HomeRequest: Equatable {
     case settings
     /// Dodir na Live Activity: puni ekran aktivnog treninga.
     case activeWorkout
+    /// Widgeti: Početna bez ičega preko nje.
+    case home
+    /// Widget Ovaj tjedan: pregled tekućeg tjedna.
+    case week
+    /// Widget težine: praćenje tijela.
+    case bodyWeight
+    /// Widget zadnjeg treninga: detalji zadnjeg treninga.
+    case lastWorkout
+    /// Widget rekorda: detalji treninga u kojem je rekord postavljen.
+    case session(UUID)
+}
+
+extension HomeRequest {
+    /// Zahtjev iz poveznice widgeta ili Live Activityja.
+    init(_ link: WidgetLink) {
+        switch link {
+        case .home: self = .home
+        case .startWorkout: self = .startWorkout
+        case .activeWorkout: self = .activeWorkout
+        case .week: self = .week
+        case .bodyWeight: self = .bodyWeight
+        case .lastWorkout: self = .lastWorkout
+        case .session(let id): self = .session(id)
+        }
+    }
 }
 
 /// Radnje glavnog prozora koje izbornik prečaca može pozvati. Objavljuje ih `RootView` aktivnog prozora.
