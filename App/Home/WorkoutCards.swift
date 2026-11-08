@@ -29,14 +29,8 @@ struct StartWorkoutCard: View {
         VStack(spacing: 0) {
             ForEach(planned, id: \.item.id) { workout in
                 Button { onStart(workout) } label: {
-                    if workout.template.kind == .cardio {
-                        StartRow(symbol: "applewatch", isProminent: true, subtitle: workout.schedule.name) {
-                            Text("Na satu: \(workout.template.name)")
-                        }
-                    } else {
-                        StartRow(symbol: "play.fill", isProminent: true, subtitle: workout.schedule.name) {
-                            Text("Započni: \(workout.template.name)")
-                        }
+                    StartRow(symbol: "play.fill", isProminent: true, subtitle: workout.schedule.name) {
+                        Text("Započni: \(workout.template.name)")
                     }
                 }
                 .accessibilityIdentifier("home.startPlanned")

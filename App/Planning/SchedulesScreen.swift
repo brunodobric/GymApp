@@ -219,11 +219,7 @@ struct SchedulesScreen: View {
             }
         case .template(let id):
             if let template = templates.first(where: { $0.id == id }) {
-                if template.kind == .cardio {
-                    CardioTemplateEditor(template: template, editing: editControls(for: .template(id)))
-                } else {
-                    TemplateEditorScreen(template: template, editing: editControls(for: .template(id)))
-                }
+                TemplateEditorScreen(template: template, editing: editControls(for: .template(id)))
             }
         case nil:
             ContentUnavailableView(
@@ -267,7 +263,7 @@ struct SchedulesScreen: View {
                             }
                         } icon: {
                             WorkoutKindIcon(
-                                mix: SessionCardio.mix(of: template, isCardio: isCardio), cardioSymbol: template.cardioPlanSymbol
+                                mix: SessionCardio.mix(of: template, isCardio: isCardio)
                             )
                         }
                     }
@@ -285,11 +281,6 @@ struct SchedulesScreen: View {
                 Menu("Dodaj", systemImage: "plus") {
                     Button("Novi raspored", systemImage: "calendar.badge.plus") { newSchedule() }
                     Button("Novi trening", systemImage: "dumbbell") { newTemplate() }
-                    Menu("Novi kardio trening", systemImage: "figure.run") {
-                        ForEach(CardioPreset.allCases) { preset in
-                            Button(preset.title) { newCardioTemplate(preset) }
-                        }
-                    }
                     Button("Gotovi programi", systemImage: "square.stack.3d.up") { showsPrograms = true }
                 }
             }
@@ -308,19 +299,7 @@ struct SchedulesScreen: View {
     }
 
     private func subtitle(of template: WorkoutTemplate) -> String {
-        if template.kind == .cardio {
-            return template.cardioPlan.map(CardioText.summary) ?? String(localized: "Kardio")
-        }
         return String(localized: "\((template.exercises ?? []).count) vježbi")
-    }
-
-    private func newCardioTemplate(_ preset: CardioPreset) {
-        do {
-            let template = try TemplateEngine(context: context).createCardioTemplate(name: preset.title, plan: preset.plan)
-            select(.template(template.id), isNew: true)
-        } catch {
-            errorText = String(localized: "Trening se nije mogao stvoriti.")
-        }
     }
 
     private func newTemplate() {

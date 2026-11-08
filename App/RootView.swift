@@ -83,6 +83,7 @@ struct RootView: View {
             PendingTemplateFromSession.discardLeftover(context: context)
             ReminderScheduler.refresh(context: context)
             PhoneWatchSync.shared.refreshContext()
+            await LegacyCardioPlans.removeFromWatch()
             await HealthService.shared.importNewData(context: context)
         }
         .onChange(of: scenePhase) { _, phase in

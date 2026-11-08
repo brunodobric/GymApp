@@ -27,8 +27,6 @@ struct HomeScreen: View {
     @State private var showsCardEditor = false
     @Namespace private var workoutTransition
     @State private var presentedSession: Session?
-    /// Kardio iz rasporeda: pregled plana s uputom za sat umjesto pokretanja treninga.
-    @State private var cardioSchedule: Schedule?
     /// Izbor treninga: bez rasporeda spremljeni treninzi, ispod rasporeda njegovi treninzi i ostali spremljeni.
     @State private var showsTemplatePicker = false
     /// Raspored iz kojeg je izbor otvoren (nil: izbor bez rasporeda).
@@ -99,9 +97,6 @@ struct HomeScreen: View {
             }
             .sheet(isPresented: $showsSettings) {
                 SettingsScreen()
-            }
-            .sheet(item: $cardioSchedule) { schedule in
-                UpcomingWorkoutSheet(schedule: schedule) { cardioSchedule = nil }
             }
             .sheet(isPresented: $showsTemplatePicker, onDismiss: startChosenWorkout) {
                 templatePicker(upcoming)
@@ -185,13 +180,7 @@ struct HomeScreen: View {
                 StartWorkoutCard(
                     planned: upcoming,
                     templateCount: startableTemplates.count,
-                    onStart: { planned in
-                        if planned.template.kind == .cardio {
-                            cardioSchedule = planned.schedule
-                        } else {
-                            start(planned)
-                        }
-                    },
+                    onStart: { planned in start(planned) },
                     offersOtherWorkout: { offersOtherWorkout($0) },
                     onChooseTemplate: { schedule in
                         pickerSchedule = schedule
@@ -209,19 +198,18 @@ struct HomeScreen: View {
     private static let workoutTransitionID = "workout"
 
     /// ⌘N nastavlja trening u tijeku ili pokreće sljedeći iz rasporeda, isto kao prvi gumb na Početnoj. Bez rasporeda
-    /// otvara izbor spremljenog treninga, a bez spremljenih treninga prazan trening. Kardio se ne pokreće u aplikaciji.
+    /// otvara izbor spremljenog treninga, a bez spremljenih treninga prazan trening.
     private func handle(_ request: HomeRequest) {
         guard presentedSession == nil else { return }
         switch request {
         case .activeWorkout:
             // Iz Live Activityja: zatvara se ono što je otvoreno preko Početne i otvara puni ekran treninga.
             guard let active = activeSessions.first else { return }
-            let hadSheet = showsSettings || showsCardEditor || showsTemplatePicker || cardioSchedule != nil
+            let hadSheet = showsSettings || showsCardEditor || showsTemplatePicker
             showsSettings = false
             showsCardEditor = false
             showsTemplatePicker = false
             chosenWorkout = nil
-            cardioSchedule = nil
             recovery = nil
             if hadSheet {
                 // Puni ekran se ne može prikazati dok se list još zatvara.
@@ -237,7 +225,7 @@ struct HomeScreen: View {
         case .startWorkout:
             if let active = activeSessions.first {
                 presentedSession = active
-            } else if let planned = upcomingWorkouts.first(where: { $0.template.kind != .cardio }) {
+            } else if let planned = upcomingWorkouts.first {
                 start(planned)
             } else if !startableTemplates.isEmpty {
                 pickerSchedule = nil

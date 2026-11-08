@@ -183,8 +183,7 @@ struct ScheduleEditorScreen: View {
             Image(systemName: "moon.zzz")
         } else if let template = templates.first(where: { $0.id == item.workoutTemplateId }) {
             WorkoutKindIcon(
-                mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises)),
-                cardioSymbol: template.cardioPlanSymbol
+                mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises))
             )
         } else {
             Image(systemName: WorkoutKind.strength.symbol)
