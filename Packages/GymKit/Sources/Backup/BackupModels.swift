@@ -139,6 +139,8 @@ struct CustomExerciseDTO: Codable {
     var musclesRaw: String
     var equipmentRaw: String
     var inputTypeRaw: String
+    /// Nil u backupu iz verzije prije vrste vježbe.
+    var kindRaw: String?
     var imageData: Data?
     var isArchived: Bool
     var createdAt: Date
@@ -151,6 +153,7 @@ struct CustomExerciseDTO: Codable {
         musclesRaw = model.musclesRaw
         equipmentRaw = model.equipmentRaw
         inputTypeRaw = model.inputTypeRaw
+        kindRaw = model.kindRaw
         imageData = model.imageData
         isArchived = model.isArchived
         createdAt = model.createdAt
@@ -164,6 +167,7 @@ struct CustomExerciseDTO: Codable {
         model.musclesRaw = musclesRaw
         model.equipmentRaw = equipmentRaw
         model.inputTypeRaw = inputTypeRaw
+        model.kindRaw = kindRaw ?? ""
         model.imageData = imageData
         model.isArchived = isArchived
         model.createdAt = createdAt

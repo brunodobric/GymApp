@@ -17,6 +17,8 @@ extension GymSchemaV1 {
         public var musclesRaw: String = ""
         public var equipmentRaw: String = ""
         public var inputTypeRaw: String = ExerciseInputType.weightReps.rawValue
+        /// Vrsta vježbe (`ExerciseKind`). Prazno za vježbe spremljene prije nego što je vrsta postojala.
+        public var kindRaw: String = ""
         @Attribute(.externalStorage) public var imageData: Data?
         public var isArchived: Bool = false
         public var createdAt: Date = Date()
@@ -34,6 +36,12 @@ extension GymSchemaV1 {
         public var category: ExerciseCategory? {
             get { ExerciseCategory(rawValue: categoryRaw) }
             set { categoryRaw = newValue?.rawValue ?? "" }
+        }
+
+        /// Vrsta koju je korisnik odabrao. Starija vježba bez vrste dobiva je po kategoriji (kardio ili snaga).
+        public var kind: ExerciseKind {
+            get { ExerciseKind(rawValue: kindRaw) ?? .fallback(for: category) }
+            set { kindRaw = newValue.rawValue }
         }
 
         public var equipment: Equipment? {
