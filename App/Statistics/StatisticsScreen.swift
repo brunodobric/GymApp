@@ -191,8 +191,6 @@ struct StatisticsCard<Content: View>: View {
 private struct SetsCard: View {
     @Binding var weeks: Int
     let loads: [String: RegionLoad]
-    /// Visina retka raste s Dynamic Typeom, da veći nazivi mišića imaju mjesta.
-    @ScaledMetric(relativeTo: .caption) private var rowHeight: CGFloat = 26
 
     /// Redak grafa. Id je regija, da graf ne crta sve iznova pri svakom iscrtavanju.
     private struct Entry: Identifiable {
@@ -218,30 +216,101 @@ private struct SetsCard: View {
             }
             .pickerStyle(.segmented)
             let rows = entries
-            Chart {
-                RectangleMark(xStart: .value("Serije tjedno", 10.0), xEnd: .value("Serije tjedno", 20.0))
-                    .foregroundStyle(Color.secondary.opacity(0.15))
-                ForEach(rows) { entry in
-                    BarMark(
-                        x: .value("Serije tjedno", entry.sets),
-                        y: .value("Mišić", entry.name),
-                        height: .ratio(0.5)
-                    )
-                    .foregroundStyle(BodyRegion.color(entry.region))
-                }
-            }
-            .chartXScale(domain: 0.0...max(22.0, (rows.map(\.sets).max() ?? 0) + 2))
-            // Nazivi mišića lijevo od grafa, izvan područja crtanja i bez vodoravnih crta,
-            // da se ne preklapaju sa stupcima ni s mrežom.
-            .chartYAxis {
-                AxisMarks(position: .leading) {
-                    AxisValueLabel(horizontalSpacing: 8)
-                }
-            }
-            .frame(height: CGFloat(rows.count) * rowHeight + 30)
+            let scaleMax = max(22.0, (rows.map(\.sets).max() ?? 0) + 2)
+            SetsBarList(
+                rows: rows.map { .init(id: $0.region, name: $0.name, sets: $0.sets, color: BodyRegion.color($0.region)) },
+                scaleMax: scaleMax
+            )
+            .accessibilityElement(children: .contain)
             .accessibilityLabel(Text("Graf tvrdih serija tjedno po mišićima"))
             Text("Siva zona je 10 do 20 tvrdih serija tjedno, raspon u kojem istraživanja nalaze najbolji rast mišića. Serija u kojoj mišić pomaže broji se kao pola.")
                 .font(.footnote).foregroundStyle(.secondary)
+        }
+    }
+}
+
+/// Vodoravni stupci serija po mišiću, složeni ručno (Grid), a ne kroz Swift Charts.
+/// Os Y u Swift Chartsu crtala je nazive mišića unutar područja grafa, preko stupaca i mreže.
+/// Ovdje je naziv u svom stupcu lijevo, a stupac, siva zona i crte mreže samo desno od njega.
+private struct SetsBarList: View {
+    struct Row: Identifiable {
+        let id: String
+        let name: String
+        let sets: Double
+        let color: Color
+    }
+
+    let rows: [Row]
+    /// Gornja granica osi X (najmanje 22, da se vidi cijela zona 10 do 20).
+    let scaleMax: Double
+
+    @Environment(\.displayScale) private var displayScale
+    @ScaledMetric(relativeTo: .caption) private var rowHeight: CGFloat = 26
+    @ScaledMetric(relativeTo: .caption) private var barHeight: CGFloat = 10
+
+    /// Zona preporučenog volumena.
+    private let zone = 10.0...20.0
+
+    private var ticks: [Int] { Array(stride(from: 0, through: Int(scaleMax), by: 5)) }
+
+    var body: some View {
+        Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 0) {
+            ForEach(rows) { row in
+                GridRow {
+                    Text(row.name)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .layoutPriority(1)
+                        .accessibilityHidden(true)
+                    // Modifikatori idu na ćelije, ne na GridRow: GridRow s modifikatorom Grid slaže kao jednu ćeliju.
+                    plotCell { width in
+                        Capsule()
+                            .fill(row.color)
+                            .frame(width: max(row.sets > 0 ? 3 : 0, width * row.sets / scaleMax), height: barHeight)
+                    }
+                    .frame(height: rowHeight)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(Text(row.name))
+                    .accessibilityValue(Text(row.sets, format: .number.precision(.fractionLength(0...1))))
+                }
+            }
+            GridRow {
+                Color.clear.frame(width: 0, height: 0)
+                GeometryReader { proxy in
+                    ForEach(ticks, id: \.self) { tick in
+                        Text(tick, format: .number)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                            .fixedSize()
+                            .offset(x: proxy.size.width * Double(tick) / scaleMax + 3)
+                    }
+                }
+                .frame(height: rowHeight)
+                .accessibilityHidden(true)
+            }
+        }
+    }
+
+    /// Ćelija s mrežom i sivom zonom u pozadini. Redovi se dodiruju (bez razmaka), pa zona i crte izgledaju neprekinuto.
+    private func plotCell<Bar: View>(@ViewBuilder bar: @escaping (CGFloat) -> Bar) -> some View {
+        GeometryReader { proxy in
+            let width = proxy.size.width
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .fill(Color.secondary.opacity(0.15))
+                    .frame(width: width * (zone.upperBound - zone.lowerBound) / scaleMax)
+                    .offset(x: width * zone.lowerBound / scaleMax)
+                ForEach(ticks, id: \.self) { tick in
+                    Rectangle()
+                        .fill(Color.secondary.opacity(0.3))
+                        .frame(width: 1 / displayScale)
+                        .offset(x: width * Double(tick) / scaleMax)
+                }
+                bar(width)
+            }
+            .frame(width: width, height: proxy.size.height, alignment: .leading)
         }
     }
 }

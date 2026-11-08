@@ -9642,16 +9642,6 @@
         }
       }
     },
-    "Serije tjedno" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sets per week"
-          }
-        }
-      }
-    },
     "Graf tvrdih serija tjedno po mišićima" : {
       "localizations" : {
         "en" : {
