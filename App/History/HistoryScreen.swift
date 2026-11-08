@@ -1,7 +1,9 @@
+import Catalog
 import Models
 import SwiftData
 import SwiftUI
 import Stats
+import Training
 import Units
 
 /// Povijest odrađenih treninga: popis s filterom i sortiranjem te kalendar s točkicama.
@@ -13,6 +15,8 @@ struct HistoryScreen: View {
     /// Kardio iz Zdravlja je u lokalnoj bazi (ne sinkronizira se), a u povijesti stoji uz vlastite treninge.
     @Query private var healthWorkouts: [HealthWorkout]
     @Query private var settingsList: [UserSettings]
+    @Query private var customExercises: [CustomExercise]
+    @Environment(CatalogStore.self) private var catalogStore
 
     @State private var filter = HistoryFilter()
     @State private var showsCalendar = false
@@ -32,13 +36,19 @@ struct HistoryScreen: View {
         let visible: [Session]
         /// S kalendarom: treninzi prikazanog mjeseca ili odabranog dana.
         let listed: [Session]
+        /// Je li vježba kardio (katalog i vlastite vježbe), za ikonu i kardio dio treninga snage.
+        let isCardio: (String) -> Bool
     }
 
     private func makeLists() -> Lists {
         let all = Session.merged(ownSessions, health: healthWorkouts)
-        let visible = filter.apply(to: all)
-        let listed = showsCalendar ? filter.apply(to: all, month: month, day: selectedDay) : visible
-        return Lists(all: all, visible: visible, listed: listed)
+        let isCardio = ExerciseInfoBuilder.isCardio(
+            ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
+        )
+        let kindsOf: (Session) -> Set<WorkoutKind> = { SessionCardio.mix(of: $0, isCardio: isCardio).kinds }
+        let visible = filter.apply(to: all, kindsOf: kindsOf)
+        let listed = showsCalendar ? filter.apply(to: all, month: month, day: selectedDay, kindsOf: kindsOf) : visible
+        return Lists(all: all, visible: visible, listed: listed, isCardio: isCardio)
     }
 
     var body: some View {
@@ -82,7 +92,7 @@ struct HistoryScreen: View {
             }
             Section {
                 ForEach(listed) { session in
-                    NavigationLink(value: session.id) { SessionRow(session: session) }
+                    NavigationLink(value: session.id) { SessionRow(session: session, isCardio: lists.isCardio) }
                         .openInWindowMenu(DetailWindow.session, value: session.id)
                 }
                 // Poruka ide u popis ispod kalendara, ne preko cijelog ekrana.
@@ -159,11 +169,12 @@ extension WorkoutKind {
 
 private struct SessionRow: View {
     let session: Session
+    let isCardio: (String) -> Bool
 
     var body: some View {
+        let mix = SessionCardio.mix(of: session, isCardio: isCardio)
         HStack(spacing: 12) {
-            Image(systemName: session.kind.symbol)
-                .foregroundStyle(.tint)
+            SessionKindIcon(mix: mix)
                 .frame(width: 28)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
@@ -172,6 +183,11 @@ private struct SessionRow: View {
                 Text(session.startedAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                if mix == .mixed, let part = SessionCardio.part(of: session, isCardio: isCardio) {
+                    Label(CardioText.historyLine(part), systemImage: "figure.run")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
             Spacer()
             Text(duration)
@@ -184,6 +200,31 @@ private struct SessionRow: View {
         guard let end = session.endedAt else { return "" }
         return Duration.seconds(max(0, end.timeIntervalSince(session.startedAt)))
             .formatted(.units(allowed: [.hours, .minutes], width: .narrow))
+    }
+}
+
+/// Ikona vrste treninga. Trening snage s kardiom je bučica s malom oznakom trčanja u kutu.
+struct SessionKindIcon: View {
+    let mix: SessionMix
+
+    var body: some View {
+        switch mix {
+        case .strength:
+            Image(systemName: WorkoutKind.strength.symbol).foregroundStyle(.tint)
+        case .cardio:
+            Image(systemName: WorkoutKind.cardio.symbol).foregroundStyle(.tint)
+        case .mixed:
+            Image(systemName: WorkoutKind.strength.symbol)
+                .foregroundStyle(.tint)
+                .overlay(alignment: .bottomTrailing) {
+                    Image(systemName: "figure.run.circle.fill")
+                        .font(.caption2)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, .tint)
+                        .background(Circle().fill(.background).padding(-1))
+                        .offset(x: 6, y: 6)
+                }
+        }
     }
 }
 

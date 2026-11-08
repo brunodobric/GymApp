@@ -33,11 +33,11 @@ public enum SessionRegions {
     public static let secondaryWeight = EffectiveSets.secondaryWeight
 
     /// Serije po regiji, od najopterećenije. Broje se tvrde serije (`EffectiveSets`); warm-up, preslabe
-    /// serije i uklonjene vježbe se ne računaju. Regija bez ijedne serije nije u popisu.
+    /// serije, kardio vježbe i uklonjene vježbe se ne računaju. Regija bez ijedne serije nije u popisu.
     public static func sets(in session: Session, info: ExerciseInfoProvider) -> [RegionSets] {
         var result: [String: RegionSets] = [:]
         for exercise in session.orderedExercises where !exercise.isRemoved {
-            guard let details = info(exercise.exerciseKey) else { continue }
+            guard let details = info(exercise.exerciseKey), !details.isCardio else { continue }
             let done = EffectiveSets.hardSets(of: exercise)
             guard !done.isEmpty else { continue }
             let volume = done.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }

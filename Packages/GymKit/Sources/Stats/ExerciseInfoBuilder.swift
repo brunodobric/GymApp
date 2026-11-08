@@ -71,7 +71,7 @@ public enum ExerciseInfoBuilder {
             table["c:\(exercise.id)"] = ExerciseInfo(
                 primary: exercise.primaryMuscles, secondary: exercise.secondaryMuscles,
                 primaryRegions: exercise.primaryRegions, secondaryRegions: exercise.secondaryRegions,
-                isCompound: exercise.mechanic.map { $0 == .compound }
+                isCompound: exercise.mechanic.map { $0 == .compound }, isCardio: exercise.kind == .cardio
             )
         }
         for exercise in custom {
@@ -82,9 +82,15 @@ public enum ExerciseInfoBuilder {
                 if !regions.contains(region) { regions.append(region) }
             }
             table["u:\(exercise.id.uuidString)"] = ExerciseInfo(
-                primary: muscles, primaryRegions: regions
+                primary: muscles, primaryRegions: regions,
+                isCardio: ExerciseKind.fallback(for: exercise.category) == .cardio
             )
         }
         return { table[$0] }
+    }
+
+    /// Je li vježba kardio, za `SessionCardio` i sažetak treninga. Nepoznata vježba nije kardio.
+    public static func isCardio(_ info: @escaping ExerciseInfoProvider) -> (String) -> Bool {
+        { info($0)?.isCardio == true }
     }
 }

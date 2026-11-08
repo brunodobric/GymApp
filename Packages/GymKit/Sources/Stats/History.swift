@@ -18,16 +18,23 @@ public struct HistoryFilter: Equatable, Sendable {
     }
 
     /// Primjenjuje filter i sortiranje na već učitane treninge (za žive upite u sučelju).
-    public func apply(to sessions: [Session]) -> [Session] {
-        let selected = kinds.isEmpty ? sessions : sessions.filter { kinds.contains($0.kind) }
+    /// `kindsOf` daje vrste treninga; u sučelju je to `SessionMix.kinds`, pa je trening snage s kardiom
+    /// i pod snagom i pod kardiom.
+    public func apply(
+        to sessions: [Session], kindsOf: (Session) -> Set<WorkoutKind> = { [$0.kind] }
+    ) -> [Session] {
+        let selected = kinds.isEmpty ? sessions : sessions.filter { !kinds.isDisjoint(with: kindsOf($0)) }
         return selected.sorted { sort == .newestFirst ? $0.startedAt > $1.startedAt : $0.startedAt < $1.startedAt }
     }
 
     /// Popis ispod kalendara: treninzi odabranog dana ili, bez odabira, cijelog prikazanog mjeseca.
-    public func apply(to sessions: [Session], month: Date, day: Date?, calendar: Calendar = .current) -> [Session] {
+    public func apply(
+        to sessions: [Session], month: Date, day: Date?, calendar: Calendar = .current,
+        kindsOf: (Session) -> Set<WorkoutKind> = { [$0.kind] }
+    ) -> [Session] {
         let component: Calendar.Component = day == nil ? .month : .day
         guard let interval = calendar.dateInterval(of: component, for: day ?? month) else { return [] }
-        return apply(to: sessions.filter { interval.contains($0.startedAt) && $0.startedAt < interval.end })
+        return apply(to: sessions.filter { interval.contains($0.startedAt) && $0.startedAt < interval.end }, kindsOf: kindsOf)
     }
 }
 

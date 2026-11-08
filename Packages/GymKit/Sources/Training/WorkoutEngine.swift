@@ -31,6 +31,8 @@ public struct WorkoutSummary: Equatable, Sendable {
     public let highlights: [RecordHighlight]
     /// Rekordi koji nisu istaknuti ("i još 4 manja rekorda").
     public let otherRecordsCount: Int
+    /// Kardio vježbe u treningu snage (`SessionCardio`); nil bez njih.
+    public var cardio: CardioPart? = nil
 }
 
 /// Operacije nad aktivnim treningom. Svaka promjena odmah se sprema (specifikacija: oporavak prekinutog treninga),
@@ -331,7 +333,8 @@ public struct WorkoutEngine {
         of session: Session,
         trackedKinds: Set<PRKind> = Set(PRKind.allCases),
         excludedExercises: Set<String> = [],
-        isCompound: (String) -> Bool? = { _ in nil }
+        isCompound: (String) -> Bool? = { _ in nil },
+        isCardio: (String) -> Bool = { _ in false }
     ) throws -> WorkoutSummary {
         var volume = 0.0
         var completed = 0
@@ -341,7 +344,8 @@ public struct WorkoutEngine {
         for exercise in visibleExercises(in: session) {
             let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)
             completed += done.count
-            hard += done.filter(SetMetrics.isHard).count
+            // Kardio nije tvrda serija: 20 minuta trake ne broji se uz serije snage.
+            if !isCardio(exercise.exerciseKey) { hard += done.filter(SetMetrics.isHard).count }
             volume += done.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
 
             let key = exercise.exerciseKey
@@ -362,7 +366,8 @@ public struct WorkoutEngine {
         return WorkoutSummary(
             durationSeconds: max(0, end.timeIntervalSince(session.startedAt)),
             totalVolumeKg: volume, completedSets: completed, hardSets: hard, records: records,
-            highlights: ranked.shown, otherRecordsCount: ranked.hiddenCount
+            highlights: ranked.shown, otherRecordsCount: ranked.hiddenCount,
+            cardio: SessionCardio.part(of: session, isCardio: isCardio)
         )
     }
 
