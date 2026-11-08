@@ -37,6 +37,16 @@
         }
       }
     },
+    "%@ od %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ of %lld"
+          }
+        }
+      }
+    },
     "%@ serija s 0 do 3 ponavljanja u rezervi." : {
       "localizations" : {
         "en" : {
@@ -198,6 +208,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@: %@ hard sets"
+          }
+        }
+      }
+    },
+    "%@: %@ tvrdih serija tjedno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@ hard sets per week"
           }
         }
       }
@@ -1355,6 +1375,16 @@
         }
       }
     },
+    "Aktivnost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activity"
+          }
+        }
+      }
+    },
     "Aktivnost i podsjetnici" : {
       "localizations" : {
         "en" : {
@@ -1785,12 +1815,32 @@
         }
       }
     },
+    "Dana s treningom: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Days with a workout: %lld"
+          }
+        }
+      }
+    },
     "Dana tjedno" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Days per week"
+          }
+        }
+      }
+    },
+    "Danas" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
           }
         }
       }
@@ -2125,6 +2175,26 @@
         }
       }
     },
+    "Dodirni dan za njegove treninge." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a day to see its workouts."
+          }
+        }
+      }
+    },
+    "Dodirni mjesec za njegov pregled." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a month to open its overview."
+          }
+        }
+      }
+    },
     "Donja leđa" : {
       "localizations" : {
         "en" : {
@@ -2365,6 +2435,16 @@
         }
       }
     },
+    "Godina prije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Year before"
+          }
+        }
+      }
+    },
     "Gornja leđa" : {
       "localizations" : {
         "en" : {
@@ -2521,6 +2601,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chart of sets by share of estimated 1RM"
+          }
+        }
+      }
+    },
+    "Graf serija tjedno po mišićima u godini i godini prije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of weekly sets per muscle this year and the year before"
+          }
+        }
+      }
+    },
+    "Graf serija tjedno po mišićima u mjesecu i mjesecu prije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of weekly sets per muscle this month and the month before"
+          }
+        }
+      }
+    },
+    "Graf treninga po mjesecima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of workouts per month"
           }
         }
       }
@@ -3265,6 +3375,26 @@
         }
       }
     },
+    "Mjesec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Month"
+          }
+        }
+      }
+    },
+    "Mjesec prije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Month before"
+          }
+        }
+      }
+    },
     "Moje vježbe" : {
       "localizations" : {
         "en" : {
@@ -3357,6 +3487,26 @@
         }
       }
     },
+    "Odabrana godina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected year"
+          }
+        }
+      }
+    },
+    "Odabrani mjesec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected month"
+          }
+        }
+      }
+    },
     "Odabrani tjedan" : {
       "localizations" : {
         "en" : {
@@ -3387,6 +3537,26 @@
         }
       }
     },
+    "Ova godina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This year"
+          }
+        }
+      }
+    },
+    "Ovaj mjesec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This month"
+          }
+        }
+      }
+    },
     "Po danima" : {
       "localizations" : {
         "en" : {
@@ -3397,12 +3567,32 @@
         }
       }
     },
-    "Pregled tjedna" : {
+    "Po mjesecima" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Week overview"
+            "value" : "By month"
+          }
+        }
+      }
+    },
+    "Pregled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overview"
+          }
+        }
+      }
+    },
+    "Prethodna godina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous year"
           }
         }
       }
@@ -3423,6 +3613,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your changes haven't been saved yet."
+          }
+        }
+      }
+    },
+    "Promjene su u odnosu na godinu prije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changes are compared with the year before."
+          }
+        }
+      }
+    },
+    "Promjene su u odnosu na mjesec prije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changes are compared with the month before."
           }
         }
       }
@@ -3453,6 +3663,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Average pace"
+          }
+        }
+      }
+    },
+    "Prošla godina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last year"
+          }
+        }
+      }
+    },
+    "Prošli mjesec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last month"
+          }
+        }
+      }
+    },
+    "Rekordi godine" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records this year"
+          }
+        }
+      }
+    },
+    "Rekordi mjeseca" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records this month"
           }
         }
       }
@@ -3493,6 +3743,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sets per muscle"
+          }
+        }
+      }
+    },
+    "Sljedeća godina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next year"
           }
         }
       }
@@ -3587,6 +3847,26 @@
         }
       }
     },
+    "Tjedan, mjesec i godina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week, month and year"
+          }
+        }
+      }
+    },
+    "Tjedno u prosjeku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly average"
+          }
+        }
+      }
+    },
     "Tjelesna težina" : {
       "localizations" : {
         "en" : {
@@ -3603,6 +3883,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your history"
+          }
+        }
+      }
+    },
+    "U ovoj godini nema serija snage." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No strength sets this year."
+          }
+        }
+      }
+    },
+    "U ovom mjesecu nema serija snage." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No strength sets this month."
           }
         }
       }
