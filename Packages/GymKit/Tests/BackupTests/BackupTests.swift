@@ -200,15 +200,12 @@ struct JSONBackupTests {
         }
     }
 
-    @Test("Kardio plan i plan sa sata preživljavaju export i import")
+    @Test("Nekadašnji kardio plan i plan sa sata preživljavaju export i import")
     func cardioRoundTrip() throws {
         let source = try makeContext()
-        let plan = CardioPlan(
-            activity: .cycling, location: .indoor, warmup: .time(seconds: 300),
-            intervals: [CardioInterval(work: .distance(meters: 1_000), recovery: .open, repeats: 3)]
-        )
+        let plan = #"{"activity":"cycling","intervals":[],"location":"indoor"}"#
         let template = WorkoutTemplate(name: "Bicikl", kind: .cardio)
-        template.cardioPlan = plan
+        template.cardioPlanRaw = plan
         source.insert(template)
         let planId = UUID()
         let session = Session(name: "Bicikl", kind: .cardio, startedAt: start)
@@ -221,7 +218,7 @@ struct JSONBackupTests {
 
         let target = try makeContext()
         _ = try JSONBackup.importBackup(try JSONBackup.export(from: source, now: exportTime), into: target)
-        #expect(try target.fetch(FetchDescriptor<WorkoutTemplate>()).first?.cardioPlan == plan)
+        #expect(try target.fetch(FetchDescriptor<WorkoutTemplate>()).first?.cardioPlanRaw == plan)
         // Uvezeni trening iz kopije završava u lokalnoj bazi podataka iz Zdravlja.
         #expect(try target.fetch(FetchDescriptor<Session>()).allSatisfy { !$0.isImportedFromWorkoutsApp })
         #expect(try HealthLocalStore(context: target).workouts().first?.workoutPlanId == planId)

@@ -27,9 +27,9 @@ public final class HealthWorkout {
     public var activeEnergyKilocalories: Double?
     public var distanceMeters: Double?
     public var averageHeartRate: Double?
-    /// Plan iz WorkoutKita po kojem je trening odrađen na satu.
+    /// Plan iz WorkoutKita po kojem je trening odrađen na satu. Nekadašnji kardio planovi; više se ne puni.
     public var workoutPlanId: UUID?
-    /// Raspored i predložak s kojima je trening povezan (`CardioPlanLinker`).
+    /// Raspored i predložak s kojima je trening bio povezan (nekadašnji kardio planovi; više se ne puni).
     public var scheduleId: UUID?
     public var templateId: UUID?
 

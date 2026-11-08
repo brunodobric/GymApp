@@ -40,16 +40,6 @@ public struct TemplateEngine {
         return template
     }
 
-    /// Kardio trening: plan umjesto vježbi (faza 10).
-    @discardableResult
-    public func createCardioTemplate(name: String, plan: CardioPlan) throws -> WorkoutTemplate {
-        let template = WorkoutTemplate(name: name, kind: .cardio)
-        template.cardioPlan = plan
-        context.insert(template)
-        try context.save()
-        return template
-    }
-
     /// Brisanje predloška ne dira odrađene treninge (oni su neovisna kopija) ni stavke rasporeda.
     public func delete(_ template: WorkoutTemplate) throws {
         context.delete(template)

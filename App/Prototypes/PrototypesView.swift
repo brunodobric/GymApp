@@ -14,11 +14,6 @@ struct PrototypesView: View {
                 } label: {
                     Label("CloudKit shema", systemImage: "icloud")
                 }
-                NavigationLink {
-                    WorkoutKitPrototypeView()
-                } label: {
-                    Label("WorkoutKit zakazivanje", systemImage: "figure.run")
-                }
             }
             .navigationTitle("Prototipi")
             .toolbar {

@@ -12,12 +12,10 @@ public struct PlannedReminder: Equatable, Sendable {
     public var scheduleItemId: UUID?
     public var templateId: UUID?
     public var cycle: Int = 1
-    /// Kardio trening se pokreće na satu u aplikaciji Workout (faza 10).
-    public var isCardio = false
 
     public init(
         scheduleId: UUID, scheduleName: String, workoutName: String?, fireDate: Date,
-        scheduleItemId: UUID? = nil, templateId: UUID? = nil, cycle: Int = 1, isCardio: Bool = false
+        scheduleItemId: UUID? = nil, templateId: UUID? = nil, cycle: Int = 1
     ) {
         self.scheduleId = scheduleId
         self.scheduleName = scheduleName
@@ -26,14 +24,12 @@ public struct PlannedReminder: Equatable, Sendable {
         self.scheduleItemId = scheduleItemId
         self.templateId = templateId
         self.cycle = cycle
-        self.isCardio = isCardio
     }
 
     init(_ planned: PlannedWorkout, fireDate: Date) {
         self.init(
             scheduleId: planned.schedule.id, scheduleName: planned.schedule.name, workoutName: planned.template.name,
-            fireDate: fireDate, scheduleItemId: planned.item.id, templateId: planned.template.id, cycle: planned.cycle,
-            isCardio: planned.template.kind == .cardio
+            fireDate: fireDate, scheduleItemId: planned.item.id, templateId: planned.template.id, cycle: planned.cycle
         )
     }
 

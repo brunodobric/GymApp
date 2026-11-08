@@ -282,8 +282,7 @@ struct TemplateListPanel: View {
                         Text(template.name)
                     } icon: {
                         WorkoutKindIcon(
-                            mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises)),
-                            cardioSymbol: template.cardioPlanSymbol
+                            mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises))
                         )
                     }
                 }

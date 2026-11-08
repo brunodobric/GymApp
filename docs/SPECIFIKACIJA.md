@@ -185,7 +185,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (npr. zadnji trening, Plate Calculator, sljedeći trening, tjedni volumen) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u popisu "Kasnije").
 2. **Odrađeni treninzi** — Povijest svih završenih treninga s filterima i detaljima.
    * Lista treninga prikazuje: datum, tip i trajanje.
-     * Trening snage s barem jednom odrađenom kardio vježbom ima bučicu s malom oznakom trčanja i redak "15 min kardio", a u filteru je i pod snagom i pod kardiom. Trening snage u kojem su odrađene samo kardio vježbe prikazuje se kao kardio. Vrsta se računa iz vježbi i ne sprema se. Isto pravilo vrijedi za predloške (samo snaga, samo kardio ili snaga + kardio), pa je ikona ista svugdje gdje se trening prikazuje: povijest, Početna, rasporedi, popis treninga i izbor treninga. Kardio plan za sat je uvijek kardio s ikonom svoje aktivnosti.
+     * Trening snage s barem jednom odrađenom kardio vježbom ima bučicu s malom oznakom trčanja i redak "15 min kardio", a u filteru je i pod snagom i pod kardiom. Trening snage u kojem su odrađene samo kardio vježbe prikazuje se kao kardio. Vrsta se računa iz vježbi i ne sprema se. Isto pravilo vrijedi za predloške (samo snaga, samo kardio ili snaga + kardio), pa je ikona ista svugdje gdje se trening prikazuje: povijest, Početna, rasporedi, popis treninga i izbor treninga.
    * Klik na trening otvara detalje:
      * Sve vježbe
      * Sve serije po vježbi
@@ -387,12 +387,8 @@ Korisnik gradi planove na tri razine:
 
 #### Notifikacije i pokretanje
 * Aplikacija šalje lokalne notifikacije kada dođe red na planirani trening (ako su uključene).
-* **Za trčanje / kardio:** aplikacija preko **WorkoutKit `WorkoutScheduler`** unaprijed zakazuje plan treninga (npr. intervali, cilj udaljenosti) u native Apple Workouts aplikaciju na Watchu, za dan i vrijeme podsjetnika.
-  * Na dan treninga plan se pojavi u Workouts aplikaciji na Watchu, a korisnik ga **pokreće sam**. iPhone aplikacija ne može izravno pokrenuti Workouts aplikaciju na Watchu.
-  * Klik na podsjetnik na iPhoneu otvara našu aplikaciju s pregledom plana i uputom "Pokreni na satu u aplikaciji Workout". Ako plan nije zakazan, nudi gumb za zakazivanje.
-  * Native app vodi cijeli trening.
-  * Nakon završetka aplikacija pročita `HKWorkout` iz HealthKit i uveze podatke.
-  * **Prije početka razvoja ovog dijela** treba prototipom potvrditi ponašanje `WorkoutScheduler` API-ja (ograničenja broja zakazanih planova, dozvole, ponašanje bez Watcha) na aktualnoj verziji watchOS-a.
+* **Svi treninzi slažu se od vježbi**, i kardio: trčanje, bicikl ili veslanje su kardio vježbe u treningu (trajanje, udaljenost). Aplikacija ne stvara planove za aplikaciju Workout na satu (WorkoutKit) i ne zakazuje ih. Kardio koji korisnik odradi u aplikaciji Workout ili drugdje stiže kroz uvoz iz Zdravlja.
+  * Nekadašnji kardio planovi za sat (vrsta predloška `cardio`) pri pokretanju postaju obični treninzi istog naziva bez vježbi (`CardioPlanMigration`), a planovi koje je aplikacija zakazala na sat jednom se maknu.
 * **Za snagu:** Notifikacija otvara vlastitu Watch / iPhone aplikaciju za logging serija.
 
 ### Ponašanje notifikacija tijekom aktivnog treninga
@@ -435,7 +431,6 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 * Sinkronizacija s iPhone aplikacijom u realnom vremenu (vidi niže).
 * Watch aplikacija može voditi trening i kad iPhone nije u blizini. Podaci se spremaju na satu i šalju na iPhone kad se veza uspostavi.
 * **Trening pokrenut na iPhoneu pokreće i sat** (`HKHealthStore.startWatchApp`), ako je sat uparen i u Postavkama je uključeno "Pokreni trening i na satu" (zadano uključeno). Trening i dalje vodi iPhone, a sat za njega drži `HKWorkoutSession`: mjeri puls i kalorije, ostaje otvoren dok je zapešće spušteno i vibrira na kraju odmora. Na kraju sat sprema trening u Zdravlje i šalje iPhoneu UUID, kalorije i puls (`WorkoutCommand.healthRecorded`), a iPhone tada svoj zapis u Zdravlje ne radi (`Session.healthRecordedByWatch`). Kraj odmora tada javlja sat, pa iPhone ne zakazuje obavijest. Ako sat ne pokrene sesiju (npr. nema dozvole za Zdravlje), iPhone sprema trening i javlja kraj odmora kao i prije.
-* **Za kardio/trčanje:** planovi zakazani preko WorkoutKit pojavljuju se u native Workouts aplikaciji, gdje ih korisnik pokreće.
 * **Complications:** Prikaz sljedećeg treninga. Podržano na svim Watch face-ovima gdje je moguće.
 
 #### Sinkronizacija iPhone ↔ Watch
@@ -548,7 +543,6 @@ Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening**
 * **Watch complications** (npr. sljedeći trening, aktivni rest timer).
 * **iPad optimizacija** (adaptivni layout, multi-column za analitiku i planiranje).
 * Planirani treninzi + lokalne notifikacije (s rasporedima, ciklusima i podsjetnicima u dva načina).
-* Osnovni WorkoutKit flow za trčanje (zakazivanje plana u Workout aplikaciju na satu + naknadni uvoz podataka).
 * Live Activity na iPhoneu tijekom treninga na Watchu (tiha, bez zvuka i bannera).
 * RPE i supersets.
 * Notes na razini treninga.

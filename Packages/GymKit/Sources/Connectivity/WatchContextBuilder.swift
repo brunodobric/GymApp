@@ -19,8 +19,7 @@ public struct WatchContextBuilder {
 
     public func make(now: Date = Date()) throws -> WatchContextPayload {
         let settings = try GymQueries(context: context).settings()
-        // Kardio iz rasporeda pokreće se u aplikaciji Workout na satu (WorkoutKit), ne u ovoj aplikaciji.
-        let upcoming = try ScheduleEngine(context: context).upcomingWorkouts().filter { $0.template.kind != .cardio }.map { planned in
+        let upcoming = try ScheduleEngine(context: context).upcomingWorkouts().map { planned in
             try payload(
                 template: planned.template, exercises: planned.exercises,
                 scheduleId: planned.schedule.id, scheduleName: planned.schedule.name

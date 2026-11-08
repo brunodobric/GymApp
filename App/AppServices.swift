@@ -100,8 +100,8 @@ enum AppServices {
             Logger(subsystem: "com.brunodobric.gymapp", category: "Health")
                 .error("Premještanje podataka iz Zdravlja: \(String(describing: error))")
         }
-        // Stari id-jevi vježbi (katalog prije MoveKita) prelaze na nove.
-        migrateCatalogIds()
+        // Stari id-jevi vježbi (katalog prije MoveKita) prelaze na nove, a stari kardio planovi u treninge.
+        migrateStoredData()
         PhoneWatchSync.shared.start(container: container)
         SyncMonitor.shared.start()
         // Rušenja, zastoji i performanse (MetricKit), samo u lokalni dnevnik.
@@ -114,10 +114,20 @@ enum AppServices {
         return try? ExerciseCatalog(data: Data(contentsOf: url))
     }()
 
-    /// Prevodi stare id-jeve kataloga u spremljenim treninzima i predlošcima (`CatalogIdMigration`).
+    /// Prevodi stare id-jeve kataloga u spremljenim treninzima i predlošcima (`CatalogIdMigration`)
+    /// i pretvara nekadašnje kardio planove za sat u obične treninge (`CardioPlanMigration`).
     /// Poziva se pri pokretanju, nakon uvoza i nakon sinkronizacije, jer stari zapisi mogu stići i kasnije.
-    static func migrateCatalogIds() {
-        guard storeOpenError == nil, let catalog = bundledCatalog else { return }
+    static func migrateStoredData() {
+        guard storeOpenError == nil else { return }
+        do {
+            if try CardioPlanMigration.migrate(in: container.mainContext) > 0 {
+                Logger(subsystem: "com.brunodobric.gymapp", category: "Planning").info("Kardio planovi pretvoreni u treninge")
+            }
+        } catch {
+            Logger(subsystem: "com.brunodobric.gymapp", category: "Planning")
+                .error("Pretvaranje kardio planova: \(String(describing: error))")
+        }
+        guard let catalog = bundledCatalog else { return }
         do {
             let result = try CatalogIdMigration.migrate(in: container.mainContext, catalog: catalog)
             if result.changed {

@@ -44,6 +44,8 @@ Prototipi se moraju isprobati na **stvarnim uređajima**: simulator ne pokazuje 
 
 ## Prototip 2: WorkoutKit zakazivanje
 
+> Kardio planovi za sat izbačeni su iz aplikacije (`docs/PLAN_IZRADE.md`, faza 10), pa i ovaj prototip. Odjeljak ostaje kao zapis.
+
 **Pitanje:** može li aplikacija zakazati plan trčanja u aplikaciju Workout na satu i kako to izgleda korisniku (specifikacija, odjeljak 6).
 
 **Postupak**

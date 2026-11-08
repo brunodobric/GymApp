@@ -19,7 +19,7 @@ public struct TemplateStarter {
     }
 
     /// Treninzi koji se mogu pokrenuti izvan rasporeda, poredani po nazivu: samo treninzi snage s barem jednom vježbom.
-    /// Kardio se ne pokreće u aplikaciji nego na satu, a trening bez vježbi je isto što i prazan trening.
+    /// Trening bez vježbi je isto što i prazan trening.
     public static func startable(_ templates: [WorkoutTemplate]) -> [WorkoutTemplate] {
         templates
             .filter { $0.kind == .strength && !($0.exercises ?? []).isEmpty }
