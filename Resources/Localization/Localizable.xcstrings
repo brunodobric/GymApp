@@ -192,6 +192,16 @@
         }
       }
     },
+    "%@: %@ tvrdih serija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@ hard sets"
+          }
+        }
+      }
+    },
     "%@: %lld dana bez treninga" : {
       "localizations" : {
         "en" : {
@@ -336,6 +346,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld min cardio"
+          }
+        }
+      }
+    },
+    "%lld od %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld"
           }
         }
       }
@@ -519,6 +539,52 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld ponavljanja"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld rekorda" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld record"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld records"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rekorda"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rekord"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rekorda"
                 }
               }
             }
@@ -1023,6 +1089,52 @@
                       "value" : "%arg treninga"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld tvrdih serija" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld hard set"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld hard sets"
+                }
+              }
+            }
+          }
+        },
+        "hr" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tvrde serije"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tvrda serija"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tvrdih serija"
                 }
               }
             }
@@ -2383,6 +2495,16 @@
         }
       }
     },
+    "Graf serija po mišićima u tjednu i tjednu prije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart of sets per muscle this week and the week before"
+          }
+        }
+      }
+    },
     "Graf serija po ponavljanjima u rezervi" : {
       "localizations" : {
         "en" : {
@@ -3235,6 +3357,16 @@
         }
       }
     },
+    "Odabrani tjedan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected week"
+          }
+        }
+      }
+    },
     "Odabrano" : {
       "localizations" : {
         "en" : {
@@ -3255,12 +3387,52 @@
         }
       }
     },
+    "Po danima" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By day"
+          }
+        }
+      }
+    },
+    "Pregled tjedna" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week overview"
+          }
+        }
+      }
+    },
+    "Prethodni tjedan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous week"
+          }
+        }
+      }
+    },
     "Promjene još nisu spremljene." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your changes haven't been saved yet."
+          }
+        }
+      }
+    },
+    "Promjene su u odnosu na tjedan prije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changes are compared with the week before."
           }
         }
       }
@@ -3285,12 +3457,52 @@
         }
       }
     },
+    "Rekordi tjedna" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records this week"
+          }
+        }
+      }
+    },
     "Rezultati" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Results"
+          }
+        }
+      }
+    },
+    "Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A set where the muscle assists counts as half, and a set below RPE 6 doesn't count."
+          }
+        }
+      }
+    },
+    "Serije po mišiću" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets per muscle"
+          }
+        }
+      }
+    },
+    "Sljedeći tjedan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next week"
           }
         }
       }
@@ -3365,6 +3577,16 @@
         }
       }
     },
+    "Tjedan prije" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week before"
+          }
+        }
+      }
+    },
     "Tjelesna težina" : {
       "localizations" : {
         "en" : {
@@ -3381,6 +3603,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your history"
+          }
+        }
+      }
+    },
+    "U ovom tjednu nema serija snage." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No strength sets this week."
           }
         }
       }
@@ -8175,26 +8407,6 @@
         }
       }
     },
-    "Usporedba s prethodnim" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compared with previous"
-          }
-        }
-      }
-    },
-    "Usporedba se pojavi kad u ovom ili prethodnom razdoblju postoji trening." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The comparison appears when there's a workout in this or the previous period."
-          }
-        }
-      }
-    },
     "Usporedba: %@" : {
       "localizations" : {
         "en" : {
@@ -9542,36 +9754,6 @@
         }
       }
     },
-    "Graf usporedbe serija po mišićima s prošlim tjednom" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chart comparing sets per muscle with last week"
-          }
-        }
-      }
-    },
-    "%@ više nego prošli tjedan." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ more than last week."
-          }
-        }
-      }
-    },
-    "%@ manje nego prošli tjedan." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ less than last week."
-          }
-        }
-      }
-    },
     "Trend snage po mišićima" : {
       "localizations" : {
         "en" : {
@@ -9688,52 +9870,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Over 20"
-          }
-        }
-      }
-    },
-    "Ovaj tjedan dosad: %lld tvrdih serija." : {
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "This week so far: %lld hard set."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "This week so far: %lld hard sets."
-                }
-              }
-            }
-          }
-        },
-        "hr" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Ovaj tjedan dosad: %lld tvrde serije."
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Ovaj tjedan dosad: %lld tvrda serija."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Ovaj tjedan dosad: %lld tvrdih serija."
-                }
-              }
-            }
           }
         }
       }

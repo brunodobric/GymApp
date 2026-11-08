@@ -147,7 +147,7 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
    * Kad nema aktivnog rasporeda, a postoje spremljeni treninzi, prvi red kartice je **Odaberi trening**: otvara popis spremljenih treninga snage (s vježbama) i dodir pokreće odabrani. Prazan trening ostaje ispod. Isto radi ⌘N (i kad raspored nudi samo kardio).
    * Dok trening traje, ekran treninga se povlačenjem prema dolje (ili gumbom Smanji) sažima u tu karticu. Kartica prikazuje isto što i Live Activity: vježbu i seriju, odbrojavanje odmora, težinu i ponavljanja s gumbima − i + te kvačicu za potvrdu serije. Dodir na karticu ponovno otvara cijeli ekran treninga.
    * Ispod nje kartice koje korisnik dodaje, uklanja i premješta (Uredi kartice na dnu). Zadano su prikazane **Ovaj tjedan** i **Zadnji trening**:
-     * **Ovaj tjedan:** odrađeni treninzi prema cilju iz onboardinga ("2 od 3 treninga" s trakom; bez cilja samo broj), sedam dana tjedna s ikonom vrste treninga (snaga, kardio ili oboje) i obrubljenim današnjim danom, niz tjedana s ispunjenim ciljem (bez cilja: s barem jednim treningom) od dva tjedna naviše te tvrde serije, vrijeme kardija i ukupno vrijeme. Broje se i kardio treninzi iz Zdravlja.
+     * **Ovaj tjedan:** odrađeni treninzi prema cilju iz onboardinga ("2 od 3 treninga" s trakom; bez cilja samo broj), sedam dana tjedna s ikonom vrste treninga (snaga, kardio ili oboje) i obrubljenim današnjim danom, niz tjedana s ispunjenim ciljem (bez cilja: s barem jednim treningom) od dva tjedna naviše te tvrde serije, vrijeme kardija i ukupno vrijeme. Broje se i kardio treninzi iz Zdravlja. Dodir otvara pregled tjedna (Statistika).
      * **Zadnji trening:** naziv, koliko je prošlo (danas, jučer, prije 3 dana) i datum, vrsta, trajanje i tvrde serije te najviše dva istaknuta rekorda (isti izbor kao u sažetku nakon treninga). Dodir otvara detalje.
      * Male kartice, dvije u redu (uz veliki tekst jedna ispod druge): **Težina** (zadnja vrijednost i promjena u 30 dana, dodir otvara praćenje tijela) i **Ploče** (kalkulator ploča).
    * Ranije kartice Tjedni volumen i Sljedeći trening su ukinute: tonaža nije dobra mjera tjedna (statistika broji tvrde serije, a kardio tjedan bi pokazao 0 kg), a sljedeći trening već piše u kartici Započni. Kod postojećih korisnika tjedni volumen jednom postaje Ovaj tjedan na istom mjestu, a Početna bez njega dobiva Ovaj tjedan na vrhu.
@@ -236,6 +236,11 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 5. **Statistika** — Grafovi, 1RM, volumen, PRs, body measurements, heatmap.
    * Prikazuje se kao vertikalni popis kartica (jedna ispod druge).
    * Svaka kartica predstavlja jednu kategoriju (npr. graf napretka, 1RM, volumen, PR lista, body measurements, heatmap).
+   * Kartica **Ovaj tjedan** (broj treninga prema cilju i tvrde serije) vodi na ekran **Tjedan**, koji se otvara i dodirom na istoimenu karticu na Početnoj. Strelicama se lista unatrag po tjednima, a gumb Ovaj tjedan vraća na tekući. Ekran ima:
+     * **Sažetak:** treninzi (prema cilju), ukupno vrijeme, tvrde serije i kardio (vrijeme i udaljenost), svaki s promjenom prema tjednu prije.
+     * **Po danima:** dani do danas, svaki s treninzima (vrsta, trajanje, tvrde serije, udaljenost, broj rekorda) ili "Odmor". Dodir otvara detalje treninga.
+     * **Serije po mišiću:** mapa tijela s opterećenjem tog tjedna i graf tvrdih serija šest mišića uz tjedan prije (nekadašnja kartica Usporedba s prethodnim).
+     * **Rekordi tjedna.**
 
 ### Funkcije
 
