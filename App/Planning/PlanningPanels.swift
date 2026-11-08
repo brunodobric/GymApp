@@ -280,6 +280,7 @@ struct TemplateListPanel: View {
                 SelectableRow(isSelected: selected.contains(template.id), toggle: { toggle(template) }) {
                     Label {
                         Text(template.name)
+                            .font(.itemTitle)
                     } icon: {
                         WorkoutKindIcon(
                             mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises))

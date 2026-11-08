@@ -38,8 +38,9 @@ Pravila iz Apple Human Interface Guidelines (skill *apple-hig-dizajn*) primijenj
 
 Smjer "Apolon, mirniji": zaobljeni bold za naslove i brojeve, obični SF Pro za opise. Stilovi su na jednom mjestu, `Shared/Design/AppFont.swift`, i dijele ih aplikacija, Live Activity i sat.
 
-* **SF Pro Rounded** (stilovi iz `AppFont`): naslovi ekrana i kartica, nazivi treninga, vježbi i programa, mala oznaka verzalom i svi brojevi (težina, ponavljanja, vrijeme, volumen, rekordi).
-* **Obični SF Pro** (sistemski stilovi, npr. `.subheadline`): opisi i sekundarni tekst, gumbi, retci listi i formi, zaglavlja sekcija. Postavke, onboarding (osim naslova pitanja) i katalog vježbi su u običnom SF Pro.
+* **SF Pro Rounded** (stilovi iz `AppFont`): naslovi ekrana i kartica, nazivi treninga, rasporeda, vježbi i programa, mala oznaka verzalom i svi brojevi (težina, ponavljanja, vrijeme, volumen, rekordi).
+* **Obični SF Pro** (sistemski stilovi, npr. `.subheadline`): opisi i sekundarni tekst, gumbi, retci formi, zaglavlja sekcija. Postavke, onboarding (osim naslova pitanja) i katalog vježbi su u običnom SF Pro.
+* **Retci listi:** naziv treninga, rasporeda ili programa u retku je `itemTitle`, a opis ispod njega (datum, broj vježbi, ciklus) je obični `.subheadline`. Tako izgledaju Povijest, Rasporedi, Gotovi programi i biranje treninga. Iznimka su retci vježbi u katalogu i u biranju vježbi: naziv vježbe je tamo u običnom SF Pro, jer su to duge liste za pretraživanje, a ne naslovi.
 * `.fontDesign(.rounded)` se ne stavlja na cijeli ekran ili karticu, jer tada zaobli i opise. Stil se bira po ulozi teksta.
 * **Težine:** bold za naslove i istaknute brojeve, semibold za brojeve u retku i polju za unos, regular za opise. Bez light i medium.
 * **Naslovi u navigacijskoj traci** su zaobljeni (`App/Design/NavigationBarFont.swift`): veliki bold, mali semibold.
@@ -50,7 +51,7 @@ Smjer "Apolon, mirniji": zaobljeni bold za naslove i brojeve, obični SF Pro za 
 |---|---|---|
 | `screenTitle` | veliki naslov u sadržaju | naziv treninga na detalju |
 | `cardTitle` | naslov kartice ili istaknutog retka | "Započni: Push dan", pitanje u onboardingu |
-| `itemTitle` | naziv vježbe, treninga ili programa | kartica vježbe, Povijest, Live Activity |
+| `itemTitle` | naziv vježbe, treninga, rasporeda ili programa | kartica vježbe, Povijest, Rasporedi, Live Activity |
 | `cardHeading` | naslov kartice verzalom uz ikonu | ZADNJI TRENING |
 | `eyebrow` | mala oznaka verzalom | ODMOR, zaglavlje tablice serija, SUPERSET |
 | `metricLarge` | najveći broj | odbrojavanje odmora, kotačić |
