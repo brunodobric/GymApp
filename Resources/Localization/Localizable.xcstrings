@@ -3135,6 +3135,16 @@
         }
       }
     },
+    "Odabrano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected"
+          }
+        }
+      }
+    },
     "Promjene još nisu spremljene." : {
       "localizations" : {
         "en" : {
@@ -3161,6 +3171,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Average pace"
+          }
+        }
+      }
+    },
+    "Rezultati" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Results"
           }
         }
       }
