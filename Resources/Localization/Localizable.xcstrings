@@ -10274,16 +10274,6 @@
         }
       }
     },
-    "Težina mora biti između 20 i 400 kg (44 i 880 lbs)." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weight must be between 20 and 400 kg (44 and 880 lbs)."
-          }
-        }
-      }
-    },
     "Radnja nije uspjela. Pokušaj u aplikaciji." : {
       "localizations" : {
         "en" : {
@@ -10376,6 +10366,26 @@
     },
     "%@" : {
       "shouldTranslate" : false
+    },
+    "Težina mora biti između 20 i 400 kg." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight must be between 20 and 400 kg."
+          }
+        }
+      }
+    },
+    "Prvo otvori aplikaciju i dovrši uvod." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the app and finish the setup first."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

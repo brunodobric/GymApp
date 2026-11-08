@@ -11,12 +11,14 @@ import Units
 enum ShortcutIntentError: Error, CustomLocalizedStringResourceConvertible {
     case templateUnavailable
     case invalidWeight
+    case needsOnboarding
     case failed
 
     var localizedStringResource: LocalizedStringResource {
         switch self {
         case .templateUnavailable: "Taj trening više ne postoji ili nema vježbi."
-        case .invalidWeight: "Težina mora biti između 20 i 400 kg (44 i 880 lbs)."
+        case .invalidWeight: "Težina mora biti između 20 i 400 kg."
+        case .needsOnboarding: "Prvo otvori aplikaciju i dovrši uvod."
         case .failed: "Radnja nije uspjela. Pokušaj u aplikaciji."
         }
     }
@@ -29,14 +31,33 @@ enum ShortcutIntentError: Error, CustomLocalizedStringResourceConvertible {
 enum ShortcutActions {
     private static let logger = Logger(subsystem: "com.brunodobric.gymapp", category: "Shortcuts")
 
-    private static func makeContext() -> ModelContext {
+    /// Baza za akciju. Kad se baza na uređaju nije otvorila, aplikacija radi s privremenom bazom u memoriji
+    /// (`AppServices.storeOpenError`): tada akcija javlja grešku, jer bi se upis izgubio.
+    private static func makeContext() throws -> ModelContext {
         AppServices.start()
+        guard AppServices.storeOpenError == nil else { throw ShortcutIntentError.failed }
         return AppServices.container.mainContext
     }
 
+    /// Treninzi koje akcija nudi za odabir.
     static func templates() -> [WorkoutTemplateEntity] {
-        let found = (try? WorkoutShortcuts(context: makeContext()).startableTemplates()) ?? []
+        guard let context = try? makeContext() else { return [] }
+        let found = (try? WorkoutShortcuts(context: context).startableTemplates()) ?? []
         return found.map { WorkoutTemplateEntity(id: $0.id, name: $0.name) }
+    }
+
+    /// Treninzi po id-u, i oni koji se više ne mogu pokrenuti: spremljeni prečac tada dobiva jasnu grešku
+    /// iz `startWorkout` umjesto općenite greške sustava da trening nije pronađen.
+    static func templates(ids: [UUID]) -> [WorkoutTemplateEntity] {
+        guard let context = try? makeContext(),
+              let all = try? context.fetch(FetchDescriptor<WorkoutTemplate>()) else { return [] }
+        let wanted = Set(ids)
+        return all.filter { wanted.contains($0.id) }.map { WorkoutTemplateEntity(id: $0.id, name: $0.name) }
+    }
+
+    /// Jedinica težine iz postavki, bez stvaranja postavki (`GymQueries.settings()` bi ih stvorio prije onboardinga).
+    private static func settings(in context: ModelContext) -> UserSettings? {
+        UserSettings.preferred(in: (try? context.fetch(FetchDescriptor<UserSettings>())) ?? [])
     }
 
     static func startWorkout(templateId: UUID?) throws -> LocalizedStringResource {
@@ -50,7 +71,7 @@ enum ShortcutActions {
     }
 
     static func finishWorkout() async throws -> LocalizedStringResource {
-        let context = makeContext()
+        let context = try makeContext()
         let result: ShortcutFinishResult
         do {
             result = try WorkoutShortcuts(context: context).finishActive()
@@ -76,8 +97,8 @@ enum ShortcutActions {
     }
 
     static func logBodyWeight(_ value: Double) throws -> LocalizedStringResource {
-        let context = makeContext()
-        let unit = (try? GymQueries(context: context).settings())?.weightUnit ?? .kilograms
+        let context = try makeContext()
+        let unit = settings(in: context)?.weightUnit ?? .kilograms
         let kilograms = WeightConversion.kilograms(from: value, in: unit)
         do {
             try BodyTracking(context: context).addShortcutWeight(kilograms: kilograms)
@@ -93,7 +114,12 @@ enum ShortcutActions {
 
     /// Zajednički dio pokretanja: trening u tijeku ili novi trening otvara se na ekranu.
     private static func handle(_ action: (WorkoutShortcuts) throws -> ShortcutStartResult) throws -> LocalizedStringResource {
-        let context = makeContext()
+        let context = try makeContext()
+        // Prije uvoda aplikacija prikazuje onboarding preko cijelog zaslona, pa se trening ne bi mogao otvoriti.
+        let hasActive = (try? GymQueries(context: context).activeSession()) != nil
+        if !hasActive, !(settings(in: context)?.onboardingCompleted ?? false) {
+            throw ShortcutIntentError.needsOnboarding
+        }
         let result: ShortcutStartResult
         do {
             result = try action(WorkoutShortcuts(context: context))

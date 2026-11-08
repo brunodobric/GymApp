@@ -24,7 +24,6 @@ struct RootView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
     @Query private var settingsList: [UserSettings]
-    @Query private var templates: [WorkoutTemplate]
 
     private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
 
@@ -93,18 +92,18 @@ struct RootView: View {
         }
         .task {
             PendingTemplateFromSession.discardLeftover(context: context)
+            GymAppShortcuts.updateAppShortcutParameters()
             ReminderScheduler.refresh(context: context)
             PhoneWatchSync.shared.refreshContext()
             await LegacyCardioPlans.removeFromWatch()
             await HealthService.shared.importNewData(context: context)
         }
-        // Prečaci nude spremljene treninge kao parametar fraze ("Započni Push u Apolonu").
-        .task(id: templates.count) {
-            GymAppShortcuts.updateAppShortcutParameters()
-        }
         .onChange(of: scenePhase) { _, phase in
             // Satu se šalju svježi treninzi i postavke, i kad korisnik izađe iz aplikacije nakon izmjena.
             if phase != .inactive { PhoneWatchSync.shared.refreshContext() }
+            // Prečaci nude spremljene treninge kao parametar fraze ("Započni Push u Apolonu"). Osvježava se
+            // pri izlasku iz aplikacije, pa vrijede i novi, preimenovani i obrisani treninzi.
+            if phase == .background { GymAppShortcuts.updateAppShortcutParameters() }
             guard phase == .active else { return }
             ReminderScheduler.refresh(context: context)
             // Trening započet na satu dok je iPhone bio zaključan dobiva Live Activity tek sad:
