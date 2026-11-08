@@ -257,6 +257,7 @@ struct SchedulesScreen: View {
                         Label {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(template.name)
+                                    .font(.itemTitle)
                                 Text(subtitle(of: template))
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
@@ -319,6 +320,7 @@ private struct ScheduleRow: View {
         VStack(alignment: .leading, spacing: 2) {
             HStack {
                 Text(schedule.name)
+                    .font(.itemTitle)
                 if !schedule.isActive {
                     Text("Neaktivan")
                         .font(.caption)
