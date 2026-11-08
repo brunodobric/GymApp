@@ -26,6 +26,18 @@ class CheckTests(unittest.TestCase):
         missing, errors, stale = check(catalog({"Spremi": {"localizations": {"en": unit("Save")}}}))
         self.assertEqual((missing, errors, stale), ([], [], []))
 
+    def test_fraze_za_precace(self):
+        def phrases(state):
+            return {"stringSet": {"state": state, "values": ["Start ${applicationName}", "Go ${applicationName}"]}}
+
+        key = "Kreni u ${applicationName}"
+        missing, errors, _ = check(catalog({key: {"localizations": {"en": phrases("translated")}}}))
+        self.assertEqual((missing, errors), ([], []))
+        _, errors, _ = check(catalog({key: {"localizations": {"en": phrases("needs_review")}}}))
+        self.assertEqual(len(errors), 2)
+        missing, _, _ = check(catalog({key: {"localizations": {"en": {"stringSet": {"state": "translated", "values": []}}}}}))
+        self.assertEqual(missing, [key])
+
     def test_kljuc_bez_engleskog(self):
         missing, _, _ = check(catalog({"Spremi": {}}))
         self.assertEqual(missing, ["Spremi"])

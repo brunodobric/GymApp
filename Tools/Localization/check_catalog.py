@@ -50,10 +50,18 @@ def specifiers(text: str) -> list[str]:
 
 
 def string_units(localization: dict) -> list[tuple[str, dict]]:
-    """Svi stringUnit zapisi lokalizacije: običan tekst, varijacije i zamjene."""
+    """Svi stringUnit zapisi lokalizacije: običan tekst, varijacije i zamjene.
+
+    Fraze za Prečace (AppShortcuts.xcstrings) imaju stringSet: više fraza s jednim stanjem.
+    Svaka fraza se provjerava kao zaseban tekst.
+    """
     units = []
     if "stringUnit" in localization:
         units.append(("", localization["stringUnit"]))
+    if "stringSet" in localization:
+        string_set = localization["stringSet"]
+        for index, value in enumerate(string_set.get("values", []), start=1):
+            units.append((f"fraza {index}", {"state": string_set.get("state"), "value": value}))
     for kind, cases in localization.get("variations", {}).items():
         for case, nested in cases.items():
             for name, unit in string_units(nested):

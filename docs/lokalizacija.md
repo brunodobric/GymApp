@@ -6,6 +6,7 @@ Aplikacija je na hrvatskom i engleskom. Izvorni jezik je hrvatski: tekst u kodu 
 
 * `Resources/Localization/Localizable.xcstrings`: svi tekstovi sučelja. Jedan katalog dijele sva četiri targeta (iPhone i iPad, Watch, Live Activity, complications), pa se tekst koji se ponavlja prevodi jednom.
 * `App/InfoPlist.xcstrings` i `WatchApp/InfoPlist.xcstrings`: opisi dozvola za Zdravlje. Odvojeni su jer iPhone i sat traže različite dozvole.
+* `App/AppShortcuts.xcstrings`: fraze za Prečace i Siri (`GymAppShortcuts`). Ključ je prva fraza akcije, a svaki jezik ima popis fraza (`stringSet`). Svaka fraza mora sadržavati `${applicationName}`, a parametar se piše kao `${workout}`.
 * Katalog vježbi (`Resources/Catalog/catalog.json`) ima nazive i upute po jeziku. Prijevodi su u `Tools/CatalogBuilder/translations/hr.json`, a katalog ih bira prema jeziku sučelja aplikacije (`CatalogStore.language`), ne prema regiji uređaja.
 
 ## Pisanje teksta u kodu

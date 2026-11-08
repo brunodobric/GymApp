@@ -1,52 +1,88 @@
 {
   "sourceLanguage" : "hr",
   "strings" : {
-    "Započni trening u ${applicationName}" : {
+    "Upiši težinu u ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
+          "stringSet" : {
             "state" : "translated",
-            "value" : "Start a workout in ${applicationName}"
+            "values" : [
+              "Log my weight in ${applicationName}"
+            ]
           }
-        }
-      }
-    },
-    "Započni ${workout} u ${applicationName}" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start ${workout} in ${applicationName}"
+        },
+        "hr" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Upiši težinu u ${applicationName}"
+            ]
           }
         }
       }
     },
     "Započni sljedeći trening u ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
+          "stringSet" : {
             "state" : "translated",
-            "value" : "Start my next workout in ${applicationName}"
+            "values" : [
+              "Start my next workout in ${applicationName}"
+            ]
+          }
+        },
+        "hr" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Započni sljedeći trening u ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Započni trening u ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Start a workout in ${applicationName}",
+              "Start ${workout} in ${applicationName}"
+            ]
+          }
+        },
+        "hr" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Započni trening u ${applicationName}",
+              "Započni ${workout} u ${applicationName}"
+            ]
           }
         }
       }
     },
     "Završi trening u ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
+          "stringSet" : {
             "state" : "translated",
-            "value" : "Finish my workout in ${applicationName}"
+            "values" : [
+              "Finish my workout in ${applicationName}"
+            ]
           }
-        }
-      }
-    },
-    "Upiši težinu u ${applicationName}" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log my weight in ${applicationName}"
+        },
+        "hr" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Završi trening u ${applicationName}"
+            ]
           }
         }
       }
