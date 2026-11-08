@@ -7,6 +7,12 @@ import WidgetKit
 struct GymAppWidgetBundle: WidgetBundle {
     var body: some Widget {
         RestTimerLiveActivity()
+        NextWorkoutWidget()
+        WeekWidget()
+        BodyWeightWidget()
+        LastWorkoutWidget()
+        RecordWidget()
+        StartWorkoutControl()
     }
 }
 

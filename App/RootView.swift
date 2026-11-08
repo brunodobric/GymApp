@@ -1,6 +1,7 @@
 import Models
 import SwiftData
 import SwiftUI
+import WidgetData
 
 /// Glavna navigacija: pet tabova (specifikacija, odjeljak 3).
 ///
@@ -57,11 +58,19 @@ struct RootView: View {
                 homeRequest = request
             }
         ))
-        // Dodir na Live Activity otvara Početnu i preko nje puni ekran aktivnog treninga.
+        // Dodir na Live Activity otvara Početnu i preko nje puni ekran aktivnog treninga,
+        // a widgeti otvaraju Početnu, pregled tjedna, težinu ili zadnji trening.
         .onOpenURL { url in
-            guard LiveActivityLink.isActiveWorkout(url) else { return }
+            guard let link = WidgetLink(url: url) else { return }
             selection = .home
-            homeRequest = .activeWorkout
+            homeRequest = HomeRequest(link)
+        }
+        // Gumb ▶ na widgetu i kontrola "Započni trening" (intent se izvršava u aplikaciji).
+        .onChange(of: AppRequestRouter.shared.pending, initial: true) { _, pending in
+            guard let pending else { return }
+            AppRequestRouter.shared.pending = nil
+            selection = .home
+            homeRequest = pending
         }
         .tint(settings?.accent.color ?? AccentChoice.blue.color)
         .preferredColorScheme(settings?.theme.colorScheme)
@@ -92,8 +101,11 @@ struct RootView: View {
         .onChange(of: scenePhase) { _, phase in
             // Satu se šalju svježi treninzi i postavke, i kad korisnik izađe iz aplikacije nakon izmjena.
             if phase != .inactive { PhoneWatchSync.shared.refreshContext() }
+            // Widgeti dobivaju svježu snimku i kad se nije ništa spremilo (npr. novi dan dok je aplikacija bila zatvorena).
+            if phase == .background { WidgetRefresher.shared.refresh() }
             guard phase == .active else { return }
             ReminderScheduler.refresh(context: context)
+            WidgetRefresher.shared.scheduleRefresh()
             // Trening započet na satu dok je iPhone bio zaključan dobiva Live Activity tek sad:
             // sustav je dopušta pokrenuti samo dok je aplikacija otvorena.
             WorkoutLiveUpdates.shared.refresh()

@@ -2,6 +2,7 @@ import Catalog
 import Foundation
 import Models
 import Units
+import WidgetData
 
 // Zadnje stanje koje iPhone šalje satu preko `updateApplicationContext` (specifikacija, odjeljak 6):
 // sljedeći treninzi i predlošci s pretpunjenim serijama (smart defaults), jedinica i zadana pauza.
@@ -84,6 +85,10 @@ public struct WatchContextPayload: Codable, Sendable, Equatable {
     /// Korisnik je u aplikaciji uključio Apple Zdravlje: sat sprema trening u Zdravlje.
     public var savesToHealth: Bool
     public var generatedAt: Date
+    /// Tekući tjedan za komplikaciju tjednog cilja (isti kao u widgetima na iPhoneu). Nil iz starije verzije aplikacije.
+    public var week: WidgetSnapshot.Week?
+    /// Zadnja tjelesna težina u kg, za komplikaciju težine.
+    public var bodyWeightKg: Double?
 
     public init(
         upcoming: [PlannedWorkoutPayload], templates: [PlannedWorkoutPayload], weightUnit: WeightUnit,

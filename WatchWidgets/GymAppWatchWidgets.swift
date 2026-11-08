@@ -1,10 +1,15 @@
 import SwiftUI
+import Units
+import WidgetData
 import WidgetKit
 
 @main
 struct GymAppWatchWidgets: WidgetBundle {
     var body: some Widget {
         GymComplication()
+        WeekGoalComplication()
+        QuickStartComplication()
+        BodyWeightComplication()
     }
 }
 
@@ -24,6 +29,13 @@ struct GymComplication: Widget {
 struct ComplicationEntry: TimelineEntry {
     let date: Date
     let state: ComplicationState
+
+    /// Smart Stack: odmor i trening u tijeku idu na vrh, inače widget ne gura sebe naprijed.
+    var relevance: TimelineEntryRelevance? {
+        if state.isResting(at: date) { return TimelineEntryRelevance(score: 100) }
+        if state.activeWorkoutName != nil { return TimelineEntryRelevance(score: 50) }
+        return nil
+    }
 }
 
 struct ComplicationProvider: TimelineProvider {

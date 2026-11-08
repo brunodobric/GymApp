@@ -14,6 +14,7 @@ iOS, iPadOS i watchOS aplikacija za bilježenje treninga. Swift + SwiftUI, Swift
 * `docs/izdanje.md`: TestFlight beta, greške iz bete i slanje na App Store review
 * `docs/lokalizacija.md`: String Catalog (hr i en), pisanje teksta u kodu i provjera prijevoda na CI-ju
 * `docs/movekit.md`: MoveKit katalog vježbi, licenca i što smije u javni repozitorij
+* `docs/widgeti.md`: widgeti, kontrola "Započni trening" i komplikacije: snimka u App Groupu i osvježavanje
 
 Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi tipova, funkcija i varijabli su na engleskom.
 
@@ -23,7 +24,8 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * `Config/`: xcconfig datoteke za potpisivanje. Tim je u `Config/Local.xcconfig` (ne commita se). Entitlements su datoteke u `App/` i `WatchApp/`, a `GymApp-PersonalTeam.entitlements` je verzija bez iCloud i push za besplatni tim (uvjet kompajliranja `PERSONAL_TEAM`).
 * `App/`: iPhone i iPad aplikacija
 * `WatchApp/`: watchOS aplikacija
-* `Widgets/`: Live Activity (i kasnije widgeti)
+* `Widgets/`: Live Activity, widgeti na početnom i zaključanom zaslonu i kontrola "Započni trening"
+* `WatchWidgets/`: komplikacije na satu
 * `UITests/`: UI test koji radi snimke zaslona za App Store (`scripts/snimke-zaslona.sh`)
 * `Shared/Common/`: kod koji dijele iPhone i Watch
 * `Shared/LiveActivity/`: kod koji dijele aplikacija i widget extension

@@ -186,7 +186,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 
 ### Opis tabova
 
-1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (ovaj tjedan, zadnji trening, težina, kalkulator ploča) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u popisu "Kasnije").
+1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (ovaj tjedan, zadnji trening, težina, kalkulator ploča) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u odjeljku 6, "Widgeti i kontrole").
 2. **Odrađeni treninzi** — Povijest svih završenih treninga s filterima i detaljima.
    * Lista treninga prikazuje: datum, tip i trajanje.
      * Trening snage s barem jednom odrađenom kardio vježbom ima bučicu s malom oznakom trčanja i redak "15 min kardio", a u filteru je i pod snagom i pod kardiom. Trening snage u kojem su odrađene samo kardio vježbe prikazuje se kao kardio. Vrsta se računa iz vježbi i ne sprema se. Isto pravilo vrijedi za predloške (samo snaga, samo kardio ili snaga + kardio), pa je ikona ista svugdje gdje se trening prikazuje: povijest, Početna, rasporedi, popis treninga i izbor treninga.
@@ -442,7 +442,7 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 * Sinkronizacija s iPhone aplikacijom u realnom vremenu (vidi niže).
 * Watch aplikacija može voditi trening i kad iPhone nije u blizini. Podaci se spremaju na satu i šalju na iPhone kad se veza uspostavi.
 * **Trening pokrenut na iPhoneu pokreće i sat** (`HKHealthStore.startWatchApp`), ako je sat uparen i u Postavkama je uključeno "Pokreni trening i na satu" (zadano uključeno). Trening i dalje vodi iPhone, a sat za njega drži `HKWorkoutSession`: mjeri puls i kalorije, ostaje otvoren dok je zapešće spušteno i vibrira na kraju odmora. Na kraju sat sprema trening u Zdravlje i šalje iPhoneu UUID, kalorije i puls (`WorkoutCommand.healthRecorded`), a iPhone tada svoj zapis u Zdravlje ne radi (`Session.healthRecordedByWatch`). Kraj odmora tada javlja sat, pa iPhone ne zakazuje obavijest. Ako sat ne pokrene sesiju (npr. nema dozvole za Zdravlje), iPhone sprema trening i javlja kraj odmora kao i prije.
-* **Complications:** Prikaz sljedećeg treninga. Podržano na svim Watch face-ovima gdje je moguće.
+* **Complications:** sljedeći trening i odmor u tijeku (s odbrojavanjem), tjedni cilj ("2/3"), brzi početak (▶ otvara aplikaciju) i tjelesna težina. Podržano na svim Watch face-ovima gdje je moguće. Tjedni cilj i težinu sat dobiva s iPhonea u kontekstu (`WatchContextPayload.week`, `bodyWeightKg`). Za vrijeme odmora i treninga komplikacija se penje na vrh Smart Stacka (`TimelineEntryRelevance`).
 
 #### Sinkronizacija iPhone ↔ Watch
 * **Tijekom aktivnog treninga koristi se WatchConnectivity**, a ne CloudKit. CloudKit je spor i nema zajamčeno vrijeme isporuke.
@@ -472,6 +472,15 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
    * Trajanje
    * Broj serija
    * Gumb Zatvori
+
+### Widgeti i kontrole (iPhone i iPad)
+* **Sljedeći trening** (mali i srednji, pravokutnik i redak iznad sata na zaključanom zaslonu): trening koji je na redu u rasporedu, broj vježbi i u srednjem prve tri vježbe s planom ("4 × 8 · 80 kg"). Gumb ▶ otvara aplikaciju i pokreće ga, isto kao ⌘N. Dok trening traje, widget pokazuje trening u tijeku i koliko traje.
+* **Ovaj tjedan** (mali, srednji, krug na zaključanom zaslonu): krug do tjednog cilja, niz tjedana zaredom, dani s vrstom treninga, tvrde serije, kardio i ukupno vrijeme. Isti podaci kao kartica na Početnoj. Novi tjedan počinje prazan i kad aplikacija nije otvorena.
+* **Težina** (mali, krug na zaključanom zaslonu): zadnja vrijednost, promjena u 30 dana i krivulja zadnjih mjerenja.
+* **Zadnji trening** (srednji) i **Zadnji rekord** (mali).
+* **Kontrola "Započni trening"** za Kontrolni centar, zaključani zaslon i tipku Action.
+* Dodir na widget otvara pripadni ekran (pregled tjedna, praćenje tijela, zadnji trening) kao list preko Početne.
+* Widget nema pristup bazi: aplikacija nakon svakog spremanja slaže snimku i sprema je u App Group (`docs/widgeti.md`).
 
 ### iPad optimizacija
 * Detaljni grafovi i statistike u split-view ili multi-column layoutu.
@@ -572,7 +581,6 @@ Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening**
 * Hibridni WOD / CrossFit formati u potpunosti.
 * Program generator / AI preporuke.
 * Dijeljenje rasporeda.
-* WidgetKit widgeti na početnom zaslonu.
 
 ---
 

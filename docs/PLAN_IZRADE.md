@@ -24,7 +24,7 @@ GymApp/
 ├── GymApp.xcodeproj
 ├── App/                    # iOS + iPadOS target (SwiftUI app)
 ├── WatchApp/               # watchOS target
-├── Widgets/                # Widget extension: Live Activity (iOS) i complications (watchOS)
+├── Widgets/                # Widget extension: Live Activity, widgeti i kontrola (iOS)
 ├── Packages/
 │   └── GymKit/             # lokalni Swift Package, dijele ga svi targeti
 │       ├── Models/         # SwiftData modeli i shema (VersionedSchema)
@@ -207,7 +207,7 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 * WatchConnectivity protokol: događaji s UUID-om i vremenom, `sendMessage` i `transferUserInfo`, jedan uređaj vodi trening, a drugi zrcali i šalje izmjene.
 * Samostalan rad bez iPhonea uz sinkronizaciju kad se veza vrati.
 * Haptika na kraju odmora.
-* Complications (WidgetKit za watchOS): sljedeći trening i aktivni rest timer.
+* Complications (WidgetKit za watchOS): sljedeći trening i aktivni rest timer, a uz widgete na iPhoneu i tjedni cilj, brzi početak i težina (`docs/widgeti.md`).
 
 **Gotovo kad:** trening od početka do kraja odrađen je samo na satu, s iPhoneom izvan dosega dio vremena, i završni zapis na iPhoneu je potpun i bez duplikata.
 
