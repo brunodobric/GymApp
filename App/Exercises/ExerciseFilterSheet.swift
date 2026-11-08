@@ -3,6 +3,8 @@ import SwiftUI
 
 struct ExerciseFilterSheet: View {
     @Binding var filter: ExerciseFilter
+    /// Početni filter popisa (npr. vrsta ili samo vlastite vježbe), na koji se vraća "Poništi filtere".
+    var base = ExerciseFilter()
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -36,12 +38,10 @@ struct ExerciseFilterSheet: View {
                     }
                 }
 
-                if filter.isActive {
+                if filter.differs(from: base) {
                     Section {
                         Button("Poništi filtere", role: .destructive) {
-                            let query = filter.query
-                            filter = ExerciseFilter()
-                            filter.query = query
+                            filter.reset(to: base)
                         }
                     }
                 }

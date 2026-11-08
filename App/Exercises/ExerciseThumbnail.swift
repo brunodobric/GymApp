@@ -33,17 +33,22 @@ struct ExerciseThumbnail: View {
     /// Veličina ikone kad slike nema i zaobljenje kutova. Mala sličica u retku popisa ima manje od mreže.
     var placeholderFont: Font = .title
     var cornerRadius: CGFloat = CornerRadius.inner
+    /// Omjer okvira (4:3 u popisu i mreži, 1 u mozaiku kartice vrste) i povećanje slike unutar njega.
+    /// Posteri su 16:9 s figurom u sredini, pa u kvadratu povećanje približi figuru.
+    var aspectRatio: CGFloat = 4 / 3
+    var zoom: CGFloat = 1
 
     @State private var image: UIImage?
 
     var body: some View {
         Color(.tertiarySystemFill)
-            .aspectRatio(4 / 3, contentMode: .fit)
+            .aspectRatio(aspectRatio, contentMode: .fit)
             .overlay {
                 if let image {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
+                        .scaleEffect(zoom)
                 } else {
                     Image(systemName: "dumbbell")
                         .font(placeholderFont)

@@ -17,6 +17,27 @@ extension ExerciseCategory {
     }
 }
 
+extension ExerciseKind {
+    var title: LocalizedStringResource {
+        switch self {
+        case .warmUp: "Zagrijavanje"
+        case .strength: "Snaga"
+        case .stretching: "Istezanje"
+        case .cardio: "Kardio"
+        }
+    }
+
+    /// Simbol na kartici vrste kad sličica nema (build bez MoveKit dodatka).
+    var systemImage: String {
+        switch self {
+        case .warmUp: "flame"
+        case .strength: "dumbbell"
+        case .stretching: "figure.flexibility"
+        case .cardio: "figure.run"
+        }
+    }
+}
+
 extension Muscle {
     var title: LocalizedStringResource {
         switch self {

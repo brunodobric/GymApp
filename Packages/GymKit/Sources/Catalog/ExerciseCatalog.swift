@@ -11,6 +11,8 @@ public struct CatalogExercise: Codable, Hashable, Identifiable, Sendable {
     public var instructions: [String: [String]]
     public var commonMistakes: [String: [String]]
     public let category: ExerciseCategory
+    /// Vrsta vježbe (zagrijavanje, snaga, istezanje, kardio), računa je CatalogBuilder.
+    public let kind: ExerciseKind
     public let primaryMuscles: [Muscle]
     public let secondaryMuscles: [Muscle]
     public let equipment: Equipment
@@ -26,7 +28,7 @@ public struct CatalogExercise: Codable, Hashable, Identifiable, Sendable {
     public let poster: String?
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, instructions, commonMistakes, category, primaryMuscles, secondaryMuscles, equipment
+        case id, name, instructions, commonMistakes, category, kind, primaryMuscles, secondaryMuscles, equipment
         case level, mechanic, movement, inputType, primaryRegions, secondaryRegions, video, poster
     }
 
@@ -37,6 +39,7 @@ public struct CatalogExercise: Codable, Hashable, Identifiable, Sendable {
         instructions = try container.decodeIfPresent([String: [String]].self, forKey: .instructions) ?? [:]
         commonMistakes = try container.decodeIfPresent([String: [String]].self, forKey: .commonMistakes) ?? [:]
         category = try container.decode(ExerciseCategory.self, forKey: .category)
+        kind = try container.decodeIfPresent(ExerciseKind.self, forKey: .kind) ?? .fallback(for: category)
         primaryMuscles = try container.decode([Muscle].self, forKey: .primaryMuscles)
         secondaryMuscles = try container.decode([Muscle].self, forKey: .secondaryMuscles)
         equipment = try container.decode(Equipment.self, forKey: .equipment)
@@ -174,6 +177,7 @@ public struct ExerciseCatalog: Codable, Sendable {
                 name: exercise.displayName(language: language),
                 alternativeNames: Array(exercise.name.values),
                 category: exercise.category,
+                kind: exercise.kind,
                 muscles: exercise.primaryMuscles,
                 equipment: exercise.equipment,
                 isArchived: false

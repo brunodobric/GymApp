@@ -31,6 +31,7 @@ class ConvertTests(unittest.TestCase):
         self.assertEqual(result["id"], "test-press")
         self.assertEqual(result["name"], {"en": "Test Press", "hr": "Testni potisak"})
         self.assertEqual(result["category"], "chest")
+        self.assertEqual(result["kind"], "strength")
         self.assertEqual(result["movement"], "push")
         self.assertEqual(result["mechanic"], "compound")
         self.assertEqual(result["equipment"], "barbell")
@@ -61,11 +62,28 @@ class ConvertTests(unittest.TestCase):
     def test_cardio_distance_and_duration(self):
         run = bc.convert(raw(name="Treadmill Run", movementPattern=["Cardio"], equipment=["Bodyweight"]), MAPPING, {}, None)
         self.assertEqual(run["category"], "cardio")
+        self.assertEqual(run["kind"], "cardio")
         self.assertEqual(run["inputType"], "durationDistance")
         self.assertIsNone(run["mechanic"])
         self.assertIsNone(run["movement"])
         jacks = bc.convert(raw(name="Jumping Jacks", movementPattern=["Cardio"], equipment=["Bodyweight"]), MAPPING, {}, None)
         self.assertEqual(jacks["inputType"], "duration")
+
+    def test_warm_up_and_stretching_kind(self):
+        warm_up = bc.convert(raw(slug="cat-camel", movementPattern=["Mobility"], equipment=["Bodyweight"]), MAPPING, {}, None)
+        self.assertEqual(warm_up["kind"], "warmUp")
+        stretch = bc.convert(raw(slug="hip-hold", movementPattern=["Mobility", "Stretch"]), MAPPING, {}, None)
+        self.assertEqual(stretch["kind"], "stretching")
+        by_name = bc.convert(raw(slug="abdominals-stretch", movementPattern=["Mobility"]), MAPPING, {}, None)
+        self.assertEqual(by_name["kind"], "stretching")
+        cardio = bc.convert(raw(movementPattern=["Cardio", "Mobility"]), MAPPING, {}, None)
+        self.assertEqual(cardio["kind"], "cardio")
+        get_up = bc.convert(raw(movementPattern=["Core", "Mobility"]), MAPPING, {"kind": "strength"}, None)
+        self.assertEqual(get_up["kind"], "strength")
+
+    def test_cardio_category_override_gives_cardio_kind(self):
+        result = bc.convert(raw(movementPattern=["Squat"]), MAPPING, {"category": "cardio"}, None)
+        self.assertEqual(result["kind"], "cardio")
 
     def test_plank_is_duration(self):
         result = bc.convert(raw(name="Front Plank", primaryMuscles=["Core"], equipment=["Bodyweight"], movementPattern=["Core"]), MAPPING, {}, None)
@@ -135,6 +153,11 @@ class PublicFilesTests(unittest.TestCase):
         legacy = {k: v for k, v in bc.load_json(TOOL / "legacy-ids.json").items() if not k.startswith("_")}
         self.assertEqual(self.catalog["legacyIds"], legacy)
         bc.check_legacy(legacy, self.ids)
+
+    def test_every_exercise_has_kind(self):
+        for exercise in self.catalog["exercises"]:
+            self.assertIn(exercise.get("kind"), {"strength", "cardio", "warmUp", "stretching"}, exercise["id"])
+            self.assertEqual(exercise["kind"] == "cardio", exercise["category"] == "cardio", exercise["id"])
 
     def test_overrides_name_existing_exercises(self):
         overrides = {k for k in bc.load_json(TOOL / "overrides.json") if not k.startswith("_")}
