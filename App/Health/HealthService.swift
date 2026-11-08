@@ -1,8 +1,10 @@
+import Catalog
 import Foundation
 import HealthKit
 import HealthSync
 import Models
 import OSLog
+import Stats
 import SwiftData
 import WorkoutKit
 
@@ -51,33 +53,50 @@ final class HealthService {
     // MARK: Spremanje treninga
 
     /// Sprema završeni trening s iPhonea u Zdravlje, ako je korisnik to dopustio.
+    /// Trening snage s kardio vježbama ide kao više treninga jedan za drugim (`HealthWorkoutExport.segments`),
+    /// jer jedan HealthKit trening ne može imati i snagu i kardio. Svi nose id treninga iz aplikacije,
+    /// a u povijest se veže glavni (najdulji trening snage).
     func saveWorkout(of session: Session, context: ModelContext) async {
         // Trening koji je vodio sat sat je i spremio u Zdravlje (HKWorkoutSession).
         guard isAvailable, Self.isConnected(context: context), session.controllingDevice == .phone,
               session.healthKitWorkoutId == nil,
-              store.authorizationStatus(for: Self.workoutType) == .sharingAuthorized,
-              let export = HealthWorkoutExport.make(for: session)
+              store.authorizationStatus(for: Self.workoutType) == .sharingAuthorized
         else { return }
+        let custom = (try? context.fetch(FetchDescriptor<CustomExercise>())) ?? []
+        let info = ExerciseInfoBuilder.provider(catalog: AppServices.bundledCatalog, custom: custom)
+        guard let export = HealthWorkoutExport.make(for: session, isCardio: ExerciseInfoBuilder.isCardio(info)) else { return }
 
+        // Glavni trening prvi: ako ostali ne uspiju, trening je ipak povezan sa Zdravljem.
+        let order = [export.primaryIndex] + export.segments.indices.filter { $0 != export.primaryIndex }
+        for index in order {
+            let segment = export.segments[index]
+            do {
+                let workout = try await save(segment, sessionId: export.sessionId)
+                guard index == export.primaryIndex, let workout else { continue }
+                let energy = workout.statistics(for: Self.activeEnergy)?.sumQuantity()?.doubleValue(for: .kilocalorie())
+                try HealthImporter(context: context).markExported(
+                    sessionId: export.sessionId, workoutId: workout.uuid, activeEnergyKilocalories: energy
+                )
+            } catch {
+                logger.error("Spremanje treninga u Zdravlje: \(error.localizedDescription)")
+                // Bez glavnog treninga ostali se ne spremaju, da ponovni pokušaj ne napravi duplikate.
+                if index == export.primaryIndex { return }
+            }
+        }
+    }
+
+    private func save(_ segment: HealthWorkoutSegment, sessionId: UUID) async throws -> HKWorkout? {
         let configuration = HKWorkoutConfiguration()
-        configuration.activityType = export.activity.hkActivityType
+        configuration.activityType = segment.activity.hkActivityType
         configuration.locationType = .indoor
         let builder = HKWorkoutBuilder(healthStore: store, configuration: configuration, device: .local())
-        do {
-            try await builder.beginCollection(at: export.start)
-            try await builder.addMetadata([
-                HKMetadataKeyExternalUUID: export.sessionId.uuidString,
-                HKMetadataKeyIndoorWorkout: true
-            ])
-            try await builder.endCollection(at: export.end)
-            guard let workout = try await builder.finishWorkout() else { return }
-            let energy = workout.statistics(for: Self.activeEnergy)?.sumQuantity()?.doubleValue(for: .kilocalorie())
-            try HealthImporter(context: context).markExported(
-                sessionId: export.sessionId, workoutId: workout.uuid, activeEnergyKilocalories: energy
-            )
-        } catch {
-            logger.error("Spremanje treninga u Zdravlje: \(error.localizedDescription)")
-        }
+        try await builder.beginCollection(at: segment.start)
+        try await builder.addMetadata([
+            HKMetadataKeyExternalUUID: sessionId.uuidString,
+            HKMetadataKeyIndoorWorkout: true
+        ])
+        try await builder.endCollection(at: segment.end)
+        return try await builder.finishWorkout()
     }
 
     // MARK: Trening na satu

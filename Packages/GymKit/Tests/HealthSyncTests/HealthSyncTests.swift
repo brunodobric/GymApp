@@ -224,6 +224,76 @@ struct WorkoutExportTests {
         #expect(HealthWorkoutExport.make(for: finishedSession(in: context, kind: .cardio))?.activity == .mixedCardio)
     }
 
+    /// Dodaje vježbu s odrađenim serijama: (minuta od početka kad je serija označena, trajanje serije u minutama).
+    private func addExercise(
+        _ session: Session, key: String, sets: [(minute: Double, minutes: Int?)], context: ModelContext
+    ) {
+        let exercise = SessionExercise(
+            orderIndex: session.orderedExercises.count, exercise: ExerciseRef(catalogId: key, name: key),
+            inputType: sets.contains { $0.minutes != nil } ? .duration : .weightReps
+        )
+        context.insert(exercise)
+        exercise.session = session
+        for (index, item) in sets.enumerated() {
+            let set = SetLog(orderIndex: index)
+            set.durationSeconds = item.minutes.map { $0 * 60 }
+            set.completedAt = base.addingTimeInterval(item.minute * 60)
+            context.insert(set)
+            set.exercise = exercise
+        }
+    }
+
+    private let cardioKeys: (String) -> Bool = { $0 == "c:bike" || $0 == "c:treadmill" }
+
+    private func minute(_ value: Double) -> Date { base.addingTimeInterval(value * 60) }
+
+    @Test("Bicikl za zagrijavanje i traka na kraju: kardio, snaga, kardio jedan za drugim")
+    func splitsCardioAndStrength() throws {
+        let context = try makeContext()
+        let session = finishedSession(in: context)
+        addExercise(session, key: "bike", sets: [(minute: 10, minutes: 10)], context: context)
+        addExercise(session, key: "bench", sets: [(minute: 15, minutes: nil), (minute: 20, minutes: nil), (minute: 40, minutes: nil)], context: context)
+        addExercise(session, key: "treadmill", sets: [(minute: 58, minutes: 15)], context: context)
+        try context.save()
+
+        let export = try #require(HealthWorkoutExport.make(for: session, isCardio: cardioKeys))
+        #expect(export.segments == [
+            HealthWorkoutSegment(activity: .mixedCardio, start: base, end: minute(10)),
+            HealthWorkoutSegment(activity: .traditionalStrengthTraining, start: minute(10), end: minute(43)),
+            // Traka je završila 2 minute prije kraja treninga, pa kardio ide do kraja.
+            HealthWorkoutSegment(activity: .mixedCardio, start: minute(43), end: minute(60)),
+        ])
+        #expect(export.primaryIndex == 1 && export.activity == .traditionalStrengthTraining)
+        #expect(export.start == base && export.end == minute(60))
+    }
+
+    @Test("Bez kardija jedan trening snage; samo kardio jedan kardio trening")
+    func singleSegment() throws {
+        let context = try makeContext()
+        let strength = finishedSession(in: context)
+        addExercise(strength, key: "bench", sets: [(minute: 20, minutes: nil)], context: context)
+        let cardioOnly = finishedSession(in: context)
+        addExercise(cardioOnly, key: "treadmill", sets: [(minute: 30, minutes: 25)], context: context)
+        try context.save()
+
+        #expect(HealthWorkoutExport.make(for: strength, isCardio: cardioKeys)?.segments == [
+            HealthWorkoutSegment(activity: .traditionalStrengthTraining, start: base, end: minute(60))
+        ])
+        #expect(HealthWorkoutExport.make(for: cardioOnly, isCardio: cardioKeys)?.segments == [
+            HealthWorkoutSegment(activity: .mixedCardio, start: base, end: minute(60))
+        ])
+    }
+
+    @Test("Kardio serija bez trajanja ne dijeli trening")
+    func cardioWithoutDuration() throws {
+        let context = try makeContext()
+        let session = finishedSession(in: context)
+        addExercise(session, key: "bench", sets: [(minute: 20, minutes: nil)], context: context)
+        addExercise(session, key: "bike", sets: [(minute: 50, minutes: nil)], context: context)
+        try context.save()
+        #expect(HealthWorkoutExport.make(for: session, isCardio: cardioKeys)?.segments.count == 1)
+    }
+
     @Test("Ne sprema se trening u tijeku, sa sata, već spremljen ni uvezen")
     func skipsIneligible() throws {
         let context = try makeContext()

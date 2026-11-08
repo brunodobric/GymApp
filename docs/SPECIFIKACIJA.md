@@ -419,6 +419,7 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 
 ### Apple Health (HealthKit)
 * Spremanje treninga (`HKWorkout`) — zatvaranje Activity Rings (za vlastite sesije).
+  * Jedan `HKWorkout` ne može miješati vrste aktivnosti (osim triatlona). Zato trening s iPhonea s kardio vježbama ide u Zdravlje kao više treninga jedan za drugim: kardio (Mixed Cardio) u vremenu kardio serija (kvačica minus trajanje serije) i snaga u razmacima između njih. Kardio blokovi razmaknuti do 5 minuta su jedan trening, a blok do 5 minuta od početka ili kraja dobiva i taj rub. Trening sa samo kardio vježbama je jedan kardio trening. Svi nose id treninga iz aplikacije (`HKMetadataKeyExternalUUID`), a u povijest se veže najdulji trening snage. Trening koji vodi sat i dalje je jedan trening snage, jer ga sprema `HKWorkoutSession` na satu.
 * Čitanje završenih treninga iz native Workouts app (posebno trčanje) radi uvoza u povijest aplikacije.
 * Čitanje tjelesne mase, visine i drugih biometrijskih podataka.
 * **Kalorije:** Koristi se isključivo Appleov proračun (`activeEnergyBurned` + `basalEnergyBurned` iz HealthKit). Ne radi se vlastiti model.

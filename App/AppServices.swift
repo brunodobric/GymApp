@@ -108,8 +108,8 @@ enum AppServices {
         MetricsReporter.shared.start()
     }
 
-    /// Javni katalog iz bundlea, samo za migraciju id-jeva (ekrani koriste `CatalogStore`).
-    private static let bundledCatalog: ExerciseCatalog? = {
+    /// Javni katalog iz bundlea, za migraciju id-jeva i spremanje u Zdravlje (ekrani koriste `CatalogStore`).
+    static let bundledCatalog: ExerciseCatalog? = {
         guard let url = Bundle.main.url(forResource: "catalog", withExtension: "json", subdirectory: "Catalog") else { return nil }
         return try? ExerciseCatalog(data: Data(contentsOf: url))
     }()
