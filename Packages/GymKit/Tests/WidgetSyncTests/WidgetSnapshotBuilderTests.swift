@@ -83,7 +83,8 @@ struct WidgetSnapshotBuilderTests {
         #expect(next.scheduleName == "PPL")
         #expect(next.exerciseCount == 2)
         #expect(next.exercises.map(\.name) == [bench.name, row.name])
-        #expect(next.exercises.allSatisfy { $0.workingSets > 0 })
+        let planned = next.exercises.allSatisfy { $0.workingSets > 0 }
+        #expect(planned)
     }
 
     @Test("Tjedan broji treninge prema cilju iz postavki")

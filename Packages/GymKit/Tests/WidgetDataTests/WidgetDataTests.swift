@@ -108,7 +108,7 @@ struct WidgetWeekTests {
         #expect(met.goal == 3)
         #expect(calendar.isDate(met.start, inSameDayAs: weekStart.addingTimeInterval(7 * day)))
         #expect(met.days.count == 7)
-        #expect(!met.days.contains(where: \.isTrained))
+        #expect(met.days.filter(\.isTrained).isEmpty)
 
         let missed = week(sessions: 2, goal: 3, streak: 4).current(at: nextMonday, calendar: calendar)
         #expect(missed.streakWeeks == 0)
