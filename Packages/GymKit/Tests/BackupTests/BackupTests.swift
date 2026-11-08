@@ -36,7 +36,6 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     let custom = CustomExercise(name: "Moja \"vježba\", s zarezom")
     custom.details = "Prvi red\nDrugi red"
     custom.muscles = [.chest, .triceps]
-    custom.kind = .stretching
     custom.imageData = Data([1, 2, 3, 4])
     context.insert(custom)
 
@@ -134,6 +133,7 @@ struct JSONBackupTests {
         let source = try makeContext()
         try fillSample(source)
         try #require(try source.fetch(FetchDescriptor<TemplateSet>()).first).targetRepsMax = 8
+        try #require(try source.fetch(FetchDescriptor<CustomExercise>()).first).kind = .stretching
         let first = try JSONBackup.export(from: source, now: exportTime)
 
         let target = try makeContext()
