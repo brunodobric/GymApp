@@ -8395,16 +8395,6 @@
         }
       }
     },
-    "WorkoutKit" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WorkoutKit"
-          }
-        }
-      }
-    },
     "Z" : {
       "localizations" : {
         "en" : {
@@ -8927,16 +8917,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "iCloud is currently unavailable, so the data in it can't be deleted. Nothing was deleted."
-          }
-        }
-      }
-    },
-    "km" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "km"
           }
         }
       }
