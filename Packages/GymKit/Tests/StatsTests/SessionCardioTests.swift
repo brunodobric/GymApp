@@ -132,13 +132,68 @@ struct SessionCardioTests {
         #expect(summary.cardio == CardioPart(seconds: 900, meters: 2500))
     }
 
-    @Test("Vlastita vježba u kategoriji kardio je kardio")
+    @Test("Usporedba s prošlim treningom: kardio nije serija, a vrijeme i udaljenost se uspoređuju")
+    func comparison() throws {
+        let context = try makeContext()
+        let template = UUID()
+        let previous = try makeSession(context, [Entry(ref: treadmill, inputType: .durationDistance, seconds: 1200, meters: 3000)])
+        previous.templateId = template
+        previous.startedAt = start.addingTimeInterval(-7 * 86_400)
+        previous.endedAt = previous.startedAt.addingTimeInterval(1800)
+        let current = try makeSession(context, [run])
+        current.templateId = template
+        try context.save()
+
+        let result = try #require(try StatisticsEngine(context: context).comparison(of: current, isCardio: isCardio))
+        #expect(result.hardSets == 0 && result.previousHardSets == 0)
+        #expect(result.cardio == CardioPart(seconds: 900, meters: 2500))
+        #expect(result.previousCardio == CardioPart(seconds: 1200, meters: 3000))
+    }
+
+    @Test("Kardio dio postoji i za trening sa samo kardio vježbama")
+    func cardioOnlyPart() throws {
+        let context = try makeContext()
+        let session = try makeSession(context, [run])
+        let summary = try WorkoutEngine(context: context).summary(of: session, trackedKinds: [], isCardio: isCardio)
+        #expect(summary.hardSets == 0 && summary.totalVolumeKg == 0)
+        #expect(summary.cardio == CardioPart(seconds: 900, meters: 2500))
+    }
+
+    @Test("Vrsta predloška iz vježbi; kardio plan za sat ostaje kardio")
+    func templateMix() throws {
+        let context = try makeContext()
+        func template(_ refs: [ExerciseRef], kind: WorkoutKind = .strength) throws -> WorkoutTemplate {
+            let template = WorkoutTemplate(name: "Trening", kind: kind)
+            context.insert(template)
+            for (index, ref) in refs.enumerated() {
+                let exercise = TemplateExercise(orderIndex: index, exercise: ref)
+                context.insert(exercise)
+                exercise.template = template
+            }
+            try context.save()
+            return template
+        }
+        #expect(SessionCardio.mix(of: try template([press]), isCardio: isCardio) == .strength)
+        #expect(SessionCardio.mix(of: try template([press, bike]), isCardio: isCardio) == .mixed)
+        #expect(SessionCardio.mix(of: try template([treadmill, bike]), isCardio: isCardio) == .cardio)
+        #expect(SessionCardio.mix(of: try template([]), isCardio: isCardio) == .strength)
+        #expect(SessionCardio.mix(of: try template([], kind: .cardio), isCardio: isCardio) == .cardio)
+    }
+
+    @Test("Vlastita vježba: kardio po odabranoj vrsti, a bez vrste po kategoriji")
     func customCardio() throws {
         let context = try makeContext()
-        let custom = CustomExercise(name: "Veslanje u parku")
-        custom.category = .cardio
-        context.insert(custom)
-        let provider = ExerciseInfoBuilder.provider(catalog: nil, custom: [custom])
-        #expect(provider("u:\(custom.id.uuidString)")?.isCardio == true)
+        let byCategory = CustomExercise(name: "Veslanje u parku")
+        byCategory.category = .cardio
+        let byKind = CustomExercise(name: "Penjanje uz stube")
+        byKind.category = .legs
+        byKind.kind = .cardio
+        let strength = CustomExercise(name: "Iskorak s ruksakom")
+        strength.category = .legs
+        for exercise in [byCategory, byKind, strength] { context.insert(exercise) }
+        let provider = ExerciseInfoBuilder.provider(catalog: nil, custom: [byCategory, byKind, strength])
+        #expect(provider("u:\(byCategory.id.uuidString)")?.isCardio == true)
+        #expect(provider("u:\(byKind.id.uuidString)")?.isCardio == true)
+        #expect(provider("u:\(strength.id.uuidString)")?.isCardio == false)
     }
 }

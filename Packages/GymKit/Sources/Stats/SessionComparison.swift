@@ -14,6 +14,9 @@ public struct SessionComparison: Equatable, Sendable {
     public let previousVolumeKg: Double
     public let durationSeconds: TimeInterval?
     public let previousDurationSeconds: TimeInterval?
+    /// Kardio dio ovog i prošlog izvođenja (`SessionCardio.part`); nil bez kardio vježbi.
+    public var cardio: CardioPart? = nil
+    public var previousCardio: CardioPart? = nil
 
     /// Relativna promjena tonaže (0,04 = +4 %). Nil kad prošli put nije bilo tonaže.
     public var volumeChange: Double? {
@@ -80,7 +83,10 @@ public enum SessionMetrics {
 extension StatisticsEngine {
 
     /// Usporedba s prethodnim završenim treningom istog predloška. Nil bez predloška ili bez ranijeg treninga.
-    public func comparison(of session: Session) throws -> SessionComparison? {
+    /// Kardio vježbe (`isCardio`) ne broje se u tvrde serije; njihovo vrijeme i udaljenost su u `cardio`.
+    public func comparison(
+        of session: Session, isCardio: (String) -> Bool = { _ in false }
+    ) throws -> SessionComparison? {
         guard session.templateId != nil else { return nil }
         let templateId: UUID? = session.templateId
         let finished = SessionState.finished.rawValue
@@ -94,22 +100,24 @@ extension StatisticsEngine {
         )
         descriptor.fetchLimit = 1
         guard let previous = try context.fetch(descriptor).first else { return nil }
-        let now = totals(of: session)
-        let before = totals(of: previous)
+        let now = totals(of: session, isCardio: isCardio)
+        let before = totals(of: previous, isCardio: isCardio)
         return SessionComparison(
             previousDate: previous.startedAt, hardSets: now.hardSets, previousHardSets: before.hardSets,
             volumeKg: now.volume, previousVolumeKg: before.volume,
             durationSeconds: session.endedAt.map { $0.timeIntervalSince(session.startedAt) },
-            previousDurationSeconds: previous.endedAt.map { $0.timeIntervalSince(previous.startedAt) }
+            previousDurationSeconds: previous.endedAt.map { $0.timeIntervalSince(previous.startedAt) },
+            cardio: SessionCardio.part(of: session, isCardio: isCardio),
+            previousCardio: SessionCardio.part(of: previous, isCardio: isCardio)
         )
     }
 
-    private func totals(of session: Session) -> (hardSets: Int, volume: Double) {
+    private func totals(of session: Session, isCardio: (String) -> Bool) -> (hardSets: Int, volume: Double) {
         var hard = 0
         var volume = 0.0
         for exercise in session.orderedExercises where !exercise.isRemoved {
             let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)
-            hard += done.filter(SetMetrics.isHard).count
+            if !isCardio(exercise.exerciseKey) { hard += done.filter(SetMetrics.isHard).count }
             volume += done.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
         }
         return (hard, volume)

@@ -245,14 +245,25 @@ struct SessionComparisonSection: View {
 
     var body: some View {
         Section {
-            LabeledContent("Tvrde serije", value: setsText)
-            if let change = comparison.volumeChange {
+            // Kardio trening nema serija snage: redak s nulama se ne prikazuje.
+            if comparison.hardSets > 0 || comparison.previousHardSets > 0 {
+                LabeledContent("Tvrde serije", value: setsText)
+            }
+            if let change = comparison.volumeChange, comparison.volumeKg > 0 {
                 LabeledContent("Tonaža") {
                     Text(ChangeFormat.percent(change)).foregroundStyle(ChangeFormat.color(change))
                 }
             }
             if let now = comparison.durationSeconds, let before = comparison.previousDurationSeconds {
                 LabeledContent("Trajanje", value: minutesText(now - before))
+            }
+            if let now = comparison.cardio, let before = comparison.previousCardio {
+                if now.seconds > 0, before.seconds > 0 {
+                    LabeledContent("Kardio", value: minutesText(TimeInterval(now.seconds - before.seconds)))
+                }
+                if let meters = now.meters, let previous = before.meters {
+                    LabeledContent("Udaljenost", value: CardioText.distanceChange(meters - previous))
+                }
             }
         } header: {
             Text("Prema prošlom treningu")

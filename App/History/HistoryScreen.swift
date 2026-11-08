@@ -42,9 +42,7 @@ struct HistoryScreen: View {
 
     private func makeLists() -> Lists {
         let all = Session.merged(ownSessions, health: healthWorkouts)
-        let isCardio = ExerciseInfoBuilder.isCardio(
-            ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
-        )
+        let isCardio = catalogStore.isCardio(custom: customExercises)
         let kindsOf: (Session) -> Set<WorkoutKind> = { SessionCardio.mix(of: $0, isCardio: isCardio).kinds }
         let visible = filter.apply(to: all, kindsOf: kindsOf)
         let listed = showsCalendar ? filter.apply(to: all, month: month, day: selectedDay, kindsOf: kindsOf) : visible
@@ -174,7 +172,8 @@ private struct SessionRow: View {
     var body: some View {
         let mix = SessionCardio.mix(of: session, isCardio: isCardio)
         HStack(spacing: 12) {
-            SessionKindIcon(mix: mix)
+            WorkoutKindIcon(mix: mix)
+                .foregroundStyle(.tint)
                 .frame(width: 28)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
@@ -200,31 +199,6 @@ private struct SessionRow: View {
         guard let end = session.endedAt else { return "" }
         return Duration.seconds(max(0, end.timeIntervalSince(session.startedAt)))
             .formatted(.units(allowed: [.hours, .minutes], width: .narrow))
-    }
-}
-
-/// Ikona vrste treninga. Trening snage s kardiom je bučica s malom oznakom trčanja u kutu.
-struct SessionKindIcon: View {
-    let mix: SessionMix
-
-    var body: some View {
-        switch mix {
-        case .strength:
-            Image(systemName: WorkoutKind.strength.symbol).foregroundStyle(.tint)
-        case .cardio:
-            Image(systemName: WorkoutKind.cardio.symbol).foregroundStyle(.tint)
-        case .mixed:
-            Image(systemName: WorkoutKind.strength.symbol)
-                .foregroundStyle(.tint)
-                .overlay(alignment: .bottomTrailing) {
-                    Image(systemName: "figure.run.circle.fill")
-                        .font(.caption2)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .tint)
-                        .background(Circle().fill(.background).padding(-1))
-                        .offset(x: 6, y: 6)
-                }
-        }
     }
 }
 

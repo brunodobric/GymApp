@@ -28,6 +28,8 @@ struct SessionDetailScreen: View {
     @State private var contentVersion = 0
     @State private var comparison: SessionComparison?
     @State private var results: [String: ExerciseResult] = [:]
+    @Environment(CatalogStore.self) private var catalogStore
+    @Query private var customExercises: [CustomExercise]
 
     /// Kalorije i puls su u lokalnoj bazi podataka iz Zdravlja.
     private var health: HealthLocalStore { HealthLocalStore(context: context) }
@@ -87,7 +89,8 @@ struct SessionDetailScreen: View {
         .id(contentVersion)
         .task(id: contentVersion) {
             let engine = StatisticsEngine(context: context)
-            comparison = try? engine.comparison(of: session)
+            let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
+            comparison = try? engine.comparison(of: session, isCardio: ExerciseInfoBuilder.isCardio(info))
             let list = (try? engine.exerciseResults(of: session)) ?? []
             results = Dictionary(list.map { ($0.key, $0) }, uniquingKeysWith: { first, _ in first })
         }

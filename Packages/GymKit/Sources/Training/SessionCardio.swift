@@ -42,16 +42,25 @@ public enum SessionCardio {
         }
     }
 
-    /// Kardio dio treninga snage; nil kad trening nema odrađenu kardio vježbu.
-    /// Kardio trening (iz plana ili Zdravlja) nema kardio dio: cijeli je kardio.
+    /// Zbroj odrađenih kardio vježbi treninga; nil kad ih nema (npr. trening snage bez kardija ili kardio
+    /// uvezen iz Zdravlja, koji nema vježbe).
     public static func part(of session: Session, isCardio: (String) -> Bool) -> CardioPart? {
-        guard session.kind == .strength else { return nil }
         let cardio = doneExercises(in: session).filter { isCardio($0.exerciseKey) }
         guard !cardio.isEmpty else { return nil }
         let sets = cardio.flatMap(\.orderedSets).filter(\.isCompleted)
         let seconds = sets.reduce(0) { $0 + max(0, $1.durationSeconds ?? 0) }
         let distances = sets.compactMap(\.distanceMeters).filter { $0 > 0 }
         return CardioPart(seconds: seconds, meters: distances.isEmpty ? nil : distances.reduce(0, +))
+    }
+
+    /// Vrsta predloška za prikaz, iz njegovih vježbi: samo snaga, samo kardio ili oboje. Kardio plan za sat
+    /// (`WorkoutKind.cardio`) je uvijek kardio. Predložak bez vježbi je snaga (novi, još prazan trening).
+    public static func mix(of template: WorkoutTemplate, isCardio: (String) -> Bool) -> SessionMix {
+        guard template.kind == .strength else { return .cardio }
+        let exercises = template.orderedExercises
+        let cardio = exercises.filter { isCardio($0.exercise.key) }.count
+        if cardio == 0 { return .strength }
+        return cardio == exercises.count ? .cardio : .mixed
     }
 
     /// Vrsta za prikaz. Trening snage u kojem su odrađene samo kardio vježbe prikazuje se kao kardio.

@@ -2,6 +2,7 @@ import Models
 import Planning
 import SwiftData
 import SwiftUI
+import Training
 
 /// Odabrana stavka u popisu rasporeda i treninga.
 enum PlanningSelection: Hashable {
@@ -27,6 +28,8 @@ struct SchedulesScreen: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Schedule.createdAt) private var schedules: [Schedule]
     @Query(sort: \WorkoutTemplate.createdAt) private var templates: [WorkoutTemplate]
+    @Query private var customExercises: [CustomExercise]
+    @Environment(CatalogStore.self) private var catalogStore
     @State private var selection: PlanningSelection?
     @State private var showsPrograms = false
     @State private var errorText: String?
@@ -252,13 +255,20 @@ struct SchedulesScreen: View {
                     Text("Još nema treninga.")
                         .foregroundStyle(.secondary)
                 }
+                let isCardio = catalogStore.isCardio(custom: customExercises)
                 ForEach(templates) { template in
                     NavigationLink(value: PlanningSelection.template(template.id)) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(template.name)
-                            Text(subtitle(of: template))
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                        Label {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(template.name)
+                                Text(subtitle(of: template))
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            WorkoutKindIcon(
+                                mix: SessionCardio.mix(of: template, isCardio: isCardio), cardioSymbol: template.cardioPlanSymbol
+                            )
                         }
                     }
                 }
