@@ -26,6 +26,30 @@ class CheckTests(unittest.TestCase):
         missing, errors, stale = check(catalog({"Spremi": {"localizations": {"en": unit("Save")}}}))
         self.assertEqual((missing, errors, stale), ([], [], []))
 
+    def test_fraze_za_precace(self):
+        def phrases(state):
+            return {"stringSet": {"state": state, "values": ["Start ${applicationName}", "Go ${applicationName}"]}}
+
+        key = "Kreni u ${applicationName}"
+        missing, errors, _ = check(catalog({key: {"localizations": {"en": phrases("translated")}}}))
+        self.assertEqual((missing, errors), ([], []))
+        _, errors, _ = check(catalog({key: {"localizations": {"en": phrases("needs_review")}}}))
+        self.assertEqual(len(errors), 2)
+        missing, _, _ = check(catalog({key: {"localizations": {"en": {"stringSet": {"state": "translated", "values": []}}}}}))
+        self.assertEqual(missing, [key])
+
+    def test_fraza_mora_imati_naziv_aplikacije_i_poznate_parametre(self):
+        key = "Kreni u ${applicationName}"
+        source = {"stringSet": {"state": "new", "values": [key, "Kreni ${workout} u ${applicationName}"]}}
+
+        def errors_for(values):
+            english = {"stringSet": {"state": "translated", "values": values}}
+            return check(catalog({key: {"localizations": {"en": english, "hr": source}}}))[1]
+
+        self.assertEqual(errors_for(["Go in ${applicationName}", "Start ${workout} in ${applicationName}"]), [])
+        self.assertEqual(len(errors_for(["Go in Apolon"])), 1)
+        self.assertEqual(len(errors_for(["Start ${workot} in ${applicationName}"])), 1)
+
     def test_kljuc_bez_engleskog(self):
         missing, _, _ = check(catalog({"Spremi": {}}))
         self.assertEqual(missing, ["Spremi"])

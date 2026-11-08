@@ -27,6 +27,17 @@ public struct BodyTracking {
         return measurement
     }
 
+    /// Tjelesna težina (kg) koju se prihvaća iz Prečaca i Sirija. Broj izvan raspona je gotovo sigurno krivo
+    /// izgovoren ili upisan (npr. 8 umjesto 80), pa se ne sprema.
+    public static let shortcutWeightRange: ClosedRange<Double> = 20...400
+
+    /// Tjelesna težina iz Prečaca ili Sirija, u kg (pretvorbu iz lbs radi intent).
+    @discardableResult
+    public func addShortcutWeight(kilograms: Double, date: Date = Date()) throws -> BodyMeasurement {
+        guard kilograms.isFinite, Self.shortcutWeightRange.contains(kilograms) else { throw BodyTrackingError.invalidValue }
+        return try add(.weight, value: kilograms, date: date)
+    }
+
     /// Povijest jedne mjere, od najstarije, s mjerenjima iz Zdravlja. Za vlastitu mjeru se razlikuje po nazivu.
     public func measurements(of kind: BodyMeasurementKind, customName: String? = nil) throws -> [BodyMeasurement] {
         let raw = kind.rawValue

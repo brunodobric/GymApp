@@ -63,6 +63,14 @@ struct RootView: View {
             selection = .home
             homeRequest = .activeWorkout
         }
+        // Trening pokrenut iz Prečaca, Sirija ili Action buttona otvara se kao dodir na Live Activity.
+        // `initial`: pri hladnom pokretanju akcija može završiti prije nego što se prozor prikaže.
+        .onChange(of: IntentRouter.shared.opensActiveWorkout, initial: true) { _, opens in
+            guard opens else { return }
+            IntentRouter.shared.opensActiveWorkout = false
+            selection = .home
+            homeRequest = .activeWorkout
+        }
         .tint(settings?.accent.color ?? AccentChoice.blue.color)
         .preferredColorScheme(settings?.theme.colorScheme)
         .fullScreenCover(isPresented: $showsOnboarding) {
@@ -84,6 +92,7 @@ struct RootView: View {
         }
         .task {
             PendingTemplateFromSession.discardLeftover(context: context)
+            GymAppShortcuts.updateAppShortcutParameters()
             ReminderScheduler.refresh(context: context)
             PhoneWatchSync.shared.refreshContext()
             await LegacyCardioPlans.removeFromWatch()
@@ -92,6 +101,9 @@ struct RootView: View {
         .onChange(of: scenePhase) { _, phase in
             // Satu se šalju svježi treninzi i postavke, i kad korisnik izađe iz aplikacije nakon izmjena.
             if phase != .inactive { PhoneWatchSync.shared.refreshContext() }
+            // Prečaci nude spremljene treninge kao parametar fraze ("Započni Push u Apolonu"). Osvježava se
+            // pri izlasku iz aplikacije, pa vrijede i novi, preimenovani i obrisani treninzi.
+            if phase == .background { GymAppShortcuts.updateAppShortcutParameters() }
             guard phase == .active else { return }
             ReminderScheduler.refresh(context: context)
             // Trening započet na satu dok je iPhone bio zaključan dobiva Live Activity tek sad:

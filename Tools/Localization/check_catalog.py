@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Provjera String Cataloga (Resources/Localization/Localizable.xcstrings).
+"""Provjera String Cataloga (Localizable.xcstrings, InfoPlist.xcstrings i fraze za Prečace u AppShortcuts.xcstrings).
 
 Izvorni jezik je hrvatski: ključ je hrvatski tekst iz koda. Svaki ključ koji se
 prevodi mora imati prevedeni engleski tekst s istim formatnim argumentima.
@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CATALOGS = [
     ROOT / "Resources" / "Localization" / "Localizable.xcstrings",
     ROOT / "App" / "InfoPlist.xcstrings",
+    ROOT / "App" / "AppShortcuts.xcstrings",
     ROOT / "WatchApp" / "InfoPlist.xcstrings",
 ]
 REQUIRED_LANGUAGE = "en"
@@ -48,11 +49,36 @@ def specifiers(text: str) -> list[str]:
     return sorted(found)
 
 
+PLACEHOLDER = re.compile(r"\$\{(\w+)\}")
+
+
+def placeholders(text: str) -> set[str]:
+    """Zamjene u frazi za Prečace, npr. {"applicationName", "workout"} iz "Započni ${workout} u ${applicationName}"."""
+    return set(PLACEHOLDER.findall(text))
+
+
+def all_placeholders(entry: dict) -> set[str]:
+    """Sve zamjene iz izvornih (hrvatskih) fraza ključa: ključ je prva fraza, ostale su u stringSetu."""
+    source = entry.get("localizations", {}).get("hr", {}).get("stringSet", {}).get("values", [])
+    found: set[str] = set()
+    for text in source:
+        found |= placeholders(text)
+    return found
+
+
 def string_units(localization: dict) -> list[tuple[str, dict]]:
-    """Svi stringUnit zapisi lokalizacije: običan tekst, varijacije i zamjene."""
+    """Svi stringUnit zapisi lokalizacije: običan tekst, varijacije i zamjene.
+
+    Fraze za Prečace (AppShortcuts.xcstrings) imaju stringSet: više fraza s jednim stanjem.
+    Svaka fraza se provjerava kao zaseban tekst.
+    """
     units = []
     if "stringUnit" in localization:
         units.append(("", localization["stringUnit"]))
+    if "stringSet" in localization:
+        string_set = localization["stringSet"]
+        for index, value in enumerate(string_set.get("values", []), start=1):
+            units.append((f"fraza {index}", {"state": string_set.get("state"), "value": value}))
     for kind, cases in localization.get("variations", {}).items():
         for case, nested in cases.items():
             for name, unit in string_units(nested):
@@ -86,10 +112,17 @@ def check(catalog: dict) -> tuple[list[str], list[str], list[str]]:
             continue
         uses_substitutions = "substitutions" in localization
         expected = specifiers(key)
+        allowed_placeholders = placeholders(key) | all_placeholders(entry)
         for case, unit in units:
             value = unit.get("value", "")
             if unit.get("state") != "translated" or not value.strip():
                 errors.append(f"{key!r} [{case or 'tekst'}]: prijevod nije označen kao preveden.")
+                continue
+            if case.startswith("fraza "):
+                # Fraza za Prečace mora imati naziv aplikacije i smije imati samo parametre iz izvornih fraza.
+                found = placeholders(value)
+                if "applicationName" not in found or not found <= allowed_placeholders:
+                    errors.append(f"{key!r} [{case}]: zamjene {sorted(found)} ne odgovaraju izvornim frazama.")
                 continue
             if uses_substitutions or case.startswith("substitution."):
                 continue
