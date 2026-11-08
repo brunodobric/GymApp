@@ -133,6 +133,7 @@ struct JSONBackupTests {
         let source = try makeContext()
         try fillSample(source)
         try #require(try source.fetch(FetchDescriptor<TemplateSet>()).first).targetRepsMax = 8
+        try #require(try source.fetch(FetchDescriptor<CustomExercise>()).first).kind = .stretching
         let first = try JSONBackup.export(from: source, now: exportTime)
 
         let target = try makeContext()
@@ -141,6 +142,7 @@ struct JSONBackupTests {
 
         #expect(first == second)
         #expect(result.added == 8 && result.skipped == 0)
+        #expect(try target.fetch(FetchDescriptor<CustomExercise>()).first?.kind == .stretching)
         let session = try #require(try target.fetch(FetchDescriptor<Session>()).first)
         #expect(session.orderedExercises.count == 3)
         #expect(session.orderedExercises[0].orderedSets.count == 2)

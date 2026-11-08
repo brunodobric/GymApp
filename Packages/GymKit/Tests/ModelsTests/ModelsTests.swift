@@ -340,6 +340,19 @@ struct CustomExerciseTests {
         #expect(summary.ref.key == "u:\(exercise.id.uuidString)")
     }
 
+    @Test("Vrsta vlastite vježbe: odabrana ili, za stariju vježbu, po kategoriji")
+    func customKind() {
+        let exercise = CustomExercise(name: "Veslanje")
+        #expect(exercise.kind == .strength)
+        exercise.category = .cardio
+        #expect(exercise.kind == .cardio && exercise.kindRaw.isEmpty)
+        exercise.kind = .warmUp
+        #expect(exercise.kindRaw == "warmUp")
+        #expect(exercise.summary.kind == .warmUp)
+        exercise.kindRaw = "nepoznato"
+        #expect(exercise.kind == .cardio)
+    }
+
     @Test("Referenca vodi na vježbu iz kataloga ili na vlastitu vježbu")
     func refSource() {
         let id = UUID()

@@ -13,6 +13,7 @@ struct CustomExerciseEditor: View {
 
     @State private var name = ""
     @State private var details = ""
+    @State private var kind = ExerciseKind.strength
     @State private var category: ExerciseCategory?
     @State private var equipment: Equipment?
     @State private var inputType = ExerciseInputType.weightReps
@@ -35,6 +36,11 @@ struct CustomExerciseEditor: View {
                 }
 
                 Section {
+                    Picker("Vrsta vježbe", selection: $kind) {
+                        ForEach(ExerciseKind.allCases, id: \.self) { value in
+                            Text(value.title).tag(value)
+                        }
+                    }
                     Picker("Kategorija", selection: $category) {
                         Text("Nije odabrano").tag(ExerciseCategory?.none)
                         ForEach(ExerciseCategory.allCases, id: \.self) { value in
@@ -95,6 +101,14 @@ struct CustomExerciseEditor: View {
                 }
             }
             .onAppear(perform: load)
+            // Kardio kategorija je uvijek kardio vrsta (kao u katalogu).
+            .onChange(of: category) { old, new in
+                if new == .cardio {
+                    kind = .cardio
+                } else if old == .cardio && kind == .cardio {
+                    kind = .strength
+                }
+            }
             .onChange(of: photoItem) { _, item in
                 guard let item else { return }
                 Task { await loadPhoto(item) }
@@ -106,6 +120,7 @@ struct CustomExerciseEditor: View {
         guard let exercise else { return }
         name = exercise.name
         details = exercise.details
+        kind = exercise.kind
         category = exercise.category
         equipment = exercise.equipment
         inputType = exercise.inputType
@@ -141,6 +156,7 @@ struct CustomExerciseEditor: View {
         target.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         target.details = details
         target.category = category
+        target.kind = kind
         target.equipment = equipment
         target.inputType = inputType
         // Redoslijed mišića je stabilan (kao u katalogu), ne ovisi o redoslijedu odabira.

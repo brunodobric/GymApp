@@ -3185,6 +3185,16 @@
         }
       }
     },
+    "Vrsta vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise type"
+          }
+        }
+      }
+    },
     "lakši obim za opću kondiciju" : {
       "localizations" : {
         "en" : {
