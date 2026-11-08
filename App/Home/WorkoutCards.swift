@@ -111,8 +111,8 @@ private struct StartRow<Title: View>: View {
     }
 }
 
-/// Pozadina kartice treninga: ista podloga kao ostale kartice, preko nje lagani poluprozirni sjaj u boji akcenta
-/// (jači gore lijevo, slabiji dolje desno) i tanki rub, da se kartica istakne među ostalima.
+/// Pozadina kartice treninga: ista podloga kao ostale kartice, preko nje ujednačen poluprozirni sloj u boji akcenta
+/// (bez stupnjevanja) i tanki rub, da se kartica istakne među ostalima.
 /// Za vrijeme odmora traka odmora leži odmah na podlozi i sjaju, ispod ruba i svih elemenata kartice.
 private struct WorkoutCardBackground: ViewModifier {
     var rest: RestTimer?
@@ -129,9 +129,7 @@ private struct WorkoutCardBackground: ViewModifier {
                     .fill(Color(.secondarySystemGroupedBackground))
                     .overlay {
                         // `.tint` je akcent iz postavki (RootView ga postavlja), a ne AccentColor iz asseta.
-                        shape
-                            .fill(.tint.opacity(0.22 * strength))
-                            .mask(LinearGradient(colors: [.white, .white.opacity(0.4)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        shape.fill(.tint.opacity(0.15 * strength))
                     }
                     .overlay {
                         if let rest {
