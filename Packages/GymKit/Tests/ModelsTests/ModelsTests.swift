@@ -371,57 +371,109 @@ struct DashboardLayoutTests {
         try layout.cards().compactMap(\.kind)
     }
 
+    private func raw(_ layout: DashboardLayout) throws -> [String] {
+        try layout.allCards().map(\.kindRaw)
+    }
+
     @Test("Dodavanje ide na kraj i svaka vrsta samo jednom")
     func addsOncePerKind() throws {
         let layout = DashboardLayout(context: try makeContext())
         #expect(try layout.availableKinds() == DashboardCardKind.allCases)
-        try layout.add(.weeklyVolume)
+        try layout.add(.bodyWeight)
         try layout.add(.plateCalculator)
-        #expect(try layout.add(.weeklyVolume) == nil)
-        #expect(try kinds(layout) == [.weeklyVolume, .plateCalculator])
-        #expect(try layout.availableKinds() == [.lastWorkout, .nextWorkout])
+        #expect(try layout.add(.bodyWeight) == nil)
+        #expect(try kinds(layout) == [.bodyWeight, .plateCalculator])
+        #expect(try layout.availableKinds() == [.thisWeek, .lastWorkout])
     }
 
     @Test("Uklanjanje zatvara rupu u redoslijedu")
     func removeRenumbers() throws {
         let layout = DashboardLayout(context: try makeContext())
-        for kind: DashboardCardKind in [.plateCalculator, .nextWorkout, .weeklyVolume] { try layout.add(kind) }
+        for kind: DashboardCardKind in [.plateCalculator, .thisWeek, .bodyWeight] { try layout.add(kind) }
         try layout.remove(try layout.cards()[1])
         #expect(try layout.cards().map(\.orderIndex) == [0, 1])
-        #expect(try kinds(layout) == [.plateCalculator, .weeklyVolume])
-        try layout.add(.nextWorkout)
-        #expect(try kinds(layout) == [.plateCalculator, .weeklyVolume, .nextWorkout])
+        #expect(try kinds(layout) == [.plateCalculator, .bodyWeight])
+        try layout.add(.thisWeek)
+        #expect(try kinds(layout) == [.plateCalculator, .bodyWeight, .thisWeek])
     }
 
     @Test("Premještanje slijedi pravila onMove")
     func moves() throws {
         let layout = DashboardLayout(context: try makeContext())
-        for kind: DashboardCardKind in [.plateCalculator, .nextWorkout, .weeklyVolume] { try layout.add(kind) }
+        for kind: DashboardCardKind in [.plateCalculator, .thisWeek, .bodyWeight] { try layout.add(kind) }
         try layout.move(fromOffsets: IndexSet(integer: 0), toOffset: 3)
-        #expect(try kinds(layout) == [.nextWorkout, .weeklyVolume, .plateCalculator])
+        #expect(try kinds(layout) == [.thisWeek, .bodyWeight, .plateCalculator])
         try layout.move(fromOffsets: IndexSet(integer: 2), toOffset: 0)
-        #expect(try kinds(layout) == [.plateCalculator, .nextWorkout, .weeklyVolume])
+        #expect(try kinds(layout) == [.plateCalculator, .thisWeek, .bodyWeight])
         try layout.move(fromOffsets: IndexSet(integer: 0), toOffset: 1)
-        #expect(try kinds(layout) == [.plateCalculator, .nextWorkout, .weeklyVolume])
+        #expect(try kinds(layout) == [.plateCalculator, .thisWeek, .bodyWeight])
     }
 
-    @Test("Uklonjena kartica zadnjeg treninga se ne vraća kad Početna već ima kartice")
+    @Test("Uklonjena zadana kartica se ne vraća kad Početna već ima kartice")
     func doesNotSeedOverExistingCards() throws {
         let layout = DashboardLayout(context: try makeContext())
-        try layout.add(.nextWorkout)
-        try layout.add(.weeklyVolume)
-        #expect(try layout.seedLastWorkout() == nil)
-        #expect(try kinds(layout) == [.nextWorkout, .weeklyVolume])
-        #expect(try layout.availableKinds() == [.lastWorkout, .plateCalculator])
+        try layout.add(.bodyWeight)
+        #expect(try layout.seedDefaults().isEmpty)
+        #expect(try kinds(layout) == [.bodyWeight])
     }
 
-    @Test("Zadnji trening na praznoj Početnoj")
-    func seedsLastWorkoutOnEmpty() throws {
+    @Test("Prazna Početna dobiva Ovaj tjedan i Zadnji trening")
+    func seedsDefaultsOnEmpty() throws {
         let layout = DashboardLayout(context: try makeContext())
-        #expect(try layout.seedLastWorkout() != nil)
-        #expect(try kinds(layout) == [.lastWorkout])
-        #expect(try layout.seedLastWorkout() == nil)
-        #expect(try layout.allCards().count == 1)
+        #expect(try layout.seedDefaults().count == 2)
+        #expect(try kinds(layout) == [.thisWeek, .lastWorkout])
+        #expect(try layout.seedDefaults().isEmpty)
+        #expect(try layout.allCards().map(\.orderIndex) == [0, 1])
+    }
+
+    @Test("Prijelaz: tjedni volumen postaje Ovaj tjedan na istom mjestu, sljedeći trening nestaje")
+    func upgradeReplacesRetiredKinds() throws {
+        let context = try makeContext()
+        context.insert(DashboardCard(kindRaw: "lastWorkout", orderIndex: 0))
+        context.insert(DashboardCard(kindRaw: "nextWorkout", orderIndex: 1))
+        context.insert(DashboardCard(kindRaw: "weeklyVolume", orderIndex: 2))
+        context.insert(DashboardCard(kindRaw: "plateCalculator", orderIndex: 3))
+        let layout = DashboardLayout(context: context)
+        try layout.upgradeToWeekCard()
+        #expect(try raw(layout) == ["lastWorkout", "thisWeek", "plateCalculator"])
+        #expect(try layout.allCards().map(\.orderIndex) == [0, 1, 2])
+    }
+
+    @Test("Prijelaz bez tjednog volumena dodaje Ovaj tjedan na vrh")
+    func upgradeAddsWeekOnTop() throws {
+        let context = try makeContext()
+        context.insert(DashboardCard(kindRaw: "lastWorkout", orderIndex: 0))
+        context.insert(DashboardCard(kindRaw: "nextWorkout", orderIndex: 1))
+        let layout = DashboardLayout(context: context)
+        try layout.upgradeToWeekCard()
+        #expect(try raw(layout) == ["thisWeek", "lastWorkout"])
+        // Drugi prolaz ništa ne mijenja.
+        try layout.upgradeToWeekCard()
+        #expect(try raw(layout) == ["thisWeek", "lastWorkout"])
+    }
+
+    @Test("Prijelaz ne dira Početnu koja već ima Ovaj tjedan ni praznu Početnu")
+    func upgradeKeepsExistingWeek() throws {
+        let empty = DashboardLayout(context: try makeContext())
+        try empty.upgradeToWeekCard()
+        #expect(try empty.allCards().isEmpty)
+
+        let context = try makeContext()
+        context.insert(DashboardCard(kindRaw: "bodyWeight", orderIndex: 0))
+        context.insert(DashboardCard(kindRaw: "thisWeek", orderIndex: 1))
+        context.insert(DashboardCard(kindRaw: "weeklyVolume", orderIndex: 2))
+        let layout = DashboardLayout(context: context)
+        try layout.upgradeToWeekCard()
+        #expect(try raw(layout) == ["bodyWeight", "thisWeek"])
+    }
+
+    @Test("Dvije uzastopne male kartice dijele red")
+    func rows() {
+        #expect(DashboardLayout.rows([.thisWeek, .bodyWeight, .plateCalculator, .lastWorkout])
+            == [[.thisWeek], [.bodyWeight, .plateCalculator], [.lastWorkout]])
+        #expect(DashboardLayout.rows([.bodyWeight, .lastWorkout, .plateCalculator])
+            == [[.bodyWeight], [.lastWorkout], [.plateCalculator]])
+        #expect(DashboardLayout.rows([]).isEmpty)
     }
 
     @Test("Nepoznata vrsta se ne prikazuje, ali ostaje u bazi")
@@ -429,9 +481,9 @@ struct DashboardLayoutTests {
         let context = try makeContext()
         context.insert(DashboardCard(kindRaw: "buducaVrsta", orderIndex: 0))
         let layout = DashboardLayout(context: context)
-        try layout.add(.nextWorkout)
+        try layout.add(.thisWeek)
         try layout.move(fromOffsets: IndexSet(integer: 0), toOffset: 1)
-        #expect(try kinds(layout) == [.nextWorkout])
+        #expect(try kinds(layout) == [.thisWeek])
         #expect(try layout.allCards().count == 2)
     }
 }

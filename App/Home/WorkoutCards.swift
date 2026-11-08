@@ -29,7 +29,7 @@ struct StartWorkoutCard: View {
         VStack(spacing: 0) {
             ForEach(planned, id: \.item.id) { workout in
                 Button { onStart(workout) } label: {
-                    StartRow(symbol: "play.fill", isProminent: true, subtitle: workout.schedule.name) {
+                    StartRow(symbol: "play.fill", isProminent: true, subtitle: subtitle(workout)) {
                         Text("Započni: \(workout.template.name)")
                     }
                 }
@@ -67,6 +67,13 @@ struct StartWorkoutCard: View {
         .clipShape(RoundedRectangle(cornerRadius: CornerRadius.card))
         .workoutCardBackground()
     }
+}
+
+/// Podnaslov sljedećeg treninga: raspored i broj vježbi, npr. "Push / Pull / Legs · 6 vježbi".
+private func subtitle(_ workout: PlannedWorkout) -> String {
+    let count = workout.exercises.count
+    guard count > 0 else { return workout.schedule.name }
+    return "\(workout.schedule.name) · \(String(localized: "\(count) vježbi"))"
 }
 
 /// Red kartice za početak: ikona u krugu, naslov i (po potrebi) raspored.

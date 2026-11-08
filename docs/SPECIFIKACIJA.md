@@ -142,13 +142,15 @@ Aplikacija koristi **adaptivni layout** (SwiftUI size classes / NavigationSplitV
 Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 
 1. **Dashboard** — Početni ekran.
-   * Na vrhu kartica **Započni** istog oblika kao kartice ispod, s laganom poluprozirnom pozadinom u boji akcenta da se istakne: sljedeći trening svakog rasporeda i prazan trening.
+   * Na vrhu kartica **Započni** istog oblika kao kartice ispod, s laganom poluprozirnom pozadinom u boji akcenta da se istakne: sljedeći trening svakog rasporeda (ispod naziva raspored i broj vježbi) i prazan trening.
    * Ispod sljedećeg treninga svakog rasporeda je red **Odaberi drugi trening**: otvara popis treninga tog rasporeda (sljedeći je označen, a trening koji se ponavlja nudi se jednom, s izmjenama tekućeg ciklusa) i ispod njega ostalih spremljenih treninga snage. Dodir pokreće odabrani. Odrađeni trening bilježi se kao odrađen u tekućem ciklusu, pa Započni dalje nudi prvi trening u nizu koji još nije odrađen.
    * Kad nema aktivnog rasporeda, a postoje spremljeni treninzi, prvi red kartice je **Odaberi trening**: otvara popis spremljenih treninga snage (s vježbama) i dodir pokreće odabrani. Prazan trening ostaje ispod. Isto radi ⌘N (i kad raspored nudi samo kardio).
    * Dok trening traje, ekran treninga se povlačenjem prema dolje (ili gumbom Smanji) sažima u tu karticu. Kartica prikazuje isto što i Live Activity: vježbu i seriju, odbrojavanje odmora, težinu i ponavljanja s gumbima − i + te kvačicu za potvrdu serije. Dodir na karticu ponovno otvara cijeli ekran treninga.
-   * Ispod njega kartica zadnjeg treninga (datum, trajanje, tip). Zadano je prikazana, a korisnik je može ukloniti ili premjestiti kao ostale kartice.
-   * Ispod toga gumb za dodavanje widgeta.
-   * **Plate Calculator** je jedan od dostupnih widgeta.
+   * Ispod nje kartice koje korisnik dodaje, uklanja i premješta (Uredi kartice na dnu). Zadano su prikazane **Ovaj tjedan** i **Zadnji trening**:
+     * **Ovaj tjedan:** odrađeni treninzi prema cilju iz onboardinga ("2 od 3 treninga" s trakom; bez cilja samo broj), sedam dana tjedna s ikonom vrste treninga (snaga, kardio ili oboje) i obrubljenim današnjim danom, niz tjedana s ispunjenim ciljem (bez cilja: s barem jednim treningom) od dva tjedna naviše te tvrde serije, vrijeme kardija i ukupno vrijeme. Broje se i kardio treninzi iz Zdravlja.
+     * **Zadnji trening:** naziv, koliko je prošlo (danas, jučer, prije 3 dana) i datum, vrsta, trajanje i tvrde serije te najviše dva istaknuta rekorda (isti izbor kao u sažetku nakon treninga). Dodir otvara detalje.
+     * Male kartice, dvije u redu (uz veliki tekst jedna ispod druge): **Težina** (zadnja vrijednost i promjena u 30 dana, dodir otvara praćenje tijela) i **Ploče** (kalkulator ploča).
+   * Ranije kartice Tjedni volumen i Sljedeći trening su ukinute: tonaža nije dobra mjera tjedna (statistika broji tvrde serije, a kardio tjedan bi pokazao 0 kg), a sljedeći trening već piše u kartici Započni. Kod postojećih korisnika tjedni volumen jednom postaje Ovaj tjedan na istom mjestu, a Početna bez njega dobiva Ovaj tjedan na vrhu.
    * Gore desno gumb **Postavke**.
 2. **Odrađeni treninzi**
 3. **Rasporedi**
@@ -183,7 +185,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 
 ### Opis tabova
 
-1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (npr. zadnji trening, Plate Calculator, sljedeći trening, tjedni volumen) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u popisu "Kasnije").
+1. **Dashboard** — opisan gore. "Widgeti" na Dashboardu su **kartice unutar aplikacije** (ovaj tjedan, zadnji trening, težina, kalkulator ploča) koje korisnik dodaje, uklanja i premješta. To nisu WidgetKit widgeti na početnom zaslonu sustava (oni su u popisu "Kasnije").
 2. **Odrađeni treninzi** — Povijest svih završenih treninga s filterima i detaljima.
    * Lista treninga prikazuje: datum, tip i trajanje.
      * Trening snage s barem jednom odrađenom kardio vježbom ima bučicu s malom oznakom trčanja i redak "15 min kardio", a u filteru je i pod snagom i pod kardiom. Trening snage u kojem su odrađene samo kardio vježbe prikazuje se kao kardio. Vrsta se računa iz vježbi i ne sprema se. Isto pravilo vrijedi za predloške (samo snaga, samo kardio ili snaga + kardio), pa je ikona ista svugdje gdje se trening prikazuje: povijest, Početna, rasporedi, popis treninga i izbor treninga.
@@ -247,7 +249,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    Korisnik unese ciljnu težinu, a app prikaže koje ploče treba staviti na šipku.  
    Podržava različite težine šipke (npr. 20 kg, 15 kg) i korisnikov skup dostupnih ploča.  
    Unutar treninga otvara se iz polja težine s već upisanom vrijednošću.  
-   Na Dashboardu je cijela kartica dodirljiva i otvara kalkulator preko cijelog ekrana, gdje se ispod izračuna mogu uključiti i isključiti dostupne ploče i promijeniti težina šipke (iste postavke kao u Postavkama).
+   Na Dashboardu je mala kartica Ploče: cijela je dodirljiva i otvara kalkulator preko cijelog ekrana, gdje se ispod izračuna mogu uključiti i isključiti dostupne ploče i promijeniti težina šipke (iste postavke kao u Postavkama).
 3. **Zamjena vježbi (Exercise Swap):** Uz očuvanje povijesti. Povijest se uvijek veže uz vježbu koja je stvarno odrađena, a ne uz onu iz predloška.
 4. **Povijest i Napredak:**
    * Prethodni rezultati uvijek vidljivi u sučelju unosa.
@@ -290,7 +292,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 * **Pregled zadnja 4 tjedna:** četiri dijela umjesto jedne ocjene: snaga (statusi vježbi), volumen (glavni mišići u zoni tvrdih serija prema cilju), redovitost (treninzi prema planu) i napor (udio serija s 0 do 3 ponavljanja u rezervi). Uz pregled ide prijedlog za dalje (lakši tjedan, manje dana, više ili manje serija, veća težina, zaboravljen mišić).
 * **Prikaz statistike:** osnovni ili detaljni, besplatna postavka. Detaljni dodaje zbroj dobrih dijelova pregleda, sve prijedloge, raspodjelu napora i intenziteta serija, najtežu seriju po ponavljanjima, relativnu snagu, odmor između serija i ocjenu napora treninga (sRPE, Foster i sur. 2001) u sažetku.
 * **Sažetak treninga:** tvrde serije, kardio dio (vrijeme, udaljenost, prosječni tempo i brzina kardio vježbi, ako ih ima), usporedba s prošlim izvođenjem istog predloška (tonaža, tvrde serije, trajanje), procjena 1RM po vježbi s promjenom prema prošlom izvođenju i tvrde serije mišića u tom tjednu. Podatak snage koji je nula (tonaža, tvrde serije) ili rekordi kojih nema ne prikazuju se, pa kardio trening pokazuje samo kardio podatke.
-* **Tvrde serije:** mjera volumena po mišiću za mapu i grafove. Broji se završena radna serija; serija s upisanim RPE-om ispod 6 (RIR 5 i više) ne broji se, a serija bez RPE-a broji se uvijek. Mišić kojem je vježba glavna dobiva cijelu seriju, a mišić koji pomaže pola. Vježbe s vlastitom težinom broje se jednako. Kardio vježbe (vrsta kardio u katalogu) ne broje se u serije, ni u treningu snage: njihovo vrijeme i udaljenost su kardio dio treninga. Tonaža (kg × ponavljanja) ostaje za napredak pojedine vježbe i karticu tjednog volumena na Početnoj, jer nije usporediva između mišića različite veličine. Izvori: Schoenfeld i sur. 2017 (doza i odgovor), Pelland i sur. (frakcijsko brojanje pomoćnih serija), Robinson i sur. 2024 (blizina otkaza).
+* **Tvrde serije:** mjera volumena po mišiću za mapu i grafove. Broji se završena radna serija; serija s upisanim RPE-om ispod 6 (RIR 5 i više) ne broji se, a serija bez RPE-a broji se uvijek. Mišić kojem je vježba glavna dobiva cijelu seriju, a mišić koji pomaže pola. Vježbe s vlastitom težinom broje se jednako. Kardio vježbe (vrsta kardio u katalogu) ne broje se u serije, ni u treningu snage: njihovo vrijeme i udaljenost su kardio dio treninga. Tonaža (kg × ponavljanja) ostaje za napredak pojedine vježbe i usporedbu istog treninga s prošlim izvođenjem, jer nije usporediva između mišića različite veličine. Izvori: Schoenfeld i sur. 2017 (doza i odgovor), Pelland i sur. (frakcijsko brojanje pomoćnih serija), Robinson i sur. 2024 (blizina otkaza).
 
 ---
 

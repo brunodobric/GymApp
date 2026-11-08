@@ -4,10 +4,26 @@ import SwiftData
 /// Vrste kartica koje korisnik može dodati na Početnu. Nepoznate vrste (iz novije verzije aplikacije)
 /// ostaju u bazi, ali se ne prikazuju.
 public enum DashboardCardKind: String, CaseIterable, Sendable {
+    case thisWeek
     case lastWorkout
+    case bodyWeight
     case plateCalculator
-    case nextWorkout
-    case weeklyVolume
+
+    /// Mala kartica: dvije uzastopne male kartice stoje jedna do druge (`DashboardLayout.rows`).
+    public var isCompact: Bool {
+        switch self {
+        case .bodyWeight, .plateCalculator: true
+        case .thisWeek, .lastWorkout: false
+        }
+    }
+
+    /// Vrste koje Početna dobiva na praznom početku, ovim redom.
+    public static let defaults: [DashboardCardKind] = [.thisWeek, .lastWorkout]
+
+    /// Ukinute vrste. Tjedni volumen (tonaža) je zamijenila kartica Ovaj tjedan, a sljedeći trening
+    /// ponavljao je ono što već piše u kartici Započni.
+    static let retiredWeeklyVolume = "weeklyVolume"
+    static let retiredNextWorkout = "nextWorkout"
 }
 
 public extension DashboardCard {
@@ -53,18 +69,62 @@ public struct DashboardLayout {
         return card
     }
 
-    /// Početna bez ijedne kartice dobiva karticu zadnjeg treninga.
+    /// Početna bez ijedne kartice dobiva zadane kartice (`DashboardCardKind.defaults`).
     ///
     /// Samo na praznoj Početnoj: ako kartice već postoje (npr. stigle su s drugog uređaja), korisnik ih je
-    /// složio sam, pa se kartica zadnjeg treninga koju je uklonio ne vraća. Duplikat s drugog uređaja
-    /// uklanja deduplikacija.
+    /// složio sam, pa se kartica koju je uklonio ne vraća. Duplikat s drugog uređaja uklanja deduplikacija.
     @discardableResult
-    public func seedLastWorkout() throws -> DashboardCard? {
-        guard try allCards().isEmpty else { return nil }
-        let card = DashboardCard(kindRaw: DashboardCardKind.lastWorkout.rawValue, orderIndex: 0)
-        context.insert(card)
+    public func seedDefaults() throws -> [DashboardCard] {
+        guard try allCards().isEmpty else { return [] }
+        let cards = DashboardCardKind.defaults.enumerated().map { index, kind in
+            DashboardCard(kindRaw: kind.rawValue, orderIndex: index)
+        }
+        cards.forEach(context.insert)
         try context.save()
-        return card
+        return cards
+    }
+
+    /// Prijelaz na kartice nove Početne (jednom po uređaju): kartica tjednog volumena postaje kartica
+    /// Ovaj tjedan na istom mjestu, kartica sljedećeg treninga se uklanja, a Početna koja nema karticu
+    /// Ovaj tjedan dobiva je na vrhu. Prazna Početna ostaje prazna (puni je `seedDefaults`).
+    public func upgradeToWeekCard() throws {
+        let all = try allCards()
+        guard !all.isEmpty else { return }
+        let week = DashboardCardKind.thisWeek.rawValue
+        var hasWeek = all.contains { $0.kindRaw == week }
+        var cards: [DashboardCard] = []
+        for card in all {
+            switch card.kindRaw {
+            case DashboardCardKind.retiredWeeklyVolume where !hasWeek:
+                card.kindRaw = week
+                hasWeek = true
+                cards.append(card)
+            case DashboardCardKind.retiredWeeklyVolume, DashboardCardKind.retiredNextWorkout:
+                context.delete(card)
+            default:
+                cards.append(card)
+            }
+        }
+        if !hasWeek {
+            let card = DashboardCard(kindRaw: week, orderIndex: 0)
+            context.insert(card)
+            cards.insert(card, at: 0)
+        }
+        try renumber(cards)
+        try context.save()
+    }
+
+    /// Redovi Početne: velika kartica je sama u redu, a dvije uzastopne male kartice dijele red.
+    public static func rows(_ kinds: [DashboardCardKind]) -> [[DashboardCardKind]] {
+        var rows: [[DashboardCardKind]] = []
+        for kind in kinds {
+            if kind.isCompact, let last = rows.last, last.count == 1, last[0].isCompact {
+                rows[rows.count - 1].append(kind)
+            } else {
+                rows.append([kind])
+            }
+        }
+        return rows
     }
 
     public func remove(_ card: DashboardCard) throws {
