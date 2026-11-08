@@ -8,6 +8,7 @@ import SwiftUI
 /// * tab bar služi samo za navigaciju, akcije idu u toolbar;
 /// * labele su jedna riječ, uz ispunjene SF Symbols;
 /// * tabovi se nikad ne skrivaju ni onemogućuju, prazna sekcija objašnjava zašto je prazna;
+/// * odlazak na drugi tab čuva stanje navigacije, a ponovni dodir na otvoren tab vraća ga na korijen;
 /// * na iPadu se tab bar pretvara u sidebar (`.sidebarAdaptable`), na iPhoneu je dolje.
 struct RootView: View {
     enum Section: Hashable {
@@ -15,6 +16,8 @@ struct RootView: View {
     }
 
     @State private var selection: Section = .home
+    /// Brojač ponovnih dodira po tabu. Promjena vraća tab na korijen, a odlazak na drugi tab čuva stanje.
+    @State private var rootResets: [Section: Int] = [:]
     @State private var showsOnboarding = false
     /// Zahtjev Početnoj iz tipkovničkog prečaca (⌘N, ⌘,).
     @State private var homeRequest: HomeRequest?
@@ -28,21 +31,21 @@ struct RootView: View {
     private var needsOnboarding: Bool { !(settings?.onboardingCompleted ?? false) }
 
     var body: some View {
-        TabView(selection: $selection) {
+        TabView(selection: tabSelection) {
             Tab("Početna", systemImage: "house.fill", value: Section.home) {
-                HomeScreen(request: $homeRequest)
+                HomeScreen(rootReset: rootResets[.home, default: 0], request: $homeRequest)
             }
             Tab("Povijest", systemImage: "clock.fill", value: Section.history) {
-                HistoryScreen()
+                HistoryScreen(rootReset: rootResets[.history, default: 0])
             }
             Tab("Rasporedi", systemImage: "calendar", value: Section.schedules) {
-                SchedulesScreen(isSelectedTab: selection == .schedules)
+                SchedulesScreen(rootReset: rootResets[.schedules, default: 0])
             }
             Tab("Vježbe", systemImage: "dumbbell.fill", value: Section.exercises) {
-                ExercisesScreen()
+                ExercisesScreen(rootReset: rootResets[.exercises, default: 0])
             }
             Tab("Statistika", systemImage: "chart.bar.fill", value: Section.statistics) {
-                StatisticsScreen()
+                StatisticsScreen(rootReset: rootResets[.statistics, default: 0])
             }
         }
         .tabViewStyle(.sidebarAdaptable)
@@ -101,6 +104,18 @@ struct RootView: View {
 }
 
 extension RootView {
+    /// Odabir taba. Dodir na tab koji je već otvoren vraća ga na korijen (Apple HIG),
+    /// a ostali tabovi zadržavaju gdje je korisnik stao.
+    private var tabSelection: Binding<Section> {
+        Binding(
+            get: { selection },
+            set: { tapped in
+                if tapped == selection { rootResets[tapped, default: 0] += 1 }
+                selection = tapped
+            }
+        )
+    }
+
     /// Raspored iz dodirnutog podsjetnika (ako još postoji).
     private var notificationSchedule: Schedule? {
         guard let id = NotificationRouter.shared.openScheduleId else { return nil }

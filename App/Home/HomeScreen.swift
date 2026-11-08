@@ -8,6 +8,9 @@ import Units
 /// Početna: kartica za početak ili nastavak treninga i kartice koje korisnik složi.
 /// Naslov je kratak (ispod 15 znakova) i nije naziv aplikacije, prema HIG-u.
 struct HomeScreen: View {
+    /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: stog navigacije se vraća na korijen.
+    var rootReset = 0
+
     /// Zahtjev iz tipkovničkog prečaca: pokretanje treninga ili Postavke.
     @Binding var request: HomeRequest?
 
@@ -151,6 +154,8 @@ struct HomeScreen: View {
             }
             #endif
         }
+        // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
+        .id(rootReset)
     }
 
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }

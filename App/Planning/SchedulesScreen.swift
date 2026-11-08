@@ -21,9 +21,9 @@ enum PlanningSelection: Hashable {
 /// U regular širini (iPad) popis i uređivač stoje jedan pored drugog (`NavigationSplitView`).
 /// U compact širini split view se sklapa u običan stog.
 struct SchedulesScreen: View {
-    /// Kartica Rasporedi je otvorena. Kad korisnik ode na drugu karticu, uređivanje se sprema,
-    /// a povratak uvijek počinje od popisa.
-    var isSelectedTab = true
+    /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: vraća se popis rasporeda i treninga.
+    /// Odlazak na drugi tab ne mijenja ništa, povratak nastavlja gdje je korisnik stao (Apple HIG).
+    var rootReset = 0
 
     @Environment(\.modelContext) private var context
     @Query(sort: \Schedule.createdAt) private var schedules: [Schedule]
@@ -66,14 +66,8 @@ struct SchedulesScreen: View {
             }
             if let id = editing?.id, !ids.contains(id) { clearEditing() }
         }
-        .onChange(of: isSelectedTab) { _, isSelected in
-            guard !isSelected else { return }
-            if editing != nil { finishEditing() }
-            asksToSave = false
-            pendingSelection = nil
-            pendingIsNew = false
-            selection = nil
-        }
+        // Uređivanje u tijeku prvo pita Spremi ili Izađi bez spremanja, kao i natrag.
+        .onChange(of: rootReset) { select(nil) }
         .alert(saveTitle, isPresented: $asksToSave) {
             Button("Spremi") {
                 finishEditing()
