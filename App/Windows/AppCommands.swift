@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 import WidgetData
 
@@ -13,8 +14,10 @@ enum HomeRequest: Equatable {
     case week
     /// Widget težine: praćenje tijela.
     case bodyWeight
-    /// Widget zadnjeg treninga ili rekorda: detalji zadnjeg treninga.
+    /// Widget zadnjeg treninga: detalji zadnjeg treninga.
     case lastWorkout
+    /// Widget rekorda: detalji treninga u kojem je rekord postavljen.
+    case session(UUID)
 }
 
 extension HomeRequest {
@@ -27,6 +30,7 @@ extension HomeRequest {
         case .week: self = .week
         case .bodyWeight: self = .bodyWeight
         case .lastWorkout: self = .lastWorkout
+        case .session(let id): self = .session(id)
         }
     }
 }

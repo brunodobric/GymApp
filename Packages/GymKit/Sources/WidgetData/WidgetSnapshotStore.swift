@@ -38,15 +38,8 @@ public struct WidgetSnapshotStore: Sendable {
         return true
     }
 
-    private static var encoder: JSONEncoder {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .secondsSince1970
-        return encoder
-    }
-
-    private static var decoder: JSONDecoder {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .secondsSince1970
-        return decoder
-    }
+    // Zadani zapis datuma (sekunde od 2001.) se čita natrag bez gubitka preciznosti, pa usporedba
+    // stare i nove snimke ne vidi promjenu tamo gdje je nema. Sekunde od 1970. bi pomaknule razlomke sekunde.
+    private static var encoder: JSONEncoder { JSONEncoder() }
+    private static var decoder: JSONDecoder { JSONDecoder() }
 }

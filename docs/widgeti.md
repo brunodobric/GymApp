@@ -24,8 +24,11 @@ je aplikacija zatvorena. Tjedan iz prošlog tjedna widget sam prazni (`WidgetSna
 
 ## Otvaranje aplikacije
 
-* Dodir na widget otvara poveznicu `apolon://…` (`WidgetLink`): Početna, pregled tjedna, praćenje tijela ili
-  zadnji trening. `RootView` je prima u `onOpenURL`, a Početna otvara list (`HomeRequest`).
+* Dodir na widget otvara poveznicu `apolon://…` (`WidgetLink`): Početna, pregled tjedna, praćenje tijela,
+  zadnji trening ili trening s rekordom. `RootView` je prima u `onOpenURL`, a Početna otvara list (`HomeRequest`).
+  Live Activity koristi istu poveznicu za trening u tijeku (`apolon://trening`).
+* Za vrijeme treninga snimka se ne slaže nakon svake serije: dok je trening u tijeku isti, ništa drugo se ne mijenja.
+* Uvoz s iClouda ne sprema kroz aplikaciju, pa `RootView` osvježava widgete i nakon uvoza (`SyncMonitor`).
 * Gumb ▶ i kontrola izvršavaju `StartWorkoutFromWidgetIntent` (`Shared/LiveActivity`). Intent ima
   `openAppWhenRun`, pa ga sustav pokreće u aplikaciji: `AppRequestRouter` preda zahtjev Početnoj, koja pokreće
   sljedeći trening ili nastavlja trening u tijeku (isto kao ⌘N). U extensionu je izvedba prazna

@@ -226,9 +226,8 @@ struct HomeScreen: View {
         case .activeWorkout:
             // Iz Live Activityja: zatvara se ono što je otvoreno preko Početne i otvara puni ekran treninga.
             guard let active = activeSessions.first else { return }
-            let hadSheet = showsSettings || showsCardEditor || showsTemplatePicker || widgetSheet != nil
+            let hadSheet = hasPresentedSheet
             dismissSheets()
-            recovery = nil
             if hadSheet {
                 // Puni ekran se ne može prikazati dok se list još zatvara.
                 Task {
@@ -249,9 +248,14 @@ struct HomeScreen: View {
         case .lastWorkout:
             guard let last = lastSession else { return }
             openWidgetSheet(.session(last))
+        case .session(let id):
+            var descriptor = FetchDescriptor<Session>(predicate: #Predicate { $0.id == id })
+            descriptor.fetchLimit = 1
+            guard let session = try? context.fetch(descriptor).first else { return }
+            openWidgetSheet(.session(session))
         case .startWorkout:
             // Iz widgeta ili kontrole aplikacija može imati otvoren list: puni ekran treninga čeka da se zatvori.
-            if showsSettings || showsCardEditor || showsTemplatePicker || widgetSheet != nil {
+            if hasPresentedSheet {
                 dismissSheets()
                 Task {
                     try? await Task.sleep(for: .milliseconds(500))
@@ -277,19 +281,26 @@ struct HomeScreen: View {
         }
     }
 
-    /// Zatvara listove preko Početne (dodir na widget vodi na čistu Početnu ili na jedan list).
+    /// Je li preko Početne otvoren list ili dijalog. Novi list ili puni ekran treninga mora čekati da se zatvori.
+    private var hasPresentedSheet: Bool {
+        showsSettings || showsCardEditor || showsTemplatePicker || widgetSheet != nil || recovery != nil
+    }
+
+    /// Zatvara listove i dijalog oporavka preko Početne (dodir na widget vodi na čistu Početnu ili na jedan list).
+    /// Trening u tijeku ostaje na kartici, pa se oporavak može nastaviti i odande.
     private func dismissSheets() {
         showsSettings = false
         showsCardEditor = false
         showsTemplatePicker = false
         chosenWorkout = nil
         widgetSheet = nil
+        recovery = nil
     }
 
     /// Otvara list iz widgeta. Ako je nešto već otvoreno, prvo se zatvara, jer se novi list ne može prikazati
     /// dok se stari zatvara.
     private func openWidgetSheet(_ sheet: WidgetSheet) {
-        let hadSheet = showsSettings || showsCardEditor || showsTemplatePicker || widgetSheet != nil
+        let hadSheet = hasPresentedSheet
         dismissSheets()
         if hadSheet {
             Task {

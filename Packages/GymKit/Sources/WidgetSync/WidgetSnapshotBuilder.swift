@@ -97,7 +97,7 @@ public struct WidgetSnapshotBuilder {
             sortBy: [SortDescriptor(\.startedAt, order: .reverse)]
         )
         ownDescriptor.fetchLimit = Self.recordLookback
-        let own = try context.fetch(ownDescriptor).filter { !$0.isImportedFromWorkoutsApp }
+        let own = try context.fetch(ownDescriptor)
         var healthDescriptor = FetchDescriptor<HealthWorkout>(sortBy: [SortDescriptor(\.startedAt, order: .reverse)])
         healthDescriptor.fetchLimit = 1
         let health = try context.fetch(healthDescriptor)
@@ -128,7 +128,7 @@ public struct WidgetSnapshotBuilder {
         for session in own {
             guard let highlight = summary(of: session)?.highlights.first else { continue }
             snapshot.latestRecord = WidgetSnapshot.Record(
-                exercise: highlight.exerciseName, value: recordText(highlight.record), date: session.startedAt
+                exercise: highlight.exerciseName, value: recordText(highlight.record), date: session.startedAt, sessionId: session.id
             )
             break
         }

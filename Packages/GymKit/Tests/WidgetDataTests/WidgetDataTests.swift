@@ -140,6 +140,7 @@ struct WidgetWeekTests {
 struct WidgetLinkTests {
     @Test("Svaka poveznica se pročita natrag", arguments: [
         WidgetLink.home, .startWorkout, .activeWorkout, .week, .bodyWeight, .lastWorkout,
+        .session(UUID(uuidString: "6E1F2A3B-4C5D-4E6F-8A9B-0C1D2E3F4A5B")!),
     ])
     func roundTrip(_ link: WidgetLink) {
         #expect(WidgetLink(url: link.url) == link)
@@ -150,6 +151,7 @@ struct WidgetLinkTests {
         #expect(WidgetLink.activeWorkout.url.absoluteString == "apolon://trening")
         #expect(WidgetLink(url: URL(string: "https://apolon.app/trening")!) == nil)
         #expect(WidgetLink(url: URL(string: "apolon://nepoznato")!) == nil)
+        #expect(WidgetLink(url: URL(string: "apolon://povijest/nije-uuid")!) == nil)
     }
 }
 
@@ -173,6 +175,20 @@ struct WidgetSnapshotStoreTests {
         later.week?.sessions = 3
         #expect(try store.save(later))
         #expect(store.load()?.week?.sessions == 3)
+    }
+
+    @Test("Datumi s dijelom sekunde se čitaju natrag isti, pa ista snimka nije promjena")
+    func fractionalDates() throws {
+        let directory = FileManager.default.temporaryDirectory.appending(path: "widget-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = WidgetSnapshotStore(directory: directory)
+        let now = Date(timeIntervalSinceReferenceDate: 815_000_123.456_789)
+        var snapshot = WidgetSnapshot.sample(now: now, calendar: calendar)
+        snapshot.activeWorkout = .init(name: "Push", startedAt: now.addingTimeInterval(-1_234.567_891))
+        #expect(try store.save(snapshot))
+        #expect(store.load() == snapshot)
+        snapshot.generatedAt = now.addingTimeInterval(5)
+        #expect(try !store.save(snapshot))
     }
 
     @Test("Bez App Groupa nema spremanja")

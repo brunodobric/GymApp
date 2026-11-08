@@ -30,11 +30,15 @@ struct ComplicationEntry: TimelineEntry {
     let date: Date
     let state: ComplicationState
 
-    /// Smart Stack: odmor i trening u tijeku idu na vrh, inače widget ne gura sebe naprijed.
-    var relevance: TimelineEntryRelevance? {
-        if state.isResting(at: date) { return TimelineEntryRelevance(score: 100) }
-        if state.activeWorkoutName != nil { return TimelineEntryRelevance(score: 50) }
-        return nil
+    /// Smart Stack: samo komplikacija odmora i treninga daje prednost (`ComplicationProvider`).
+    var relevance: TimelineEntryRelevance?
+}
+
+extension ComplicationEntry {
+    /// Odmor i trening u tijeku idu na vrh Smart Stacka, inače widget ne gura sebe naprijed.
+    static func withRelevance(date: Date, state: ComplicationState) -> ComplicationEntry {
+        let score: Float? = state.isResting(at: date) ? 100 : (state.activeWorkoutName != nil ? 50 : nil)
+        return ComplicationEntry(date: date, state: state, relevance: score.map { TimelineEntryRelevance(score: $0) })
     }
 }
 
@@ -52,12 +56,12 @@ struct ComplicationProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<ComplicationEntry>) -> Void) {
         let now = Date()
         let state = ComplicationState.load()
-        var entries = [ComplicationEntry(date: now, state: state)]
+        var entries = [ComplicationEntry.withRelevance(date: now, state: state)]
         if let end = state.restEndsAt, end > now {
             var after = state
             after.restStartedAt = nil
             after.restEndsAt = nil
-            entries.append(ComplicationEntry(date: end, state: after))
+            entries.append(ComplicationEntry.withRelevance(date: end, state: after))
         }
         completion(Timeline(entries: entries, policy: .never))
     }

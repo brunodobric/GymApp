@@ -77,7 +77,7 @@ targets:
           - UIInterfaceOrientationLandscapeRight
         UIBackgroundModes: [remote-notification]
         NSSupportsLiveActivities: true
-        # Dodir na Live Activity otvara aktivni trening (Shared/LiveActivity/LiveActivityLink.swift).
+        # Dodir na Live Activity i widgete otvara aplikaciju (WidgetLink u paketu WidgetData, RootView.onOpenURL).
         CFBundleURLTypes:
           - CFBundleURLName: com.brunodobric.gymapp
             CFBundleURLSchemes: [apolon]

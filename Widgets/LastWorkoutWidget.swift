@@ -76,7 +76,7 @@ struct RecordWidget: Widget {
             RecordView(entry: entry)
                 .tint(entry.snapshot.accentColor)
                 .containerBackground(for: .widget) { CardBackground() }
-                .widgetURL(WidgetLink.lastWorkout.url)
+                .widgetURL(entry.snapshot.latestRecord?.sessionId.map { WidgetLink.session($0).url } ?? WidgetLink.home.url)
         }
         .configurationDisplayName("Zadnji rekord")
         .description("Najnoviji osobni rekord.")

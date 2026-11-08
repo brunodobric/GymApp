@@ -66,11 +66,14 @@ struct RootView: View {
             homeRequest = HomeRequest(link)
         }
         // Gumb ▶ na widgetu i kontrola "Započni trening" (intent se izvršava u aplikaciji).
-        .onChange(of: AppRequestRouter.shared.pending, initial: true) { _, pending in
-            guard let pending else { return }
-            AppRequestRouter.shared.pending = nil
+        .onChange(of: AppRequestRouter.shared.pending, initial: true) {
+            guard let pending = AppRequestRouter.shared.take() else { return }
             selection = .home
             homeRequest = pending
+        }
+        // Podaci s drugih uređaja (iCloud) ne prolaze kroz spremanje u ovoj aplikaciji: widgeti se osvježe nakon uvoza.
+        .onChange(of: SyncMonitor.shared.tracker.lastImport) {
+            WidgetRefresher.shared.scheduleRefresh()
         }
         .tint(settings?.accent.color ?? AccentChoice.blue.color)
         .preferredColorScheme(settings?.theme.colorScheme)

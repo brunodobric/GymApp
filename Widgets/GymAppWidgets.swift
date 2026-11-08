@@ -1,6 +1,7 @@
 import ActivityKit
 import AppIntents
 import SwiftUI
+import WidgetData
 import WidgetKit
 
 @main
@@ -26,7 +27,7 @@ struct RestTimerLiveActivity: Widget {
         ActivityConfiguration(for: RestTimerActivityAttributes.self) { context in
             LockScreenView(state: context.state, isStale: context.isStale)
                 .lockScreenAppearance(context.state)
-                .widgetURL(LiveActivityLink.activeWorkout)
+                .widgetURL(WidgetLink.activeWorkout.url)
         } dynamicIsland: { context in
             let state = context.state
             let rest = RestState(state: state, isStale: context.isStale)
@@ -67,7 +68,7 @@ struct RestTimerLiveActivity: Widget {
             } minimal: {
                 RestRingOrIcon(rest: rest, accent: state.accentColor)
             }
-            .widgetURL(LiveActivityLink.activeWorkout)
+            .widgetURL(WidgetLink.activeWorkout.url)
             .keylineTint(state.accentColor)
         }
     }

@@ -173,11 +173,14 @@ extension WidgetSnapshot {
         public var exercise: String
         public var value: String
         public var date: Date
+        /// Trening u kojem je rekord postavljen (dodir na widget ga otvara).
+        public var sessionId: UUID?
 
-        public init(exercise: String, value: String, date: Date) {
+        public init(exercise: String, value: String, date: Date, sessionId: UUID? = nil) {
             self.exercise = exercise
             self.value = value
             self.date = date
+            self.sessionId = sessionId
         }
     }
 
