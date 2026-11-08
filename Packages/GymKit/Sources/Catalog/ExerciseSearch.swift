@@ -175,6 +175,19 @@ public enum ExerciseSearch {
             .map(\.item)
     }
 
+    /// Rezultati pretrage s odabranim vježbama izdvojenima na vrh, da korisnik tijekom pretrage vidi što je odabrao.
+    /// `selected` su id-evi redom odabira. Odabrane se traže u `all`, pa se vide i kad ne odgovaraju upitu,
+    /// a iz `results` se izbacuju da se ne ponavljaju. Nepoznati id-evi se preskaču.
+    public static func pinningSelected(
+        _ selected: [String], results: [ExerciseSummary], all: [ExerciseSummary]
+    ) -> (selected: [ExerciseSummary], others: [ExerciseSummary]) {
+        guard !selected.isEmpty else { return ([], results) }
+        let byID = Dictionary(all.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let pinned = selected.compactMap { byID[$0] }
+        let pinnedIDs = Set(pinned.map(\.id))
+        return (pinned, results.filter { !pinnedIDs.contains($0.id) })
+    }
+
     /// nil ako neka riječ ne postoji ni u nazivu ni u `labels`. Manje je bolje.
     private static func relevance(of tokens: [String], in text: String, labels: String) -> Int? {
         guard !tokens.isEmpty else { return 0 }

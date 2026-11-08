@@ -139,6 +139,24 @@ struct SearchTests {
         filter.origin = .official
         #expect(ExerciseSearch.apply(filter, to: all).count == sample.count)
     }
+
+    @Test("Odabrane vježbe idu na vrh pretrage redom odabira, i kad ne odgovaraju upitu")
+    func pinnedSelection() {
+        var filter = ExerciseFilter()
+        filter.query = "sipk"
+        let results = ExerciseSearch.apply(filter, to: sample)
+        let pinned = ExerciseSearch.pinningSelected(["c:curl", "c:row", "c:nepostoji"], results: results, all: sample)
+        #expect(pinned.selected.map(\.id) == ["c:curl", "c:row"])
+        #expect(!pinned.others.contains { $0.id == "c:row" })
+        #expect(pinned.others.map(\.id) == results.map(\.id).filter { $0 != "c:row" })
+    }
+
+    @Test("Bez odabira rezultati ostaju isti")
+    func pinnedEmptySelection() {
+        let pinned = ExerciseSearch.pinningSelected([], results: sample, all: sample)
+        #expect(pinned.selected.isEmpty)
+        #expect(pinned.others.map(\.id) == sample.map(\.id))
+    }
 }
 
 @Suite("Katalog")
