@@ -16,15 +16,15 @@ private func plan(cardio: Bool = true) -> PlannedWorkoutPayload {
             sets: [
                 PlannedSetPayload(kind: .warmUp, weightKg: 40, reps: 10),
                 PlannedSetPayload(weightKg: 80, reps: 8),
-                PlannedSetPayload(weightKg: 80, reps: 8),
+                PlannedSetPayload(weightKg: 80, reps: 8)
             ],
             isCardio: false,
             previous: [
                 PlannedSetPayload(kind: .warmUp, weightKg: 40, reps: 10),
                 PlannedSetPayload(weightKg: 77.5, reps: 8),
-                PlannedSetPayload(weightKg: 80, reps: 7),
+                PlannedSetPayload(weightKg: 80, reps: 7)
             ]
-        ),
+        )
     ]
     if cardio {
         exercises.append(PlannedExercisePayload(

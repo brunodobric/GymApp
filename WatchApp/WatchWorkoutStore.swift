@@ -74,17 +74,6 @@ final class WatchWorkoutStore {
 
     var unit: WeightUnit { context.weightUnit }
     var accent: AccentChoice { context.accent ?? .blue }
-
-    /// Je li vježba kardio (ikona trčanja, ne broji se u serije).
-    func isCardio(_ exercise: ExerciseSnapshot) -> Bool {
-        context.isCardio(exercise.exercise)
-    }
-
-    /// "Prošli put" za seriju: vrijednosti iz zadnjeg izvođenja vježbe na istom mjestu.
-    func previousSet(of set: SetSnapshot, in exercise: ExerciseSnapshot) -> SetSnapshot? {
-        guard let position = exercise.position(ofSet: set.id) else { return nil }
-        return context.previousSet(for: exercise.exercise, kind: set.kind, position: position)
-    }
     var isController: Bool { active?.controllingDevice == .watch }
     /// Puls i kalorije prikazuju se kad sat drži sesiju u Zdravlju (vodi trening ili ga je pokrenuo iPhone).
     var showsHealthMetrics: Bool { isController || (mirrorHealthSessionID != nil && mirrorHealthSessionID == active?.id) }
@@ -185,18 +174,6 @@ final class WatchWorkoutStore {
         mutate { engine in
             engine.updateSet(setID) { field.apply(value, to: &$0, unit: displayUnit) }
         }
-    }
-
-    /// Pokreće, pauzira ili nastavlja štopericu serije. Štoperica druge serije se odbacuje.
-    func toggleStopwatch(for setID: UUID) {
-        let now = Date()
-        if var current = stopwatch, current.setID == setID {
-            current.toggle(at: now)
-            stopwatch = current
-        } else {
-            stopwatch = Stopwatch(setID: setID, startedAt: now)
-        }
-        WKInterfaceDevice.current().play(.click)
     }
 
     func uncomplete(_ setID: UUID) {
@@ -609,5 +586,32 @@ extension WatchWorkoutStore {
             guard !Task.isCancelled, let self else { return }
             endMirrorHealth(sessionID: sessionID, finishedAt: Date())
         }
+    }
+}
+
+// MARK: - Prikaz kao na iPhoneu
+
+extension WatchWorkoutStore {
+    /// Je li vježba kardio (ikona trčanja, ne broji se u serije).
+    func isCardio(_ exercise: ExerciseSnapshot) -> Bool {
+        context.isCardio(exercise.exercise)
+    }
+
+    /// "Prošli put" za seriju: vrijednosti iz zadnjeg izvođenja vježbe na istom mjestu.
+    func previousSet(of set: SetSnapshot, in exercise: ExerciseSnapshot) -> SetSnapshot? {
+        guard let position = exercise.position(ofSet: set.id) else { return nil }
+        return context.previousSet(for: exercise.exercise, kind: set.kind, position: position)
+    }
+
+    /// Pokreće, pauzira ili nastavlja štopericu serije. Štoperica druge serije se odbacuje.
+    func toggleStopwatch(for setID: UUID) {
+        let now = Date()
+        if var current = stopwatch, current.setID == setID {
+            current.toggle(at: now)
+            stopwatch = current
+        } else {
+            stopwatch = Stopwatch(setID: setID, startedAt: now)
+        }
+        WKInterfaceDevice.current().play(.click)
     }
 }
