@@ -6,7 +6,8 @@ public enum WheelOptions {
     /// Najmanja i najveća ponuđena ponavljanja.
     public static let repsRange = 1...50
 
-    /// Korak težine: 2,5 kg ili 5 lbs (najmanji uobičajeni skok s parom ploča).
+    /// Korak težine kad se ne zna oprema vježbe: 2,5 kg ili 5 lbs (najmanji uobičajeni skok s parom ploča).
+    /// Korak po opremi i po vježbi je u `WeightStepSettings` (Models).
     public static func weightStep(for unit: WeightUnit) -> Double {
         switch unit {
         case .kilograms: 2.5
@@ -32,12 +33,14 @@ public enum WheelOptions {
     /// Početna ponavljanja kad serija i prošli trening nemaju vrijednost.
     public static let defaultReps = 10
 
-    /// Težine od 0 do najveće u koracima jedinice. Vrijednost koja nije na koraku (npr. 83 kg upisano
-    /// tipkovnicom) dodaje se na svoje mjesto, da je kotačić može prikazati i da se ne promijeni sama.
-    public static func weights(for unit: WeightUnit, including current: Double? = nil) -> [Double] {
-        let step = weightStep(for: unit)
-        let count = Int((maximumWeight(for: unit) / step).rounded())
-        var values = (0...count).map { Double($0) * step }
+    /// Težine od 0 do najveće u zadanom koraku (bez koraka korak jedinice). Vrijednost koja nije na koraku
+    /// (npr. 83 kg upisano tipkovnicom) dodaje se na svoje mjesto, da je kotačić može prikazati i da se ne
+    /// promijeni sama.
+    public static func weights(for unit: WeightUnit, step: Double? = nil, including current: Double? = nil) -> [Double] {
+        let step = step.flatMap { $0 > 0 ? $0 : nil } ?? weightStep(for: unit)
+        let count = Int((maximumWeight(for: unit) / step).rounded(.down))
+        // Množenje (a ne zbrajanje) i zaokruživanje na 0,001, da 0,1 + 0,2 ne postane 0,30000000000000004.
+        var values = (0...count).map { (Double($0) * step * 1000).rounded() / 1000 }
         if let current, current >= 0, !values.contains(where: { abs($0 - current) < tolerance }) {
             let index = values.firstIndex(where: { $0 > current }) ?? values.endIndex
             values.insert(current, at: index)

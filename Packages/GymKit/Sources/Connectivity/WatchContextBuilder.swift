@@ -13,17 +13,21 @@ public struct WatchContextBuilder {
     public let isCardio: (String) -> Bool
     /// Je li vježba složena, po ključu `ExerciseRef.key` (`ExerciseCatalog.isCompound` u aplikaciji).
     public let isCompound: (String) -> Bool?
+    /// Korak težine vježbe u jedinici prikaza (`UserSettings.weightStep(for:catalog:custom:)` u aplikaciji).
+    public let weightStep: (ExerciseRef) -> Double?
 
     /// Najviše predložaka u kontekstu (WatchConnectivity ima ograničenje veličine).
     public static let maxTemplates = 20
 
     public init(
         context: ModelContext, isCardio: @escaping (String) -> Bool = { _ in false },
-        isCompound: @escaping (String) -> Bool? = { _ in nil }
+        isCompound: @escaping (String) -> Bool? = { _ in nil },
+        weightStep: @escaping (ExerciseRef) -> Double? = { _ in nil }
     ) {
         self.context = context
         self.isCardio = isCardio
         self.isCompound = isCompound
+        self.weightStep = weightStep
     }
 
     public func make(now: Date = Date()) throws -> WatchContextPayload {
@@ -87,7 +91,8 @@ public struct WatchContextBuilder {
             return PlannedExercisePayload(
                 exercise: planned.ref, inputType: planned.inputType, restSeconds: source?.restSeconds,
                 supersetGroup: group, sets: sets, isCardio: isCardio(planned.ref.key),
-                previous: previous.map(PlannedSetPayload.init(values:)), isCompound: isCompound(planned.ref.key)
+                previous: previous.map(PlannedSetPayload.init(values:)), isCompound: isCompound(planned.ref.key),
+                weightStep: weightStep(planned.ref)
             )
         }
         return PlannedWorkoutPayload(

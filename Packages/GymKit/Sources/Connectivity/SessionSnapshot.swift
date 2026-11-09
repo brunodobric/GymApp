@@ -56,6 +56,9 @@ public struct ExerciseSnapshot: Codable, Sendable, Equatable, Identifiable {
     public var restSeconds: Int?
     public var isRemoved: Bool
     public var sets: [SetSnapshot]
+    /// Korak težine vježbe u jedinici prikaza (`WeightStepSettings`), za krunu na satu. Ne sprema se u bazu:
+    /// iPhone ga računa iz postavki pri svakoj snimci. Nil iz starije verzije aplikacije (tada korak jedinice).
+    public var weightStep: Double?
 
     public init(
         id: UUID = UUID(),
@@ -65,7 +68,8 @@ public struct ExerciseSnapshot: Codable, Sendable, Equatable, Identifiable {
         supersetGroupId: UUID? = nil,
         restSeconds: Int? = nil,
         isRemoved: Bool = false,
-        sets: [SetSnapshot] = []
+        sets: [SetSnapshot] = [],
+        weightStep: Double? = nil
     ) {
         self.id = id
         self.orderIndex = orderIndex
@@ -75,6 +79,7 @@ public struct ExerciseSnapshot: Codable, Sendable, Equatable, Identifiable {
         self.restSeconds = restSeconds
         self.isRemoved = isRemoved
         self.sets = sets
+        self.weightStep = weightStep
     }
 
     public var orderedSets: [SetSnapshot] { sets.sorted { $0.orderIndex < $1.orderIndex } }

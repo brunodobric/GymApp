@@ -152,7 +152,15 @@ struct TemplateExerciseEditor: View {
     // koju je dobio prvi put, pa bi kasnije stigla jedinica (npr. iz `.task`) krivo preračunala unos.
     @Query private var settingsList: [UserSettings]
     @Environment(CatalogStore.self) private var catalogStore
+    @Query private var customExercises: [CustomExercise]
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
+
+    /// Korak težine na kotačiću, isti kao u treningu (`WeightStepSettings`).
+    private var weightStep: Double {
+        WeightStepSettings.resolver(
+            settings: UserSettings.preferred(in: settingsList), catalog: catalogStore.catalog, custom: customExercises
+        )(exercise.exercise)
+    }
 
     private var engine: TemplateEngine { TemplateEngine(context: context) }
 
@@ -166,7 +174,9 @@ struct TemplateExerciseEditor: View {
         List {
             Section("Serije") {
                 ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
-                    TemplateSetRow(set: set, inputType: exercise.inputType, unit: unit, position: index + 1)
+                    TemplateSetRow(
+                        set: set, inputType: exercise.inputType, unit: unit, step: weightStep, position: index + 1
+                    )
                         // Promjena jedinice gradi redak iznova, da tekst težine bude u novoj jedinici.
                         // Id sadrži i seriju: samo `unit` bi svim retcima dao isti identitet u listi.
                         .id("\(set.id.uuidString)-\(unit.rawValue)")
@@ -210,15 +220,18 @@ private struct TemplateSetRow: View {
     let set: TemplateSet
     let inputType: ExerciseInputType
     let unit: WeightUnit
+    /// Korak težine vježbe na kotačiću.
+    let step: Double
     let position: Int
 
     @State private var weight: String
     @State private var reps: String
 
-    init(set: TemplateSet, inputType: ExerciseInputType, unit: WeightUnit, position: Int) {
+    init(set: TemplateSet, inputType: ExerciseInputType, unit: WeightUnit, step: Double, position: Int) {
         self.set = set
         self.inputType = inputType
         self.unit = unit
+        self.step = step
         self.position = position
         _weight = State(initialValue: NumberInput.format(set.targetWeightKg.map {
             WeightConversion.displayValue(fromKilograms: $0, in: unit)
@@ -239,7 +252,7 @@ private struct TemplateSetRow: View {
             SetBadge(kind: set.kind, number: position)
             if usesWeight {
                 WheelInputField.weight(
-                    weightTitle, hint: weightHint, text: $weight, unit: unit,
+                    weightTitle, hint: weightHint, text: $weight, unit: unit, step: step,
                     fallback: WheelOptions.defaultWeight(for: unit, isExtraLoad: inputType != .weightReps)
                 )
             }

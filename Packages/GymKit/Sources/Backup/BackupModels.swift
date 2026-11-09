@@ -70,6 +70,8 @@ struct SettingsDTO: Codable {
     var statsDetailRaw: String?
     var sexRaw: String?
     var compoundRestSeconds: Int?
+    var equipmentWeightStepsRaw: String?
+    var exerciseWeightStepsRaw: String?
 
     init(_ model: UserSettings) {
         id = model.id
@@ -100,6 +102,8 @@ struct SettingsDTO: Codable {
         statsDetailRaw = model.statsDetailRaw
         sexRaw = model.sexRaw
         compoundRestSeconds = model.compoundRestSeconds
+        equipmentWeightStepsRaw = model.equipmentWeightStepsRaw
+        exerciseWeightStepsRaw = model.exerciseWeightStepsRaw
     }
 
     func apply(to model: UserSettings) {
@@ -131,6 +135,8 @@ struct SettingsDTO: Codable {
         model.statsDetailRaw = statsDetailRaw ?? StatsDetail.basic.rawValue
         model.sexRaw = sexRaw ?? ""
         model.compoundRestSeconds = compoundRestSeconds ?? 150
+        model.equipmentWeightStepsRaw = equipmentWeightStepsRaw ?? ""
+        model.exerciseWeightStepsRaw = exerciseWeightStepsRaw ?? ""
     }
 }
 

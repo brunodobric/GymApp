@@ -181,14 +181,15 @@ private struct WheelInputPanel: View {
 // MARK: Težina i ponavljanja
 
 extension WheelInputField {
-    /// Polje za težinu u jedinici korisnika: koraci od 2,5 kg ili 5 lbs.
+    /// Polje za težinu u jedinici korisnika, u koracima vježbe (`step`, iz `WeightStepSettings`).
+    /// Bez koraka vrijedi korak jedinice: 2,5 kg ili 5 lbs.
     static func weight(
-        _ title: LocalizedStringKey, hint: String, text: Binding<String>, unit: WeightUnit,
+        _ title: LocalizedStringKey, hint: String, text: Binding<String>, unit: WeightUnit, step: Double? = nil,
         fallback: Double, longPress: (label: LocalizedStringKey, action: () -> Void)? = nil
     ) -> WheelInputField {
         WheelInputField(
             title: title, hint: hint, text: text,
-            options: { WheelOptions.weights(for: unit, including: $0) },
+            options: { WheelOptions.weights(for: unit, step: step, including: $0) },
             fallback: fallback,
             format: { NumberInput.format($0) },
             parse: { NumberInput.parse($0) },

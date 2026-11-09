@@ -216,7 +216,9 @@ struct WatchSetValuesEditor: View {
         .focusable()
         .focused($focused, equals: field)
         .digitalCrownRotation(
-            binding, from: range.lowerBound, through: range.upperBound, by: field.step(unit: store.unit),
+            binding, from: range.lowerBound, through: range.upperBound,
+            // Težina ide u koraku vježbe s iPhonea (oprema ili vlastiti korak), isto kao kotačić tamo.
+            by: field.step(unit: store.unit, weightStep: exercise.weightStep),
             sensitivity: .medium, isContinuous: false, isHapticFeedbackEnabled: true
         )
         .accessibilityElement(children: .combine)

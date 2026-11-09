@@ -37,7 +37,7 @@ public struct SnapshotEngine: Sendable {
             }
             return ExerciseSnapshot(
                 orderIndex: index, exercise: planned.exercise, inputType: planned.inputType,
-                supersetGroupId: group, restSeconds: planned.restSeconds, sets: sets
+                supersetGroupId: group, restSeconds: planned.restSeconds, sets: sets, weightStep: planned.weightStep
             )
         }
         return SessionSnapshot(

@@ -104,7 +104,8 @@ Aplikacija podržava 3 glavna modula:
   * Izračunati volumen
   * Kvačicu desno
 * Klik na polje težine ili ponavljanja omogućuje izmjenu.
-* Težina i ponavljanja se biraju kotačićem umjesto tipkovnice: težina u koracima od 2,5 kg (5 lbs), ponavljanja od 1 do 50. Kotačić kreće od trenutne vrijednosti, prošlog treninga ili prazne šipke. Dodir na broj iznad kotačića otvara tipkovnicu za vrijednost koje na kotačiću nema (npr. 83 kg). Isto vrijedi za ciljeve u predlošku.
+* Težina i ponavljanja se biraju kotačićem umjesto tipkovnice: težina u koraku vježbe, ponavljanja od 1 do 50. Kotačić kreće od trenutne vrijednosti, prošlog treninga ili prazne šipke. Dodir na broj iznad kotačića otvara tipkovnicu za vrijednost koje na kotačiću nema (npr. 83 kg). Isto vrijedi za ciljeve u predlošku.
+* **Korak težine** ovisi o opremi vježbe (Postavke > Trening > Korak težine). Zadano: šipka i EZ šipka 2,5 kg, bučice 2 kg, sajla i sprava 5 kg, girja 4 kg, ostalo 2,5 kg; u funtama 5 lbs, a sajla i sprava 10 lbs. Kilogrami i funte imaju odvojene korake. Na stranici vježbe može se postaviti vlastiti korak koji vrijedi umjesto koraka opreme ("Prema opremi" ga vraća). Isti korak koriste kotačić, gumbi − i + u Live Activityju i na kartici treninga te Digital Crown na satu. Težina izvan koraka (npr. 83 kg upisano tipkovnicom) ostaje kakva jest, a − i + je pomiču na susjednu vrijednost na koraku (82,5 ili 85).
 * Klik na kvačicu kompletira seriju (zasivi redak) i pokreće rest timer.
 * Rest timer se pojavljuje kao redak ispod s linijom koja teče i gumbima +10 / -10.
 * **Trajanje pauze:** pauza postavljena na vježbi ima prednost. Inače vrijedi zadana pauza iz Postavki prema vrsti vježbe iz kataloga: **složene vježbe 2:30, izolacijske i ostale 1:30** (tvornički). Vlastite vježbe i vježbe bez oznake dobivaju pauzu za ostale. Pauza ne ovisi o težini u kg, jer je isti teret nekome lagan, a nekome blizu maksimuma; ravna se po vrsti vježbe (Senna i sur. 2016, Schoenfeld i sur. 2016, Grgic i sur. 2018, Singer i sur. 2024).
@@ -559,7 +560,7 @@ Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening**
 * **PersonalRecord:** izvedeni podatak, računa se iz `SetLog` zapisa i može se u svakom trenutku ponovno izračunati. Sprema se u predmemoriju radi brzine, ali nije izvor istine.
 * **BodyMeasurement:** `id`, vrsta (težina, visina, struk, prsa, ruka, noga, custom), vrijednost u metričkim jedinicama, datum, izvor (ručno / HealthKit).
 * **DashboardCard:** vrsta kartice, `orderIndex`, postavke kartice.
-* **UserSettings:** jedan zapis: jedinice, zadane pauze (složene i ostale vježbe), tema, accent boja, tema i boja Live Activityja, RPE/RIR, PR postavke, zvuk kraja odmora, dostupne ploče i težine šipke.
+* **UserSettings:** jedan zapis: jedinice, zadane pauze (složene i ostale vježbe), tema, accent boja, tema i boja Live Activityja, RPE/RIR, PR postavke, zvuk kraja odmora, dostupne ploče i težine šipke, korak težine po opremi i po vježbi.
 
 ### Pravila
 * Svi identifikatori su UUID. Svi modeli poštuju ograničenja iz odjeljka 5 (opcionalna polja, bez `unique`, `orderIndex` za redoslijed).

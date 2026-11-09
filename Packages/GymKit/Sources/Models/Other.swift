@@ -75,6 +75,10 @@ extension GymSchemaV1 {
         /// Dostupne ploče u kilogramima, odvojene zarezom.
         public var availablePlatesRaw: String = "1.25,2.5,5,10,15,20,25"
         public var barbellWeightKg: Double = 20
+        /// Korak težine po opremi (`WeightStepSettings`). Prazno znači zadane korake.
+        public var equipmentWeightStepsRaw: String = ""
+        /// Vlastiti korak težine pojedinih vježbi (`WeightStepSettings`). Prazno znači da sve prate opremu.
+        public var exerciseWeightStepsRaw: String = ""
         /// Onboarding. Prazan tekst znači da korisnik nije odgovorio.
         public var goalRaw: String = ""
         public var experienceRaw: String = ""

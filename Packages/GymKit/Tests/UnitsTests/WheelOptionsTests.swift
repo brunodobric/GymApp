@@ -21,6 +21,25 @@ struct WheelOptionsTests {
         #expect(values.count == 221)
     }
 
+    @Test("Korak vježbe mijenja razmak, a najveća težina ostaje")
+    func customStep() {
+        let dumbbells = WheelOptions.weights(for: .kilograms, step: 2)
+        #expect(Array(dumbbells.prefix(4)) == [0, 2, 4, 6])
+        #expect(dumbbells.last == 500)
+        #expect(dumbbells.count == 251)
+
+        let micro = WheelOptions.weights(for: .kilograms, step: 1.25)
+        #expect(micro[1] == 1.25)
+        #expect(micro.contains(81.25))
+        #expect(micro.last == 500)
+
+        // Korak koji ne dijeli najveću težinu staje ispod nje.
+        #expect(WheelOptions.weights(for: .pounds, step: 15).last == 1095)
+        // Nevaljan korak vraća korak jedinice.
+        #expect(WheelOptions.weights(for: .kilograms, step: 0)[1] == 2.5)
+        #expect(WheelOptions.weights(for: .kilograms, step: 2, including: 13).contains(13))
+    }
+
     @Test("Težina izvan koraka dodaje se na svoje mjesto")
     func offStepWeight() {
         let values = WheelOptions.weights(for: .kilograms, including: 83)

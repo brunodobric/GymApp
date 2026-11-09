@@ -42,10 +42,13 @@ public struct PlannedExercisePayload: Codable, Sendable, Hashable {
     public var previous: [PlannedSetPayload]?
     /// Složena vježba iz kataloga (zadana pauza, `RestDefaults`). Nil kad se ne zna ili iz starije verzije aplikacije.
     public var isCompound: Bool?
+    /// Korak težine vježbe u jedinici prikaza (`WeightStepSettings`). Nil iz starije verzije aplikacije.
+    public var weightStep: Double?
 
     public init(
         exercise: ExerciseRef, inputType: ExerciseInputType, restSeconds: Int? = nil, supersetGroup: Int? = nil,
-        sets: [PlannedSetPayload], isCardio: Bool? = nil, previous: [PlannedSetPayload]? = nil, isCompound: Bool? = nil
+        sets: [PlannedSetPayload], isCardio: Bool? = nil, previous: [PlannedSetPayload]? = nil, isCompound: Bool? = nil,
+        weightStep: Double? = nil
     ) {
         self.exercise = exercise
         self.inputType = inputType
@@ -55,6 +58,7 @@ public struct PlannedExercisePayload: Codable, Sendable, Hashable {
         self.isCardio = isCardio
         self.isCompound = isCompound
         self.previous = previous
+        self.weightStep = weightStep
     }
 }
 

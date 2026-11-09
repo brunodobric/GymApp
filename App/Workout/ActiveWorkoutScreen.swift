@@ -217,6 +217,12 @@ struct ActiveWorkoutScreen: View {
             onLeaveSuperset: { try? engine.removeFromSuperset(exercise) },
             onShowInfo: exercise.exercise.source == nil ? nil : { infoExercise = exercise }
         )
+        .environment(\.weightStep, weightStep(for: exercise.exercise))
+    }
+
+    /// Korak težine vježbe na kotačiću (oprema ili vlastiti korak vježbe, `WeightStepSettings`).
+    private func weightStep(for exercise: ExerciseRef) -> Double {
+        WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)(exercise)
     }
 
     @ViewBuilder

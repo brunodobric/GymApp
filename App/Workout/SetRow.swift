@@ -38,6 +38,8 @@ struct SetRow: View {
     @State private var syncedTexts: [Field: String] = [:]
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.colorSchemeContrast) private var contrast
+    /// Korak težine vježbe (postavlja ga kartica vježbe).
+    @Environment(\.weightStep) private var weightStep
     private var metrics = SetTableMetrics()
 
     init(
@@ -415,7 +417,7 @@ extension SetRow {
 
     private var mainWeightField: some View {
         WheelInputField.weight(
-            "Težina", hint: unit.symbol, text: $weightText, unit: unit, fallback: weightFallback,
+            "Težina", hint: unit.symbol, text: $weightText, unit: unit, step: weightStep, fallback: weightFallback,
             longPress: ("Kalkulator ploča", { showsPlates = true })
         )
         .onChange(of: weightText) { _, new in userChanged(.weight, new, apply: applyWeight) }
@@ -434,7 +436,7 @@ extension SetRow {
 
 extension SetRow {
     private func weightField(_ title: LocalizedStringKey, _ hint: String) -> some View {
-        WheelInputField.weight(title, hint: hint, text: $weightText, unit: unit, fallback: weightFallback)
+        WheelInputField.weight(title, hint: hint, text: $weightText, unit: unit, step: weightStep, fallback: weightFallback)
             .onChange(of: weightText) { _, new in userChanged(.weight, new, apply: applyWeight) }
     }
 
