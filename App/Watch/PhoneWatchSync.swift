@@ -25,6 +25,8 @@ final class PhoneWatchSync {
     /// Zadnja snimka treninga s iPhonea poslana satu.
     private var lastSent: SessionSnapshot?
     private var lastContext: WatchContextPayload?
+    /// Zadnji kontekst predan sustavu: isti se ne šalje ponovno (svaka izmjena treninga ga inače šalje).
+    private var lastSentContext: ApplicationContextPayload?
     private var pendingChanges: [UUID: Task<Void, Never>] = [:]
 
     private init() {}
@@ -172,7 +174,10 @@ final class PhoneWatchSync {
         // Tjedni cilj i težina za komplikacije na satu, iz iste snimke kao widgeti na iPhoneu.
         lastContext?.week = WidgetRefresher.shared.latest?.week
         lastContext?.bodyWeightKg = WidgetRefresher.shared.latest?.bodyWeight?.latestKg
-        transport.updateContext(ApplicationContextPayload(watchContext: lastContext, session: session))
+        let payload = ApplicationContextPayload(watchContext: lastContext, session: session)
+        guard payload != lastSentContext else { return }
+        lastSentContext = payload
+        transport.updateContext(payload)
     }
 
     // MARK: Primanje
@@ -198,6 +203,8 @@ final class PhoneWatchSync {
     private func connectionChanged() {
         // Nakon aktivacije sesije: kontekst za sat i zadnje stanje sa sata koje je stiglo dok aplikacija nije radila.
         guard transport.isActivated else { return }
+        // Sat se mogao promijeniti (uparivanje, ponovna instalacija): kontekst se šalje iznova.
+        lastSentContext = nil
         if lastContext == nil { refreshContext() }
         if let snapshot = transport.receivedContext.session {
             applyWatchSnapshot(snapshot)

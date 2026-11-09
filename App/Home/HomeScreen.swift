@@ -170,8 +170,9 @@ struct HomeScreen: View {
 
     /// Redovi kartica: dvije uzastopne male kartice dijele red, a uz veliki tekst svaka je u svom redu.
     private var cardRows: [[DashboardCardKind]] {
+        // Čitanje `orderIndex` drži ekran prijavljenim na premještanje kartica.
         _ = dashboardCards.map(\.orderIndex)
-        var kinds = ((try? DashboardLayout(context: context).cards()) ?? []).compactMap(\.kind)
+        var kinds = DashboardLayout.visible(dashboardCards).compactMap(\.kind)
         // Bez odrađenog treninga kartica zadnjeg treninga nema što pokazati.
         if lastSession == nil { kinds.removeAll { $0 == .lastWorkout } }
         if dynamicTypeSize.isAccessibilitySize { return kinds.map { [$0] } }

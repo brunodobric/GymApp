@@ -61,6 +61,8 @@ struct ActiveWorkoutScreen: View {
 
     var body: some View {
         NavigationStack {
+            // Korak težine vježbe na kotačiću (oprema ili vlastiti korak, `WeightStepSettings`): jedan za sve kartice.
+            let weightStep = WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)
             List {
                 if isLedByWatch {
                     Label("Trening vodi Apple Watch", systemImage: "applewatch")
@@ -69,7 +71,7 @@ struct ActiveWorkoutScreen: View {
                 if editMode.isEditing {
                     // Kod promjene redoslijeda vježbe su zatvorene, jedna vježba je jedan redak.
                     ForEach(visible) { exercise in
-                        card(for: exercise)
+                        card(for: exercise, weightStep: weightStep)
                     }
                     .onMove { source, destination in
                         try? engine.moveExercises(in: session, from: source, to: destination)
@@ -77,7 +79,7 @@ struct ActiveWorkoutScreen: View {
                 } else {
                     // Svaka vježba je svoja sekcija, a serija svoj redak koji se briše povlačenjem.
                     ForEach(visible) { exercise in
-                        Section { card(for: exercise) }
+                        Section { card(for: exercise, weightStep: weightStep) }
                     }
                 }
 
@@ -198,7 +200,7 @@ struct ActiveWorkoutScreen: View {
 
     // MARK: Dijelovi ekrana
 
-    private func card(for exercise: SessionExercise) -> some View {
+    private func card(for exercise: SessionExercise, weightStep: (ExerciseRef) -> Double) -> some View {
         ExerciseCard(
             exercise: exercise,
             thumbnail: catalogStore.thumbnail(for: exercise.exercise.source, customExercises: customExercises),
@@ -222,12 +224,7 @@ struct ActiveWorkoutScreen: View {
             onLeaveSuperset: { try? engine.removeFromSuperset(exercise) },
             onShowInfo: exercise.exercise.source == nil ? nil : { infoExercise = exercise }
         )
-        .environment(\.weightStep, weightStep(for: exercise.exercise))
-    }
-
-    /// Korak težine vježbe na kotačiću (oprema ili vlastiti korak vježbe, `WeightStepSettings`).
-    private func weightStep(for exercise: ExerciseRef) -> Double {
-        WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)(exercise)
+        .environment(\.weightStep, weightStep(exercise.exercise))
     }
 
     @ViewBuilder
