@@ -186,8 +186,14 @@ struct ExerciseProgressScreen: View {
         if let trend {
             Section {
                 LabeledContent {
-                    Label(trend.trend.status.title, systemImage: trend.trend.status.systemImage)
-                        .foregroundStyle(trend.trend.status.color)
+                    // Namjerno HStack, ne Label: Label kao vrijednost LabeledContenta u Listi preuzme raspored
+                    // retka (redak se razvuče u visinu, a crta ispod retka počne tek kod statusa).
+                    HStack(spacing: 6) {
+                        Image(systemName: trend.trend.status.systemImage)
+                            .accessibilityHidden(true)
+                        Text(trend.trend.status.title)
+                    }
+                    .foregroundStyle(trend.trend.status.color)
                 } label: {
                     Text("Zadnjih 8 tjedana")
                     if let change = trend.trend.monthlyChange {
