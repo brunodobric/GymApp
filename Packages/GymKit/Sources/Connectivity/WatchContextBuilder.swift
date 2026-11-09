@@ -37,12 +37,13 @@ public struct WatchContextBuilder {
                 }
                 return try payload(template: template, exercises: exercises, scheduleId: nil, scheduleName: nil)
             }
-        var payload = WatchContextPayload(
+        // Ne zove se `payload`, jer bi zasjenila metodu `payload(template:…)` iznad.
+        var watchContext = WatchContextPayload(
             upcoming: upcoming, templates: Array(templates), weightUnit: settings.weightUnit,
             defaultRestSeconds: settings.defaultRestSeconds, savesToHealth: settings.wantsHealthKit, generatedAt: now
         )
-        payload.accent = settings.accent
-        return payload
+        watchContext.accent = settings.accent
+        return watchContext
     }
 
     /// Samo sljedeći trening prvog aktivnog rasporeda, s planiranim serijama (za widgete na iPhoneu).
