@@ -40,6 +40,11 @@ androidComponents {
 dependencies {
     implementation(project(":core:units"))
     implementation(project(":core:catalog"))
+    implementation(project(":core:model"))
+    implementation(project(":core:training"))
+    implementation(project(":core:planning"))
+    implementation(project(":core:stats"))
+    implementation(project(":domain:backup"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
