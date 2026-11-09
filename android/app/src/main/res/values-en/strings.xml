@@ -8,4 +8,26 @@
     <string name="coming_soon">Coming soon on Android.</string>
     <string name="search_exercises">Search exercises</string>
     <string name="no_results">No results</string>
+    <string name="start_empty_workout">Start empty workout</string>
+    <string name="workout_default_name">Workout</string>
+    <string name="workout_in_progress">Workout in progress</string>
+    <string name="finish_workout">Finish</string>
+    <string name="add_exercise">Add exercise</string>
+    <string name="add_set">Add set</string>
+    <string name="complete_set">Complete set</string>
+    <string name="reps_label">Reps</string>
+    <string name="duration_label">Time</string>
+    <string name="rest">Rest</string>
+    <string name="skip_rest">Skip rest</string>
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="discard_workout">Discard workout</string>
+    <string name="discard_workout_title">No completed sets</string>
+    <string name="discard_workout_message">A workout without any completed sets can\'t be saved. Do you want to discard it?</string>
+    <string name="history_empty">No finished workouts yet.</string>
+    <plurals name="completed_sets">
+        <item quantity="one">%d set</item>
+        <item quantity="other">%d sets</item>
+    </plurals>
 </resources>
