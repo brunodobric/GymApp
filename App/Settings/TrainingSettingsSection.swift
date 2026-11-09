@@ -73,8 +73,12 @@ struct TrainingSettingsSection: View {
         } header: {
             Text("Statistika")
         } footer: {
-            Text("Detaljni prikaz dodaje sve prijedloge, napor i intenzitet serija, tablicu rekorda po ponavljanjima, relativnu snagu, DOTS bodove, odmor između serija i ocjenu napora treninga.")
-                + Text(verbatim: " ") + Text("Spol za DOTS bodove je u Profilu.")
+            Text("""
+                Detaljni prikaz dodaje savjete, mišiće (mapu i serije), trend snage, napor i intenzitet serija i \
+                DOTS bodove. Na grafu vježbe dodaje 1RM, volumen, izbor raspona, usporedbu, tablicu rekorda po \
+                ponavljanjima i relativnu snagu, a u treningu odmor između serija i ocjenu napora.
+                """)
+                + Text(verbatim: " ") + Text("DOTS bodovi se pojave kad je u Profilu odabran spol, a u Tijelu upisana tjelesna težina.")
         }
     }
 }

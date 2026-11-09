@@ -57,16 +57,6 @@
         }
       }
     },
-    "%@ serija s 0 do 3 ponavljanja u rezervi." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ of sets with 0 to 3 reps in reserve."
-          }
-        }
-      }
-    },
     "%@ serija, %@" : {
       "localizations" : {
         "en" : {
@@ -396,36 +386,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld of %lld"
-          }
-        }
-      }
-    },
-    "%lld od %lld glavnih mišića ima %lld do %lld tvrdih serija tjedno." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld of %lld main muscles get %lld to %lld hard sets per week."
-          }
-        }
-      }
-    },
-    "%lld od %lld glavnih mišića ima barem %lld tvrdih serija tjedno." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld of %lld main muscles get at least %lld hard sets per week."
-          }
-        }
-      }
-    },
-    "%lld od %lld planiranih treninga, prosjek %@ tjedno." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld of %lld planned workouts, average %@ per week."
           }
         }
       }
@@ -1345,26 +1305,6 @@
         }
       }
     },
-    "30 dana" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 days"
-          }
-        }
-      }
-    },
-    "90 dana" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "90 days"
-          }
-        }
-      }
-    },
     "Ako je vježba već korištena u treningu, samo će se arhivirati i povijest ostaje." : {
       "localizations" : {
         "en" : {
@@ -1985,16 +1925,6 @@
         }
       }
     },
-    "Detaljni prikaz dodaje sve prijedloge, napor i intenzitet serija, tablicu rekorda po ponavljanjima, relativnu snagu, DOTS bodove, odmor između serija i ocjenu napora treninga." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The detailed view adds all suggestions, set effort and intensity, a table of records by reps, relative strength, DOTS points, rest between sets and a workout effort rating."
-          }
-        }
-      }
-    },
     "Dijagnostika" : {
       "localizations" : {
         "en" : {
@@ -2271,16 +2201,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DOTS points"
-          }
-        }
-      }
-    },
-    "DOTS se pojavi kad u zadnjih 12 tjedana radiš čučanj, potisak s klupe ili mrtvo dizanje sa šipkom." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DOTS appears when you do the barbell squat, bench press or deadlift in the last 12 weeks."
           }
         }
       }
@@ -2781,16 +2701,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Intensity appears with weighted exercises."
-          }
-        }
-      }
-    },
-    "Intenzitet serija" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set intensity"
           }
         }
       }
@@ -4307,16 +4217,6 @@
         }
       }
     },
-    "Medijan %@ mjesečno." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Median %@ per month."
-          }
-        }
-      }
-    },
     "Mišić" : {
       "localizations" : {
         "en" : {
@@ -4617,16 +4517,6 @@
         }
       }
     },
-    "Napor serija" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set effort"
-          }
-        }
-      }
-    },
     "Napor treninga" : {
       "localizations" : {
         "en" : {
@@ -4693,16 +4583,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Improving"
-          }
-        }
-      }
-    },
-    "Napreduje %lld, stoji %lld, plato %lld, pada %lld." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Improving %lld, steady %lld, plateau %lld, declining %lld."
           }
         }
       }
@@ -5297,16 +5177,6 @@
         }
       }
     },
-    "Odaberi spol u Postavkama, u dijelu Profil, da vidiš DOTS bodove." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose your sex in Settings, under Profile, to see DOTS points."
-          }
-        }
-      }
-    },
     "Odaberi trening" : {
       "localizations" : {
         "en" : {
@@ -5333,16 +5203,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Select exercises or drag them into the list."
-          }
-        }
-      }
-    },
-    "Odaberi vježbu" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose exercise"
           }
         }
       }
@@ -5513,16 +5373,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Equipment"
-          }
-        }
-      }
-    },
-    "Opterećenje po dijelovima tijela" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Load by body part"
           }
         }
       }
@@ -6387,16 +6237,6 @@
         }
       }
     },
-    "Praćenje tijela" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Body tracking"
-          }
-        }
-      }
-    },
     "Predloži raspored" : {
       "localizations" : {
         "en" : {
@@ -6873,16 +6713,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The change takes effect after you close the app (swipe it up in the app switcher) and open it again."
-          }
-        }
-      }
-    },
-    "Prosjek %@ treninga tjedno." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Average %@ workouts per week."
           }
         }
       }
@@ -7747,16 +7577,6 @@
         }
       }
     },
-    "Spol za DOTS bodove je u Profilu." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sex for DOTS points is in Profile."
-          }
-        }
-      }
-    },
     "Sporo pokretanje" : {
       "localizations" : {
         "en" : {
@@ -8297,16 +8117,6 @@
         }
       }
     },
-    "Trend se pojavi kad istu vježbu s težinom napraviš barem 4 puta u 8 tjedana." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The trend appears when you do the same weighted exercise at least 4 times in 8 weeks."
-          }
-        }
-      }
-    },
     "Trening" : {
       "localizations" : {
         "en" : {
@@ -8823,16 +8633,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter all values for the set."
-          }
-        }
-      }
-    },
-    "Upiši tjelesnu težinu u Tijelu da vidiš DOTS bodove." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log your body weight in Body to see DOTS points."
           }
         }
       }
@@ -10294,16 +10094,6 @@
         }
       }
     },
-    "Siva zona je 10 do 20 tvrdih serija tjedno, raspon u kojem istraživanja nalaze najbolji rast mišića. Serija u kojoj mišić pomaže broji se kao pola." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The grey zone is 10 to 20 hard sets per week, the range where research finds the best muscle growth. A set where the muscle only assists counts as half."
-          }
-        }
-      }
-    },
     "Tvrde serije" : {
       "localizations" : {
         "en" : {
@@ -10320,16 +10110,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Strength trend by muscle"
-          }
-        }
-      }
-    },
-    "Boja pokazuje prosjek tvrdih serija tjedno. Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji. Dodirni dio tijela za detalje." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Colour shows the average hard sets per week. A set where the muscle only assists counts as half, and a set with RPE below 6 is not counted. Tap a body part for details."
           }
         }
       }
@@ -10723,6 +10503,76 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No workouts with this exercise in the selected range."
+          }
+        }
+      }
+    },
+    "Savjeti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tips"
+          }
+        }
+      }
+    },
+    "Napor i intenzitet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effort and intensity"
+          }
+        }
+      }
+    },
+    "Intenzitet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensity"
+          }
+        }
+      }
+    },
+    "Prosjek tvrdih serija tjedno. Siva zona je 10 do 20 serija, raspon u kojem istraživanja nalaze najbolji rast mišića. Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji. Dodirni dio tijela za detalje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average hard sets per week. The grey zone is 10 to 20 sets, the range where research finds the best muscle growth. A set where the muscle assists counts as half, and a set below RPE 6 doesn't count. Tap a body part for details."
+          }
+        }
+      }
+    },
+    "DOTS bodovi se pojave kad je u Profilu odabran spol, a u Tijelu upisana tjelesna težina." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DOTS points appear once you choose a sex in Profile and enter your body weight in Body."
+          }
+        }
+      }
+    },
+    "Detaljni prikaz dodaje savjete, mišiće (mapu i serije), trend snage, napor i intenzitet serija i DOTS bodove. Na grafu vježbe dodaje 1RM, volumen, izbor raspona, usporedbu, tablicu rekorda po ponavljanjima i relativnu snagu, a u treningu odmor između serija i ocjenu napora." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The detailed view adds tips, muscles (map and sets), strength trend, set effort and intensity, and DOTS points. On the exercise chart it adds 1RM, volume, range selection, comparison, the rep records table and relative strength, and in workouts the rest between sets and the effort rating."
+          }
+        }
+      }
+    },
+    "Najveća težina po treningu, zadnja 3 mjeseca." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heaviest weight per workout, last 3 months."
           }
         }
       }
