@@ -100,7 +100,10 @@ final class PhoneWatchSync {
             logger.error("Kontekst za sat: \(error.localizedDescription)")
         }
         let active = try? GymQueries(context: context).activeSession()
-        sendContext(session: active.flatMap { $0.controllingDevice == .phone ? SessionSnapshot(session: $0) : nil })
+        let weightStep = weightSteps(context)
+        sendContext(session: active.flatMap {
+            $0.controllingDevice == .phone ? SessionSnapshot(session: $0, weightStep: weightStep) : nil
+        })
     }
 
     /// Kontekst za sat zna i koje su vježbe kardio (ikona vrste treninga, sažetak i štoperica na satu).
@@ -110,15 +113,28 @@ final class PhoneWatchSync {
         let info = ExerciseInfoBuilder.provider(catalog: catalog, custom: custom)
         return WatchContextBuilder(
             context: context, isCardio: ExerciseInfoBuilder.isCardio(info),
-            isCompound: { catalog?.isCompound(exerciseKey: $0) }
+            isCompound: { catalog?.isCompound(exerciseKey: $0) }, weightStep: weightSteps(context)
         )
+    }
+
+    /// Korak težine po vježbi za krunu na satu, isti kao na kotačiću na iPhoneu (`WeightStepSettings`).
+    private func weightSteps(_ context: ModelContext) -> (ExerciseRef) -> Double? {
+        let settings = try? GymQueries(context: context).settings()
+        let custom = (try? context.fetch(FetchDescriptor<CustomExercise>())) ?? []
+        let resolver = WeightStepSettings.resolver(settings: settings, catalog: AppServices.bundledCatalog, custom: custom)
+        return { resolver($0) }
+    }
+
+    /// Spremište snimki s korakom težine vježbi.
+    private func snapshotStore(_ context: ModelContext) -> SessionSnapshotStore {
+        SessionSnapshotStore(context: context, weightStep: weightSteps(context))
     }
 
     private func flush(sessionID: UUID) {
         pendingChanges[sessionID]?.cancel()
         pendingChanges[sessionID] = nil
         guard let context else { return }
-        let store = SessionSnapshotStore(context: context)
+        let store = snapshotStore(context)
         guard let session = try? store.session(withID: sessionID) else { return }
         let snapshot = store.snapshot(of: session)
         switch session.controllingDevice {
@@ -238,7 +254,7 @@ final class PhoneWatchSync {
     /// Naredbe sa sata za trening koji vodi iPhone.
     private func applyCommands(_ commands: [WorkoutCommand], to sessionID: UUID, sentAt: Date) {
         guard let context else { return }
-        let store = SessionSnapshotStore(context: context)
+        let store = snapshotStore(context)
         do {
             guard let session = try store.session(withID: sessionID), session.controllingDevice == .phone,
                   session.state == .active else { return }

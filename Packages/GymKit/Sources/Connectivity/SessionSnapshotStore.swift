@@ -3,8 +3,8 @@ import Models
 import SwiftData
 
 extension SessionSnapshot {
-    /// Snimka treninga iz baze na iPhoneu.
-    public init(session: Session) {
+    /// Snimka treninga iz baze na iPhoneu. `weightStep` daje korak težine vježbe za krunu na satu.
+    public init(session: Session, weightStep: (ExerciseRef) -> Double? = { _ in nil }) {
         self.init(
             id: session.id,
             name: session.name,
@@ -38,7 +38,8 @@ extension SessionSnapshot {
                             reps: set.reps, extraWeightKg: set.extraWeightKg, durationSeconds: set.durationSeconds,
                             distanceMeters: set.distanceMeters, rpe: set.rpe, completedAt: set.completedAt
                         )
-                    }
+                    },
+                    weightStep: weightStep(exercise.exercise)
                 )
             }
         )
@@ -49,14 +50,17 @@ extension SessionSnapshot {
 /// pa ista snimka primljena dvaput (ili stara snimka iz reda za slanje) ne stvara duplikate.
 public struct SessionSnapshotStore {
     public let context: ModelContext
+    /// Korak težine vježbe za snimku (`SessionSnapshot.init(session:weightStep:)`).
+    public let weightStep: (ExerciseRef) -> Double?
 
-    public init(context: ModelContext) {
+    public init(context: ModelContext, weightStep: @escaping (ExerciseRef) -> Double? = { _ in nil }) {
         self.context = context
+        self.weightStep = weightStep
     }
 
     /// Snimka treninga s kalorijama i pulsom iz lokalne baze podataka iz Zdravlja.
     public func snapshot(of session: Session) -> SessionSnapshot {
-        var snapshot = SessionSnapshot(session: session)
+        var snapshot = SessionSnapshot(session: session, weightStep: weightStep)
         let local = try? HealthLocalStore(context: context).values(forSession: session.id)
         snapshot.activeEnergyKilocalories = local?.activeEnergyKilocalories ?? session.activeEnergyKilocalories
         snapshot.averageHeartRate = local?.averageHeartRate ?? session.averageHeartRate

@@ -21,14 +21,30 @@ public enum WatchSetField: String, CaseIterable, Sendable {
         }
     }
 
-    /// Korak jednog "klika" krune, u jedinici prikaza.
-    public func step(unit: WeightUnit) -> Double {
+    /// Težina ili dodatna težina (korak ovisi o opremi vježbe).
+    public var isWeight: Bool { self == .weight || self == .extraWeight }
+
+    /// Korak jednog "klika" krune ili dodira na + i −, u jedinici prikaza. Za težinu je to korak vježbe
+    /// (`WeightStepSettings`, isti kao na kotačiću na iPhoneu), a bez njega korak jedinice (`WheelOptions`).
+    public func step(unit: WeightUnit, weightStep: Double? = nil) -> Double {
         switch self {
-        case .weight, .extraWeight: unit == .kilograms ? 1.25 : 2.5
+        case .weight, .extraWeight: weightStep.flatMap { $0 > 0 ? $0 : nil } ?? WheelOptions.weightStep(for: unit)
         case .reps: 1
         case .duration: 5
         case .distance: 50
         }
+    }
+
+    /// Vrijednost nakon `steps` koraka od `value`. Težina ide na sljedeću vrijednost na koraku, kao na
+    /// kotačiću: 83 kg s korakom 2,5 ide na 85 ili 82,5, a ne na 85,5 ili 80,5.
+    public func value(_ value: Double, movedBy steps: Int, step: Double) -> Double {
+        guard isWeight, steps != 0, step > 0 else { return value + Double(steps) * step }
+        let position = value / step
+        let tolerance = 1e-6
+        let target = steps > 0
+            ? (position + tolerance).rounded(.down) + Double(steps)
+            : (position - tolerance).rounded(.up) + Double(steps)
+        return target * step
     }
 
     /// Raspon vrijednosti u jedinici prikaza.
@@ -53,12 +69,16 @@ public enum WatchSetField: String, CaseIterable, Sendable {
         }
     }
 
-    /// Upisuje vrijednost u jedinici prikaza u seriju (težina se sprema u kilogramima).
-    /// Vrijednost se zaokružuje na korak polja i ograničava na raspon.
+    /// Upisuje vrijednost u jedinici prikaza u seriju (težina se sprema u kilogramima) i ograničava je na raspon.
+    /// Ponavljanja, trajanje i udaljenost zaokružuju se na korak polja. Težina se zaokružuje samo na 0,05
+    /// (preciznost prikaza), ne na korak: težina upisana na iPhoneu izvan koraka (npr. 83 kg) ne smije se
+    /// promijeniti sama. Kruna i gumbi + i − ionako daju vrijednosti na koraku.
     public func apply(_ value: Double, to set: inout SetSnapshot, unit: WeightUnit) {
         let range = range(unit: unit)
-        let step = step(unit: unit)
-        let snapped = min(max((value / step).rounded() * step, range.lowerBound), range.upperBound)
+        let rounded = isWeight
+            ? (value * Self.weightSubdivisions).rounded() / Self.weightSubdivisions
+            : (value / step(unit: unit)).rounded() * step(unit: unit)
+        let snapped = min(max(rounded, range.lowerBound), range.upperBound)
         switch self {
         case .weight: set.weightKg = WeightConversion.kilograms(from: snapped, in: unit)
         case .extraWeight: set.extraWeightKg = WeightConversion.kilograms(from: snapped, in: unit)
@@ -67,6 +87,10 @@ public enum WatchSetField: String, CaseIterable, Sendable {
         case .distance: set.distanceMeters = snapped
         }
     }
+
+    /// Težina se zaokružuje na 1/20 (0,05), kao prikaz u `WeightConversion.displayValue`. Dijeli se s 20,
+    /// a ne množi s 0,05, da 81,25 ostane točno 81,25.
+    static let weightSubdivisions = 20.0
 
     /// Je li vrijednost u seriji već jednaka (u jedinici prikaza), da kruna ne bi bilježila promjenu bez promjene.
     public func matches(_ value: Double, in set: SetSnapshot, unit: WeightUnit) -> Bool {

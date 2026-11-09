@@ -18,6 +18,9 @@ struct TrainingSettingsSection: View {
                 Text("Kilogrami").tag(WeightUnit.kilograms)
                 Text("Funte").tag(WeightUnit.pounds)
             }
+            NavigationLink("Korak težine") {
+                WeightStepsScreen(settings: settings)
+            }
             Picker("Napor", selection: $settings.effortScale) {
                 Text("RPE").tag(EffortScale.rpe)
                 Text("RIR").tag(EffortScale.rir)

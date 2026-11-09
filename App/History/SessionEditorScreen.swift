@@ -30,6 +30,8 @@ struct SessionEditorScreen: View {
 
     @Environment(\.dismiss) private var dismiss
     @Query private var settingsList: [UserSettings]
+    @Query private var customExercises: [CustomExercise]
+    @Environment(CatalogStore.self) private var catalogStore
     @State private var showsPicker = false
     @State private var confirmsDiscard = false
     @State private var hasChanges = false
@@ -58,6 +60,12 @@ struct SessionEditorScreen: View {
                 ForEach(exercises) { exercise in
                     Section {
                         exerciseRows(exercise)
+                            .environment(
+                                \.weightStep,
+                                WeightStepSettings.resolver(
+                                    settings: settings, catalog: catalogStore.catalog, custom: customExercises
+                                )(exercise.exercise)
+                            )
                     } header: {
                         exerciseHeader(exercise)
                     }

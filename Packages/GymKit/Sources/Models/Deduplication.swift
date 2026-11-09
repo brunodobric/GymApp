@@ -127,6 +127,8 @@ public extension UserSettings {
             (restEndSoundEnabled, defaults.restEndSoundEnabled),
             (availablePlatesRaw, defaults.availablePlatesRaw),
             (barbellWeightKg, defaults.barbellWeightKg),
+            (equipmentWeightStepsRaw, defaults.equipmentWeightStepsRaw),
+            (exerciseWeightStepsRaw, defaults.exerciseWeightStepsRaw),
             (goalRaw, defaults.goalRaw),
             (experienceRaw, defaults.experienceRaw),
             (equipmentRaw, defaults.equipmentRaw),

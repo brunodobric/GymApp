@@ -18,7 +18,8 @@ public struct LiveSetValue: Equatable, Sendable {
 /// Prikaz i promjena vrijednosti sljedeće serije iz Live Activityja.
 ///
 /// Polja, koraci i rasponi isti su kao za Digital Crown na satu (`WatchSetField`), pa jedan dodir na + ili −
-/// mijenja vrijednost kao jedan klik krune: 1,25 kg (2,5 lbs), 1 ponavljanje, 5 sekundi ili 50 metara.
+/// mijenja vrijednost kao jedan klik krune: korak težine vježbe (isti kao na kotačiću, `WeightStepSettings`),
+/// 1 ponavljanje, 5 sekundi ili 50 metara.
 public enum LiveSetEditor {
 
     /// Vrijednosti serije redom kako se prikazuju (prvo težina ili trajanje).
@@ -42,13 +43,17 @@ public enum LiveSetEditor {
         }
     }
 
-    /// Mijenja polje serije za `steps` koraka (+1 ili −1). Težina se sprema u kilogramima.
+    /// Mijenja polje serije za `steps` koraka (+1 ili −1). Težina se sprema u kilogramima i ide na sljedeću
+    /// vrijednost na koraku `weightStep` (u jedinici prikaza; nil je korak jedinice).
     /// Prazno polje kreće od nule i ne smanjuje se. Vraća `false` kad se vrijednost nije promijenila (npr. na rubu raspona).
     @discardableResult
-    public static func adjust(_ set: SetLog, field: WatchSetField, steps: Int, unit: WeightUnit) -> Bool {
+    public static func adjust(
+        _ set: SetLog, field: WatchSetField, steps: Int, unit: WeightUnit, weightStep: Double? = nil
+    ) -> Bool {
         var snapshot = makeSnapshot(of: set)
         guard steps > 0 || field.isFilled(in: snapshot) else { return false }
-        let target = field.value(in: snapshot, unit: unit) + Double(steps) * field.step(unit: unit)
+        let step = field.step(unit: unit, weightStep: weightStep)
+        let target = field.value(field.value(in: snapshot, unit: unit), movedBy: steps, step: step)
         guard !field.matches(target, in: snapshot, unit: unit) else { return false }
         field.apply(target, to: &snapshot, unit: unit)
         set.weightKg = snapshot.weightKg

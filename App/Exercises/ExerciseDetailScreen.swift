@@ -106,6 +106,9 @@ private struct CatalogExerciseDetail: View {
                     LabeledContent("Vrsta") { Text(mechanic.title) }
                 }
                 LabeledContent("Unos") { Text(exercise.inputType.title) }
+                if exercise.inputType.hasWeight {
+                    ExerciseWeightStepRow(exercise: ref, equipment: exercise.equipment)
+                }
             }
 
             Section {
@@ -197,6 +200,9 @@ private struct CustomExerciseDetail: View {
                     LabeledContent("Mišići") { Text(exercise.muscles.formattedList) }
                 }
                 LabeledContent("Unos") { Text(exercise.inputType.title) }
+                if exercise.inputType.hasWeight {
+                    ExerciseWeightStepRow(exercise: exercise.ref, equipment: exercise.equipment)
+                }
             }
 
             if let history {

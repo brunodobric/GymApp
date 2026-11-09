@@ -22,7 +22,7 @@ private func plan() -> PlannedWorkoutPayload {
             ]),
             PlannedExercisePayload(exercise: curl, inputType: .weightReps, supersetGroup: 3, sets: [
                 PlannedSetPayload(weightKg: 12, reps: 12), PlannedSetPayload(weightKg: 12, reps: 12),
-            ]),
+            ], weightStep: 2),
             PlannedExercisePayload(exercise: bench, inputType: .weightReps, restSeconds: 60, supersetGroup: 3, sets: [
                 PlannedSetPayload(weightKg: 50, reps: 10), PlannedSetPayload(weightKg: 50, reps: 10),
             ]),
@@ -50,6 +50,19 @@ struct SnapshotEngineTests {
         #expect(snapshot.exercises[1].supersetGroupId == snapshot.exercises[2].supersetGroupId)
         let ids = snapshot.exercises.flatMap { $0.sets.map(\.id) } + snapshot.exercises.map(\.id)
         #expect(Set(ids).count == ids.count)
+        // Korak težine dolazi iz plana; bez njega (starija aplikacija na iPhoneu) vrijedi korak jedinice.
+        #expect(snapshot.exercises.map(\.weightStep) == [nil, 2, nil])
+    }
+
+    @Test("Snimka s iPhonea nosi korak težine vježbe")
+    func snapshotWeightStep() throws {
+        let engine = WorkoutEngine(context: ModelContext(try GymPersistence.makeUserContainer(storage: .inMemory)))
+        let session = try engine.startSession(name: "A", now: base)
+        _ = try engine.addExercise(bench, inputType: .weightReps, to: session, now: base)
+        _ = try engine.addExercise(curl, inputType: .weightReps, to: session, now: base)
+        let snapshot = SessionSnapshot(session: session) { $0 == curl ? 2 : nil }
+        #expect(snapshot.orderedExercises.map(\.weightStep) == [nil, 2])
+        #expect(SessionSnapshot(session: session).exercises.allSatisfy { $0.weightStep == nil })
     }
 
     @Test("Kvačica pokreće pauzu vježbe, a nepotpuna serija se ne može označiti")
@@ -240,15 +253,18 @@ struct WatchSetFieldTests {
         #expect(WatchSetField.fields(for: .durationDistance) == [.duration, .distance])
     }
 
-    @Test("Težina se upisuje u kilogramima i zaokružuje na korak krune")
+    @Test("Težina se upisuje u kilogramima i ne zaokružuje na korak")
     func weightConversion() {
         var set = SetSnapshot(orderIndex: 0)
-        WatchSetField.weight.apply(100.3, to: &set, unit: .pounds)
+        WatchSetField.weight.apply(100.01, to: &set, unit: .pounds)
         #expect(abs((set.weightKg ?? 0) - 100 * WeightConversion.kilogramsPerPound) < 1e-9)
         #expect(WatchSetField.weight.value(in: set, unit: .pounds) == 100)
         #expect(WatchSetField.weight.text(in: set, unit: .pounds, locale: Locale(identifier: "hr_HR")) == "100")
 
-        WatchSetField.weight.apply(81.1, to: &set, unit: .kilograms)
+        // Težina izvan koraka (upisana tipkovnicom na iPhoneu) ostaje kakva jest.
+        WatchSetField.weight.apply(83, to: &set, unit: .kilograms)
+        #expect(set.weightKg == 83)
+        WatchSetField.weight.apply(81.24, to: &set, unit: .kilograms)
         #expect(set.weightKg == 81.25)
         #expect(WatchSetField.weight.text(in: set, unit: .kilograms, locale: Locale(identifier: "hr_HR")) == "81,25")
 
@@ -261,9 +277,33 @@ struct WatchSetFieldTests {
         let set = SetSnapshot(orderIndex: 0, weightKg: 80, reps: 8, durationSeconds: 95)
         #expect(WatchSetField.weight.matches(80, in: set, unit: .kilograms))
         #expect(!WatchSetField.weight.matches(81.25, in: set, unit: .kilograms))
+        #expect(WatchSetField.weight.matches(80.01, in: set, unit: .kilograms))
         #expect(WatchSetField.reps.matches(8, in: set, unit: .kilograms))
         #expect(!WatchSetField.distance.matches(0, in: set, unit: .kilograms))
         #expect(WatchSetField.duration.text(in: set, unit: .kilograms) == "1:35")
+    }
+
+    @Test("Korak težine je korak vježbe, a bez njega korak jedinice")
+    func weightStep() {
+        #expect(WatchSetField.weight.step(unit: .kilograms) == 2.5)
+        #expect(WatchSetField.weight.step(unit: .pounds) == 5)
+        #expect(WatchSetField.weight.step(unit: .kilograms, weightStep: 2) == 2)
+        #expect(WatchSetField.extraWeight.step(unit: .kilograms, weightStep: 1.25) == 1.25)
+        #expect(WatchSetField.weight.step(unit: .kilograms, weightStep: 0) == 2.5)
+        #expect(WatchSetField.reps.step(unit: .kilograms, weightStep: 2) == 1)
+    }
+
+    @Test("Težina ide na sljedeću vrijednost na koraku, ostala polja za cijeli korak")
+    func movedBy() {
+        let weight = WatchSetField.weight
+        #expect(weight.value(80, movedBy: 1, step: 2.5) == 82.5)
+        #expect(weight.value(80, movedBy: -1, step: 2.5) == 77.5)
+        #expect(weight.value(83, movedBy: 1, step: 2.5) == 85)
+        #expect(weight.value(83, movedBy: -1, step: 2.5) == 82.5)
+        #expect(weight.value(11, movedBy: 1, step: 2) == 12)
+        #expect(weight.value(0, movedBy: 1, step: 2) == 2)
+        #expect(WatchSetField.reps.value(8, movedBy: -1, step: 1) == 7)
+        #expect(WatchSetField.duration.value(93, movedBy: 1, step: 5) == 98)
     }
 }
 
@@ -298,7 +338,7 @@ struct LiveSetEditorTests {
         #expect(values[1].canIncrease)
     }
 
-    @Test("Plus i minus mijenjaju za jedan korak krune, težina ostaje u kilogramima")
+    @Test("Plus i minus mijenjaju za jedan korak težine, težina ostaje u kilogramima")
     func adjust() throws {
         let (engine, set) = try makeSet()
         defer { withExtendedLifetime(engine) {} }
@@ -306,15 +346,32 @@ struct LiveSetEditorTests {
         set.reps = 8
 
         #expect(LiveSetEditor.adjust(set, field: .weight, steps: 1, unit: .kilograms))
-        #expect(set.weightKg == 81.25)
+        #expect(set.weightKg == 82.5)
         #expect(LiveSetEditor.adjust(set, field: .reps, steps: -1, unit: .kilograms))
         #expect(set.reps == 7)
-        #expect(set.weightKg == 81.25)
+        #expect(set.weightKg == 82.5)
 
-        // U funtama je korak 2,5 lbs, a sprema se u kilogramima.
+        // Korak vježbe (bučice po 2 kg).
+        set.weightKg = 10
+        #expect(LiveSetEditor.adjust(set, field: .weight, steps: 1, unit: .kilograms, weightStep: 2))
+        #expect(set.weightKg == 12)
+
+        // Bez koraka vježbe u funtama je korak 5 lbs, a sprema se u kilogramima.
         set.weightKg = 100 * WeightConversion.kilogramsPerPound
         #expect(LiveSetEditor.adjust(set, field: .weight, steps: 1, unit: .pounds))
-        #expect(abs((set.weightKg ?? 0) - 102.5 * WeightConversion.kilogramsPerPound) < 1e-9)
+        #expect(abs((set.weightKg ?? 0) - 105 * WeightConversion.kilogramsPerPound) < 1e-9)
+    }
+
+    @Test("Težina izvan koraka ide na susjednu vrijednost na koraku")
+    func adjustOffStep() throws {
+        let (engine, set) = try makeSet()
+        defer { withExtendedLifetime(engine) {} }
+        set.weightKg = 83
+        #expect(LiveSetEditor.adjust(set, field: .weight, steps: 1, unit: .kilograms, weightStep: 2.5))
+        #expect(set.weightKg == 85)
+        set.weightKg = 83
+        #expect(LiveSetEditor.adjust(set, field: .weight, steps: -1, unit: .kilograms, weightStep: 2.5))
+        #expect(set.weightKg == 82.5)
     }
 
     @Test("Na rubu raspona i u praznom polju minus ne mijenja ništa")
@@ -329,7 +386,7 @@ struct LiveSetEditorTests {
         #expect(!LiveSetEditor.adjust(set, field: .weight, steps: -1, unit: .kilograms))
         #expect(set.weightKg == nil)
         #expect(LiveSetEditor.adjust(set, field: .weight, steps: 1, unit: .kilograms))
-        #expect(set.weightKg == 1.25)
+        #expect(set.weightKg == 2.5)
     }
 
     @Test("Trajanje i udaljenost")

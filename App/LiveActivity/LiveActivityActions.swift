@@ -36,8 +36,9 @@ enum LiveActivityActions {
         await WorkoutLiveUpdates.shared.refreshAndWait()
     }
 
-    /// Gumb − ili + uz vrijednost sljedeće serije: mijenja je kao da je upisana na ekranu treninga
-    /// i javlja promjenu satu. Odmor se ne dira.
+    /// Gumb − ili + uz vrijednost sljedeće serije (Live Activity i kartica treninga na Početnoj): mijenja je
+    /// kao da je upisana na ekranu treninga i javlja promjenu satu. Težina se mijenja za korak vježbe, isti
+    /// kao na kotačiću (`WeightStepSettings`). Odmor se ne dira.
     @MainActor
     static func adjustSet(id: String, field rawField: String, steps: Int) async {
         AppServices.start()
@@ -48,8 +49,13 @@ enum LiveActivityActions {
             await WorkoutLiveUpdates.shared.refreshAndWait()
             return
         }
-        let unit = (try? GymQueries(context: context).settings())?.weightUnit ?? .kilograms
-        if LiveSetEditor.adjust(set, field: field, steps: steps.signum(), unit: unit) {
+        let settings = try? GymQueries(context: context).settings()
+        let unit = settings?.weightUnit ?? .kilograms
+        let custom = (try? context.fetch(FetchDescriptor<CustomExercise>())) ?? []
+        let weightStep = set.exercise.map {
+            WeightStepSettings.resolver(settings: settings, catalog: AppServices.bundledCatalog, custom: custom)($0.exercise)
+        }
+        if LiveSetEditor.adjust(set, field: field, steps: steps.signum(), unit: unit, weightStep: weightStep) {
             do {
                 try WorkoutEngine(context: context).touch(session)
             } catch {

@@ -3345,6 +3345,26 @@
         }
       }
     },
+    "Korak postavljen na vježbi ima prednost pred korakom opreme. Mijenja se na stranici vježbe, a povlačenjem ulijevo vježba se vraća na korak opreme." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An increment set on an exercise takes precedence over the equipment increment. Change it on the exercise page, or swipe left to return the exercise to the equipment increment."
+          }
+        }
+      }
+    },
+    "Korak težine" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight increment"
+          }
+        }
+      }
+    },
     "Kraj" : {
       "localizations" : {
         "en" : {
@@ -3405,6 +3425,16 @@
         }
       }
     },
+    "Nepoznata vježba" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown exercise"
+          }
+        }
+      }
+    },
     "Ostale vježbe" : {
       "localizations" : {
         "en" : {
@@ -3421,6 +3451,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start"
+          }
+        }
+      }
+    },
+    "Prema opremi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By equipment"
+          }
+        }
+      }
+    },
+    "Prema opremi (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By equipment (%@)"
+          }
+        }
+      }
+    },
+    "Razmak između dviju težina na kotačiću, na gumbima + i − u Live Activityju i za jedan klik Digital Crowna na satu. Koraci vrijede za jedinicu koja je sada odabrana (%@)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The gap between two weights on the wheel, on the + and − buttons in the Live Activity and for one click of the Digital Crown on the watch. Increments apply to the unit selected now (%@)."
           }
         }
       }
@@ -3445,12 +3505,32 @@
         }
       }
     },
+    "Vježbe s vlastitim korakom" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercises with their own increment"
+          }
+        }
+      }
+    },
     "Vježbe: %lld od %lld" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exercises: %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Vrati zadane korake" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore default increments"
           }
         }
       }

@@ -95,4 +95,8 @@ extension EnvironmentValues {
         get { self[SetFieldWidthKey.self] }
         set { self[SetFieldWidthKey.self] = newValue }
     }
+
+    /// Korak težine vježbe na kotačiću, u jedinici korisnika (`WeightStepSettings`). Postavlja ga ekran
+    /// koji prikazuje vježbu; bez njega kotačić koristi korak jedinice.
+    @Entry var weightStep: Double?
 }
