@@ -18,7 +18,6 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     let settings = try GymQueries(context: context).settings()
     settings.weightUnit = .pounds
     settings.defaultRestSeconds = 120
-    settings.compoundRestSeconds = 210
     settings.goal = .strength
     settings.experience = .intermediate
     settings.equipment = [.barbell, .dumbbell]
@@ -135,6 +134,7 @@ struct JSONBackupTests {
         try fillSample(source)
         try #require(try source.fetch(FetchDescriptor<TemplateSet>()).first).targetRepsMax = 8
         try #require(try source.fetch(FetchDescriptor<CustomExercise>()).first).kind = .stretching
+        try GymQueries(context: source).settings().compoundRestSeconds = 210
         let first = try JSONBackup.export(from: source, now: exportTime)
 
         let target = try makeContext()
