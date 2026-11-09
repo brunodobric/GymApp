@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Apolon</string>
+    <string name="tab_home">Početna</string>
+    <string name="tab_history">Povijest</string>
+    <string name="tab_plans">Rasporedi</string>
+    <string name="tab_exercises">Vježbe</string>
+    <string name="tab_statistics">Statistika</string>
+    <string name="coming_soon">Uskoro na Androidu.</string>
+    <string name="search_exercises">Traži vježbe</string>
+    <string name="no_results">Nema rezultata</string>
+</resources>

@@ -19,3 +19,13 @@ dependencyResolutionManagement {
 rootProject.name = "Apolon"
 
 include(":core:units")
+include(":core:catalog")
+include(":core:model")
+
+// Modul aplikacije treba Android SDK (ANDROID_HOME ili sdk.dir u local.properties). Bez njega se grade i
+// testiraju samo čisti Kotlin moduli, npr. u okruženju gdje se SDK ne može preuzeti.
+val hasAndroidSdk = System.getenv("ANDROID_HOME") != null || System.getenv("ANDROID_SDK_ROOT") != null ||
+    file("local.properties").takeIf { it.exists() }?.readText()?.contains("sdk.dir") == true
+if (hasAndroidSdk) {
+    include(":app")
+}

@@ -31,3 +31,16 @@ jobs:
       # Runner ima Android SDK (ANDROID_HOME), pa settings.gradle.kts uključuje i modul aplikacije.
       - name: Testovi i build
         run: ./gradlew check --console=plain
+
+      # APK za testiranje na mobitelu (debug potpis, bez MoveKit klipova).
+      - name: Debug APK
+        if: hashFiles('android/app/build.gradle.kts') != ''
+        run: ./gradlew :app:assembleDebug --console=plain
+
+      - name: Spremi APK
+        if: hashFiles('android/app/build.gradle.kts') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: apolon-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14
