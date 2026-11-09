@@ -13,7 +13,10 @@ public enum Deduplication {
         id: KeyPath<Model, UUID>,
         in context: ModelContext
     ) throws -> Int {
-        let all = try context.fetch(FetchDescriptor<Model>())
+        // Čita se samo UUID: provjera nakon svakog uvoza ne smije učitati cijelu bazu u memoriju.
+        var descriptor = FetchDescriptor<Model>()
+        descriptor.propertiesToFetch = [id]
+        let all = try context.fetch(descriptor)
         var seen = Set<UUID>()
         var removed = 0
         for item in all {

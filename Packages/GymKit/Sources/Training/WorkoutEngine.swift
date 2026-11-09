@@ -444,8 +444,9 @@ public struct WorkoutEngine {
     /// Izvođenja vježbe u ranije završenim treninzima, od najnovijeg prema starijem, bez čitanja serija.
     private func finishedExercises(of ref: ExerciseRef, before session: Session?) throws -> [SessionExercise] {
         let key = ref.key
+        let finished = SessionState.finished.rawValue
         let descriptor = FetchDescriptor<SessionExercise>(
-            predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false }
+            predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false && $0.session?.stateRaw == finished }
         )
         let currentId = session?.id
         let cutoff = session?.startedAt ?? .distantFuture

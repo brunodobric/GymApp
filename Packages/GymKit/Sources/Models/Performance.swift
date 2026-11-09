@@ -8,6 +8,8 @@ extension GymSchemaV1 {
 
     @Model
     public final class Session {
+        /// Gotovo svaki upit traži treninge po stanju i vremenu početka.
+        #Index<Session>([\.stateRaw], [\.startedAt])
         public var id: UUID = UUID()
         /// Samo za praćenje odakle je pokrenut. Ne smije biti relacija: brisanje predloška ne briše povijest.
         public var templateId: UUID?
@@ -68,6 +70,8 @@ extension GymSchemaV1 {
 
     @Model
     public final class SessionExercise {
+        /// Povijest vježbe (prošli put, napredak, rekordi) traži izvođenja po ključu vježbe.
+        #Index<SessionExercise>([\.exerciseKey])
         public var id: UUID = UUID()
         public var orderIndex: Int = 0
         public var exerciseCatalogId: String?
