@@ -4,6 +4,7 @@ import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.model.ExerciseRef
 import com.brunodobric.gymapp.model.GymStore
 import com.brunodobric.gymapp.model.InMemoryPersistence
+import com.brunodobric.gymapp.model.ReminderMode
 import com.brunodobric.gymapp.model.Schedule
 import com.brunodobric.gymapp.model.ScheduleItemKind
 import com.brunodobric.gymapp.model.Session
@@ -15,6 +16,9 @@ import com.brunodobric.gymapp.training.WorkoutError
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.Locale
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -672,6 +676,113 @@ class PlanningTest {
     }
 
     @Nested
+    inner class ReminderTests {
+        private val utc: ZoneId = ZoneOffset.UTC
+        private val evening = 18 * 60
+        private val today = LocalDate.of(2027, 1, 15).atStartOfDay(utc).toInstant()
+
+        @Test
+        fun `fiksni dani - odabrani dani u idućih 14 dana, u zadano vrijeme`() {
+            val dates = ReminderPlanner.fixedDates(listOf(2, 4, 6), evening, base, emptySet(), utc)
+            assertEquals(6, dates.size)
+            assertEquals(today.plusSeconds(18 * 3600), dates.first())
+            assertTrue(dates.all { it.atZone(utc).dayOfWeek.appleWeekday in listOf(2, 4, 6) })
+        }
+
+        @Test
+        fun `fiksni dani - dan s već odrađenim treningom se preskače, a prošlo vrijeme ne`() {
+            val dates = ReminderPlanner.fixedDates(listOf(6), evening, base, setOf(LocalDate.of(2027, 1, 15)), utc)
+            assertEquals(listOf(today.plusSeconds(7 * DAY + 18 * 3600)), dates)
+            val late = ReminderPlanner.fixedDates(listOf(6), evening, base.plusSeconds(11 * 3600), emptySet(), utc)
+            assertEquals(today.plusSeconds(7 * DAY + 18 * 3600), late.first())
+        }
+
+        @Test
+        fun `fleksibilno - razmak od zadnjeg treninga, rest dani ga produljuju`() {
+            val last = base.plusSeconds(12 * 3600)
+            assertEquals(today.plusSeconds(DAY + 18 * 3600), ReminderPlanner.flexibleDate(last, 1, 0, evening, base, utc))
+            assertEquals(today.plusSeconds(2 * DAY + 18 * 3600), ReminderPlanner.flexibleDate(last, 1, 1, evening, base, utc))
+        }
+
+        @Test
+        fun `fleksibilno - bez treninga ili uz prošao termin stiže sljedeće zadano vrijeme`() {
+            assertEquals(today.plusSeconds(18 * 3600), ReminderPlanner.flexibleDate(null, 1, 0, evening, base, utc))
+            assertEquals(
+                today.plusSeconds(DAY + 18 * 3600),
+                ReminderPlanner.flexibleDate(base.minusSeconds(5 * DAY), 1, 0, evening, base.plusSeconds(11 * 3600), utc),
+            )
+        }
+
+        @Test
+        fun `zakazivanje iz baze - oba načina, bez podsjetnika tijekom aktivnog treninga`() {
+            val store = newStore()
+            val engine = ScheduleEngine(store)
+            val (flexible, _) = store.abcSchedule(null)
+            flexible.reminderMinutes = evening
+            flexible.reminderMode = ReminderMode.FLEXIBLE
+            val (fixed, _) = store.abcSchedule(null)
+            fixed.reminderMinutes = evening
+            fixed.reminderMode = ReminderMode.FIXED_DAYS
+            fixed.weekdays = listOf(6)
+            val (silent, _) = store.abcSchedule(null)
+            silent.reminderMinutes = null
+
+            val builder = ReminderBuilder(store)
+            val reminders = builder.reminders(base, utc)
+            assertEquals(1, reminders.count { it.scheduleId == flexible.id })
+            assertEquals(2, reminders.count { it.scheduleId == fixed.id })
+            assertTrue(reminders.none { it.scheduleId == silent.id })
+            assertTrue(reminders.all { it.workoutName == "A" })
+
+            // Odrađen trening iz fiksnog rasporeda: današnji petak otpada.
+            store.doWorkout(engine.nextWorkout(fixed), base)
+            val afterWorkout = builder.reminders(base.plusSeconds(3600), utc)
+            assertEquals(1, afterWorkout.count { it.scheduleId == fixed.id })
+            val flexibleNext = assertNotNull(afterWorkout.firstOrNull { it.scheduleId == flexible.id })
+            assertTrue(flexibleNext.fireDate > base)
+
+            // Tijekom aktivnog treninga nema podsjetnika.
+            TemplateStarter(store).start(assertNotNull(engine.nextWorkout(flexible)), base.plusSeconds(7200))
+            assertTrue(builder.reminders(base.plusSeconds(7300), utc).isEmpty())
+        }
+
+        @Test
+        fun `identifikator je isti kao na iOS-u`() {
+            val id = java.util.UUID.fromString("0a1b2c3d-0000-4000-8000-00000000abcd")
+            val reminder = PlannedReminder(id, "R", "A", base)
+            assertEquals("schedule-0A1B2C3D-0000-4000-8000-00000000ABCD-1800000000", reminder.identifier)
+        }
+    }
+
+    @Nested
+    inner class ReminderTimeTests {
+        private val zagreb = ZoneId.of("Europe/Zagreb")
+
+        @Test
+        fun `minute od ponoći u datum i natrag`() {
+            for (minutes in listOf(0, 7 * 60 + 30, 18 * 60 + 5, 23 * 60 + 59)) {
+                val date = ReminderTime.date(minutes, base, zagreb)
+                assertEquals(minutes, ReminderTime.minutes(date, zagreb))
+            }
+        }
+
+        @Test
+        fun `vrijeme izvan dana se ograničava na dan`() {
+            assertEquals(0, ReminderTime.minutes(ReminderTime.date(-5, base, zagreb), zagreb))
+            assertEquals(1439, ReminderTime.minutes(ReminderTime.date(2000, base, zagreb), zagreb))
+        }
+
+        @Test
+        fun `dan se uključuje i isključuje, a popis ostaje sortiran`() {
+            assertEquals(listOf(2, 4, 6), ReminderTime.toggling(2, listOf(4, 6)))
+            assertEquals(listOf(2, 6), ReminderTime.toggling(4, listOf(2, 4, 6)))
+            assertEquals(listOf(1), ReminderTime.toggling(1, emptyList()))
+            assertEquals(2, ReminderTime.weekdaysFromMonday.first())
+            assertEquals(1, ReminderTime.weekdaysFromMonday.last())
+        }
+    }
+
+    @Nested
     inner class EditDiscardTests {
         @Test
         fun `odbačeni novi trening iz rasporeda nestaje iz niza i iz treninga`() {
@@ -684,6 +795,64 @@ class PlanningTest {
             assertEquals(4, schedule.orderedItems.size)
             assertEquals(listOf(0, 1, 2, 3), schedule.orderedItems.map { it.orderIndex })
             assertEquals(listOf("A", "B", "C"), store.templates.map { it.name }.sorted())
+        }
+        @Test
+        fun `raspored se vraća na stanje prije uređivanja - polja, niz i izmjene ciklusa`() {
+            val store = newStore()
+            val engine = ScheduleEngine(store)
+            val (schedule, templates) = store.abcSchedule(4)
+            engine.skipNextWorkout(schedule)
+            val before = schedule.orderedItems.map { it.id }
+            val snapshot = ScheduleSnapshot(schedule, store)
+
+            schedule.name = "Promijenjeno"
+            schedule.cycleCount = null
+            schedule.reminderMinutes = 7 * 60
+            engine.setActive(false, schedule)
+            engine.removeItem(schedule.orderedItems[2])
+            engine.addWorkout(templates[0], schedule)
+            engine.moveItems(schedule, listOf(0), 3)
+            engine.unskip(engine.skippedWorkouts(schedule).first().change, schedule)
+
+            snapshot.restore(schedule, store)
+            assertEquals("ABC", schedule.name)
+            assertEquals(4, schedule.cycleCount)
+            assertNull(schedule.reminderMinutes)
+            assertTrue(schedule.isActive)
+            assertEquals(before, schedule.orderedItems.map { it.id })
+            assertEquals(listOf("A"), engine.skippedWorkouts(schedule).map { it.templateName })
+            assertEquals("B", engine.nextWorkout(schedule)?.template?.name)
+            assertEquals(4, store.scheduleItems.size)
+        }
+
+        @Test
+        fun `trening se vraća na stanje prije uređivanja - naziv, vježbe i serije`() {
+            val store = newStore()
+            val engine = TemplateEngine(store)
+            val workout = store.template("Gornji dio", listOf(bench, row))
+            val benchExercise = workout.orderedExercises.first()
+            benchExercise.orderedSets.first().targetReps = 8
+            store.save()
+            val setCount = benchExercise.orderedSets.size
+            val snapshot = TemplateSnapshot(workout)
+
+            workout.name = "Drugo"
+            benchExercise.orderedSets.first().targetReps = 12
+            engine.addSet(benchExercise)
+            engine.removeExercise(workout.orderedExercises[1])
+            engine.addExercise(curl, WR, workout)
+            engine.moveExercises(workout, listOf(0), 2)
+
+            snapshot.restore(workout, store)
+            assertEquals("Gornji dio", workout.name)
+            assertEquals(listOf(bench.name, row.name), workout.orderedExercises.map { it.exerciseName })
+            val restored = workout.orderedExercises.first()
+            assertEquals(setCount, restored.orderedSets.size)
+            assertEquals(8, restored.orderedSets.first().targetReps)
+            assertEquals(2, store.templateExercises.size)
+            // Snimka je spremljena: ponovno učitavanje iz baze daje isto stanje.
+            store.rollback()
+            assertEquals(listOf(bench.name, row.name), store.templates.single().orderedExercises.map { it.exerciseName })
         }
     }
 }
