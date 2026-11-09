@@ -103,6 +103,8 @@ enum AppServices {
         PhoneWatchSync.shared.start(container: container)
         // Widgeti i komplikacije: nova snimka nakon svakog spremanja baze.
         WidgetRefresher.shared.start(container: container)
+        // Statistika i kartice: preračun nakon izmjene podataka.
+        DataVersion.shared.start(container: container)
         SyncMonitor.shared.start()
         // Rušenja, zastoji i performanse (MetricKit), samo u lokalni dnevnik.
         MetricsReporter.shared.start()
