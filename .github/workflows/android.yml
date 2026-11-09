@@ -3,9 +3,9 @@ name: Android
 on:
   push:
     branches: [main]
-    paths: ["android/**", "Resources/**", ".github/workflows/android.yml"]
+    paths: ["android/**", "Resources/**", "Packages/GymKit/Tests/BackupTests/Fixtures/**", ".github/workflows/android.yml"]
   pull_request:
-    paths: ["android/**", "Resources/**", ".github/workflows/android.yml"]
+    paths: ["android/**", "Resources/**", "Packages/GymKit/Tests/BackupTests/Fixtures/**", ".github/workflows/android.yml"]
 
 concurrency:
   group: android-${{ github.ref }}
