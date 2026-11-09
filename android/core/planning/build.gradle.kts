@@ -10,3 +10,8 @@ dependencies {
     testImplementation(libs.kotlin.test)
     testRuntimeOnly(libs.junit.launcher)
 }
+
+tasks.test {
+    // Testovi programa provjeravaju izvedbe i volumen na stvarnom katalogu iz repozitorija.
+    systemProperty("catalog.dir", rootDir.resolve("../Resources/Catalog").canonicalPath)
+}
