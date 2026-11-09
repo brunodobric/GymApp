@@ -14,6 +14,7 @@ iOS, iPadOS i watchOS aplikacija za bilježenje treninga. Swift + SwiftUI, Swift
 * `docs/lokalizacija.md`: String Catalog (hr i en), pisanje teksta u kodu i provjera prijevoda na CI-ju
 * `docs/movekit.md`: MoveKit katalog vježbi, licenca i što smije u javni repozitorij
 * `docs/widgeti.md`: widgeti, kontrola "Započni trening" i komplikacije: snimka u App Groupu i osvježavanje
+* `docs/android.md`: plan Android verzije (samo mobitel): stog, mapiranje funkcija, faze
 
 Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi tipova, funkcija i varijabli su na engleskom.
 
@@ -34,6 +35,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * `Resources/MoveKit/`: licencirani MoveKit klipovi i upute, ne commita se (`scripts/movekit.sh`)
 * `AppStore/`: tekstovi za App Store Connect (hr i en), napomena za review i snimke zaslona. Duljine provjerava CI.
 * `site/`: pravila privatnosti i podrška (GitHub Pages)
+* `android/`: Android aplikacija (Kotlin, Gradle). Čisti Kotlin moduli u `android/core/` i `android/domain/` su port GymKita s istim testovima; modul `app` se gradi samo uz Android SDK (CI: `.github/workflows/android.yml`).
 
 ## Pravila
 
@@ -45,6 +47,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * **Dizajn prema `docs/DIZAJN.md`:** sistemske komponente, tab bar samo za navigaciju, Dynamic Type, iPad preko size classa.
 * **MoveKit sadržaj nikad ne ide u repozitorij** (klipovi, posteri, upute, česte greške i njihovi prijevodi): `docs/movekit.md`.
 * Debug-only kod (prototipi, alati) ide unutar `#if DEBUG`.
+* **Android prati iOS:** promjena logike u GymKitu dobiva istu promjenu u Kotlin modulu u `android/` (ili zapis u `docs/android.md` da još nije prenesena). Formati izvoza (CSV, JSON) su isti na obje platforme.
 
 ## Naredbe
 
@@ -55,6 +58,7 @@ scripts/movekit.sh                             # MoveKit klipovi i upute u build
 scripts/testflight.sh                          # arhiva i upload za TestFlight (na Macu)
 swift test --package-path Packages/GymKit      # testovi logike
 swiftlint lint
+(cd android && ./gradlew check)                # Android: testovi logike (i build aplikacije uz Android SDK)
 ```
 
 CI (`.github/workflows/ci.yml`) na svaki push i PR pokreće SwiftLint, testove paketa te build za iOS i watchOS simulator.
