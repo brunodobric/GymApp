@@ -378,6 +378,27 @@ struct RecommenderTests {
     }
 }
 
+@Suite("Cilj dana tjedno i dani programa")
+struct DaysGoalTests {
+    @Test("Dani programa prema profilu: dani iz profila ako ih program podržava, inače dani programa")
+    func trainingDays() throws {
+        #expect(try program("upper-lower-4").trainingDays(for: TrainingProfile(daysPerWeek: 4)) == 4)
+        #expect(try program("full-body-3").trainingDays(for: TrainingProfile(daysPerWeek: 4)) == 3)
+        #expect(try program("full-body-3").trainingDays(for: TrainingProfile()) == 3)
+        #expect(try program("basic-full-body-2").trainingDays(for: TrainingProfile(daysPerWeek: 1)) == 1)
+        #expect(try program("ppl-6").trainingDays(for: TrainingProfile(daysPerWeek: 7)) == 6)
+    }
+
+    @Test("Smanjenje cilja nudi se samo kad program ima manje dana od cilja")
+    func lowerGoal() throws {
+        #expect(TrainingProfile(daysPerWeek: 4).lowerDaysGoal(for: try program("full-body-3")) == 3)
+        #expect(TrainingProfile(daysPerWeek: 7).lowerDaysGoal(for: try program("ppl-6")) == 6)
+        #expect(TrainingProfile(daysPerWeek: 4).lowerDaysGoal(for: try program("upper-lower-4")) == nil)
+        #expect(TrainingProfile(daysPerWeek: 2).lowerDaysGoal(for: try program("full-body-3")) == nil)
+        #expect(TrainingProfile().lowerDaysGoal(for: try program("full-body-3")) == nil)
+    }
+}
+
 @Suite("Preseti opreme")
 struct EquipmentPresetTests {
     @Test("Teretana je sva oprema, a preset se prepoznaje iz spremljenog popisa")
