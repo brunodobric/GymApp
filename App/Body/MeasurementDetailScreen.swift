@@ -40,7 +40,7 @@ struct MeasurementDetailScreen: View {
                             y: .value(title, BodyFormat.displayValue(item.value, kind: kind, unit: unit))
                         )
                     }
-                    .chartYScale(domain: .automatic(includesZero: false))
+                    .chartYScale(domain: ChartValueDomain.domain(for: list.map { BodyFormat.displayValue($0.value, kind: kind, unit: unit) }))
                     .chartHeight(200, regular: 320)
                     .accessibilityLabel(Text("Graf mjere \(title)"))
                 }
