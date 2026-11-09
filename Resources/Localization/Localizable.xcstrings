@@ -47,6 +47,16 @@
         }
       }
     },
+    "%@ od %lld tjedno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ of %lld per week"
+          }
+        }
+      }
+    },
     "%@ serija s 0 do 3 ponavljanja u rezervi." : {
       "localizations" : {
         "en" : {
@@ -83,6 +93,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ has been steady for 4 weeks, and the muscle gets fewer than 10 hard sets per week. More sets bring more progress (Pelland et al. 2024)."
+          }
+        }
+      }
+    },
+    "%@ tjedno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ per week"
           }
         }
       }
@@ -3903,16 +3923,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Week before"
-          }
-        }
-      }
-    },
-    "Tjedan, mjesec i godina" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Week, month and year"
           }
         }
       }

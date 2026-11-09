@@ -10,6 +10,8 @@ extension DashboardCardKind {
     var title: LocalizedStringKey {
         switch self {
         case .thisWeek: "Ovaj tjedan"
+        case .thisMonth: "Ovaj mjesec"
+        case .thisYear: "Ova godina"
         case .lastWorkout: "Zadnji trening"
         case .bodyWeight: "Tjelesna težina"
         case .plateCalculator: "Kalkulator ploča"
@@ -19,6 +21,8 @@ extension DashboardCardKind {
     var symbol: String {
         switch self {
         case .thisWeek: "target"
+        case .thisMonth: "calendar"
+        case .thisYear: "chart.bar.xaxis"
         case .lastWorkout: "clock.arrow.circlepath"
         case .bodyWeight: "figure.stand"
         case .plateCalculator: "scalemass"
@@ -93,9 +97,11 @@ struct ThisWeekCard: View {
                     ProgressView(value: fraction)
                         .accessibilityHidden(true)
                 }
-                days(progress)
+                WeekDaysStrip(progress: progress)
                 if progress.sessions > 0 {
-                    figures(progress)
+                    PeriodFigures(
+                        hardSets: progress.hardSets, cardioSeconds: progress.cardioSeconds, totalSeconds: progress.totalSeconds
+                    )
                 }
             }
         }
@@ -147,77 +153,6 @@ struct ThisWeekCard: View {
             }
             .font(.subheadline).foregroundStyle(.secondary)
         }
-    }
-
-    /// Sedam dana tjedna: odrađen dan je pun krug s ikonom vrste, danas je obrubljen.
-    private func days(_ progress: WeekProgress) -> some View {
-        HStack(spacing: 0) {
-            ForEach(progress.days, id: \.date) { day in
-                let isToday = Calendar.current.isDateInToday(day.date)
-                VStack(spacing: 4) {
-                    ZStack {
-                        Circle()
-                            .fill(day.isTrained ? AnyShapeStyle(.tint) : AnyShapeStyle(Color(.tertiarySystemFill)))
-                        if isToday && !day.isTrained {
-                            Circle().strokeBorder(.tint, lineWidth: 2)
-                        }
-                        if let mix = day.mix {
-                            WorkoutKindIcon(mix: mix)
-                                .font(.footnote.bold())
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    .frame(width: 32, height: 32)
-                    Text(day.date, format: .dateTime.weekday(.narrow))
-                        .font(.caption)
-                        .foregroundStyle(isToday ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
-                }
-                .frame(maxWidth: .infinity)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(dayLabel(day))
-            }
-        }
-    }
-
-    private func dayLabel(_ day: WeekProgress.Day) -> Text {
-        let name = Text(day.date, format: .dateTime.weekday(.wide))
-        guard let mix = day.mix else { return Text("\(name): bez treninga") }
-        return Text("\(name): \(Text(mix.title))")
-    }
-
-    /// Tvrde serije, kardio i ukupno vrijeme; nula se ne prikazuje.
-    private func figures(_ progress: WeekProgress) -> some View {
-        HStack(spacing: 8) {
-            if progress.hardSets > 0 {
-                figure(Text(progress.hardSets, format: .number), label: "Tvrde serije")
-            }
-            if progress.cardioSeconds >= 60 {
-                figure(Text(duration(Double(progress.cardioSeconds))), label: "Kardio")
-            }
-            figure(Text(duration(progress.totalSeconds)), label: "Ukupno")
-        }
-    }
-
-    private func figure(_ value: Text, label: LocalizedStringKey) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            value
-                .font(.rowValue)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(Color(.tertiarySystemFill), in: .rect(cornerRadius: CornerRadius.inner))
-        .accessibilityElement(children: .combine)
-    }
-
-    private func duration(_ seconds: TimeInterval) -> String {
-        Duration.seconds(seconds).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
     }
 
     private func load() {

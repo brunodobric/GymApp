@@ -5,6 +5,10 @@ import SwiftData
 /// ostaju u bazi, ali se ne prikazuju.
 public enum DashboardCardKind: String, CaseIterable, Sendable {
     case thisWeek
+    /// Tekući mjesec, kao Ovaj tjedan, s prosjekom treninga tjedno; dodir otvara Pregled na mjesecu.
+    case thisMonth
+    /// Tekuća godina s treninzima po mjesecima; dodir otvara Pregled na godini.
+    case thisYear
     case lastWorkout
     case bodyWeight
     case plateCalculator
@@ -13,7 +17,7 @@ public enum DashboardCardKind: String, CaseIterable, Sendable {
     public var isCompact: Bool {
         switch self {
         case .bodyWeight, .plateCalculator: true
-        case .thisWeek, .lastWorkout: false
+        case .thisWeek, .thisMonth, .thisYear, .lastWorkout: false
         }
     }
 
