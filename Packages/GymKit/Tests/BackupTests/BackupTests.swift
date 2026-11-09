@@ -134,6 +134,7 @@ struct JSONBackupTests {
         try fillSample(source)
         try #require(try source.fetch(FetchDescriptor<TemplateSet>()).first).targetRepsMax = 8
         try #require(try source.fetch(FetchDescriptor<CustomExercise>()).first).kind = .stretching
+        try GymQueries(context: source).settings().compoundRestSeconds = 210
         let first = try JSONBackup.export(from: source, now: exportTime)
 
         let target = try makeContext()
@@ -154,6 +155,7 @@ struct JSONBackupTests {
         #expect(try GymQueries(context: target).settings().startsWatchWorkout == false)
         let restored = try GymQueries(context: target).settings()
         #expect(restored.liveActivityFollowsApp == false)
+        #expect(restored.compoundRestSeconds == 210)
         #expect(restored.liveActivityTheme == .light)
         #expect(restored.liveActivityAccent == .pink)
         let measurements = try target.fetch(FetchDescriptor<BodyMeasurement>())

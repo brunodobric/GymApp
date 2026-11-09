@@ -275,7 +275,11 @@ struct ActiveWorkoutScreen: View {
                 try engine.uncompleteSet(set)
                 return
             }
-            try engine.completeSet(set, defaultRestSeconds: settings?.defaultRestSeconds ?? 90)
+            let catalog = catalogStore.catalog
+            try engine.completeSet(
+                set, restDefaults: settings?.restDefaults ?? .standard,
+                isCompound: { catalog?.isCompound(exerciseKey: $0) }
+            )
             completedCount += 1
             syncCompletedSets()
         } catch WorkoutError.setIncomplete {

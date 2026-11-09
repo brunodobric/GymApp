@@ -55,7 +55,10 @@ extension GymSchemaV1 {
     public final class UserSettings {
         public var id: UUID = UUID()
         public var weightUnitRaw: String = WeightUnit.kilograms.rawValue
+        /// Zadana pauza za izolacijske i ostale vježbe (i za sve vježbe prije nego što su postojale dvije).
         public var defaultRestSeconds: Int = 90
+        /// Zadana pauza za složene vježbe (`RestDefaults`).
+        public var compoundRestSeconds: Int = 150
         public var themeRaw: String = "system"
         public var accentColorRaw: String = "blue"
         public var effortScaleRaw: String = EffortScale.rpe.rawValue

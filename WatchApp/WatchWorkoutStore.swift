@@ -145,9 +145,11 @@ final class WatchWorkoutStore {
             }
         }
         do {
-            let rest = context.defaultRestSeconds
+            let watchContext = context
             try mutate { engine in
-                _ = try engine.completeSet(set.id, defaultRestSeconds: rest)
+                _ = try engine.completeSet(
+                    set.id, restDefaults: watchContext.restDefaults, isCompound: { watchContext.isCompound($0) }
+                )
             }
             WKInterfaceDevice.current().play(.success)
             if stopwatch?.setID == set.id { stopwatch = nil }

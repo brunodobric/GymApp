@@ -115,6 +115,7 @@ public extension UserSettings {
         let pairs: [(AnyHashable, AnyHashable)] = [
             (weightUnitRaw, defaults.weightUnitRaw),
             (defaultRestSeconds, defaults.defaultRestSeconds),
+            (compoundRestSeconds, defaults.compoundRestSeconds),
             (themeRaw, defaults.themeRaw),
             (accentColorRaw, defaults.accentColorRaw),
             (effortScaleRaw, defaults.effortScaleRaw),

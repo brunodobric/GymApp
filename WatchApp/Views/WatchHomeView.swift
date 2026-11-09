@@ -55,7 +55,7 @@ struct WatchPlanMeta: View {
     var body: some View {
         HStack(spacing: 4) {
             Text("\(plan.exercises.count) vježbi")
-            if let minutes = plan.estimatedMinutes(defaultRestSeconds: store.context.defaultRestSeconds) {
+            if let minutes = plan.estimatedMinutes(restDefaults: store.context.restDefaults) {
                 let approx = "~\(minutes)"
                 Text(verbatim: "·")
                 Text("\(approx) min")

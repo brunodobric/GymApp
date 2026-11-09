@@ -69,6 +69,19 @@ struct WatchPlanInfoTests {
         #expect(empty.estimatedMinutes(defaultRestSeconds: 90) == nil)
     }
 
+    @Test("Procjena trajanja: vježba bez vlastite pauze odmara prema vrsti")
+    func estimateByMechanic() {
+        var compound = plan(cardio: false)
+        compound.exercises[0].restSeconds = nil
+        compound.exercises[0].isCompound = true
+        let defaults = RestDefaults(compoundSeconds: 600, otherSeconds: 90)
+        // 3 × 45 s + 2 × 600 s = 1335 s ≈ 22 min → 20.
+        #expect(compound.estimatedMinutes(restDefaults: defaults) == 20)
+        // Nepoznata vrsta: 3 × 45 s + 2 × 90 s = 315 s, najmanje 5 minuta.
+        compound.exercises[0].isCompound = nil
+        #expect(compound.estimatedMinutes(restDefaults: defaults) == 5)
+    }
+
     @Test("Prošli put: serija iste vrste na istom mjestu, a iznad broja prošlih zadnja")
     func previous() {
         let payload = context([plan()])

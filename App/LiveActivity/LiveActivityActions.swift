@@ -23,9 +23,12 @@ enum LiveActivityActions {
             await WorkoutLiveUpdates.shared.refreshAndWait()
             return
         }
-        let restSeconds = (try? GymQueries(context: context).settings())?.defaultRestSeconds ?? 90
+        let restDefaults = (try? GymQueries(context: context).settings())?.restDefaults ?? .standard
+        let catalog = AppServices.bundledCatalog
         do {
-            try WorkoutEngine(context: context).completeSet(set, defaultRestSeconds: restSeconds)
+            try WorkoutEngine(context: context).completeSet(
+                set, restDefaults: restDefaults, isCompound: { catalog?.isCompound(exerciseKey: $0) }
+            )
         } catch {
             logger.error("Serija iz Live Activityja nije potvrđena: \(String(describing: error))")
         }

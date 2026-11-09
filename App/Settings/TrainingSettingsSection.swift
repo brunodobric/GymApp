@@ -18,16 +18,27 @@ struct TrainingSettingsSection: View {
                 Text("Kilogrami").tag(WeightUnit.kilograms)
                 Text("Funte").tag(WeightUnit.pounds)
             }
-            Stepper(value: $settings.defaultRestSeconds, in: 15...600, step: 15) {
-                LabeledContent("Zadana pauza") {
-                    Text(Duration.seconds(settings.defaultRestSeconds), format: .time(pattern: .minuteSecond))
-                }
-            }
             Picker("Napor", selection: $settings.effortScale) {
                 Text("RPE").tag(EffortScale.rpe)
                 Text("RIR").tag(EffortScale.rir)
             }
             Toggle("Zvuk kraja odmora", isOn: $settings.restEndSoundEnabled)
+        }
+        Section {
+            Stepper(value: $settings.compoundRestSeconds, in: 15...600, step: 15) {
+                LabeledContent("Složene vježbe") {
+                    Text(Duration.seconds(settings.compoundRestSeconds), format: .time(pattern: .minuteSecond))
+                }
+            }
+            Stepper(value: $settings.defaultRestSeconds, in: 15...600, step: 15) {
+                LabeledContent("Ostale vježbe") {
+                    Text(Duration.seconds(settings.defaultRestSeconds), format: .time(pattern: .minuteSecond))
+                }
+            }
+        } header: {
+            Text("Zadana pauza")
+        } footer: {
+            Text("Složene vježbe, poput čučnja, mrtvog dizanja i potiska, traže dulji odmor od izolacijskih. Pauza postavljena na vježbi ima prednost.")
         }
         if UIDevice.current.userInterfaceIdiom == .phone {
             Section {

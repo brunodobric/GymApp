@@ -3,6 +3,7 @@ import Models
 import Planning
 import SwiftData
 import SwiftUI
+import Training
 import Units
 
 /// Uređivač treninga (predloška): vježbe, redoslijed, supersetovi, ciljane serije i pauze.
@@ -150,9 +151,16 @@ struct TemplateExerciseEditor: View {
     // Jedinica iz upita, dostupna već pri prvom prikazu: redak serije zapamti tekst težine u jedinici
     // koju je dobio prvi put, pa bi kasnije stigla jedinica (npr. iz `.task`) krivo preračunala unos.
     @Query private var settingsList: [UserSettings]
+    @Environment(CatalogStore.self) private var catalogStore
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
 
     private var engine: TemplateEngine { TemplateEngine(context: context) }
+
+    /// Zadana pauza za ovu vježbu prema vrsti (složena ili ostale), početna vrijednost vlastite pauze.
+    private var defaultRest: Int {
+        let defaults = UserSettings.preferred(in: settingsList)?.restDefaults ?? .standard
+        return defaults.seconds(isCompound: [catalogStore.catalog?.isCompound(exerciseKey: exercise.exercise.key)])
+    }
 
     var body: some View {
         List {
@@ -171,7 +179,7 @@ struct TemplateExerciseEditor: View {
                 Section("Pauza") {
                     Toggle("Vlastita pauza", isOn: Binding(
                         get: { exercise.restSeconds != nil },
-                        set: { try? engine.setRest($0 ? 90 : nil, for: exercise) }
+                        set: { try? engine.setRest($0 ? defaultRest : nil, for: exercise) }
                     ))
                     if let rest = exercise.restSeconds {
                         Stepper(value: Binding(

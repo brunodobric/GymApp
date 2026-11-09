@@ -69,6 +69,7 @@ struct SettingsDTO: Codable {
     var prExcludedExercisesRaw: String?
     var statsDetailRaw: String?
     var sexRaw: String?
+    var compoundRestSeconds: Int?
 
     init(_ model: UserSettings) {
         id = model.id
@@ -98,6 +99,7 @@ struct SettingsDTO: Codable {
         prExcludedExercisesRaw = model.prExcludedExercisesRaw
         statsDetailRaw = model.statsDetailRaw
         sexRaw = model.sexRaw
+        compoundRestSeconds = model.compoundRestSeconds
     }
 
     func apply(to model: UserSettings) {
@@ -128,6 +130,7 @@ struct SettingsDTO: Codable {
         model.prExcludedExercisesRaw = prExcludedExercisesRaw ?? ""
         model.statsDetailRaw = statsDetailRaw ?? StatsDetail.basic.rawValue
         model.sexRaw = sexRaw ?? ""
+        model.compoundRestSeconds = compoundRestSeconds ?? 150
     }
 }
 
