@@ -19,3 +19,4 @@ dependencyResolutionManagement {
 rootProject.name = "Apolon"
 
 include(":core:units")
+include(":core:catalog")
