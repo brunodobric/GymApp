@@ -102,9 +102,14 @@ struct ExerciseProgressScreen: View {
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
     private var isPro: Bool { UserSettings.preferred(in: settingsList)?.statsDetail == .pro }
 
+    // Osnovni prikaz (kasnije besplatna verzija): samo težina za zadnja 3 mjeseca, bez usporedbe.
+    // 1RM, volumen, izbor raspona i usporedba su dio detaljnog prikaza.
+    private var shownMetric: Metric { isPro ? metric : .weight }
+    private var shownCompared: ExerciseRef? { isPro ? compared : nil }
+
     private func value(_ point: ExercisePoint) -> Double? {
         let kilograms: Double?
-        switch metric {
+        switch shownMetric {
         case .weight: kilograms = point.bestWeightKg
         case .oneRepMax: kilograms = point.estimatedOneRepMaxKg
         case .volume: kilograms = point.volumeKg
@@ -113,7 +118,8 @@ struct ExerciseProgressScreen: View {
     }
 
     private var range: ChartRange {
-        switch rangeChoice {
+        guard isPro else { return .months(3) }
+        return switch rangeChoice {
         case .month: .months(1)
         case .twoMonths: .months(2)
         case .sixMonths: .months(6)
@@ -126,7 +132,7 @@ struct ExerciseProgressScreen: View {
     private var plotted: [PlotPoint] {
         let now = Date.now
         return series(ref.name, range.filter(points, now: now))
-            + (compared.map { series($0.name, range.filter(comparedPoints, now: now)) } ?? [])
+            + (shownCompared.map { series($0.name, range.filter(comparedPoints, now: now)) } ?? [])
     }
 
     /// Os x pokriva cijeli odabrani raspon, i kad su treninzi samo u dijelu njega; za "sve" od prve do zadnje točke.
@@ -147,23 +153,25 @@ struct ExerciseProgressScreen: View {
         List {
             statusSection
             Section {
-                Picker("Prikaz", selection: $metric) {
-                    ForEach(Metric.allCases) { Text($0.title).tag($0) }
-                }
-                .pickerStyle(.segmented)
-                if metric == .oneRepMax && isPro {
-                    Toggle("Brzycki umjesto Epley", isOn: $useBrzycki)
-                }
-                Picker("Raspon", selection: $rangeChoice) {
-                    ForEach(RangeChoice.allCases) { Text($0.title).tag($0) }
-                }
-                .pickerStyle(.menu)
-                if rangeChoice == .custom {
-                    DatePicker("Od", selection: $customFrom, in: ...customTo, displayedComponents: .date)
-                    DatePicker("Do", selection: $customTo, in: customFrom...Date.now, displayedComponents: .date)
+                if isPro {
+                    Picker("Prikaz", selection: $metric) {
+                        ForEach(Metric.allCases) { Text($0.title).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    if metric == .oneRepMax {
+                        Toggle("Brzycki umjesto Epley", isOn: $useBrzycki)
+                    }
+                    Picker("Raspon", selection: $rangeChoice) {
+                        ForEach(RangeChoice.allCases) { Text($0.title).tag($0) }
+                    }
+                    .pickerStyle(.menu)
+                    if rangeChoice == .custom {
+                        DatePicker("Od", selection: $customFrom, in: ...customTo, displayedComponents: .date)
+                        DatePicker("Do", selection: $customTo, in: customFrom...Date.now, displayedComponents: .date)
+                    }
                 }
                 let visible = plotted
-                if points.count < 2 && compared == nil {
+                if points.count < 2 && shownCompared == nil {
                     Text("Za graf trebaju barem dva treninga s ovom vježbom.").foregroundStyle(.secondary)
                 } else if visible.isEmpty {
                     Text("U odabranom rasponu nema treninga s ovom vježbom.").foregroundStyle(.secondary)
@@ -176,13 +184,17 @@ struct ExerciseProgressScreen: View {
                     }
                     .chartYScale(domain: ChartValueDomain.domain(for: visible.map(\.value)))
                     .chartXScale(domain: xDomain(visible))
-                    .chartLegend(compared == nil ? .hidden : .visible)
+                    .chartLegend(shownCompared == nil ? .hidden : .visible)
                     .chartHeight(220, regular: 360)
                     .accessibilityLabel(Text(chartLabel))
                 }
-                compareMenu
+                if isPro {
+                    compareMenu
+                }
             } footer: {
-                if metric == .oneRepMax {
+                if !isPro {
+                    Text("Najveća težina po treningu, zadnja 3 mjeseca.")
+                } else if metric == .oneRepMax {
                     Text("Procjena 1RM računa se iz serija do 12 ponavljanja, uz ponavljanja u rezervi kad je upisan RPE ili RIR.")
                 }
             }
@@ -275,7 +287,7 @@ struct ExerciseProgressScreen: View {
     }
 
     private var chartLabel: String {
-        if let compared {
+        if let compared = shownCompared {
             return String(localized: "Graf napretka vježbi \(ref.name) i \(compared.name)")
         }
         return String(localized: "Graf napretka vježbe \(ref.name)")

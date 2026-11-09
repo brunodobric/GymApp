@@ -33,6 +33,8 @@ struct OverviewScreen: View {
 
     private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
+    /// Mišići razdoblja (mapa i serije) su dio detaljnog prikaza, kao kartica Mišići u Statistici.
+    private var isPro: Bool { settings?.statsDetail == .pro }
     private var interval: DateInterval { period.interval(containing: anchor) }
     private var isCurrent: Bool { interval.contains(.now) }
 
@@ -74,10 +76,12 @@ struct OverviewScreen: View {
                             period = .month
                         }
                     }
-                    OverviewMusclesCard(
-                        period: period, comparison: data.comparison, heatmap: data.heatmap, isCurrent: isCurrent,
-                        female: settings?.bodyMapFemale ?? false, selected: $selectedRegion
-                    )
+                    if isPro {
+                        OverviewMusclesCard(
+                            period: period, comparison: data.comparison, heatmap: data.heatmap, isCurrent: isCurrent,
+                            female: settings?.bodyMapFemale ?? false, selected: $selectedRegion
+                        )
+                    }
                     if !data.records.isEmpty {
                         StatisticsCard(title: recordsTitle) {
                             ForEach(Array(data.records.enumerated()), id: \.offset) { _, entry in
@@ -748,11 +752,14 @@ private struct OverviewMusclesCard: View {
 // MARK: - Kartica u Statistici
 
 /// Kartica Pregled na vrhu Statistike: tekući tjedan (treninzi prema cilju, dani, serije i vrijeme) te
-/// mjesec i godina ukratko. Otvara Pregled na tjednu, a retci mjeseca i godine na svom razdoblju.
+/// mjesec i godina ukratko te graf treninga po tjednu za zadnjih 12 tjedana. Otvara Pregled na tjednu,
+/// a retci mjeseca i godine na svom razdoblju.
 struct OverviewCard: View {
     let week: WeekProgress
     let month: PeriodSummary?
     let year: PeriodSummary?
+    /// Treninzi po tjednu, zadnjih 12 tjedana.
+    var frequency: [FrequencyPoint] = []
 
     var body: some View {
         StatisticsCard(title: "Pregled") {
@@ -788,7 +795,33 @@ struct OverviewCard: View {
                 Divider()
                 periodRow(title: "Ova godina", summary: year)
             }
+            if !frequency.isEmpty {
+                Divider()
+                frequencyChart
+            }
         }
+    }
+
+    private var frequencyAverage: Double {
+        Double(frequency.reduce(0) { $0 + $1.sessions }) / Double(max(frequency.count, 1))
+    }
+
+    @ViewBuilder
+    private var frequencyChart: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("Treninga tjedno").font(.subheadline.weight(.semibold))
+            Text("Prosjek zadnjih 12 tjedana: \(frequencyAverage.formatted(.number.precision(.fractionLength(0...1))))")
+                .font(.subheadline).foregroundStyle(.secondary)
+        }
+        Chart(frequency, id: \.weekStart) { point in
+            BarMark(
+                x: .value("Tjedan", point.weekStart, unit: .weekOfYear),
+                y: .value("Treninga", point.sessions)
+            )
+        }
+        .chartYAxis { AxisMarks(values: .automatic(desiredCount: 4)) }
+        .chartHeight(120, regular: 180)
+        .accessibilityLabel(Text("Graf broja treninga po tjednima"))
     }
 
     @ViewBuilder
