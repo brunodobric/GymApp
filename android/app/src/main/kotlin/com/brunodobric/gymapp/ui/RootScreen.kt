@@ -30,6 +30,7 @@ import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.ui.exercises.ExercisesScreen
 import com.brunodobric.gymapp.ui.history.HistoryScreen
 import com.brunodobric.gymapp.ui.home.HomeScreen
+import com.brunodobric.gymapp.ui.settings.SettingsScreen
 import com.brunodobric.gymapp.ui.workout.WorkoutScreen
 
 /** Pet glavnih dijelova aplikacije, isti kao tabovi na iOS-u (specifikacija, odjeljak 3). */
@@ -46,8 +47,13 @@ fun RootScreen(services: AppServices) {
     var selected by rememberSaveable { mutableStateOf(Section.HOME) }
     // Trening u tijeku je preko cijelog zaslona, kao na iPhoneu; tabovi ostaju ispod njega.
     var showsWorkout by rememberSaveable { mutableStateOf(false) }
+    var showsSettings by rememberSaveable { mutableStateOf(false) }
     if (showsWorkout) {
         WorkoutScreen(services, onClose = { showsWorkout = false })
+        return
+    }
+    if (showsSettings) {
+        SettingsScreen(services, onClose = { showsSettings = false })
         return
     }
     Scaffold(
@@ -66,7 +72,11 @@ fun RootScreen(services: AppServices) {
     ) { padding ->
         Box(Modifier.padding(padding).fillMaxSize()) {
             when (selected) {
-                Section.HOME -> HomeScreen(services, onOpenWorkout = { showsWorkout = true })
+                Section.HOME -> HomeScreen(
+                    services,
+                    onOpenWorkout = { showsWorkout = true },
+                    onOpenSettings = { showsSettings = true },
+                )
                 Section.HISTORY -> HistoryScreen(services)
                 Section.EXERCISES -> ExercisesScreen(services)
                 else -> Placeholder()

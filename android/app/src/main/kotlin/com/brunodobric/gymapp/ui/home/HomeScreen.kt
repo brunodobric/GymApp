@@ -2,13 +2,19 @@ package com.brunodobric.gymapp.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,7 +28,7 @@ import java.time.Duration
 
 /** Početna, prvi korak: nastavak treninga u tijeku ili početak praznog treninga. Kartice dolaze kasnije. */
 @Composable
-fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit) {
+fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit, onOpenSettings: () -> Unit) {
     val store = services.store
     rememberStoreRevision(store)
     val active = store.activeSession()
@@ -32,6 +38,13 @@ fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit) {
         modifier = Modifier.fillMaxWidth().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        // Postavke su na Početnoj, kao na iOS-u (gumb u alatnoj traci).
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.tab_home), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
+            IconButton(onClick = onOpenSettings) {
+                Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.settings))
+            }
+        }
         if (active != null) {
             val now = rememberTicker()
             Card(onClick = onOpenWorkout, modifier = Modifier.fillMaxWidth()) {
