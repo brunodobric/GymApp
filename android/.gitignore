@@ -1,0 +1,8 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.kotlin/
+# MoveKit sadržaj nikad ne ide u repozitorij (docs/movekit.md).
+app/src/main/assets/movekit/
