@@ -86,23 +86,64 @@ struct ProgramRecommendationSections: View {
     }
 }
 
+extension View {
+    /// Upozorenje kad odabrani program ima manje dana treninga od cilja dana tjedno, s ponudom da se cilj
+    /// smanji. `onAdd` dobiva program i novi cilj (nil kad korisnik zadrži stari).
+    func daysGoalWarning(
+        profile: TrainingProfile, program: Binding<Program?>, onAdd: @escaping (Program, Int?) -> Void
+    ) -> some View {
+        alert(
+            "Raspored ima manje dana od cilja",
+            isPresented: Binding(get: { program.wrappedValue != nil }, set: { if !$0 { program.wrappedValue = nil } }),
+            presenting: program.wrappedValue
+        ) { item in
+            let days = profile.lowerDaysGoal(for: item) ?? item.daysPerWeek
+            let goal = profile.daysPerWeek ?? days
+            Button("Smanji na \(days) dana") { onAdd(item, days) }
+            Button("Zadrži \(goal) dana") { onAdd(item, nil) }
+            Button("Odustani", role: .cancel) {}
+        } message: { item in
+            let days = profile.lowerDaysGoal(for: item) ?? item.daysPerWeek
+            let goal = profile.daysPerWeek ?? days
+            Text(
+                "Raspored ima \(days) dana treninga tjedno, a cilj ti je \(goal). Možeš smanjiti cilj ili ga zadržati i dodatni trening ili kardio odraditi sam."
+            )
+        }
+    }
+}
+
 /// Postavke > Profil > Predloži raspored.
 struct ProgramRecommendationScreen: View {
+    let settings: UserSettings
+    /// Profil u trenutku otvaranja, da se popis ne mijenja kad se smanji cilj.
     let profile: TrainingProfile
 
     @Environment(CatalogStore.self) private var catalogStore
     @Environment(\.modelContext) private var context
     @State private var added: String?
+    @State private var pendingProgram: Program?
     @State private var errorText: String?
+
+    init(settings: UserSettings) {
+        self.settings = settings
+        profile = TrainingProfile(settings: settings)
+    }
 
     var body: some View {
         Form {
             ProgramRecommendationSections(profile: profile) { program in
-                do {
-                    added = try ProgramAdder.add(program, profile: profile, context: context, catalogStore: catalogStore).name
-                } catch {
-                    errorText = String(localized: "Program se nije mogao dodati.")
+                if profile.lowerDaysGoal(for: program) != nil {
+                    pendingProgram = program
+                } else {
+                    add(program, newDaysGoal: nil)
                 }
+            }
+        }
+        .daysGoalWarning(profile: profile, program: $pendingProgram) { program, days in
+            // Potvrda o dodavanju je drugo upozorenje: čeka da se prvo zatvori, inače se ne prikaže.
+            Task {
+                try? await Task.sleep(for: .milliseconds(400))
+                add(program, newDaysGoal: days)
             }
         }
         .navigationTitle("Prijedlog rasporeda")
@@ -113,5 +154,14 @@ struct ProgramRecommendationScreen: View {
             Text("Raspored \(added ?? "") nalazi se u kartici Rasporedi, a ciljeve u treningu možeš prilagoditi.")
         }
         .errorAlert($errorText)
+    }
+
+    private func add(_ program: Program, newDaysGoal: Int?) {
+        do {
+            if let newDaysGoal { settings.trainingDaysPerWeek = newDaysGoal }
+            added = try ProgramAdder.add(program, profile: profile, context: context, catalogStore: catalogStore).name
+        } catch {
+            errorText = String(localized: "Program se nije mogao dodati.")
+        }
     }
 }

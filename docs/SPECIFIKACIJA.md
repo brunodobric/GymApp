@@ -278,12 +278,13 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Korisnik može ručno unijeti dodatna mjerenja.
    * Prikazuje se povijest i graf za svaku mjeru.
 7. **Onboarding (jedna stranica):**
-   * Kratka stranica s tipkama "Preskoči" i "Spremi". Sve osim jedinica je neobavezno, a isti podaci su kasnije u Postavkama > Profil.
+   * Kratka stranica s tipkama "Preskoči" i "Spremi". Sve osim jedinica je neobavezno, a isti podaci su kasnije u Postavkama (cilj, dani, iskustvo, oprema i spol u Profilu).
    * Trening: cilj (hipertrofija / snaga / rekompozicija / opća kondicija), dani tjedno, iskustvo (početnik < 6 mj., srednji 6 mj. – 2 god., napredni > 2 god.).
    * Gdje treniraš: Teretana (sva oprema jednim dodirom), Kućna teretana, Bučice i trake, Bez opreme ili "Prilagodi" s popisom opreme.
    * Tijelo: jedinice (kg / lbs), visina i težina, spol (za DOTS i tijelo na prikazu mišića).
-   * Povezivanje s Apple Health (prekidač, dozvola se traži odmah).
    * Nakon "Spremi", ako je korisnik odgovorio o treningu, nudi se gotov raspored (najbolji i dvije alternative) s tipkama "Dodaj i aktiviraj" i "Složit ću sam".
+   * Ako odabrani program ima manje dana treninga od cilja dana tjedno, upozorenje nudi "Smanji na N dana" ili "Zadrži N dana" (korisnik može dodatni trening ili kardio odraditi sam). Isto upozorenje je u Postavkama > Profil > Predloži raspored.
+   * Na kraju, i nakon "Preskoči", zaseban zaslon o Apple Healthu s izričitim izborom "Poveži s Apple Zdravljem" ili "Ne sada". Sistemska dozvola traži se tek nakon pristanka. Na uređaju bez Zdravlja zaslon se preskače.
 
 ---
 

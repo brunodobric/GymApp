@@ -3,7 +3,7 @@ import Foundation
 import SwiftData
 import Units
 
-/// Odgovori iz onboardinga. Sve osim jedinica i odgovora o Apple Zdravlju je neobavezno.
+/// Odgovori iz onboardinga. Sve osim jedinica i odgovora o Apple Zdravlju (zaseban zaslon na kraju) je neobavezno.
 public struct OnboardingAnswers: Equatable, Sendable {
     public static let heightRangeCm: ClosedRange<Double> = 100...250
     public static let weightRangeKg: ClosedRange<Double> = 20...400
@@ -72,9 +72,12 @@ public struct OnboardingApplier {
         try context.save()
     }
 
-    /// "Preskoči": ništa se ne sprema osim da je onboarding obavljen.
-    public func skip() throws {
-        try GymQueries(context: context).settings().onboardingCompleted = true
+    /// "Preskoči": ništa se ne sprema osim da je onboarding obavljen i odgovora o Apple Zdravlju,
+    /// koji se daje na zasebnom zaslonu i nakon preskakanja.
+    public func skip(wantsHealthKit: Bool = false) throws {
+        let settings = try GymQueries(context: context).settings()
+        settings.wantsHealthKit = wantsHealthKit
+        settings.onboardingCompleted = true
         try context.save()
     }
 }

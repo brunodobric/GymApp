@@ -21,7 +21,7 @@ struct ProfileSettingsSection: View {
         }
         Section {
             NavigationLink("Predloži raspored") {
-                ProgramRecommendationScreen(profile: TrainingProfile(settings: settings))
+                ProgramRecommendationScreen(settings: settings)
             }
         } footer: {
             Text("Gotov raspored prema cilju, danima, iskustvu i opremi. Postojeći rasporedi ostaju kakvi jesu.")
