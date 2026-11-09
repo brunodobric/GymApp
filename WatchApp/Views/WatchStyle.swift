@@ -8,17 +8,7 @@ import Training
 
 extension AccentChoice {
     /// Ista boja kao na iPhoneu (`AccentChoice.color` u aplikaciji).
-    var color: Color {
-        switch self {
-        case .blue: .blue
-        case .green: .green
-        case .orange: .orange
-        case .red: .red
-        case .purple: .purple
-        case .pink: .pink
-        case .teal: .teal
-        }
-    }
+    var color: Color { AccentPalette.color(for: rawValue) }
 }
 
 extension SessionMix {

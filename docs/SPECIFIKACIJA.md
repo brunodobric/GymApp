@@ -166,7 +166,7 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju stranicu: **Prikaz, Trening, Ploče i šipka** · **Obavijesti, Zdravlje, iCloud** · **Podaci** · **O aplikaciji**. Na iPadu je isti list s istim stranicama.
 
 * **Tema:** Svijetlo / Tamno / Automatski (prema sustavu).
-* **Accent boja:** Korisnik može birati accent boju aplikacije.
+* **Accent boja:** zadana je Apolon plava, boja aplikacije izvedena iz ikone. Korisnik može izabrati jednu od šest provjerenih boja: Apolon plava, indigo, ljubičasta, roza, tirkizna i grafit. Zelene, crvene i narančaste nema jer znače završenu seriju, brisanje i zagrijavanje (docs/DIZAJN.md, odjeljak Boja).
 * **Live Activity:** prema zadanom prati temu i accent boju aplikacije. Kad se "Prati aplikaciju" isključi, bira vlastitu temu i boju (kreću od aplikacijinih). Tema vrijedi za zaključani zaslon; Dynamic Island je uvijek crn, pa se ondje mijenja samo boja.
 * **Jedinice:** kg / lbs.
 * **Default rest timer:** Podešavanje zadanog vremena (default 90s).

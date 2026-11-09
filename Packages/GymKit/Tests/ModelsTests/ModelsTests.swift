@@ -164,26 +164,26 @@ struct ModelsTests {
         let settings = try GymQueries(context: context).settings()
         #expect(settings.liveActivityFollowsApp)
         settings.theme = .light
-        settings.accent = .green
+        settings.accent = .purple
         #expect(settings.effectiveLiveActivityTheme == .light)
-        #expect(settings.effectiveLiveActivityAccent == .green)
+        #expect(settings.effectiveLiveActivityAccent == .purple)
 
         // Isključivanje kreće od aplikacijinih vrijednosti, pa se Live Activity ne mijenja.
         settings.setLiveActivityFollowsApp(false)
         #expect(settings.liveActivityTheme == .light)
-        #expect(settings.liveActivityAccent == .green)
+        #expect(settings.liveActivityAccent == .purple)
 
         settings.liveActivityTheme = .dark
-        settings.liveActivityAccent = .orange
+        settings.liveActivityAccent = .teal
         settings.theme = .system
         #expect(settings.effectiveLiveActivityTheme == .dark)
-        #expect(settings.effectiveLiveActivityAccent == .orange)
+        #expect(settings.effectiveLiveActivityAccent == .teal)
 
         // Ponovno uključivanje vraća aplikacijine, a vlastite ostaju zapamćene.
         settings.setLiveActivityFollowsApp(true)
         #expect(settings.effectiveLiveActivityTheme == .system)
-        #expect(settings.effectiveLiveActivityAccent == .green)
-        #expect(settings.liveActivityAccent == .orange)
+        #expect(settings.effectiveLiveActivityAccent == .purple)
+        #expect(settings.liveActivityAccent == .teal)
     }
 
     @Test("Težina se u bazi čuva u kilogramima")

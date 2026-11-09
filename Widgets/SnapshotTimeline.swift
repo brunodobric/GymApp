@@ -40,15 +40,7 @@ struct SnapshotProvider: TimelineProvider {
 extension WidgetSnapshot {
     /// Naglasna boja iz Postavki (kao `AccentChoice.color` u aplikaciji).
     var accentColor: Color {
-        switch accent {
-        case "green": .green
-        case "orange": .orange
-        case "red": .red
-        case "purple": .purple
-        case "pink": .pink
-        case "teal": .teal
-        default: .blue
-        }
+        AccentPalette.color(for: accent)
     }
 
     var weightFormatter: WeightFormatter { WeightFormatter(unit: weightUnit) }

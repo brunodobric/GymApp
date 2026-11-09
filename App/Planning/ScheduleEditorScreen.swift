@@ -11,6 +11,7 @@ import Training
 /// Treninzi se dodaju iz izbornika ili iz bočne ploče (inspector), gdje se mogu odabrati više odjednom
 /// ili na iPadu povući na željeno mjesto u nizu.
 struct ScheduleEditorScreen: View {
+    @Environment(\.appAccent) private var accent
     @Bindable var schedule: Schedule
     /// Prikaz ili uređivanje. Bez toga raspored se uvijek uređuje.
     var editing: PlanningEditing?
@@ -286,7 +287,7 @@ struct ScheduleEditorScreen: View {
                     Text(Calendar.current.veryShortStandaloneWeekdaySymbols[weekday - 1])
                         .font(.subheadline.bold())
                         .frame(maxWidth: .infinity, minHeight: 36)
-                        .background(isOn ? Color.accentColor : Color.secondary.opacity(0.15), in: .circle)
+                        .background(isOn ? accent : Color.secondary.opacity(0.15), in: .circle)
                         .foregroundStyle(isOn ? Color.white : Color.primary)
                 }
                 .buttonStyle(.plain)

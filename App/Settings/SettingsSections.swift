@@ -23,27 +23,16 @@ extension AppTheme {
 }
 
 extension AccentChoice {
-    var color: Color {
-        switch self {
-        case .blue: .blue
-        case .green: .green
-        case .orange: .orange
-        case .red: .red
-        case .purple: .purple
-        case .pink: .pink
-        case .teal: .teal
-        }
-    }
+    var color: Color { AccentPalette.color(for: rawValue) }
 
     var title: LocalizedStringKey {
         switch self {
-        case .blue: "Plava"
-        case .green: "Zelena"
-        case .orange: "Narančasta"
-        case .red: "Crvena"
+        case .blue: "Apolon plava"
+        case .indigo: "Indigo"
         case .purple: "Ljubičasta"
         case .pink: "Roza"
         case .teal: "Tirkizna"
+        case .graphite: "Grafit"
         }
     }
 }

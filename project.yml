@@ -91,6 +91,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp
+        # Zadana naglasna boja (Apolon plava) iz kataloga: docs/DIZAJN.md, odjeljak Boja.
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         TARGETED_DEVICE_FAMILY: "1,2"
         GENERATE_INFOPLIST_FILE: NO
     scheme:
@@ -145,6 +147,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.brunodobric.gymapp.watchkitapp
+        # Zadana naglasna boja (Apolon plava) iz kataloga: docs/DIZAJN.md, odjeljak Boja.
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         GENERATE_INFOPLIST_FILE: NO
     scheme: {}
 

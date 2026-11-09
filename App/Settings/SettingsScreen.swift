@@ -89,7 +89,7 @@ struct SettingsScreen: View {
         // Za "Sustav" nil ne poništava već prisilno postavljenu shemu na prikazanom listu, pa se šalje
         // sistemska shema izričito.
         .preferredColorScheme(settings?.theme.colorScheme ?? systemScheme)
-        .tint(settings?.accent.color ?? AccentChoice.blue.color)
+        .appAccent(settings?.accent)
     }
 
     @ViewBuilder

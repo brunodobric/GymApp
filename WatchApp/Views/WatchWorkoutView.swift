@@ -68,6 +68,8 @@ struct WatchSetView: View {
                         .disabled(!store.canMoveExercise(by: -1))
                     Button("Završi seriju", systemImage: "checkmark") { store.completeCurrentSet() }
                         .buttonStyle(.borderedProminent)
+                        // Zelena znači gotovu seriju (kao kvačica na iPhoneu), pa ne prati akcent.
+                        .tint(.green)
                         .layoutPriority(1)
                     Button("Sljedeća vježba", systemImage: "chevron.forward") { store.moveExercise(by: 1) }
                         .disabled(!store.canMoveExercise(by: 1))
@@ -287,6 +289,7 @@ struct WatchStopwatchView: View {
                 Button("Završi seriju", systemImage: "checkmark") { store.completeCurrentSet() }
                     .labelStyle(.iconOnly)
                     .buttonStyle(.borderedProminent)
+                    .tint(.green)
             }
             .font(.title3.weight(.semibold))
         }

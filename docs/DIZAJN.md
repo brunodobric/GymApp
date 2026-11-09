@@ -76,6 +76,13 @@ Smjer "Apolon, mirniji": zaobljeni bold za naslove i brojeve, obični SF Pro za 
 * Dark Mode je zadani izgled, ali i svijetli mora biti ispravan.
 * Hrvatski tekstovi su dulji od engleskih: svaki ekran se provjerava na hrvatskom.
 
+## Boja
+
+* **Zadana boja je Apolon plava**, nijansa tamnoplave podloge ikone, posvijetljena da bude čitljiva: `#1F5BD6` u svijetloj i `#4C88FA` u tamnoj temi. Ista je u `AccentColor` u katalozima aplikacije i sata, pa sustav (upozorenja, prvo pokretanje) ima istu boju. Sat dobiva korisnikov izbor u kontekstu s iPhonea.
+* **Izbor u Postavkama** ima šest boja (`AccentPalette` u `Shared/Design`, `AccentChoice` u GymKitu): Apolon plava, indigo, ljubičasta, roza, tirkizna i grafit. Svaka ima svijetlu i tamnu vrijednost s barem 4,5 : 1 kao tekst na podlozi i barem 3 : 1 za bijeli tekst na punom gumbu. Nova boja ulazi samo ako prolazi oboje.
+* **Akcent u kodu:** kontrole ga dobivaju kroz `.tint`, a pozadine, grafovi i Canvas čitaju `@Environment(\.appAccent)`. Oboje postavlja `appAccent(_:)` na korijenu prozora. Ne koristi se `Color.accentColor` ni sistemska `.blue`. Widgeti i Live Activity boju čitaju iz snimke odnosno stanja preko `AccentPalette.color(for:)`.
+* **Semantičke boje ne prate akcent:** zelena je završena serija (i gumb "Završi seriju" na satu), narančasta zagrijavanje, rekord i niz, crvena brisanje i greške, a mišićne skupine imaju svoje boje. Zato zelene, crvene i narančaste nema u ponudi akcenata.
+
 ## Pristupačnost
 
 * **Dynamic Type:** veličine elemenata uz tekst (oznaka serije, polja za unos, odbrojavanje na satu) idu kroz `@ScaledMetric`, ne fiksne brojeve. Retci s više polja (redak serije, traka odmora) kod veličina pristupačnosti (`dynamicTypeSize.isAccessibilitySize`) prelaze u dva retka.

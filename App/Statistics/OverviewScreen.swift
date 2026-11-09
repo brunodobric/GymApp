@@ -446,6 +446,7 @@ private struct WeekDaysCard: View {
 
 /// Kalendar mjeseca s označenim danima treninga. Dodir na dan pokazuje njegove treninge ispod kalendara.
 private struct MonthCalendarCard: View {
+    @Environment(\.appAccent) private var accent
     let data: OverviewData
     let unit: WeightUnit
     @State private var selectedDay: Date?
@@ -506,11 +507,11 @@ private struct MonthCalendarCard: View {
                     .font(.body)
                     .foregroundStyle(isFuture ? .tertiary : .primary)
                 Circle()
-                    .fill(day.isTrained ? Color.accentColor : Color.clear)
+                    .fill(day.isTrained ? accent : Color.clear)
                     .frame(width: 6, height: 6)
             }
             .frame(maxWidth: .infinity, minHeight: 40)
-            .background(isSelected ? Color.accentColor.opacity(0.2) : Color.clear, in: .rect(cornerRadius: CornerRadius.small))
+            .background(isSelected ? accent.opacity(0.2) : Color.clear, in: .rect(cornerRadius: CornerRadius.small))
         }
         .buttonStyle(.plain)
         .disabled(isFuture)
@@ -542,6 +543,7 @@ private struct MonthCalendarCard: View {
 
 /// Treninzi po mjesecima (dodir na mjesec otvara njegov pregled) i aktivnost cijele godine po danima.
 private struct YearCard: View {
+    @Environment(\.appAccent) private var accent
     let summary: PeriodSummary
     let onSelectMonth: (Date) -> Void
     @State private var selectedMonth: Date?
@@ -553,7 +555,7 @@ private struct YearCard: View {
                     x: .value("Mjesec", month.start, unit: .month),
                     y: .value("Treninga", month.sessions)
                 )
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(accent)
             }
             .chartXAxis {
                 AxisMarks(values: summary.months.map(\.start)) { _ in
@@ -582,6 +584,7 @@ private struct YearCard: View {
 
 /// Dani godine u stupcima po tjednima, kao kvadratići: obojen je dan s treningom.
 private struct YearActivityGrid: View {
+    @Environment(\.appAccent) private var accent
     let days: [WeekProgress.Day]
 
     private var calendar: Calendar { .current }
@@ -607,7 +610,7 @@ private struct YearActivityGrid: View {
                     width: cell, height: cell
                 )
                 let color: Color = if day.isTrained {
-                    .accentColor
+                    accent
                 } else if day.date > today {
                     .clear
                 } else {
@@ -625,6 +628,7 @@ private struct YearActivityGrid: View {
 /// Tvrde serije po mišiću uz razdoblje prije, i mapa tijela s opterećenjem razdoblja. Za mjesec i godinu
 /// prosjek serija tjedno.
 private struct OverviewMusclesCard: View {
+    @Environment(\.appAccent) private var accent
     let period: OverviewPeriod
     let comparison: VolumeComparison?
     let heatmap: [String: RegionLoad]
@@ -719,7 +723,7 @@ private struct OverviewMusclesCard: View {
                     .foregroundStyle(by: .value("Razdoblje", entry.series))
                     .position(by: .value("Razdoblje", entry.series))
                 }
-                .chartForegroundStyleScale([previousTitle: Color.secondary.opacity(0.5), currentTitle: Color.accentColor])
+                .chartForegroundStyleScale([previousTitle: Color.secondary.opacity(0.5), currentTitle: accent])
                 .chartHeight(220, regular: 320)
                 .accessibilityLabel(Text(chartLabel))
                 Text("Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji.")

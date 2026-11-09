@@ -1465,6 +1465,16 @@
         }
       }
     },
+    "Apolon plava" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apollo blue"
+          }
+        }
+      }
+    },
     "Apple Zdravlje" : {
       "localizations" : {
         "en" : {
@@ -1831,16 +1841,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The body drawings in the heatmap come from the MuscleMap project (MIT license)."
-          }
-        }
-      }
-    },
-    "Crvena" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Red"
           }
         }
       }
@@ -2675,6 +2675,16 @@
         }
       }
     },
+    "Grafit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Graphite"
+          }
+        }
+      }
+    },
     "Greška" : {
       "localizations" : {
         "en" : {
@@ -2751,6 +2761,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Has a workout"
+          }
+        }
+      }
+    },
+    "Indigo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indigo"
           }
         }
       }
@@ -4657,16 +4677,6 @@
         }
       }
     },
-    "Narančasta" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Orange"
-          }
-        }
-      }
-    },
     "Nastavi" : {
       "localizations" : {
         "en" : {
@@ -5743,16 +5753,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plateau"
-          }
-        }
-      }
-    },
-    "Plava" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blue"
           }
         }
       }
@@ -9813,16 +9813,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Health isn't available on this device."
-          }
-        }
-      }
-    },
-    "Zelena" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Green"
           }
         }
       }

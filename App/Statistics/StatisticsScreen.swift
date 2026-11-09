@@ -466,6 +466,7 @@ private struct HeatmapCard: View {
 
 /// Legenda fiksne skale heatmapa (`LoadScale.weeklyLevel`): četiri razine boje.
 struct HeatmapLegend: View {
+    @Environment(\.appAccent) private var accent
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Tvrde serije tjedno").font(.caption).foregroundStyle(.secondary)
@@ -482,7 +483,7 @@ struct HeatmapLegend: View {
     private func swatch(level: Int, _ label: Text) -> some View {
         HStack(spacing: 4) {
             RoundedRectangle(cornerRadius: 3)
-                .fill(BodyFigureView.fill(intensity: LoadScale.intensity(level: level)))
+                .fill(BodyFigureView.fill(intensity: LoadScale.intensity(level: level), accent: accent))
                 .frame(width: 14, height: 14)
             label.font(.caption)
         }
