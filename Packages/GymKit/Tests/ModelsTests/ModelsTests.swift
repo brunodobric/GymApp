@@ -539,6 +539,15 @@ struct OnboardingTests {
         try OnboardingApplier(context: context).skip()
         let settings = try GymQueries(context: context).settings()
         #expect(settings.onboardingCompleted && settings.goal == nil && settings.weightUnit == .kilograms)
+        #expect(!settings.wantsHealthKit)
+    }
+
+    @Test("Odgovor o Apple Zdravlju sprema se i nakon preskakanja")
+    func skipKeepsHealthAnswer() throws {
+        let context = try makeContext()
+        try OnboardingApplier(context: context).skip(wantsHealthKit: true)
+        let settings = try GymQueries(context: context).settings()
+        #expect(settings.onboardingCompleted && settings.wantsHealthKit && settings.goal == nil)
     }
 }
 

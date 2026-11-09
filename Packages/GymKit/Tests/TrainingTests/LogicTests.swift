@@ -263,6 +263,12 @@ struct PersonalRecordTests {
         }
         #expect(AccentChoice.allCases == [.blue, .indigo, .purple, .pink, .teal, .graphite])
     }
+
+    @Test("Stara boja u JSON-u dekodira se kao zadana, a ne ruši dekodiranje")
+    func removedAccentDecodesAsDefault() throws {
+        let decoded = try JSONDecoder().decode([AccentChoice].self, from: Data(#"["green","teal"]"#.utf8))
+        #expect(decoded == [.blue, .teal])
+    }
 }
 
 @Suite("Rest timer i tijek")

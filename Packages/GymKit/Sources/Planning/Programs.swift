@@ -210,6 +210,14 @@ public enum ProgramLibrary {
     }
 }
 
+public extension Program {
+    /// Broj dana treninga tjedno nakon dodavanja za profil (dani podsjetnika): dani iz profila ako ih program
+    /// podržava, inače dani programa.
+    func trainingDays(for profile: TrainingProfile) -> Int {
+        profile.daysPerWeek.flatMap { suitableDays.contains($0) ? min($0, daysPerWeek) : nil } ?? daysPerWeek
+    }
+}
+
 /// Stvara predloške i raspored iz gotovog programa. Nazive vježbi daje pozivatelj (katalog je na jeziku korisnika).
 public struct ProgramInstaller {
     public let context: ModelContext
@@ -271,8 +279,7 @@ public struct ProgramInstaller {
         // Fiksni dani za podsjetnike: inače bi "3 dana" s jednim danom razmaka bila 4 treninga tjedno.
         // Vrijeme podsjetnika ostaje prazno, pa se ništa ne zakazuje dok ga korisnik ne postavi.
         schedule.reminderMode = .fixedDays
-        let days = profile.daysPerWeek.flatMap { program.suitableDays.contains($0) ? min($0, program.daysPerWeek) : nil }
-        schedule.weekdays = ProgramLibrary.defaultWeekdays(daysPerWeek: days ?? program.daysPerWeek)
+        schedule.weekdays = ProgramLibrary.defaultWeekdays(daysPerWeek: program.trainingDays(for: profile))
         try context.save()
         return schedule
     }

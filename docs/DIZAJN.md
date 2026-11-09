@@ -78,7 +78,7 @@ Smjer "Apolon, mirniji": zaobljeni bold za naslove i brojeve, obični SF Pro za 
 
 ## Boja
 
-* **Zadana boja je Apolon plava**, nijansa tamnoplave podloge ikone, posvijetljena da bude čitljiva: `#1F5BD6` u svijetloj i `#4C88FA` u tamnoj temi. Ista je u `AccentColor` u katalozima aplikacije i sata, pa sustav (upozorenja, prvo pokretanje) i sat imaju istu boju.
+* **Zadana boja je Apolon plava**, nijansa tamnoplave podloge ikone, posvijetljena da bude čitljiva: `#1F5BD6` u svijetloj i `#4C88FA` u tamnoj temi. Ista je u `AccentColor` u katalozima aplikacije i sata, pa sustav (upozorenja, prvo pokretanje) ima istu boju. Sat dobiva korisnikov izbor u kontekstu s iPhonea.
 * **Izbor u Postavkama** ima šest boja (`AccentPalette` u `Shared/Design`, `AccentChoice` u GymKitu): Apolon plava, indigo, ljubičasta, roza, tirkizna i grafit. Svaka ima svijetlu i tamnu vrijednost s barem 4,5 : 1 kao tekst na podlozi i barem 3 : 1 za bijeli tekst na punom gumbu. Nova boja ulazi samo ako prolazi oboje.
 * **Akcent u kodu:** kontrole ga dobivaju kroz `.tint`, a pozadine, grafovi i Canvas čitaju `@Environment(\.appAccent)`. Oboje postavlja `appAccent(_:)` na korijenu prozora. Ne koristi se `Color.accentColor` ni sistemska `.blue`. Widgeti i Live Activity boju čitaju iz snimke odnosno stanja preko `AccentPalette.color(for:)`.
 * **Semantičke boje ne prate akcent:** zelena je završena serija (i gumb "Završi seriju" na satu), narančasta zagrijavanje, rekord i niz, crvena brisanje i greške, a mišićne skupine imaju svoje boje. Zato zelene, crvene i narančaste nema u ponudi akcenata.

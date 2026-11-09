@@ -1425,6 +1425,16 @@
         }
       }
     },
+    "Aplikacija radi i bez toga. Odluku možeš promijeniti u Postavkama > Zdravlje." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app works without it too. You can change this in Settings > Health."
+          }
+        }
+      }
+    },
     "Apolon" : {
       "localizations" : {
         "en" : {
@@ -1761,6 +1771,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Goal"
+          }
+        }
+      }
+    },
+    "Cilj %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal %@"
           }
         }
       }
@@ -3275,6 +3295,16 @@
         }
       }
     },
+    "Kardio treninzi iz drugih aplikacija i sa sata dolaze u povijest." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cardio workouts from other apps and your watch appear in your history."
+          }
+        }
+      }
+    },
     "Kartice" : {
       "localizations" : {
         "en" : {
@@ -3465,6 +3495,36 @@
         }
       }
     },
+    "Pokreni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
+    "Vježbe: %lld od %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercises: %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Završeno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed"
+          }
+        }
+      }
+    },
     "najdalje" : {
       "localizations" : {
         "en" : {
@@ -3511,6 +3571,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Progress and records"
+          }
+        }
+      }
+    },
+    "Ne sada" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Now"
+          }
+        }
+      }
+    },
+    "Nekoliko pitanja za prijedlog treninga. Sve je neobavezno i možeš promijeniti u Postavkama." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A few questions for a workout suggestion. Everything is optional and you can change it in Settings."
           }
         }
       }
@@ -3787,6 +3867,26 @@
         }
       }
     },
+    "Raspored ima %lld dana treninga tjedno, a cilj ti je %lld. Možeš smanjiti cilj ili ga zadržati i dodatni trening ili kardio odraditi sam." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The schedule has %lld training days a week and your goal is %lld. You can lower the goal, or keep it and add an extra workout or cardio yourself."
+          }
+        }
+      }
+    },
+    "Raspored ima manje dana od cilja" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The schedule has fewer days than your goal"
+          }
+        }
+      }
+    },
     "Rekordi godine" : {
       "localizations" : {
         "en" : {
@@ -3867,6 +3967,16 @@
         }
       }
     },
+    "Smanji na %lld dana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lower to %lld days"
+          }
+        }
+      }
+    },
     "Snaga + kardio" : {
       "localizations" : {
         "en" : {
@@ -3923,6 +4033,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "All exercises"
+          }
+        }
+      }
+    },
+    "Težina i visina uvoze se iz Zdravlja." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight and height are imported from Health."
           }
         }
       }
@@ -3993,6 +4113,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This week's workouts against your goal."
+          }
+        }
+      }
+    },
+    "Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts are saved to Health and count toward your Activity rings."
           }
         }
       }
@@ -4653,16 +4783,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inactive"
-          }
-        }
-      }
-    },
-    "Nekoliko pitanja za prijedlog treninga. Sve je neobavezno i možeš promijeniti u Postavkama > Profil." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A few questions for a workout suggestion. Everything is optional and you can change it in Settings > Profile."
           }
         }
       }
@@ -7277,16 +7397,6 @@
         }
       }
     },
-    "Serije: %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sets: %lld"
-          }
-        }
-      }
-    },
     "Sinkronizacija isključena" : {
       "localizations" : {
         "en" : {
@@ -8437,16 +8547,6 @@
         }
       }
     },
-    "Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove, a kardio treninzi, težina i visina dolaze iz njega. Aplikacija radi i bez toga." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Workouts are saved to Health and count toward your Activity rings, and cardio workouts, weight and height come from it. The app also works without it."
-          }
-        }
-      }
-    },
     "Treninzi, predlošci, rasporedi, vlastite vježbe, mjerenja i postavke sinkroniziraju se preko tvog iClouda između tvojih uređaja. Katalog vježbi je dio aplikacije i ne sinkronizira se." : {
       "localizations" : {
         "en" : {
@@ -9077,16 +9177,6 @@
         }
       }
     },
-    "Vježbe: %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exercises: %lld"
-          }
-        }
-      }
-    },
     "Vježbi: %lld" : {
       "localizations" : {
         "en" : {
@@ -9493,6 +9583,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Last 90 days"
+          }
+        }
+      }
+    },
+    "Zadrži %lld dana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep %lld days"
           }
         }
       }

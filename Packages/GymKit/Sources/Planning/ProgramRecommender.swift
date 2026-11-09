@@ -47,6 +47,16 @@ public struct TrainingProfile: Equatable, Sendable {
     }
 }
 
+public extension TrainingProfile {
+    /// Dani treninga programa kad ih je manje od cilja dana tjedno, inače nil. Tada se prije dodavanja
+    /// nudi smanjenje cilja (korisnik može zadržati cilj i dodatni trening odraditi sam).
+    func lowerDaysGoal(for program: Program) -> Int? {
+        guard let daysPerWeek else { return nil }
+        let days = program.trainingDays(for: self)
+        return days < daysPerWeek ? days : nil
+    }
+}
+
 /// Zašto je program predložen. Tekst slaže aplikacija na jeziku sučelja.
 public enum RecommendationReason: Equatable, Sendable {
     case days(Int)

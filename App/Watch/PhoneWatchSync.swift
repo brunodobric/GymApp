@@ -3,6 +3,7 @@ import Foundation
 import Models
 import OSLog
 import Planning
+import Stats
 import SwiftData
 
 /// Veza aplikacije na iPhoneu sa satom (specifikacija, odjeljak 6, "Sinkronizacija iPhone ↔ Watch").
@@ -94,12 +95,19 @@ final class PhoneWatchSync {
     func refreshContext() {
         guard let context, transport.isCounterpartAvailable else { return }
         do {
-            lastContext = try WatchContextBuilder(context: context).make()
+            lastContext = try contextBuilder(context).make()
         } catch {
             logger.error("Kontekst za sat: \(error.localizedDescription)")
         }
         let active = try? GymQueries(context: context).activeSession()
         sendContext(session: active.flatMap { $0.controllingDevice == .phone ? SessionSnapshot(session: $0) : nil })
+    }
+
+    /// Kontekst za sat zna i koje su vježbe kardio (ikona vrste treninga, sažetak i štoperica na satu).
+    private func contextBuilder(_ context: ModelContext) -> WatchContextBuilder {
+        let custom = (try? context.fetch(FetchDescriptor<CustomExercise>())) ?? []
+        let info = ExerciseInfoBuilder.provider(catalog: AppServices.bundledCatalog, custom: custom)
+        return WatchContextBuilder(context: context, isCardio: ExerciseInfoBuilder.isCardio(info))
     }
 
     private func flush(sessionID: UUID) {
@@ -139,7 +147,7 @@ final class PhoneWatchSync {
     private func sendContext(session: SessionSnapshot?) {
         guard transport.isCounterpartAvailable else { return }
         if lastContext == nil, let context {
-            lastContext = try? WatchContextBuilder(context: context).make()
+            lastContext = try? contextBuilder(context).make()
         }
         // Tjedni cilj i težina za komplikacije na satu, iz iste snimke kao widgeti na iPhoneu.
         lastContext?.week = WidgetRefresher.shared.latest?.week
