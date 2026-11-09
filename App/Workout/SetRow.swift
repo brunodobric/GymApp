@@ -11,6 +11,7 @@ import Units
 /// Polja drže vlastiti tekst. Izmjena ide u model (i u bazu) kad korisnik potvrdi kotačić ili tipka u polje.
 /// Težina i ponavljanja se biraju kotačićem (`WheelInputField`), trajanje i udaljenost tipkovnicom.
 struct SetRow: View {
+    @Environment(\.appAccent) private var accent
     let set: SetLog
     let inputType: ExerciseInputType
     let position: Int
@@ -98,7 +99,7 @@ struct SetRow: View {
 
     /// Boja aktivne serije preko obične boje retka, da redak ostane neprozirna kartica.
     private var highlightBackground: some View {
-        Color.accentColor.opacity(0.12)
+        accent.opacity(0.12)
             .background(Color(uiColor: .secondarySystemGroupedBackground))
     }
 

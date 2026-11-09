@@ -64,7 +64,6 @@ struct WatchPlanView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .tint(.green)
             .listRowBackground(Color.clear)
 
             ForEach(Array(plan.exercises.enumerated()), id: \.offset) { _, exercise in

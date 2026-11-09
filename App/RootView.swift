@@ -83,11 +83,11 @@ struct RootView: View {
             selection = .home
             homeRequest = .activeWorkout
         }
-        .tint(settings?.accent.color ?? AccentChoice.blue.color)
+        .appAccent(settings?.accent)
         .preferredColorScheme(settings?.theme.colorScheme)
         .fullScreenCover(isPresented: $showsOnboarding) {
             OnboardingScreen()
-                .tint(settings?.accent.color ?? AccentChoice.blue.color)
+                .appAccent(settings?.accent)
         }
         // Kratka odgoda: ako je onboarding potreban zbog brisanja podataka, list Postavki se prvo mora zatvoriti.
         .task(id: needsOnboarding) {

@@ -95,7 +95,7 @@ struct ExerciseWindow: View {
 extension View {
     /// Tema i boja iz postavki, kao u glavnom prozoru.
     func windowAppearance(_ settings: UserSettings?) -> some View {
-        tint(settings?.accent.color ?? AccentChoice.blue.color)
+        appAccent(settings?.accent)
             .preferredColorScheme(settings?.theme.colorScheme)
     }
 }

@@ -68,6 +68,7 @@ struct WatchSetView: View {
                     .disabled(!store.canMoveExercise(by: -1))
                 Button("Završi seriju", systemImage: "checkmark") { store.completeCurrentSet() }
                     .buttonStyle(.borderedProminent)
+                    // Zelena znači gotovu seriju (kao kvačica na iPhoneu), pa ne prati akcent.
                     .tint(.green)
                 Button("Sljedeća vježba", systemImage: "chevron.forward") { store.moveExercise(by: 1) }
                     .disabled(!store.canMoveExercise(by: 1))
@@ -98,7 +99,6 @@ struct WatchSetView: View {
                 if store.showsFinishPrompt {
                     Button("Završi trening", systemImage: "flag.checkered") { store.finish() }
                         .buttonStyle(.borderedProminent)
-                        .tint(.green)
                 }
                 if let exercise = store.currentExercise {
                     Button("Dodaj seriju", systemImage: "plus") { store.addSet(to: exercise.id) }
@@ -161,7 +161,7 @@ struct WatchSetValuesEditor: View {
         .frame(maxWidth: .infinity)
         .overlay {
             RoundedRectangle(cornerRadius: 8)
-                .stroke(focused == field ? Color.green : Color.secondary.opacity(0.4), lineWidth: focused == field ? 2 : 1)
+                .stroke(focused == field ? Color.accentColor : Color.secondary.opacity(0.4), lineWidth: focused == field ? 2 : 1)
         }
         .focusable()
         .focused($focused, equals: field)

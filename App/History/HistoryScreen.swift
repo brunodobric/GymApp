@@ -208,6 +208,7 @@ private struct SessionRow: View {
 
 /// Mjesec s točkicom ispod dana u kojem je odrađen trening. Dodir na dan ga odabire, ponovni dodir poništava odabir.
 private struct CalendarMonthView: View {
+    @Environment(\.appAccent) private var accent
     @Binding var month: Date
     @Binding var selectedDay: Date?
     let workoutDays: Set<Date>
@@ -261,11 +262,11 @@ private struct CalendarMonthView: View {
                 Text("\(calendar.component(.day, from: day))")
                     .font(.body)
                 Circle()
-                    .fill(hasWorkout ? Color.accentColor : Color.clear)
+                    .fill(hasWorkout ? accent : Color.clear)
                     .frame(width: 6, height: 6)
             }
             .frame(maxWidth: .infinity, minHeight: 40)
-            .background(isSelected ? Color.accentColor.opacity(0.2) : Color.clear, in: .rect(cornerRadius: CornerRadius.small))
+            .background(isSelected ? accent.opacity(0.2) : Color.clear, in: .rect(cornerRadius: CornerRadius.small))
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(day.formatted(date: .complete, time: .omitted)))

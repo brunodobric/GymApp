@@ -77,6 +77,7 @@ struct SVGShape: Shape {
 
 /// Jedno tijelo (sprijeda ili straga) s mišićima obojenima prema intenzitetu regije.
 struct BodyFigureView: View {
+    @Environment(\.appAccent) private var accent
     let female: Bool
     let back: Bool
     let heatmap: [String: RegionLoad]
@@ -93,7 +94,7 @@ struct BodyFigureView: View {
                 ForEach(parsed.muscles) { shape in
                     let intensity = shape.region.flatMap { heatmap[$0]?.intensity } ?? 0
                     SVGShape(commands: shape.commands, box: parsed.bounds)
-                        .fill(Self.fill(intensity: intensity))
+                        .fill(Self.fill(intensity: intensity, accent: accent))
                         .overlay {
                             if let region = shape.region, region == selected {
                                 SVGShape(commands: shape.commands, box: parsed.bounds).stroke(Color.primary, lineWidth: 1.5)
@@ -110,7 +111,7 @@ struct BodyFigureView: View {
     }
 
     /// Boja mišića za intenzitet 0...1; 0 je neopterećen mišić (sivo). Koristi je i legenda heatmapa.
-    static func fill(intensity: Double) -> Color {
-        intensity > 0 ? Color.accentColor.opacity(0.25 + 0.75 * intensity) : Color.secondary.opacity(0.22)
+    static func fill(intensity: Double, accent: Color) -> Color {
+        intensity > 0 ? accent.opacity(0.25 + 0.75 * intensity) : Color.secondary.opacity(0.22)
     }
 }

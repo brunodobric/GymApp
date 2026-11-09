@@ -10,6 +10,7 @@ import SwiftUI
 /// Koriste ga sažetak nakon treninga i detalji treninga iz povijesti. Trening bez tvrde serije
 /// (npr. uvezen iz Zdravlja) nema odjeljak.
 struct SessionMusclesSection: View {
+    @Environment(\.appAccent) private var accent
     let session: Session
     /// Tvrde serije po regiji u tjednu treninga (sažetak nakon treninga); prazno kad se ne prikazuju.
     var weekSets: [String: Double] = [:]
@@ -91,7 +92,7 @@ struct SessionMusclesSection: View {
         .buttonStyle(.plain)
         // Crta između redaka ide do lijevog ruba, preko točke.
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
-        .listRowBackground(selected ? Color.accentColor.opacity(0.12) : nil)
+        .listRowBackground(selected ? accent.opacity(0.12) : nil)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(BodyRegion.title(load.region)))
         .accessibilityValue(Text("\(load.weightedSets.formatted(.number.precision(.fractionLength(0...1)))) serija, \(detail(load))"))
@@ -117,6 +118,7 @@ struct SessionMusclesSection: View {
 
 /// Razina opterećenja u četiri stupnja, u istim bojama kao mišići na mapi.
 private struct LevelSegments: View {
+    @Environment(\.appAccent) private var accent
     let level: Int
 
     var body: some View {
@@ -124,7 +126,7 @@ private struct LevelSegments: View {
             ForEach(1...LoadScale.maximumLevel, id: \.self) { step in
                 RoundedRectangle(cornerRadius: 3)
                     .fill(step <= level
-                        ? BodyFigureView.fill(intensity: LoadScale.intensity(level: step))
+                        ? BodyFigureView.fill(intensity: LoadScale.intensity(level: step), accent: accent)
                         : Color.secondary.opacity(0.15))
                     .frame(width: 10, height: 14)
             }

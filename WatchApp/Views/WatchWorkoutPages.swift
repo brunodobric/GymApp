@@ -18,7 +18,7 @@ struct WatchControlsView: View {
                 // Gumbi su gore, da ih točkice stranica pri dnu nikad ne prekriju.
                 HStack {
                     Button("Završi") { confirmsFinish = true }
-                        .tint(.green)
+                        .tint(.accentColor)
                     Button("Odbaci", role: .destructive) { confirmsDiscard = true }
                 }
                 if let active = store.active {

@@ -251,6 +251,18 @@ struct PersonalRecordTests {
         settings.accentColorRaw = "nepoznato"
         #expect(settings.theme == .system && settings.accent == .blue)
     }
+
+    @Test("Boje koje su izašle iz ponude čitaju se kao zadana Apolon plava")
+    func removedAccentsFallBackToDefault() {
+        let settings = UserSettings()
+        for removed in ["green", "orange", "red"] {
+            settings.accentColorRaw = removed
+            settings.liveActivityAccentRaw = removed
+            #expect(settings.accent == .blue)
+            #expect(settings.liveActivityAccent == .blue)
+        }
+        #expect(AccentChoice.allCases == [.blue, .indigo, .purple, .pink, .teal, .graphite])
+    }
 }
 
 @Suite("Rest timer i tijek")

@@ -13,20 +13,12 @@ extension RestTimerActivityAttributes.ContentState {
     }
 
     var accentColor: Color {
-        switch accent {
-        case "green": .green
-        case "orange": .orange
-        case "red": .red
-        case "purple": .purple
-        case "pink": .pink
-        case "teal": .teal
-        default: .blue
-        }
+        AccentPalette.color(for: accent)
     }
 }
 
 extension EnvironmentValues {
     /// Naglasna boja Live Activityja. `Color.accentColor` u widgetu je uvijek zadana boja iz kataloga,
     /// pa dijelovi čitaju ovu vrijednost.
-    @Entry var activityAccent: Color = .blue
+    @Entry var activityAccent: Color = AccentPalette.apolon
 }
