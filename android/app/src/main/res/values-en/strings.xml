@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_home">Home</string>
+    <string name="tab_history">History</string>
+    <string name="tab_plans">Schedules</string>
+    <string name="tab_exercises">Exercises</string>
+    <string name="tab_statistics">Statistics</string>
+    <string name="coming_soon">Coming soon on Android.</string>
+    <string name="search_exercises">Search exercises</string>
+    <string name="no_results">No results</string>
+</resources>
