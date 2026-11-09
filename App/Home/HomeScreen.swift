@@ -30,10 +30,10 @@ struct HomeScreen: View {
     @State private var showsCardEditor = false
     @Namespace private var workoutTransition
     @State private var presentedSession: Session?
-    /// Izbor treninga: bez rasporeda spremljeni treninzi, ispod rasporeda njegovi treninzi i ostali spremljeni.
+    /// Izbor treninga: bez rasporeda spremljeni treninzi, s rasporedima njihovi treninzi i ostali spremljeni.
     @State private var showsTemplatePicker = false
-    /// Raspored iz kojeg je izbor otvoren (nil: izbor bez rasporeda).
-    @State private var pickerSchedule: Schedule?
+    /// Aktivni rasporedi čiji su treninzi u izboru (prazno: izbor bez rasporeda).
+    @State private var pickerSchedules: [Schedule] = []
     /// Trening odabran u listu; pokreće se tek kad se list zatvori, jer se puni ekran ne može prikazati dok se list zatvara.
     @State private var chosenWorkout: WorkoutChoice?
     @State private var errorText: String?
@@ -205,9 +205,9 @@ struct HomeScreen: View {
                     planned: upcoming,
                     templateCount: startableTemplates.count,
                     onStart: { planned in start(planned) },
-                    offersOtherWorkout: { offersOtherWorkout($0) },
-                    onChooseTemplate: { schedule in
-                        pickerSchedule = schedule
+                    offersOtherWorkout: offersOtherWorkout(upcoming),
+                    onChooseTemplate: { schedules in
+                        pickerSchedules = schedules
                         showsTemplatePicker = true
                     },
                     onStartEmpty: startWorkout
@@ -347,18 +347,22 @@ struct HomeScreen: View {
         TemplateStarter.startable(templates)
     }
 
-    /// List za izbor treninga: uz raspored njegovi treninzi (sljedeći označen) i ostali spremljeni, inače samo spremljeni.
+    /// List za izbor treninga: uz rasporede njihovi treninzi (sljedeći označen), svaki raspored u svom odjeljku,
+    /// i ostali spremljeni; inače samo spremljeni.
     private func templatePicker(_ upcoming: [PlannedWorkout]) -> TemplatePickerSheet {
-        var scheduled: [PlannedWorkout] = []
-        var nextItemID: UUID?
-        if let schedule = pickerSchedule {
-            scheduled = workoutChoices(schedule)
-            nextItemID = upcoming.first(where: { $0.schedule.id == schedule.id })?.item.id
-        }
+        var seen = Set<UUID>()
+        let groups = pickerSchedules
+            .filter { seen.insert($0.id).inserted }
+            .map { schedule in
+                ScheduleChoices(
+                    schedule: schedule,
+                    workouts: workoutChoices(schedule),
+                    nextItemID: upcoming.first(where: { $0.schedule.id == schedule.id })?.item.id
+                )
+            }
+            .filter { !$0.workouts.isEmpty }
         return TemplatePickerSheet(
-            schedule: pickerSchedule,
-            scheduled: scheduled,
-            nextItemID: nextItemID,
+            groups: groups,
             templates: startableTemplates,
             onSelect: { choice in chosenWorkout = choice }
         )
@@ -369,9 +373,10 @@ struct HomeScreen: View {
         (try? ScheduleEngine(context: context).workoutChoices(of: schedule)) ?? []
     }
 
-    /// Red "Odaberi drugi trening" ispod rasporeda: ima smisla kad postoji barem jedan trening snage osim sljedećeg.
-    private func offersOtherWorkout(_ planned: PlannedWorkout) -> Bool {
-        startableTemplates.contains { $0.id != planned.template.id }
+    /// Red "Odaberi drugi trening" ispod rasporeda: ima smisla kad postoji barem jedan trening snage osim sljedećih.
+    private func offersOtherWorkout(_ upcoming: [PlannedWorkout]) -> Bool {
+        let next = Set(upcoming.map(\.template.id))
+        return startableTemplates.contains { !next.contains($0.id) }
     }
 
     private func startChosenWorkout() {
@@ -416,7 +421,7 @@ extension HomeScreen {
         } else if let planned = upcomingWorkouts.first {
             start(planned)
         } else if !startableTemplates.isEmpty {
-            pickerSchedule = nil
+            pickerSchedules = []
             showsTemplatePicker = true
         } else {
             startWorkout()

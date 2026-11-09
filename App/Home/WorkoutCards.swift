@@ -7,20 +7,20 @@ import Units
 
 /// Kartica za početak treninga na vrhu Početne, istog oblika kao kartice ispod nje.
 /// Svaki red je jedan način početka: sljedeći trening svakog rasporeda (kardio se otvara kao uputa za sat),
-/// ispod njega izbor drugog treninga tog rasporeda ili spremljenog treninga, i prazan trening. Bez aktivnog
+/// ispod svih njih jedan red za izbor drugog treninga (iz bilo kojeg aktivnog rasporeda ili spremljenog), i prazan trening. Bez aktivnog
 /// rasporeda, a sa spremljenim treninzima, prvi red otvara njihov popis (`TemplatePickerSheet`).
 struct StartWorkoutCard: View {
     let planned: [PlannedWorkout]
     /// Broj spremljenih treninga koji se mogu pokrenuti bez rasporeda (`TemplateStarter.startable`).
     let templateCount: Int
     let onStart: (PlannedWorkout) -> Void
-    /// Postoji li trening koji se može pokrenuti umjesto ovog sljedećeg (red "Odaberi drugi trening").
-    let offersOtherWorkout: (PlannedWorkout) -> Bool
-    /// Izbor treninga: s rasporedom njegovi treninzi i ostali spremljeni, bez njega samo spremljeni.
-    let onChooseTemplate: (Schedule?) -> Void
+    /// Postoji li trening koji se može pokrenuti umjesto sljedećih (red "Odaberi drugi trening").
+    let offersOtherWorkout: Bool
+    /// Izbor treninga: s aktivnim rasporedima njihovi treninzi i ostali spremljeni, bez njih samo spremljeni.
+    let onChooseTemplate: ([Schedule]) -> Void
     let onStartEmpty: () -> Void
 
-    /// Red za izbor spremljenog treninga kad nema aktivnog rasporeda; inače je izbor ispod svakog rasporeda.
+    /// Red za izbor spremljenog treninga kad nema aktivnog rasporeda; inače je izbor ispod sljedećih treninga.
     private var offersTemplates: Bool {
         templateCount > 0 && planned.isEmpty
     }
@@ -35,18 +35,19 @@ struct StartWorkoutCard: View {
                 }
                 .accessibilityIdentifier("home.startPlanned")
                 Divider().padding(.leading, 68)
-                if offersOtherWorkout(workout) {
-                    Button { onChooseTemplate(workout.schedule) } label: {
-                        StartRow(symbol: "list.bullet", isProminent: false, subtitle: nil) {
-                            Text("Odaberi drugi trening")
-                        }
+            }
+            // Jedan red za sve rasporede: s dva aktivna rasporeda red ispod svakog bio bi isti izbor dvaput.
+            if !planned.isEmpty && offersOtherWorkout {
+                Button { onChooseTemplate(planned.map(\.schedule)) } label: {
+                    StartRow(symbol: "list.bullet", isProminent: false, subtitle: nil) {
+                        Text("Odaberi drugi trening")
                     }
-                    .accessibilityIdentifier("home.chooseScheduleWorkout")
-                    Divider().padding(.leading, 68)
                 }
+                .accessibilityIdentifier("home.chooseScheduleWorkout")
+                Divider().padding(.leading, 68)
             }
             if offersTemplates {
-                Button { onChooseTemplate(nil) } label: {
+                Button { onChooseTemplate([]) } label: {
                     StartRow(symbol: "list.bullet", isProminent: true, subtitle: String(localized: "\(templateCount) spremljenih treninga")) {
                         Text("Odaberi trening")
                     }
