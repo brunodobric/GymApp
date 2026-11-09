@@ -38,7 +38,7 @@ enum CloudKitSchemaTool {
     }
 }
 
-/// Ekran u Prototipima (samo Debug build) za pokretanje alata.
+/// Ekran u Prototipima (samo Debug build) za pokretanje alata. Tekstovi su doslovni i ne idu u String Catalog.
 struct CloudKitSchemaToolView: View {
     @State private var result: String?
     @State private var isRunning = false
@@ -46,22 +46,22 @@ struct CloudKitSchemaToolView: View {
     var body: some View {
         Form {
             Section {
-                Button("Stvori shemu u Developmentu") { run() }
+                Button(String("Stvori shemu u Developmentu")) { run() }
                     .disabled(isRunning || !AppServices.isCloudSyncSupported)
                 if isRunning { ProgressView() }
                 if let result { Text(result).font(.footnote) }
             } footer: {
-                Text("""
+                Text(verbatim: """
                     Pokreće se iz Xcodea (Debug build ide u Development okruženje), nakon svake promjene sheme. \
                     Zatim u CloudKit konzoli: Deploy Schema Changes u produkciju.
                     """)
             }
-            Section("Stanje") {
-                LabeledContent("Sinkronizacija u ovom pokretanju", value: AppServices.isSyncRunning ? "da" : "ne")
-                LabeledContent("Kontejner", value: AppServices.cloudContainerIdentifier)
+            Section(String("Stanje")) {
+                LabeledContent(String("Sinkronizacija u ovom pokretanju"), value: AppServices.isSyncRunning ? "da" : "ne")
+                LabeledContent(String("Kontejner"), value: AppServices.cloudContainerIdentifier)
             }
         }
-        .navigationTitle("CloudKit shema")
+        .navigationTitle(String("CloudKit shema"))
     }
 
     private func run() {

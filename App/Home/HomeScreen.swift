@@ -99,7 +99,7 @@ struct HomeScreen: View {
                 #if DEBUG
                 if !ScreenshotMode.isActive {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Prototipi", systemImage: "hammer") {
+                        Button(String("Prototipi"), systemImage: "hammer") {
                             showsPrototypes = true
                         }
                     }
