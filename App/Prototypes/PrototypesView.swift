@@ -2,6 +2,7 @@
 import SwiftUI
 
 /// Alati za razvoj (zasad alat za CloudKit shemu, `docs/sinkronizacija.md`). Postoji samo u Debug buildu.
+/// Tekstovi su doslovni (`String`, `verbatim:`) i ne idu u String Catalog (`docs/lokalizacija.md`).
 struct PrototypesView: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -11,10 +12,10 @@ struct PrototypesView: View {
                 NavigationLink {
                     CloudKitSchemaToolView()
                 } label: {
-                    Label("CloudKit shema", systemImage: "icloud")
+                    Label(String("CloudKit shema"), systemImage: "icloud")
                 }
             }
-            .navigationTitle("Prototipi")
+            .navigationTitle(String("Prototipi"))
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Gotovo") { dismiss() }
