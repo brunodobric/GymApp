@@ -23,6 +23,7 @@ include(":core:catalog")
 include(":core:model")
 include(":core:training")
 include(":core:planning")
+include(":core:stats")
 
 // Modul aplikacije treba Android SDK (ANDROID_HOME ili sdk.dir u local.properties). Bez njega se grade i
 // testiraju samo čisti Kotlin moduli, npr. u okruženju gdje se SDK ne može preuzeti.
