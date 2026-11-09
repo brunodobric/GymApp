@@ -26,6 +26,7 @@ Ovaj odjeljak vrijedi ispred svega ispod njega.
   * **Widgeti** imaju crnu pozadinu u tamnoj temi i vidljiv trokut na gumbu ▶ (#128, #129); isto vrijedi za Glance widgete.
   * **Zadani akcent je Apolon plava** uz paletu od šest boja (#127).
 * **Pohrana bez Rooma (odluka u izradi, 9. 11.).** Logika na iOS-u mijenja graf modela (trening → vježbe → serije) i zatim sprema. Da bi port bio vjeran i testovi isti, Android ima isti graf u memoriji (`core/model`, `GymStore`): logika mijenja objekte, a `save()` usporedbom sa zadnjim spremljenim stanjem zapisuje samo promijenjene i obrisane zapise. Trajno spremanje je jedna SQLite tablica `records(type, id, json)` preko Androidova `SQLiteDatabase` (bez Rooma i KSP-a, dakle bez nove ovisnosti). Upiti idu nad memorijom (podaci jednog korisnika su mali), a `revision` u `GymStore` je `DataVersion`. Zapisi koje Android ne razumije (iz novije verzije ili uvoza) i zapisi bez roditelja ostaju u bazi netaknuti. Nazivi polja u JSON-u su isti kao u SwiftData modelima, a UUID-ovi se pišu velikim slovima, pa izvoz i uvoz ostaju isti na obje platforme. Ako se ikad pokaže sporim, `RecordPersistence` se može zamijeniti tablicama po modelu bez promjene logike.
+* **Sigurnosna kopija (`domain/backup`) u istom zapisu kao na iOS-u.** JSON ima ista polja, ključeve abecedno, datume kao sekunde od 1. 1. 2001. (zadano u Swiftovu `JSONEncoder`u) i UUID-ove velikim slovima, pa se kopija s iPhonea uvozi na Android i obrnuto. CSV ima iste stupce i datume (ISO 8601 s milisekundama, UTC). Slika vlastite vježbe je u kopiji kao Base64 bajtovi, a u aplikaciji zasebna datoteka (`imageFile`). Dok ne postoji Health Connect, uvoz preskače treninge iz aplikacije Workouts i težinu ili visinu iz Zdravlja (na iOS-u idu u lokalnu bazu zdravstvenih podataka, ne u korisničku). `DataResetScope` (iCloud) se ne prenosi; brisanje u Driveu dolazi sa sinkronizacijom.
 * **Okruženje za izradu:** u ovom oblaku `dl.google.com` je blokiran, pa se Android SDK ne može instalirati. Čisti Kotlin moduli (logika i testovi) grade se i testiraju ovdje, a aplikacija se gradi na GitHub Actionsu (Ubuntu runner ima Android SDK). Za lokalni build aplikacije ovdje treba dopustiti `dl.google.com` u mrežnim postavkama okruženja.
 
 **Nova procjena za mobitel:** oko 36 tjedana sa sinkronizacijom (faze 0 do 8, 10, 12, 13, 14), oko 33 bez nje.
@@ -139,7 +140,7 @@ android/
   core/model          (čisti Kotlin: modeli, GymStore, deduplikacija, kartice, onboarding, koraci težine)
   core/training       (WorkoutEngine, SessionEditor, PersonalRecords, PRRanking, PlateCalculator, RestAndFlow)
   core/planning       (TemplateEngine, ScheduleEngine, TemplateStarter, EditSnapshot, Reminders, Programs)
-  domain/stats        (Statistics, EffectiveSets, Trends, PeriodOverview, WeeklyReview, BodyTracking...)
+  core/stats          (Statistics, EffectiveSets, Trends, PeriodOverview, WeeklyReview, BodyTracking...)
   domain/backup       (CSV, JSON, ForeignWorkoutImport, DataReset)
   domain/health       (HealthImporter, pravila zapisa treninga)
   shared/wearprotocol (SessionSnapshot, WorkoutCommand, WorkoutEvent, WatchContext: dijele telefon i sat)
