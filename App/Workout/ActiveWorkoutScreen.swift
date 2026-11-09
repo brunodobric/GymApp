@@ -49,6 +49,8 @@ struct ActiveWorkoutScreen: View {
     @State private var errorCount = 0
     /// Trening se zatvara s ovog ekrana (a ne sa sata).
     @State private var isClosingHere = false
+    /// Odgođeno spremanje izmjene polja serije (`scheduleSave`).
+    @State private var pendingSave: Task<Void, Never>?
 
     private var engine: WorkoutEngine { WorkoutEngine(context: context) }
     private var unit: WeightUnit { settings?.weightUnit ?? .kilograms }
@@ -105,7 +107,7 @@ struct ActiveWorkoutScreen: View {
             .onChange(of: completedSetCount) { syncCompletedSets() }
             .onChange(of: scenePhase) { _, phase in
                 // Promjena iz Live Activityja dok je aplikacija u pozadini provjerava se i pri povratku.
-                if phase == .active { syncCompletedSets() }
+                if phase == .active { syncCompletedSets() } else { flushPendingSave() }
             }
             .onChange(of: session.stateRaw) {
                 // Trening je završen ili odbačen na satu: ekran se zatvara.
@@ -168,7 +170,10 @@ struct ActiveWorkoutScreen: View {
             .errorAlert($errorText)
         }
         .onAppear { WorkoutScreenPresence.appeared() }
-        .onDisappear { WorkoutScreenPresence.disappeared() }
+        .onDisappear {
+            flushPendingSave()
+            WorkoutScreenPresence.disappeared()
+        }
         .task {
             // Trening je u međuvremenu završen (npr. na satu): nema se što nastaviti.
             if session.state != .active {
@@ -204,7 +209,7 @@ struct ActiveWorkoutScreen: View {
             unit: unit,
             effortScale: settings?.effortScale ?? .rpe,
             onToggleOpen: { openExerciseID = isOpen(exercise) ? nil : exercise.id },
-            onEdit: { try? engine.touch(session) },
+            onEdit: scheduleSave,
             onToggleComplete: { toggleComplete($0, in: exercise) },
             onChangeKind: { set, kind in
                 set.kind = kind
@@ -279,6 +284,7 @@ struct ActiveWorkoutScreen: View {
         do {
             if set.isCompleted {
                 try engine.uncompleteSet(set)
+                cancelPendingSave()
                 return
             }
             let catalog = catalogStore.catalog
@@ -286,6 +292,8 @@ struct ActiveWorkoutScreen: View {
                 set, restDefaults: settings?.restDefaults ?? .standard,
                 isCompound: { catalog?.isCompound(exerciseKey: $0) }
             )
+            // `completeSet` je spremio i izmjene koje su čekale odgođeno spremanje.
+            cancelPendingSave()
             completedCount += 1
             syncCompletedSets()
         } catch WorkoutError.setIncomplete {
@@ -364,6 +372,7 @@ struct ActiveWorkoutScreen: View {
 
     private func finish() {
         isClosingHere = true
+        flushPendingSave()
         do {
             try engine.finishSession(session)
             WorkoutLifecycle.finished(session, context: context, origin: .phone)
@@ -384,6 +393,7 @@ struct ActiveWorkoutScreen: View {
 
     private func discard() {
         isClosingHere = true
+        cancelPendingSave()
         WorkoutLifecycle.discard(session, context: context)
         dismiss()
     }
@@ -546,4 +556,32 @@ private enum UndoAction {
 private struct SummaryBox: Identifiable, Equatable {
     let id = UUID()
     let summary: WorkoutSummary
+}
+
+// MARK: Odgođeno spremanje
+
+extension ActiveWorkoutScreen {
+    /// Izmjena polja serije: sprema se pola sekunde nakon zadnje izmjene, pa tipkanje ne sprema bazu na svaki znak.
+    private func scheduleSave() {
+        pendingSave?.cancel()
+        pendingSave = Task {
+            try? await Task.sleep(for: .milliseconds(500))
+            guard !Task.isCancelled else { return }
+            pendingSave = nil
+            try? engine.touch(session)
+        }
+    }
+
+    private func cancelPendingSave() {
+        pendingSave?.cancel()
+        pendingSave = nil
+    }
+
+    /// Izmjena koja još čeka spremanje sprema se odmah (izlazak s ekrana, završetak treninga).
+    private func flushPendingSave() {
+        guard let task = pendingSave else { return }
+        task.cancel()
+        pendingSave = nil
+        try? engine.touch(session)
+    }
 }
