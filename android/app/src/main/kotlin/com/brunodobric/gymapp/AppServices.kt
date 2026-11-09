@@ -2,6 +2,8 @@ package com.brunodobric.gymapp
 
 import android.content.Context
 import com.brunodobric.gymapp.catalog.ExerciseCatalog
+import com.brunodobric.gymapp.data.SqliteRecordPersistence
+import com.brunodobric.gymapp.model.GymStore
 
 /**
  * Usluge koje dijele svi ekrani. Katalog se učitava jednom i lijeno, izvan glavne niti kad ga ekran
@@ -14,4 +16,10 @@ class AppServices(context: Context) {
         val json = appContext.assets.open("catalog.json").bufferedReader().use { it.readText() }
         ExerciseCatalog.decode(json)
     }
+
+    /**
+     * Korisnička baza (`ModelContext` na iOS-u). Učitava se pri prvom pristupu; ekrani je koriste s glavne niti,
+     * a teški izračuni rade nad kopijama podataka.
+     */
+    val store: GymStore by lazy { GymStore(SqliteRecordPersistence(appContext)) }
 }
