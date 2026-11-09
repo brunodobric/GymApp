@@ -1745,16 +1745,6 @@
         }
       }
     },
-    "CloudKit shema" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "CloudKit schema"
-          }
-        }
-      }
-    },
     "Core trening" : {
       "localizations" : {
         "en" : {
@@ -3321,16 +3311,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "How hard the whole workout was, from 1 to 10. Effort times duration is the training load (Foster et al. 2001)."
-          }
-        }
-      }
-    },
-    "Kontejner" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Container"
           }
         }
       }
@@ -5907,16 +5887,6 @@
         }
       }
     },
-    "Pokreće se iz Xcodea (Debug build ide u Development okruženje), nakon svake promjene sheme. Zatim u CloudKit konzoli: Deploy Schema Changes u produkciju." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Run from Xcode (a Debug build goes to the Development environment) after every schema change. Then in the CloudKit console: Deploy Schema Changes to production."
-          }
-        }
-      }
-    },
     "Pokreće trening" : {
       "localizations" : {
         "en" : {
@@ -6817,16 +6787,6 @@
         }
       }
     },
-    "Prototipi" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prototypes"
-          }
-        }
-      }
-    },
     "Provjeravam iCloud…" : {
       "localizations" : {
         "en" : {
@@ -7387,16 +7347,6 @@
         }
       }
     },
-    "Sinkronizacija u ovom pokretanju" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sync in this session"
-          }
-        }
-      }
-    },
     "Sinkroniziram…" : {
       "localizations" : {
         "en" : {
@@ -7727,16 +7677,6 @@
         }
       }
     },
-    "Stanje" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Status"
-          }
-        }
-      }
-    },
     "Stari podaci ostaju na uređaju u zasebnoj mapi. Treninzi iz iClouda ponovno se preuzimaju." : {
       "localizations" : {
         "en" : {
@@ -7823,16 +7763,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Waist"
-          }
-        }
-      }
-    },
-    "Stvori shemu u Developmentu" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create schema in Development"
           }
         }
       }

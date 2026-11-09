@@ -15,6 +15,7 @@ Aplikacija je na hrvatskom i engleskom. Izvorni jezik je hrvatski: tekst u kodu 
 * Tekst koji se gradi u kodu ide kroz `String(localized: "…")` ili `LocalizedStringResource`. Obični `String` literal koji završi u `Text(string)` se ne prevodi.
 * Brojeve, datume, trajanja i popise formatiraj kroz `formatted()`, ne lijepljenjem stringova, kako bi poštovali jezik i regiju.
 * Tekst s brojem koji mijenja oblik ("1 serija", "3 serije", "5 serija") dobiva u katalogu varijante za množinu (`plural`) na oba jezika. Hrvatski ima oblike `one`, `few` i `other`, engleski `one` i `other`.
+* Tekst u kodu unutar `#if DEBUG` (Prototipi, alat za CloudKit shemu) ne ide u katalog: piše se doslovno, `Text(verbatim:)` ili `String("…")` (npr. `Button(String("Prototipi"), systemImage: "hammer")`). Izvoz lokalizacije prevodi aplikaciju bez `DEBUG`-a, pa bi takav tekst u katalogu ispao zastarjeo i srušio provjeru.
 * Simboli koji se ne prevode (`·`, `×`, `+10`) u katalogu imaju `shouldTranslate: false`.
 
 ## Provjera na CI-ju
