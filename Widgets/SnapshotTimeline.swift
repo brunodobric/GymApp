@@ -96,17 +96,28 @@ struct WidgetHeading: View {
 }
 
 /// Okrugli gumb ▶ koji otvara aplikaciju i pokreće sljedeći trening.
+/// U obojenom i prozirnom načinu sustav sve neprozirne piksele boji istom bojom, pa bi bijeli
+/// trokut na krugu nestao. Zato je tamo trokut izrezan iz kruga (`play.circle.fill`).
 struct StartButton: View {
     var size: CGFloat = 44
+    @Environment(\.widgetRenderingMode) private var renderingMode
 
     var body: some View {
         Button(intent: StartWorkoutFromWidgetIntent()) {
-            Image(systemName: "play.fill")
-                .font(.system(size: size * 0.4, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: size, height: size)
-                .background(Circle().fill(.tint))
-                .widgetAccentable()
+            if renderingMode == .fullColor {
+                Image(systemName: "play.fill")
+                    .font(.system(size: size * 0.4, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: size, height: size)
+                    .background(Circle().fill(.tint))
+            } else {
+                Image(systemName: "play.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .fontWeight(.bold)
+                    .frame(width: size, height: size)
+                    .widgetAccentable()
+            }
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("Započni trening"))
