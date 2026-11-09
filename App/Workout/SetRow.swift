@@ -8,7 +8,8 @@ import Units
 /// Stupci su iste širine u svim retcima i u zaglavlju (`SetTableHeader`), pa su brojevi poravnati.
 /// Kod najvećih veličina teksta redak prelazi u okomiti raspored bez stupaca.
 /// Završena serija se zasivi, a kvačica ostaje zelena.
-/// Polja drže vlastiti tekst. Izmjena ide u model (i u bazu) kad korisnik potvrdi kotačić ili tipka u polje.
+/// Polja drže vlastiti tekst. Izmjena ide u model kad korisnik potvrdi kotačić ili tipka u polje, a `onEdit` je sprema
+/// (aktivni trening sprema s kratkom odgodom, da tipkanje ne sprema bazu na svaki znak).
 /// Težina i ponavljanja se biraju kotačićem (`WheelInputField`), trajanje i udaljenost tipkovnicom.
 struct SetRow: View {
     @Environment(\.appAccent) private var accent
@@ -323,29 +324,56 @@ struct SetRow: View {
 
     // MARK: Primjena unosa
 
+    /// Kvačica: tekst polja ide u model samo ako se razlikuje od modela, bez spremanja (sprema ga `completeSet`).
+    /// Neizmijenjena težina se ne pretvara ponovno iz zaokruženog teksta, pa vrijednost u lbs ne klizi.
     private func applyAllFields() {
         switch inputType {
         case .weightReps, .weightedBodyweight, .assisted:
-            applyWeight()
-            applyReps()
+            applyWeightIfChanged()
+            applyRepsIfChanged()
         case .bodyweight:
-            applyReps()
+            applyRepsIfChanged()
         case .duration:
-            applyDuration()
+            applyDurationIfChanged()
         case .durationDistance:
-            applyDuration()
-            applyDistance()
+            applyDurationIfChanged()
+            applyDistanceIfChanged()
         }
     }
 
+    private func applyWeightIfChanged() {
+        let shown = Self.load(of: set, inputType: inputType).map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
+        guard !Self.same(NumberInput.parse(weightText), shown, tolerance: 0.051) else { return }
+        writeWeight()
+    }
+
+    private func applyRepsIfChanged() {
+        let value = Int(reps.trimmingCharacters(in: .whitespaces))
+        if value != set.reps { set.reps = value }
+    }
+
+    private func applyDurationIfChanged() {
+        let value = DurationInput.parse(duration)
+        if value != set.durationSeconds { set.durationSeconds = value }
+    }
+
+    private func applyDistanceIfChanged() {
+        guard !Self.same(NumberInput.parse(distance), set.distanceMeters.map { $0 / 1000 }) else { return }
+        set.distanceMeters = NumberInput.parse(distance).map { $0 * 1000 }
+    }
+
     private func applyWeight() {
+        writeWeight()
+        onEdit()
+    }
+
+    private func writeWeight() {
         let kilograms = NumberInput.parse(weightText).map { WeightConversion.kilograms(from: $0, in: unit) }
         if inputType == .weightedBodyweight || inputType == .assisted {
             set.extraWeightKg = kilograms
         } else {
             set.weightKg = kilograms
         }
-        onEdit()
     }
 
     private func applyReps() {

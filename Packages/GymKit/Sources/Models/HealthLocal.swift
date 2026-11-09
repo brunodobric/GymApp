@@ -27,11 +27,6 @@ public final class HealthWorkout {
     public var activeEnergyKilocalories: Double?
     public var distanceMeters: Double?
     public var averageHeartRate: Double?
-    /// Plan iz WorkoutKita po kojem je trening odrađen na satu. Nekadašnji kardio planovi; više se ne puni.
-    public var workoutPlanId: UUID?
-    /// Raspored i predložak s kojima je trening bio povezan (nekadašnji kardio planovi; više se ne puni).
-    public var scheduleId: UUID?
-    public var templateId: UUID?
 
     public init(healthKitWorkoutId: UUID, name: String, startedAt: Date, endedAt: Date) {
         self.healthKitWorkoutId = healthKitWorkoutId
@@ -53,9 +48,6 @@ public final class HealthWorkout {
         session.activeEnergyKilocalories = activeEnergyKilocalories
         session.distanceMeters = distanceMeters
         session.averageHeartRate = averageHeartRate
-        session.workoutPlanId = workoutPlanId
-        session.scheduleId = scheduleId
-        session.templateId = templateId
         return session
     }
 }
@@ -223,8 +215,9 @@ public struct HealthLocalStore {
     @discardableResult
     public func moveHealthDataOutOfUserStore() throws -> Int {
         var moved = 0
-        let knownWorkouts = Set(try workouts().map(\.healthKitWorkoutId))
         let imported = try context.fetch(FetchDescriptor<Session>(predicate: #Predicate { $0.isImportedFromWorkoutsApp == true }))
+        // Lokalna baza se čita samo kad ima što premjestiti (ovo se zove pri svakom pokretanju i nakon uvoza s iClouda).
+        let knownWorkouts = imported.isEmpty ? [] : Set(try workouts().map(\.healthKitWorkoutId))
         var addedWorkouts = Set<UUID>()
         for session in imported {
             // Bez UUID-a iz Zdravlja (npr. ručno složena kopija) trening se ipak čuva, pod svojim id-om.
@@ -238,19 +231,16 @@ public struct HealthLocalStore {
                 workout.activeEnergyKilocalories = session.activeEnergyKilocalories
                 workout.distanceMeters = session.distanceMeters
                 workout.averageHeartRate = session.averageHeartRate
-                workout.workoutPlanId = session.workoutPlanId
-                workout.scheduleId = session.scheduleId
-                workout.templateId = session.templateId
                 context.insert(workout)
             }
             context.delete(session)
             moved += 1
         }
 
-        let knownSamples = Set(try measurements().map(\.healthKitSampleId))
         var addedSamples = Set<UUID>()
         let source = MeasurementSource.healthKit.rawValue
         let fromHealth = try context.fetch(FetchDescriptor<BodyMeasurement>(predicate: #Predicate { $0.sourceRaw == source }))
+        let knownSamples = fromHealth.isEmpty ? [] : Set(try measurements().map(\.healthKitSampleId))
         // Iz Zdravlja se uvoze samo težina i visina. Druge mjere s tim izvorom ostaju gdje jesu.
         for measurement in fromHealth where measurement.kind == .weight || measurement.kind == .height {
             if let sampleId = measurement.healthKitSampleId, !knownSamples.contains(sampleId),

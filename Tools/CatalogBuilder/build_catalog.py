@@ -4,14 +4,13 @@
 MoveKit sadržaj ne smije u javni repozitorij, pa build ima dva izlaza:
 
 * javni `Resources/Catalog/catalog.json`: naši podaci o vježbama (id, nazivi, kategorija, vrsta, mišići,
-  oprema, vrsta unosa, regije mape mišića) i tablica starih id-jeva. Bez MoveKit tekstova i medija.
+  oprema, vrsta unosa, regije mape mišića). Bez MoveKit tekstova i medija.
 * privatna mapa (zadano `<MoveKit paket>/GymApp`): `texts.json` s uputama i čestim greškama te
   `Media/` s pretvorenim klipovima (HEVC) i posterima (JPEG). `scripts/movekit.sh` je kopira u
   `Resources/MoveKit/`, koja je u .gitignore i ulazi u build samo na Macu s paketom.
 
 Ulazi u repozitoriju: mapping.json (pravila), overrides.json (ispravke po vježbi), names-hr.json
-(hrvatski nazivi), legacy-ids.json (stari id-jevi iz free-exercise-db). Hrvatski prijevodi uputa su
-privatni: `<privatna mapa>/translations-hr.json`.
+(hrvatski nazivi). Hrvatski prijevodi uputa su privatni: `<privatna mapa>/translations-hr.json`.
 
 Pokretanje (iz korijena repozitorija, za medije treba ffmpeg):
     python3 Tools/CatalogBuilder/build_catalog.py --movekit ~/Documents/MoveKit [--media]
@@ -196,12 +195,6 @@ def texts_for(raw: dict, hr: dict | None) -> dict:
     return {"instructions": instructions, "commonMistakes": mistakes}
 
 
-def check_legacy(legacy: dict, slugs: set[str]) -> None:
-    unknown = {old: new for old, new in legacy.items() if new is not None and new not in slugs}
-    if unknown:
-        raise BuildError(f"legacy-ids.json upućuje na nepostojeće vježbe: {unknown}")
-
-
 def find_media(package: Path, relative: str) -> Path:
     """Datoteka iz paketa: MoveKit isporučuje klipove i postere u zasebnim mapama."""
     name = Path(relative).name
@@ -246,7 +239,6 @@ def main() -> int:
     mapping = load_json(TOOL / "mapping.json")
     overrides = load_json(TOOL / "overrides.json", {})
     hr_names = load_json(TOOL / "names-hr.json", {})
-    legacy = load_json(TOOL / "legacy-ids.json", {})
     hr_texts = load_json(private / "translations-hr.json", {})
 
     slugs = {raw["slug"] for raw in metadata}
@@ -254,7 +246,6 @@ def main() -> int:
         unknown = sorted(k for k in table if not k.startswith("_") and k not in slugs)
         if unknown:
             raise BuildError(f"{label}: nepoznate vježbe {unknown}")
-    check_legacy({k: v for k, v in legacy.items() if not k.startswith("_")}, slugs)
 
     exercises = [convert(raw, mapping, overrides.get(raw["slug"], {}), hr_names.get(raw["slug"])) for raw in metadata]
     exercises.sort(key=lambda e: e["name"]["en"].lower())
@@ -263,7 +254,6 @@ def main() -> int:
         catalog = {
             "version": CATALOG_VERSION,
             "source": SOURCE,
-            "legacyIds": {k: v for k, v in sorted(legacy.items()) if not k.startswith("_")},
             "exercises": exercises,
         }
         PUBLIC_OUTPUT.parent.mkdir(parents=True, exist_ok=True)

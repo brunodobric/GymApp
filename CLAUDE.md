@@ -8,7 +8,6 @@ iOS, iPadOS i watchOS aplikacija za bilježenje treninga. Swift + SwiftUI, Swift
 * `docs/PLAN_IZRADE.md`: faze, redoslijed i kriteriji "gotovo kad"
 * `docs/DIZAJN.md`: pravila Apple HIG-a za ovu aplikaciju
 * `docs/PRAVNO_I_PRIVATNOST.md`: privatnost, licence, App Store pravila
-* `docs/prototipi.md`: prototipi faze 0 i nalazi
 * `docs/sinkronizacija.md`: iCloud sinkronizacija, objava CloudKit sheme i provjera na uređajima
 * `docs/performanse.md`: signposti, ciljevi i mjerenje performansi u Instrumentsu
 * `docs/izdanje.md`: TestFlight beta, greške iz bete i slanje na App Store review

@@ -95,22 +95,18 @@ public struct CatalogTexts: Codable, Hashable, Sendable {
 public struct ExerciseCatalog: Codable, Sendable {
     public let version: Int
     public let source: CatalogSource
-    /// Stari id-jevi (free-exercise-db, katalog do verzije 1) -> novi id. `nil` znači da vježba više
-    /// nije u katalogu i pri migraciji postaje vlastita vježba (`CatalogIdMigration`).
-    public let legacyIds: [String: String?]
     public private(set) var exercises: [CatalogExercise]
 
     private let index: [String: Int]
 
     private enum CodingKeys: String, CodingKey {
-        case version, source, legacyIds, exercises
+        case version, source, exercises
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         version = try container.decode(Int.self, forKey: .version)
         source = try container.decode(CatalogSource.self, forKey: .source)
-        legacyIds = try container.decodeIfPresent([String: String?].self, forKey: .legacyIds) ?? [:]
         exercises = try container.decode([CatalogExercise].self, forKey: .exercises)
         index = Self.makeIndex(exercises)
     }
@@ -119,7 +115,6 @@ public struct ExerciseCatalog: Codable, Sendable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(version, forKey: .version)
         try container.encode(source, forKey: .source)
-        try container.encode(legacyIds, forKey: .legacyIds)
         try container.encode(exercises, forKey: .exercises)
     }
 
@@ -131,31 +126,9 @@ public struct ExerciseCatalog: Codable, Sendable {
         Dictionary(exercises.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
-    /// Vježba po id-ju. Prihvaća i stari id iz free-exercise-db, pa stari backupi, uvoz i podaci
-    /// koji još nisu migrirani i dalje pronalaze vježbu.
+    /// Vježba po id-ju.
     public func exercise(withID id: String) -> CatalogExercise? {
-        if let position = index[id] { return exercises[position] }
-        if let renamed = legacyIds[id] ?? nil, let position = index[renamed] { return exercises[position] }
-        return nil
-    }
-
-    /// Što se događa sa spremljenim id-jem kataloga.
-    public enum IDResolution: Equatable, Sendable {
-        /// Id je ispravan.
-        case current
-        /// Stari id koji je preimenovan.
-        case renamed(String)
-        /// Stari id bez para u novom katalogu.
-        case removed
-        /// Id koji katalog ne poznaje ni kao stari.
-        case unknown
-    }
-
-    public func resolve(_ id: String) -> IDResolution {
-        if index[id] != nil { return .current }
-        guard let entry = legacyIds[id] else { return .unknown }
-        if let renamed = entry, index[renamed] != nil { return .renamed(renamed) }
-        return .removed
+        index[id].map { exercises[$0] }
     }
 
     /// Spaja privatne MoveKit tekstove (upute i česte greške) s javnim katalogom.

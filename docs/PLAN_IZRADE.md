@@ -85,7 +85,7 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 * **Prototip 2, WorkoutKit:** `WorkoutScheduler` zakazuje jednostavan plan trčanja na sat. Provjeriti dozvole, ograničenje broja zakazanih planova i ponašanje bez uparenog sata.
 * **Prototip 3, WatchConnectivity:** razmjena događaja (`sendMessage`, `transferUserInfo`) s iPhoneom u prvom planu, u pozadini i kad je zaključan.
 
-**Gotovo kad:** CI je zelen, a nalazi prototipa zapisani su u `docs/prototipi.md`. Ako neki prototip ne potvrdi specifikaciju, specifikacija se ažurira prije faze 1.
+**Gotovo kad:** CI je zelen, a nalazi prototipa zapisani su u `docs/prototipi.md` (datoteka je kasnije uklonjena, alat za CloudKit shemu opisan je u `docs/sinkronizacija.md`). Ako neki prototip ne potvrdi specifikaciju, specifikacija se ažurira prije faze 1.
 
 ## Faza 1: Model podataka i pohrana (3 tj.)
 
@@ -234,7 +234,7 @@ Usporedni posao (ne programiranje): **prijevod i pregled kataloga** na hrvatski.
 
 **Kako je napravljeno:** kardio trening je predložak vrste `cardio` s planom (`CardioPlan` u GymKitu: aktivnost, mjesto, zagrijavanje, blokovi rada i oporavka s brojem ponavljanja, hlađenje) umjesto vježbi. Novi kardio trening kreće od gotovog predloška (lagano trčanje, 5 km, intervali 8 × 1 min, intervali 6 × 400 m). Za sljedeći kardio trening aktivnog rasporeda `CardioWorkoutScheduler` zakazuje plan na sat za termin prvog podsjetnika, a nakon svake promjene rasporeda miče stari plan i zakazuje novi. Što treba promijeniti računa GymKit (`CardioScheduleSync`, s testovima). Id plana izvodi se iz rasporeda, stavke, ciklusa i sadržaja plana, pa se ne sprema i jednak je na svakom uređaju. Dodir na podsjetnik otvara pregled plana s uputom za pokretanje na satu i gumbom "Zakaži na satu" kad plan nije zakazan. Na Početnoj kardio ne pokreće trening u aplikaciji nego otvara isti pregled. Uvezeni trening sa sata povezuje se s rasporedom po planu koji HealthKit zapiše uz trening (`HKWorkout.workoutPlan`), a ako ga nema, po odrađenom planu u WorkoutKitu istog dana (`CardioPlanLinker`). Nakon toga raspored napreduje.
 
-**Izbačeno (studeni 2026):** kardio planovi za sat su izbačeni. Aplikacija stvara samo svoje treninge od vježbi, a kardio je kardio vježba u treningu (vrsta treninga računa se iz vježbi). Izbačeni su `CardioPlan`, `CardioScheduling`, `CardioWorkoutScheduler`, uređivač kardio plana, pregled plana na satu i prototip WorkoutKita. Postojeći kardio plan pri pokretanju postaje obični trening istog naziva bez vježbi (`CardioPlanMigration`, s testovima), pa stavke rasporeda ostaju, a planove koje je aplikacija zakazala na sat `LegacyCardioPlans` jednom makne. Svojstva u modelima (`cardioPlanRaw`, `workoutPlanId`) ostaju jer se shema CloudKita samo proširuje.
+**Izbačeno (studeni 2026):** kardio planovi za sat su izbačeni. Aplikacija stvara samo svoje treninge od vježbi, a kardio je kardio vježba u treningu (vrsta treninga računa se iz vježbi). Izbačeni su `CardioPlan`, `CardioScheduling`, `CardioWorkoutScheduler`, uređivač kardio plana, pregled plana na satu i prototip WorkoutKita. Migracija starih kardio planova i polja `cardioPlanRaw` i `workoutPlanId` uklonjeni su prije prvog izdanja, jer su postojali samo u razvojnim buildovima.
 
 ## Faza 11: iPad layouti (2,5 tj.)
 

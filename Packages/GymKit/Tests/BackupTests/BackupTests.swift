@@ -202,28 +202,35 @@ struct JSONBackupTests {
         }
     }
 
-    @Test("Nekadašnji kardio plan i plan sa sata preživljavaju export i import")
-    func cardioRoundTrip() throws {
+    @Test("Trening iz Zdravlja iz kopije završava u lokalnoj bazi")
+    func importedHealthWorkoutRoundTrip() throws {
         let source = try makeContext()
-        let plan = #"{"activity":"cycling","intervals":[],"location":"indoor"}"#
-        let template = WorkoutTemplate(name: "Bicikl", kind: .cardio)
-        template.cardioPlanRaw = plan
-        source.insert(template)
-        let planId = UUID()
         let session = Session(name: "Bicikl", kind: .cardio, startedAt: start)
         session.state = .finished
         session.endedAt = start.addingTimeInterval(1_800)
         session.isImportedFromWorkoutsApp = true
-        session.workoutPlanId = planId
         source.insert(session)
         try source.save()
 
         let target = try makeContext()
         _ = try JSONBackup.importBackup(try JSONBackup.export(from: source, now: exportTime), into: target)
-        #expect(try target.fetch(FetchDescriptor<WorkoutTemplate>()).first?.cardioPlanRaw == plan)
-        // Uvezeni trening iz kopije završava u lokalnoj bazi podataka iz Zdravlja.
         #expect(try target.fetch(FetchDescriptor<Session>()).allSatisfy { !$0.isImportedFromWorkoutsApp })
-        #expect(try HealthLocalStore(context: target).workouts().first?.workoutPlanId == planId)
+        #expect(try HealthLocalStore(context: target).workouts().map(\.name) == ["Bicikl"])
+    }
+
+    @Test("Kopija sa starim poljima (kardio plan, plan sa sata) i dalje se uvozi")
+    func importsBackupWithRemovedFields() throws {
+        let source = try makeContext()
+        let template = WorkoutTemplate(name: "Push")
+        source.insert(template)
+        try source.save()
+        let json = String(decoding: try JSONBackup.export(from: source, now: exportTime), as: UTF8.self)
+            .replacingOccurrences(of: "\"name\" : \"Push\"", with: "\"cardioPlanRaw\" : \"{}\", \"name\" : \"Push\"")
+        #expect(json.contains("cardioPlanRaw"))
+
+        let target = try makeContext()
+        _ = try JSONBackup.importBackup(Data(json.utf8), into: target)
+        #expect(try target.fetch(FetchDescriptor<WorkoutTemplate>()).map(\.name) == ["Push"])
     }
 }
 

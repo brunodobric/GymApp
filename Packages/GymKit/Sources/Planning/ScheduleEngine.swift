@@ -156,12 +156,6 @@ public struct ScheduleEngine {
 
     // MARK: Što je sljedeće
 
-    /// Stavka na kojoj je raspored stao (može biti i rest dan), ili nil kad je ciklus na kraju.
-    public func currentItem(of schedule: Schedule) -> ScheduleItem? {
-        let items = schedule.orderedItems
-        return items.indices.contains(schedule.currentPosition) ? items[schedule.currentPosition] : nil
-    }
-
     /// Indeks sljedećeg treninga (ne rest dana, ne preskočenog) u tekućem ciklusu.
     public func nextWorkoutIndex(in schedule: Schedule) throws -> Int? {
         let items = schedule.orderedItems

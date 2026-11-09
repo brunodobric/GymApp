@@ -170,8 +170,9 @@ struct HomeScreen: View {
 
     /// Redovi kartica: dvije uzastopne male kartice dijele red, a uz veliki tekst svaka je u svom redu.
     private var cardRows: [[DashboardCardKind]] {
+        // Čitanje `orderIndex` drži ekran prijavljenim na premještanje kartica.
         _ = dashboardCards.map(\.orderIndex)
-        var kinds = ((try? DashboardLayout(context: context).cards()) ?? []).compactMap(\.kind)
+        var kinds = DashboardLayout.visible(dashboardCards).compactMap(\.kind)
         // Bez odrađenog treninga kartica zadnjeg treninga nema što pokazati.
         if lastSession == nil { kinds.removeAll { $0 == .lastWorkout } }
         if dynamicTypeSize.isAccessibilitySize { return kinds.map { [$0] } }
@@ -309,9 +310,7 @@ struct HomeScreen: View {
     private func closeStale(_ session: Session) {
         do {
             try WorkoutEngine(context: context).closeStaleSession(session)
-            PhoneWatchSync.shared.sessionChanged(session)
-            WorkoutLiveUpdates.shared.refresh()
-            Task { await HealthService.shared.saveWorkout(of: session, context: context) }
+            WorkoutLifecycle.finished(session, context: context, origin: .phone)
         } catch WorkoutError.nothingCompleted {
             // Bez završene serije nema što spremiti: trening se odbacuje.
             discard(session)
@@ -321,10 +320,7 @@ struct HomeScreen: View {
     }
 
     private func discard(_ session: Session) {
-        PhoneWatchSync.shared.willDiscard(session)
-        try? WorkoutEngine(context: context).discardSession(session)
-        WorkoutLiveUpdates.shared.refresh()
-        ReminderScheduler.refresh(context: context)
+        WorkoutLifecycle.discard(session, context: context)
     }
 
     /// Sljedeći trening svakog aktivnog rasporeda. `schedules` i `cycleOverrides` su ovdje samo da se

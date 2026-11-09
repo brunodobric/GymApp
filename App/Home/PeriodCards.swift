@@ -101,9 +101,6 @@ struct PeriodCard: View {
 
     @Environment(\.modelContext) private var context
     @Environment(CatalogStore.self) private var catalogStore
-    /// Samo za osvježavanje kad se trening završi, obriše ili stigne iz Zdravlja.
-    @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }) private var sessions: [Session]
-    @Query private var healthWorkouts: [HealthWorkout]
     @Query private var customExercises: [CustomExercise]
     @Query private var settingsList: [UserSettings]
     @State private var summary: PeriodSummary?
@@ -112,8 +109,8 @@ struct PeriodCard: View {
     private var kind: DashboardCardKind { period == .year ? .thisYear : .thisMonth }
 
     private struct RefreshKey: Equatable {
-        let sessions: Int
-        let health: Int
+        /// Izmjena podataka (`DataVersion`): trening završen, uređen, obrisan ili stigao iz Zdravlja ili s iClouda.
+        let version: Int
         let goal: Int?
         let day: Date
     }
@@ -139,7 +136,7 @@ struct PeriodCard: View {
             }
         }
         .buttonStyle(.plain)
-        .task(id: RefreshKey(sessions: sessions.count, health: healthWorkouts.count, goal: goal, day: Calendar.current.startOfDay(for: .now))) {
+        .task(id: RefreshKey(version: DataVersion.shared.value, goal: goal, day: Calendar.current.startOfDay(for: .now))) {
             load()
         }
     }

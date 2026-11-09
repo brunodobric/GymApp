@@ -49,8 +49,13 @@ public struct DashboardLayout {
 
     /// Kartice koje se prikazuju: poznate vrste, najviše jedna po vrsti (duplikati iz sinkronizacije se preskaču).
     public func cards() throws -> [DashboardCard] {
+        Self.visible(try allCards())
+    }
+
+    /// Kao `cards()`, za kartice koje je ekran već dohvatio (`@Query` po `orderIndex`).
+    public static func visible(_ all: [DashboardCard]) -> [DashboardCard] {
         var seen = Set<DashboardCardKind>()
-        return try allCards().filter { card in
+        return all.filter { card in
             guard let kind = card.kind else { return false }
             return seen.insert(kind).inserted
         }

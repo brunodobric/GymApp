@@ -202,25 +202,6 @@ struct CatalogDataTests {
         }
     }
 
-    @Test("Svaki stari id upućuje na postojeću vježbu ili je izbačen")
-    func legacyIds() throws {
-        let (catalog, _) = try Self.loadBundledCatalog()
-        #expect(catalog.legacyIds.count == 187)
-        for (old, new) in catalog.legacyIds {
-            if let new {
-                #expect(catalog.exercise(withID: new) != nil, "\(old) -> \(new): nema vježbe")
-                #expect(catalog.resolve(old) == .renamed(new))
-            } else {
-                #expect(catalog.resolve(old) == .removed)
-            }
-        }
-        #expect(catalog.exercise(withID: "Barbell_Squat")?.id == "barbell-squat")
-        #expect(catalog.resolve("barbell-squat") == .current)
-        #expect(catalog.resolve("Ab_Roller") == .removed)
-        #expect(catalog.exercise(withID: "Ab_Roller") == nil)
-        #expect(catalog.resolve("ne-postoji") == .unknown)
-    }
-
     @Test("Svaka vježba ima vrstu: kardio točno u kategoriji kardio")
     func kinds() throws {
         let (catalog, _) = try Self.loadBundledCatalog()

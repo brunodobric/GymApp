@@ -53,21 +53,18 @@ struct ExerciseIllustrationTests {
         #expect(exercise.displayCommonMistakes(language: "hr") == ["Mistake."])
     }
 
-    @Test("Stari id pronalazi novu vježbu")
-    func legacyLookup() throws {
+    @Test("Katalog sa starom tablicom id-jeva se učitava, a stari id se ne prepoznaje")
+    func ignoresLegacyIds() throws {
         let catalog = try ExerciseCatalog(data: catalogJSON())
-        #expect(catalog.exercise(withID: "Old_X")?.id == "x")
-        #expect(catalog.resolve("Old_X") == .renamed("x"))
-        #expect(catalog.resolve("Gone") == .removed)
-        #expect(catalog.exercise(withID: "Gone") == nil)
+        #expect(catalog.exercise(withID: "x")?.id == "x")
+        #expect(catalog.exercise(withID: "Old_X") == nil)
     }
 
-    @Test("Kodiranje i dekodiranje čuva vježbe i stare id-jeve")
+    @Test("Kodiranje i dekodiranje čuva vježbe")
     func roundTrip() throws {
         let original = try ExerciseCatalog(data: catalogJSON())
         let decoded = try ExerciseCatalog(data: JSONEncoder().encode(original))
         #expect(decoded.exercises == original.exercises)
         #expect(decoded.source == original.source)
-        #expect(decoded.legacyIds == original.legacyIds)
     }
 }

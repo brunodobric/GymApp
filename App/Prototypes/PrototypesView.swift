@@ -1,8 +1,7 @@
 #if DEBUG
 import SwiftUI
 
-/// Ulaz u prototipe iz faze 0 i alate za razvoj. Postoji samo u Debug buildu.
-/// Postupak provjere i mjesto za upis nalaza: docs/prototipi.md.
+/// Alati za razvoj (zasad alat za CloudKit shemu, `docs/sinkronizacija.md`). Postoji samo u Debug buildu.
 struct PrototypesView: View {
     @Environment(\.dismiss) private var dismiss
 

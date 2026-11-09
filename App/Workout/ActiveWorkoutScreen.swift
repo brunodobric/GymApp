@@ -49,6 +49,8 @@ struct ActiveWorkoutScreen: View {
     @State private var errorCount = 0
     /// Trening se zatvara s ovog ekrana (a ne sa sata).
     @State private var isClosingHere = false
+    /// Odgođeno spremanje izmjene polja serije (`scheduleSave`).
+    @State private var pendingSave: Task<Void, Never>?
 
     private var engine: WorkoutEngine { WorkoutEngine(context: context) }
     private var unit: WeightUnit { settings?.weightUnit ?? .kilograms }
@@ -59,6 +61,8 @@ struct ActiveWorkoutScreen: View {
 
     var body: some View {
         NavigationStack {
+            // Korak težine vježbe na kotačiću (oprema ili vlastiti korak, `WeightStepSettings`): jedan za sve kartice.
+            let weightStep = WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)
             List {
                 if isLedByWatch {
                     Label("Trening vodi Apple Watch", systemImage: "applewatch")
@@ -67,7 +71,7 @@ struct ActiveWorkoutScreen: View {
                 if editMode.isEditing {
                     // Kod promjene redoslijeda vježbe su zatvorene, jedna vježba je jedan redak.
                     ForEach(visible) { exercise in
-                        card(for: exercise)
+                        card(for: exercise, weightStep: weightStep)
                     }
                     .onMove { source, destination in
                         try? engine.moveExercises(in: session, from: source, to: destination)
@@ -75,7 +79,7 @@ struct ActiveWorkoutScreen: View {
                 } else {
                     // Svaka vježba je svoja sekcija, a serija svoj redak koji se briše povlačenjem.
                     ForEach(visible) { exercise in
-                        Section { card(for: exercise) }
+                        Section { card(for: exercise, weightStep: weightStep) }
                     }
                 }
 
@@ -105,7 +109,7 @@ struct ActiveWorkoutScreen: View {
             .onChange(of: completedSetCount) { syncCompletedSets() }
             .onChange(of: scenePhase) { _, phase in
                 // Promjena iz Live Activityja dok je aplikacija u pozadini provjerava se i pri povratku.
-                if phase == .active { syncCompletedSets() }
+                if phase == .active { syncCompletedSets() } else { flushPendingSave() }
             }
             .onChange(of: session.stateRaw) {
                 // Trening je završen ili odbačen na satu: ekran se zatvara.
@@ -168,7 +172,10 @@ struct ActiveWorkoutScreen: View {
             .errorAlert($errorText)
         }
         .onAppear { WorkoutScreenPresence.appeared() }
-        .onDisappear { WorkoutScreenPresence.disappeared() }
+        .onDisappear {
+            flushPendingSave()
+            WorkoutScreenPresence.disappeared()
+        }
         .task {
             // Trening je u međuvremenu završen (npr. na satu): nema se što nastaviti.
             if session.state != .active {
@@ -193,7 +200,7 @@ struct ActiveWorkoutScreen: View {
 
     // MARK: Dijelovi ekrana
 
-    private func card(for exercise: SessionExercise) -> some View {
+    private func card(for exercise: SessionExercise, weightStep: (ExerciseRef) -> Double) -> some View {
         ExerciseCard(
             exercise: exercise,
             thumbnail: catalogStore.thumbnail(for: exercise.exercise.source, customExercises: customExercises),
@@ -204,7 +211,7 @@ struct ActiveWorkoutScreen: View {
             unit: unit,
             effortScale: settings?.effortScale ?? .rpe,
             onToggleOpen: { openExerciseID = isOpen(exercise) ? nil : exercise.id },
-            onEdit: { try? engine.touch(session) },
+            onEdit: scheduleSave,
             onToggleComplete: { toggleComplete($0, in: exercise) },
             onChangeKind: { set, kind in
                 set.kind = kind
@@ -217,12 +224,7 @@ struct ActiveWorkoutScreen: View {
             onLeaveSuperset: { try? engine.removeFromSuperset(exercise) },
             onShowInfo: exercise.exercise.source == nil ? nil : { infoExercise = exercise }
         )
-        .environment(\.weightStep, weightStep(for: exercise.exercise))
-    }
-
-    /// Korak težine vježbe na kotačiću (oprema ili vlastiti korak vježbe, `WeightStepSettings`).
-    private func weightStep(for exercise: ExerciseRef) -> Double {
-        WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)(exercise)
+        .environment(\.weightStep, weightStep(exercise.exercise))
     }
 
     @ViewBuilder
@@ -279,6 +281,7 @@ struct ActiveWorkoutScreen: View {
         do {
             if set.isCompleted {
                 try engine.uncompleteSet(set)
+                cancelPendingSave()
                 return
             }
             let catalog = catalogStore.catalog
@@ -286,6 +289,8 @@ struct ActiveWorkoutScreen: View {
                 set, restDefaults: settings?.restDefaults ?? .standard,
                 isCompound: { catalog?.isCompound(exerciseKey: $0) }
             )
+            // `completeSet` je spremio i izmjene koje su čekale odgođeno spremanje.
+            cancelPendingSave()
             completedCount += 1
             syncCompletedSets()
         } catch WorkoutError.setIncomplete {
@@ -364,22 +369,16 @@ struct ActiveWorkoutScreen: View {
 
     private func finish() {
         isClosingHere = true
+        flushPendingSave()
         do {
             try engine.finishSession(session)
-            // Sat dobiva završetak (vodi li trening sat) ili završnu snimku (vodi li ga iPhone).
-            PhoneWatchSync.shared.sessionChanged(session)
-            // Live Activity se gasi, a obavijest o kraju odmora otkazuje.
-            WorkoutLiveUpdates.shared.refresh()
-            // Raspored napreduje samo ako je ovo bio njegov sljedeći trening; podsjetnici se zakazuju iznova.
-            _ = try? ScheduleEngine(context: context).sessionFinished(session)
-            ReminderScheduler.refresh(context: context)
+            WorkoutLifecycle.finished(session, context: context, origin: .phone)
             let tracked = PRKind.tracked(by: settings)
             let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
             finishedSummary = SummaryBox(summary: try engine.summary(
                 of: session, trackedKinds: tracked, excludedExercises: settings?.prExcludedExerciseKeys ?? [],
                 isCompound: { info($0)?.isCompound }, isCardio: ExerciseInfoBuilder.isCardio(info)
             ))
-            Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {
             isClosingHere = false
             showsNothingCompleted = true
@@ -391,10 +390,8 @@ struct ActiveWorkoutScreen: View {
 
     private func discard() {
         isClosingHere = true
-        PhoneWatchSync.shared.willDiscard(session)
-        try? engine.discardSession(session)
-        WorkoutLiveUpdates.shared.refresh()
-        ReminderScheduler.refresh(context: context)
+        cancelPendingSave()
+        WorkoutLifecycle.discard(session, context: context)
         dismiss()
     }
 
@@ -556,4 +553,32 @@ private enum UndoAction {
 private struct SummaryBox: Identifiable, Equatable {
     let id = UUID()
     let summary: WorkoutSummary
+}
+
+// MARK: Odgođeno spremanje
+
+extension ActiveWorkoutScreen {
+    /// Izmjena polja serije: sprema se pola sekunde nakon zadnje izmjene, pa tipkanje ne sprema bazu na svaki znak.
+    private func scheduleSave() {
+        pendingSave?.cancel()
+        pendingSave = Task {
+            try? await Task.sleep(for: .milliseconds(500))
+            guard !Task.isCancelled else { return }
+            pendingSave = nil
+            try? engine.touch(session)
+        }
+    }
+
+    private func cancelPendingSave() {
+        pendingSave?.cancel()
+        pendingSave = nil
+    }
+
+    /// Izmjena koja još čeka spremanje sprema se odmah (izlazak s ekrana, završetak treninga).
+    private func flushPendingSave() {
+        guard let task = pendingSave else { return }
+        task.cancel()
+        pendingSave = nil
+        try? engine.touch(session)
+    }
 }

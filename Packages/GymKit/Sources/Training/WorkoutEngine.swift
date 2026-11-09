@@ -91,8 +91,9 @@ public struct WorkoutEngine {
                 context.delete(exercise)
             }
         }
-        // Kardio: ukupna udaljenost treninga iz završenih serija (ručni unos).
-        let distance = (session.exercises ?? []).flatMap { $0.sets ?? [] }
+        // Kardio: ukupna udaljenost treninga iz završenih serija (ručni unos). Izbačene vježbe su obrisane,
+        // ali ih relacija do spremanja još sadrži, pa se preskaču izričito.
+        let distance = (session.exercises ?? []).filter { !$0.isRemoved }.flatMap { $0.sets ?? [] }
             .filter(\.isCompleted).compactMap(\.distanceMeters).reduce(0, +)
         if distance > 0 { session.distanceMeters = distance }
         if let notes { session.notes = notes }
@@ -385,8 +386,8 @@ public struct WorkoutEngine {
 
     // MARK: Pomoćno
 
-    @discardableResult
     /// Dodaje seriju na kraj vježbe, ili ispred prve neodrađene serije kad je `beforeIncomplete` (zagrijavanje).
+    @discardableResult
     private func appendSet(
         to exercise: SessionExercise, kind: SetKind, previous: [SetValues], beforeIncomplete: Bool = false
     ) throws -> SetLog {
@@ -429,7 +430,6 @@ public struct WorkoutEngine {
         return []
     }
 
-    /// Završene serije iste vježbe u ranije završenim treninzima, od najnovijeg prema starijem.
     /// Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga.
     private func recordHistory(of ref: ExerciseRef, before session: Session?, inputType: ExerciseInputType) throws -> RecordHistory {
         var history = RecordHistory()
@@ -443,8 +443,9 @@ public struct WorkoutEngine {
     /// Izvođenja vježbe u ranije završenim treninzima, od najnovijeg prema starijem, bez čitanja serija.
     private func finishedExercises(of ref: ExerciseRef, before session: Session?) throws -> [SessionExercise] {
         let key = ref.key
+        let finished = SessionState.finished.rawValue
         let descriptor = FetchDescriptor<SessionExercise>(
-            predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false }
+            predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false && $0.session?.stateRaw == finished }
         )
         let currentId = session?.id
         let cutoff = session?.startedAt ?? .distantFuture

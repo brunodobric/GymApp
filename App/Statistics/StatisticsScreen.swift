@@ -14,10 +14,8 @@ struct StatisticsScreen: View {
 
     @Environment(\.modelContext) private var context
     @Environment(CatalogStore.self) private var catalogStore
-    @Query(filter: #Predicate<Session> { $0.stateRaw == "finished" }) private var ownSessions: [Session]
-    /// Kardio iz Zdravlja (lokalna baza) broji se u učestalost treninga.
-    @Query private var healthWorkouts: [HealthWorkout]
-    private var sessionCount: Int { ownSessions.count + healthWorkouts.count }
+    /// Završeni treninzi i treninzi iz Zdravlja; nil dok se ne prebroje (`compute`).
+    @State private var sessionCount: Int?
     @Query private var customExercises: [CustomExercise]
     @Query private var settingsList: [UserSettings]
 
@@ -50,7 +48,8 @@ struct StatisticsScreen: View {
     }
 
     private struct LoadKey: Equatable {
-        var sessionCount: Int
+        /// Izmjena podataka (`DataVersion`).
+        var version: Int
         var muscleDays: Int
         var customCount: Int
         var goal: TrainingGoal?
@@ -60,7 +59,7 @@ struct StatisticsScreen: View {
     }
 
     private struct RecordsKey: Equatable {
-        var sessionCount: Int
+        var version: Int
         var kinds: Set<PRKind>
         var excluded: Set<String>
     }
@@ -76,7 +75,7 @@ struct StatisticsScreen: View {
                     .padding(.top, 40)
                 }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)], spacing: 16) {
-                    if sessionCount > 0 {
+                    if let sessionCount, sessionCount > 0 {
                         if let week {
                             OverviewCard(week: week, month: month, year: year, frequency: frequency)
                         }
@@ -108,11 +107,11 @@ struct StatisticsScreen: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Statistika")
             .task(id: LoadKey(
-                sessionCount: sessionCount, muscleDays: muscleDays, customCount: customExercises.count,
+                version: DataVersion.shared.value, muscleDays: muscleDays, customCount: customExercises.count,
                 goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek, sex: settings?.sex, isPro: isPro
             )) { load() }
             // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
-            .task(id: RecordsKey(sessionCount: sessionCount, kinds: trackedKinds, excluded: excludedExercises)) { loadRecords() }
+            .task(id: RecordsKey(version: DataVersion.shared.value, kinds: trackedKinds, excluded: excludedExercises)) { loadRecords() }
         }
         // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
         .id(rootReset)
@@ -123,6 +122,9 @@ struct StatisticsScreen: View {
     }
 
     private func compute() {
+        // Kardio iz Zdravlja (lokalna baza) broji se u učestalost treninga.
+        let finished = FetchDescriptor<Session>(predicate: #Predicate { $0.stateRaw == "finished" })
+        sessionCount = ((try? context.fetchCount(finished)) ?? 0) + ((try? context.fetchCount(FetchDescriptor<HealthWorkout>())) ?? 0)
         let engine = StatisticsEngine(context: context)
         let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
         let now = Date()

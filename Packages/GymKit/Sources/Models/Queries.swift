@@ -41,13 +41,14 @@ public struct GymQueries {
     /// Izbačene vježbe i treninzi koji nisu završeni se preskaču.
     public func lastPerformance(of exercise: ExerciseRef) throws -> SessionExercise? {
         let key = exercise.key
-        let descriptor = FetchDescriptor<SessionExercise>(
-            predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false }
+        let finished = SessionState.finished.rawValue
+        // Stanje treninga i redoslijed provjerava baza, pa se dohvaća samo jedan zapis.
+        var descriptor = FetchDescriptor<SessionExercise>(
+            predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false && $0.session?.stateRaw == finished },
+            sortBy: [SortDescriptor(\.session?.startedAt, order: .reverse)]
         )
-        let finished = SessionState.finished
-        return try context.fetch(descriptor)
-            .filter { $0.session?.state == finished }
-            .max { ($0.session?.startedAt ?? .distantPast) < ($1.session?.startedAt ?? .distantPast) }
+        descriptor.fetchLimit = 1
+        return try context.fetch(descriptor).first
     }
 
     /// Jedini zapis postavki. Ako ga nema, stvara se sa zadanim vrijednostima.

@@ -107,7 +107,6 @@ struct RootView: View {
             GymAppShortcuts.updateAppShortcutParameters()
             ReminderScheduler.refresh(context: context)
             PhoneWatchSync.shared.refreshContext()
-            await LegacyCardioPlans.removeFromWatch()
             await HealthService.shared.importNewData(context: context)
         }
         .onChange(of: scenePhase) { _, phase in

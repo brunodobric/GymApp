@@ -21,22 +21,33 @@ final class CatalogStore {
 
     private let directory: URL?
     private let mediaDirectory: URL?
+    /// Datoteke medija u buildu ("Media/<naziv>"), pročitane jednom: sličice ne pitaju disk pri svakom crtanju.
+    private let mediaFiles: Set<String>
 
     init(bundle: Bundle = .main) {
         language = bundle.preferredLocalizations.first == "hr" ? "hr" : "en"
         directory = bundle.resourceURL?.appendingPathComponent("Catalog")
         mediaDirectory = bundle.resourceURL?.appendingPathComponent("MoveKit")
-        load()
+        mediaFiles = Self.listMedia(in: mediaDirectory)
+        load(bundle: bundle)
     }
 
-    private func load() {
+    private static func listMedia(in directory: URL?) -> Set<String> {
+        guard let path = directory?.appendingPathComponent("Media").path,
+              let names = try? FileManager.default.contentsOfDirectory(atPath: path) else { return [] }
+        return Set(names.map { "Media/\($0)" })
+    }
+
+    private func load(bundle: Bundle) {
         guard let directory else {
             errorText = String(localized: "Katalog nije pronađen u aplikaciji.")
             return
         }
         do {
-            var loaded = try PerformanceSignpost.measure("CatalogLoad") {
-                try ExerciseCatalog(data: Data(contentsOf: directory.appendingPathComponent("catalog.json")))
+            // Katalog iz glavnog bundlea već je dekodiran za Zdravlje, widgete i sat; ne dekodira se dvaput.
+            var loaded = try PerformanceSignpost.measure("CatalogLoad") { () throws -> ExerciseCatalog in
+                if bundle == .main, let shared = AppServices.bundledCatalog { return shared }
+                return try ExerciseCatalog(data: Data(contentsOf: directory.appendingPathComponent("catalog.json")))
             }
             if let texts = loadTexts() {
                 loaded = loaded.merging(texts: texts)
@@ -55,18 +66,11 @@ final class CatalogStore {
         return try? CatalogTexts.decode(data)
     }
 
-    /// Ima li build upute iz MoveKit dodatka (bez njega detalj vježbe kaže da uputa nema).
-    var hasTexts: Bool {
-        guard let mediaDirectory else { return false }
-        return FileManager.default.fileExists(atPath: mediaDirectory.appendingPathComponent("texts.json").path)
-    }
-
     /// Datoteka medija iz kataloga (npr. "Media/barbell-squat.mp4") ili nil ako je nema u buildu.
     /// Mediji su u bundleu i nikad ne idu u iCloud.
     func mediaURL(_ path: String) -> URL? {
-        guard let url = mediaDirectory?.appendingPathComponent(path),
-              FileManager.default.fileExists(atPath: url.path) else { return nil }
-        return url
+        guard mediaFiles.contains(path) else { return nil }
+        return mediaDirectory?.appendingPathComponent(path)
     }
 
     func illustration(for exercise: CatalogExercise) -> ExerciseIllustration {

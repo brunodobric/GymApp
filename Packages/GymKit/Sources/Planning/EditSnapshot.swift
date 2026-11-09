@@ -146,14 +146,12 @@ public struct TemplateSnapshot {
     private let name: String
     private let details: String
     private let kindRaw: String
-    private let cardioPlanRaw: String?
     private let exercises: [ExerciseValue]
 
     public init(_ template: WorkoutTemplate) {
         name = template.name
         details = template.details
         kindRaw = template.kindRaw
-        cardioPlanRaw = template.cardioPlanRaw
         exercises = template.orderedExercises.map { exercise in
             ExerciseValue(
                 id: exercise.id, orderIndex: exercise.orderIndex, catalogId: exercise.exerciseCatalogId,
@@ -174,7 +172,6 @@ public struct TemplateSnapshot {
         template.name = name
         template.details = details
         template.kindRaw = kindRaw
-        template.cardioPlanRaw = cardioPlanRaw
 
         var existing = Dictionary((template.exercises ?? []).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for value in exercises {

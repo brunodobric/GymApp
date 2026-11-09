@@ -20,6 +20,8 @@ final class HealthService {
     private let store = HKHealthStore()
     private let logger = Logger(subsystem: "com.brunodobric.gymapp", category: "Health")
     private var isImporting = false
+    /// Treninzi koji se upravo spremaju u Zdravlje: dva poziva za isti trening ne spremaju ga dvaput.
+    private var savingSessions: Set<UUID> = []
 
     private static let workoutType = HKObjectType.workoutType()
     private static let bodyMass = HKQuantityType(.bodyMass)
@@ -61,6 +63,8 @@ final class HealthService {
               session.healthKitWorkoutId == nil,
               store.authorizationStatus(for: Self.workoutType) == .sharingAuthorized
         else { return }
+        guard savingSessions.insert(session.id).inserted else { return }
+        defer { savingSessions.remove(session.id) }
         let custom = (try? context.fetch(FetchDescriptor<CustomExercise>())) ?? []
         let info = ExerciseInfoBuilder.provider(catalog: AppServices.bundledCatalog, custom: custom)
         guard let export = HealthWorkoutExport.make(for: session, isCardio: ExerciseInfoBuilder.isCardio(info)) else { return }
