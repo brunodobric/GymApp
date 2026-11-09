@@ -24,8 +24,11 @@ final class WatchWorkoutStore {
     struct Summary: Equatable {
         var name: String
         var duration: TimeInterval
+        /// Završene serije bez kardio vježbi (kao sažetak na iPhoneu).
         var completedSets: Int
         var volumeKg: Double
+        var mix: SessionMix
+        var cardio: CardioPart?
         var activeEnergyKilocalories: Double?
         var averageHeartRate: Double?
     }
@@ -42,6 +45,8 @@ final class WatchWorkoutStore {
     var errorText: String?
     /// Trening koji vodi iPhone za koji sat drži sesiju u Zdravlju.
     private(set) var mirrorHealthSessionID: UUID?
+    /// Štoperica serije s trajanjem (kardio, izdržaj). Ne sprema se: nakon gašenja aplikacije trajanje se upiše krunom.
+    private(set) var stopwatch: Stopwatch?
 
     let health = WorkoutSessionManager()
 
@@ -51,6 +56,8 @@ final class WatchWorkoutStore {
     @ObservationIgnored private var mirrorBase: SessionSnapshot?
     @ObservationIgnored private var pendingSend: Task<Void, Never>?
     @ObservationIgnored private var restTask: Task<Void, Never>?
+    /// Koliko prije kraja odmora sat lagano upozori.
+    private static let restWarningLead: TimeInterval = 10
     @ObservationIgnored private var isFinishing = false
     /// iPhone je zatražio sesiju u Zdravlju, a snimka njegovog treninga još nije stigla.
     @ObservationIgnored private var mirrorHealthRequestedAt: Date?
@@ -66,6 +73,7 @@ final class WatchWorkoutStore {
     private init() {}
 
     var unit: WeightUnit { context.weightUnit }
+    var accent: AccentChoice { context.accent ?? .blue }
     var isController: Bool { active?.controllingDevice == .watch }
     /// Puls i kalorije prikazuju se kad sat drži sesiju u Zdravlju (vodi trening ili ga je pokrenuo iPhone).
     var showsHealthMetrics: Bool { isController || (mirrorHealthSessionID != nil && mirrorHealthSessionID == active?.id) }
@@ -129,12 +137,20 @@ final class WatchWorkoutStore {
 
     func completeCurrentSet() {
         guard let (exercise, set) = currentSet else { return }
+        // Izmjereno vrijeme štoperice ide u seriju prije kvačice.
+        if let stopwatch, stopwatch.setID == set.id {
+            let seconds = stopwatch.elapsedSeconds(at: Date())
+            if seconds > 0 {
+                mutate { engine in engine.updateSet(set.id) { $0.durationSeconds = seconds } }
+            }
+        }
         do {
             let rest = context.defaultRestSeconds
             try mutate { engine in
                 _ = try engine.completeSet(set.id, defaultRestSeconds: rest)
             }
             WKInterfaceDevice.current().play(.success)
+            if stopwatch?.setID == set.id { stopwatch = nil }
             guard let snapshot = active else { return }
             let engine = SnapshotEngine(snapshot: snapshot)
             if let next = engine.exerciseAfterCompleting(in: exercise.id) {
@@ -277,11 +293,15 @@ final class WatchWorkoutStore {
     }
 
     private func showSummary(of snapshot: SessionSnapshot, volume: Double) {
+        let plans = context
+        let isCardio: (ExerciseRef) -> Bool = { plans.isCardio($0) }
         summary = Summary(
             name: snapshot.name,
             duration: (snapshot.endedAt ?? Date()).timeIntervalSince(snapshot.startedAt),
-            completedSets: snapshot.completedSetCount,
+            completedSets: snapshot.strengthSetCount(isCardio: isCardio),
             volumeKg: volume,
+            mix: snapshot.mix(isCardio: isCardio),
+            cardio: snapshot.cardioPart(isCardio: isCardio),
             activeEnergyKilocalories: snapshot.activeEnergyKilocalories,
             averageHeartRate: snapshot.averageHeartRate
         )
@@ -295,6 +315,7 @@ final class WatchWorkoutStore {
         currentExerciseID = nil
         isResting = false
         showsFinishPrompt = false
+        stopwatch = nil
         persist()
     }
 
@@ -436,6 +457,13 @@ extension WatchWorkoutStore {
         }
         isResting = true
         restTask = Task { [weak self] in
+            // Lagani dodir malo prije kraja, da se stigne pripremiti za seriju.
+            let warning = timer.remaining(at: Date()) - Self.restWarningLead
+            if warning > 0 {
+                try? await Task.sleep(for: .seconds(warning))
+                guard !Task.isCancelled else { return }
+                WKInterfaceDevice.current().play(.click)
+            }
             try? await Task.sleep(for: .seconds(timer.remaining(at: Date())))
             guard !Task.isCancelled, let self else { return }
             WKInterfaceDevice.current().play(.notification)
@@ -558,5 +586,32 @@ extension WatchWorkoutStore {
             guard !Task.isCancelled, let self else { return }
             endMirrorHealth(sessionID: sessionID, finishedAt: Date())
         }
+    }
+}
+
+// MARK: - Prikaz kao na iPhoneu
+
+extension WatchWorkoutStore {
+    /// Je li vježba kardio (ikona trčanja, ne broji se u serije).
+    func isCardio(_ exercise: ExerciseSnapshot) -> Bool {
+        context.isCardio(exercise.exercise)
+    }
+
+    /// "Prošli put" za seriju: vrijednosti iz zadnjeg izvođenja vježbe na istom mjestu.
+    func previousSet(of set: SetSnapshot, in exercise: ExerciseSnapshot) -> SetSnapshot? {
+        guard let position = exercise.position(ofSet: set.id) else { return nil }
+        return context.previousSet(for: exercise.exercise, kind: set.kind, position: position)
+    }
+
+    /// Pokreće, pauzira ili nastavlja štopericu serije. Štoperica druge serije se odbacuje.
+    func toggleStopwatch(for setID: UUID) {
+        let now = Date()
+        if var current = stopwatch, current.setID == setID {
+            current.toggle(at: now)
+            stopwatch = current
+        } else {
+            stopwatch = Stopwatch(setID: setID, startedAt: now)
+        }
+        WKInterfaceDevice.current().play(.click)
     }
 }

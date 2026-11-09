@@ -227,6 +227,16 @@ struct WatchContextBuilderTests {
         #expect(planned.exercises.map(\.sets) == (try startedSets(template, in: context)))
         #expect(payload.weightUnit == .kilograms)
         #expect(payload.defaultRestSeconds == 90)
+        #expect(payload.accent == .blue)
+        // "Prošli put" za sat: završene serije zadnjeg izvođenja; potisak još nije odrađen.
+        #expect(planned.exercises[0].previous?.map(\.weightKg) == pastRow.orderedSets.map(\.weightKg))
+        #expect(planned.exercises[1].previous == [])
+        #expect(planned.exercises.map(\.isCardio) == [false, false])
+
+        let withCardio = try WatchContextBuilder(context: context, isCardio: { $0 == row.key }).make(now: base)
+        let cardioPlan = try #require(withCardio.templates.first { $0.templateId == template.id })
+        #expect(cardioPlan.exercises.map(\.isCardio) == [true, false])
+        #expect(cardioPlan.mix == .mixed)
     }
 
     @Test("Sljedeći trening rasporeda je u kontekstu s nazivom rasporeda i supersetom")

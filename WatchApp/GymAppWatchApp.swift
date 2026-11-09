@@ -42,12 +42,16 @@ struct WatchRootView: View {
     @Environment(WatchWorkoutStore.self) private var store
 
     var body: some View {
-        if let summary = store.summary {
-            WatchSummaryView(summary: summary) { store.closeSummary() }
-        } else if store.active != nil {
-            WatchWorkoutView()
-        } else {
-            WatchHomeView()
+        Group {
+            if let summary = store.summary {
+                WatchSummaryView(summary: summary) { store.closeSummary() }
+            } else if store.active != nil {
+                WatchWorkoutView()
+            } else {
+                WatchHomeView()
+            }
         }
+        // Naglasna boja iz postavki na iPhoneu (gumbi, kvačica, polje pod krunom, trenutna vježba).
+        .tint(store.accent.color)
     }
 }
