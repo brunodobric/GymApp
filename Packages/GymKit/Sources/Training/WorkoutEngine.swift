@@ -91,8 +91,9 @@ public struct WorkoutEngine {
                 context.delete(exercise)
             }
         }
-        // Kardio: ukupna udaljenost treninga iz završenih serija (ručni unos).
-        let distance = (session.exercises ?? []).flatMap { $0.sets ?? [] }
+        // Kardio: ukupna udaljenost treninga iz završenih serija (ručni unos). Izbačene vježbe su obrisane,
+        // ali ih relacija do spremanja još sadrži, pa se preskaču izričito.
+        let distance = (session.exercises ?? []).filter { !$0.isRemoved }.flatMap { $0.sets ?? [] }
             .filter(\.isCompleted).compactMap(\.distanceMeters).reduce(0, +)
         if distance > 0 { session.distanceMeters = distance }
         if let notes { session.notes = notes }

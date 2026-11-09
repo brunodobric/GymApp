@@ -280,18 +280,13 @@ final class PhoneWatchSync {
     /// Sat je završio trening koji je vodio: raspored napreduje. U Zdravlje ga je već spremio sat.
     private func sessionFinishedOnWatch(_ session: Session) {
         guard let context else { return }
-        _ = try? ScheduleEngine(context: context).sessionFinished(session)
-        ReminderScheduler.refresh(context: context)
-        refreshContext()
+        WorkoutLifecycle.finished(session, context: context, origin: .watch)
     }
 
     /// Trening koji vodi iPhone završen je sa sata: isto kao završetak na iPhoneu.
     private func sessionFinishedFromWatch(_ session: Session) {
         guard let context else { return }
-        _ = try? ScheduleEngine(context: context).sessionFinished(session)
-        ReminderScheduler.refresh(context: context)
-        refreshContext()
-        Task { await HealthService.shared.saveWorkout(of: session, context: context) }
+        WorkoutLifecycle.finished(session, context: context, origin: .watchCommand)
     }
 
     /// Odbačeni trening briše se tek kad ga ekran koji ga je prikazivao zatvori.

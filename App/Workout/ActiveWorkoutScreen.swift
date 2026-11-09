@@ -366,20 +366,13 @@ struct ActiveWorkoutScreen: View {
         isClosingHere = true
         do {
             try engine.finishSession(session)
-            // Sat dobiva završetak (vodi li trening sat) ili završnu snimku (vodi li ga iPhone).
-            PhoneWatchSync.shared.sessionChanged(session)
-            // Live Activity se gasi, a obavijest o kraju odmora otkazuje.
-            WorkoutLiveUpdates.shared.refresh()
-            // Raspored napreduje samo ako je ovo bio njegov sljedeći trening; podsjetnici se zakazuju iznova.
-            _ = try? ScheduleEngine(context: context).sessionFinished(session)
-            ReminderScheduler.refresh(context: context)
+            WorkoutLifecycle.finished(session, context: context, origin: .phone)
             let tracked = PRKind.tracked(by: settings)
             let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
             finishedSummary = SummaryBox(summary: try engine.summary(
                 of: session, trackedKinds: tracked, excludedExercises: settings?.prExcludedExerciseKeys ?? [],
                 isCompound: { info($0)?.isCompound }, isCardio: ExerciseInfoBuilder.isCardio(info)
             ))
-            Task { await HealthService.shared.saveWorkout(of: session, context: context) }
         } catch WorkoutError.nothingCompleted {
             isClosingHere = false
             showsNothingCompleted = true
@@ -391,10 +384,7 @@ struct ActiveWorkoutScreen: View {
 
     private func discard() {
         isClosingHere = true
-        PhoneWatchSync.shared.willDiscard(session)
-        try? engine.discardSession(session)
-        WorkoutLiveUpdates.shared.refresh()
-        ReminderScheduler.refresh(context: context)
+        WorkoutLifecycle.discard(session, context: context)
         dismiss()
     }
 

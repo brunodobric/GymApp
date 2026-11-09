@@ -309,9 +309,7 @@ struct HomeScreen: View {
     private func closeStale(_ session: Session) {
         do {
             try WorkoutEngine(context: context).closeStaleSession(session)
-            PhoneWatchSync.shared.sessionChanged(session)
-            WorkoutLiveUpdates.shared.refresh()
-            Task { await HealthService.shared.saveWorkout(of: session, context: context) }
+            WorkoutLifecycle.finished(session, context: context, origin: .phone)
         } catch WorkoutError.nothingCompleted {
             // Bez završene serije nema što spremiti: trening se odbacuje.
             discard(session)
@@ -321,10 +319,7 @@ struct HomeScreen: View {
     }
 
     private func discard(_ session: Session) {
-        PhoneWatchSync.shared.willDiscard(session)
-        try? WorkoutEngine(context: context).discardSession(session)
-        WorkoutLiveUpdates.shared.refresh()
-        ReminderScheduler.refresh(context: context)
+        WorkoutLifecycle.discard(session, context: context)
     }
 
     /// Sljedeći trening svakog aktivnog rasporeda. `schedules` i `cycleOverrides` su ovdje samo da se
