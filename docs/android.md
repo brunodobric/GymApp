@@ -136,10 +136,9 @@ android/
   settings.gradle.kts, gradle/libs.versions.toml
   core/units          (čisti Kotlin: Weight, InputParsing, WheelOptions)
   core/catalog        (čisti Kotlin: ExerciseCatalog, Taxonomy, ExerciseSearch)
-  core/model          (čisti Kotlin: domenski tipovi, enumi, ExerciseRef, ordering)
-  core/data           (Room: entiteti, DAO, migracije, deduplikacija, repozitoriji)
-  domain/training     (WorkoutEngine, SessionEditor, PersonalRecords, PRRanking, PlateCalculator, RestAndFlow)
-  domain/planning     (ScheduleEngine, TemplateEngine, Programs, ProgramRecommender, Reminders)
+  core/model          (čisti Kotlin: modeli, GymStore, deduplikacija, kartice, onboarding, koraci težine)
+  core/training       (WorkoutEngine, SessionEditor, PersonalRecords, PRRanking, PlateCalculator, RestAndFlow)
+  core/planning       (TemplateEngine, ScheduleEngine, TemplateStarter, EditSnapshot, Reminders, Programs)
   domain/stats        (Statistics, EffectiveSets, Trends, PeriodOverview, WeeklyReview, BodyTracking...)
   domain/backup       (CSV, JSON, ForeignWorkoutImport, DataReset)
   domain/health       (HealthImporter, pravila zapisa treninga)
