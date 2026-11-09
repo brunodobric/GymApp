@@ -47,11 +47,16 @@ extension PlannedWorkoutPayload {
     /// Približno trajanje u minutama, zaokruženo na 5: rad serija (trajanje kardio serije ili 45 s),
     /// odmor između serija i minuta za prijelaz na sljedeću vježbu. Nil za trening bez serija.
     public func estimatedMinutes(defaultRestSeconds: Int) -> Int? {
+        estimatedMinutes(restDefaults: RestDefaults(uniform: defaultRestSeconds))
+    }
+
+    /// Kao gore, a vježba bez vlastite pauze odmara prema vrsti (`RestDefaults`).
+    public func estimatedMinutes(restDefaults: RestDefaults) -> Int? {
         var seconds = 0
         var setCount = 0
         for (index, exercise) in exercises.enumerated() {
             if index > 0 { seconds += Self.exerciseChangeSeconds }
-            let rest = max(0, exercise.restSeconds ?? defaultRestSeconds)
+            let rest = max(0, exercise.restSeconds ?? restDefaults.seconds(isCompound: [exercise.isCompound]))
             for (setIndex, set) in exercise.sets.enumerated() {
                 let work = set.durationSeconds.flatMap { $0 > 0 ? $0 : nil } ?? Self.assumedSetSeconds
                 seconds += work
@@ -68,6 +73,17 @@ extension PlannedWorkoutPayload {
 extension WatchContextPayload {
     private var allPlannedExercises: [PlannedExercisePayload] {
         (upcoming + templates).flatMap(\.exercises)
+    }
+
+    /// Zadane pauze s iPhonea (`RestDefaults`).
+    public var restDefaults: RestDefaults {
+        RestDefaults(compoundSeconds: compoundRestSeconds ?? defaultRestSeconds, otherSeconds: defaultRestSeconds)
+    }
+
+    /// Je li vježba složena, prema vježbama u treninzima koje je poslao iPhone. Nil za nepoznatu vježbu.
+    public func isCompound(_ exercise: ExerciseRef) -> Bool? {
+        let key = exercise.key
+        return allPlannedExercises.first { $0.exercise.key == key && $0.isCompound != nil }?.isCompound
     }
 
     /// Je li vježba kardio, prema vježbama u treninzima koje je poslao iPhone. Nepoznata vježba nije kardio.

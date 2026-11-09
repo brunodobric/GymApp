@@ -49,9 +49,18 @@ public struct SnapshotEngine: Sendable {
     // MARK: Serije
 
     /// Označava seriju završenom i pokreće pauzu prema istim pravilima kao iPhone (`RestPolicy`).
-    /// Vraća pokrenuti timer ili nil kad je pauza 0.
+    /// Vraća pokrenuti timer ili nil kad je pauza 0. Ista zadana pauza za sve vježbe.
     @discardableResult
     public mutating func completeSet(_ setID: UUID, defaultRestSeconds: Int, now: Date = Date()) throws -> RestTimer? {
+        try completeSet(setID, restDefaults: RestDefaults(uniform: defaultRestSeconds), isCompound: { _ in nil }, now: now)
+    }
+
+    /// Kao gore, a vježba bez vlastite pauze dobiva zadanu prema vrsti (`RestDefaults`, isto kao
+    /// `WorkoutEngine.completeSet` na iPhoneu).
+    @discardableResult
+    public mutating func completeSet(
+        _ setID: UUID, restDefaults: RestDefaults, isCompound: (ExerciseRef) -> Bool?, now: Date = Date()
+    ) throws -> RestTimer? {
         guard let exercise = snapshot.exercise(containingSet: setID),
               let set = exercise.sets.first(where: { $0.id == setID }) else { return nil }
         guard SetMetrics.isComplete(set.values, inputType: exercise.inputType) else { throw WorkoutError.setIncomplete }
@@ -60,8 +69,9 @@ public struct SnapshotEngine: Sendable {
         let members = group(of: exercise.id)
         let position = members.firstIndex { $0.id == exercise.id } ?? 0
         let configured = exercise.restSeconds ?? members.last?.restSeconds
+        let defaultSeconds = restDefaults.seconds(isCompound: members.map { isCompound($0.exercise) })
         let seconds = RestPolicy.seconds(
-            positionInGroup: position, groupSize: members.count, configured: configured, defaultSeconds: defaultRestSeconds
+            positionInGroup: position, groupSize: members.count, configured: configured, defaultSeconds: defaultSeconds
         )
         let timer = seconds > 0 ? RestTimer(startedAt: now, seconds: seconds) : nil
         snapshot.restTimerStartedAt = timer?.startedAt

@@ -273,8 +273,19 @@ public struct WorkoutEngine {
     // MARK: Serije i rest timer
 
     /// Označava seriju završenom i vraća rest timer koji treba pokrenuti (nil kad je pauza 0).
+    /// Ista zadana pauza za sve vježbe (demo podaci, testovi).
     @discardableResult
     public func completeSet(_ set: SetLog, defaultRestSeconds: Int, now: Date = Date()) throws -> RestTimer? {
+        try completeSet(set, restDefaults: RestDefaults(uniform: defaultRestSeconds), isCompound: { _ in nil }, now: now)
+    }
+
+    /// Označava seriju završenom i vraća rest timer koji treba pokrenuti (nil kad je pauza 0).
+    /// Vježba bez vlastite pauze dobiva zadanu prema vrsti (`RestDefaults`); `isCompound` prima
+    /// ključ vježbe (`ExerciseRef.key`).
+    @discardableResult
+    public func completeSet(
+        _ set: SetLog, restDefaults: RestDefaults, isCompound: (String) -> Bool?, now: Date = Date()
+    ) throws -> RestTimer? {
         guard let exercise = set.exercise, let session = exercise.session else { return nil }
         guard SetMetrics.isComplete(set.values, inputType: exercise.inputType) else { throw WorkoutError.setIncomplete }
         set.completedAt = now
@@ -282,8 +293,9 @@ public struct WorkoutEngine {
         let members = group(of: exercise)
         let position = members.firstIndex { $0.id == exercise.id } ?? 0
         let configured = exercise.restSeconds ?? members.last?.restSeconds
+        let defaultSeconds = restDefaults.seconds(isCompound: members.map { isCompound($0.exercise.key) })
         let seconds = RestPolicy.seconds(
-            positionInGroup: position, groupSize: members.count, configured: configured, defaultSeconds: defaultRestSeconds
+            positionInGroup: position, groupSize: members.count, configured: configured, defaultSeconds: defaultSeconds
         )
         let timer = seconds > 0 ? RestTimer(startedAt: now, seconds: seconds) : nil
         session.restTimerStartedAt = timer?.startedAt

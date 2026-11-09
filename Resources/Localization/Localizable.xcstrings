@@ -3495,12 +3495,42 @@
         }
       }
     },
+    "Ostale vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other exercises"
+          }
+        }
+      }
+    },
     "Pokreni" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start"
+          }
+        }
+      }
+    },
+    "Složene vježbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compound exercises"
+          }
+        }
+      }
+    },
+    "Složene vježbe, poput čučnja, mrtvog dizanja i potiska, traže dulji odmor od izolacijskih. Pauza postavljena na vježbi ima prednost." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compound exercises such as squats, deadlifts and presses need longer rest than isolation exercises. Rest set on an exercise takes precedence."
           }
         }
       }

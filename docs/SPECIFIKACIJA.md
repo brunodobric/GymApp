@@ -79,7 +79,7 @@ Aplikacija podržava 3 glavna modula:
   Prilikom kreiranja treninga postoji opcija **Dodaj superset**. Unutar superseta korisnik bira vježbe.  
   Tijekom treninga se prikazuje s naslovom “Superset” i ispod njega vježbe koje su u njemu.  
   Serije se izvode naizmjenično.  
-  Defaultna pauza: 0 sekundi nakon svih vježbi osim zadnje u supersetu, a nakon zadnje vježbe vrijedi **zadana pauza iz Postavki** (tvornički 90 s), osim ako je za tu vježbu ili superset postavljena drukčija.  
+  Defaultna pauza: 0 sekundi nakon svih vježbi osim zadnje u supersetu, a nakon zadnje vježbe vrijedi **zadana pauza iz Postavki** (pauza za složene vježbe ako je u supersetu barem jedna složena, inače za ostale), osim ako je za tu vježbu ili superset postavljena drukčija.  
   Primjer (2 vježbe, zadana pauza 90 s): pauza 0 nakon prve, 90 s nakon druge.  
   Primjer (3 vježbe, zadana pauza 120 s): pauza 0 nakon prve dvije, 120 s nakon treće.  
   Korisnik može dodati superset i ad-hoc tijekom samog treninga.
@@ -107,6 +107,7 @@ Aplikacija podržava 3 glavna modula:
 * Težina i ponavljanja se biraju kotačićem umjesto tipkovnice: težina u koracima od 2,5 kg (5 lbs), ponavljanja od 1 do 50. Kotačić kreće od trenutne vrijednosti, prošlog treninga ili prazne šipke. Dodir na broj iznad kotačića otvara tipkovnicu za vrijednost koje na kotačiću nema (npr. 83 kg). Isto vrijedi za ciljeve u predlošku.
 * Klik na kvačicu kompletira seriju (zasivi redak) i pokreće rest timer.
 * Rest timer se pojavljuje kao redak ispod s linijom koja teče i gumbima +10 / -10.
+* **Trajanje pauze:** pauza postavljena na vježbi ima prednost. Inače vrijedi zadana pauza iz Postavki prema vrsti vježbe iz kataloga: **složene vježbe 2:30, izolacijske i ostale 1:30** (tvornički). Vlastite vježbe i vježbe bez oznake dobivaju pauzu za ostale. Pauza ne ovisi o težini u kg, jer je isti teret nekome lagan, a nekome blizu maksimuma; ravna se po vrsti vježbe (Senna i sur. 2016, Schoenfeld i sur. 2016, Grgic i sur. 2018, Singer i sur. 2024).
 * U jednom trenutku samo jedna vježba može biti otvorena.
 * Korisnik može otvarati i zatvarati vježbe i kompletirati serije bilo kojim redoslijedom.
 * Nakon kompletiranja zadnje serije u vježbi, app se automatski vraća na prvu nekompletiranu vježbu.
@@ -169,7 +170,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 * **Accent boja:** zadana je Apolon plava, boja aplikacije izvedena iz ikone. Korisnik može izabrati jednu od šest provjerenih boja: Apolon plava, indigo, ljubičasta, roza, tirkizna i grafit. Zelene, crvene i narančaste nema jer znače završenu seriju, brisanje i zagrijavanje (docs/DIZAJN.md, odjeljak Boja).
 * **Live Activity:** prema zadanom prati temu i accent boju aplikacije. Kad se "Prati aplikaciju" isključi, bira vlastitu temu i boju (kreću od aplikacijinih). Tema vrijedi za zaključani zaslon; Dynamic Island je uvijek crn, pa se ondje mijenja samo boja.
 * **Jedinice:** kg / lbs.
-* **Default rest timer:** Podešavanje zadanog vremena (default 90s).
+* **Zadana pauza:** dvije vrijednosti, za složene vježbe (tvornički 2:30) i za izolacijske i ostale (tvornički 1:30).
 * **PR postavke:** Uključivanje/isključivanje i odabir tipova PR-ova.
 * **Obavijesti:** Globalne postavke obavijesti.
 * **Sinkronizacija (iCloud):**
@@ -558,7 +559,7 @@ Ključno pravilo: **predložak** (ono što je planirano) i **odrađeni trening**
 * **PersonalRecord:** izvedeni podatak, računa se iz `SetLog` zapisa i može se u svakom trenutku ponovno izračunati. Sprema se u predmemoriju radi brzine, ali nije izvor istine.
 * **BodyMeasurement:** `id`, vrsta (težina, visina, struk, prsa, ruka, noga, custom), vrijednost u metričkim jedinicama, datum, izvor (ručno / HealthKit).
 * **DashboardCard:** vrsta kartice, `orderIndex`, postavke kartice.
-* **UserSettings:** jedan zapis: jedinice, zadana pauza, tema, accent boja, tema i boja Live Activityja, RPE/RIR, PR postavke, zvuk kraja odmora, dostupne ploče i težine šipke.
+* **UserSettings:** jedan zapis: jedinice, zadane pauze (složene i ostale vježbe), tema, accent boja, tema i boja Live Activityja, RPE/RIR, PR postavke, zvuk kraja odmora, dostupne ploče i težine šipke.
 
 ### Pravila
 * Svi identifikatori su UUID. Svi modeli poštuju ograničenja iz odjeljka 5 (opcionalna polja, bez `unique`, `orderIndex` za redoslijed).

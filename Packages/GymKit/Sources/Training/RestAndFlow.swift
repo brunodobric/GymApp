@@ -1,4 +1,6 @@
+import Catalog
 import Foundation
+import Models
 
 /// Rest timer koji se sprema kao trenutak završetka, ne kao preostale sekunde.
 /// Nakon oporavka ili povratka iz pozadine isti zapis daje ispravno preostalo vrijeme.
@@ -30,6 +32,38 @@ public struct RestTimer: Equatable, Sendable {
     /// +10 / −10 sekundi. Timer se nikad ne skraćuje ispod trenutka pritiska (tada istječe odmah).
     public func adjusted(bySeconds delta: Int, at now: Date) -> RestTimer {
         RestTimer(startedAt: startedAt, endsAt: max(now, endsAt.addingTimeInterval(Double(delta))))
+    }
+}
+
+/// Zadane pauze iz Postavki, za vježbe bez vlastite pauze. Složene (višezglobne) vježbe traže dulji
+/// odmor od izolacijskih: 2–3 min prema 1–1,5 min (Senna i sur. 2016, Schoenfeld i sur. 2016,
+/// Grgic i sur. 2018), a izolacijske preko 90 s gotovo ništa ne dobivaju (Singer i sur. 2024).
+/// Opterećenje u kg nije dobar pokazatelj (isti teret je nekome 60 %, a nekome 95 % maksimuma),
+/// pa pauza ovisi o vrsti vježbe iz kataloga (`Mechanic`).
+public struct RestDefaults: Equatable, Sendable {
+    /// Složene vježbe (`Mechanic.compound`).
+    public var compoundSeconds: Int
+    /// Izolacijske i vježbe bez oznake (vlastite vježbe, kardio, istezanje).
+    public var otherSeconds: Int
+
+    public init(compoundSeconds: Int, otherSeconds: Int) {
+        self.compoundSeconds = compoundSeconds
+        self.otherSeconds = otherSeconds
+    }
+
+    /// Ista pauza za sve vježbe.
+    public init(uniform seconds: Int) {
+        self.init(compoundSeconds: seconds, otherSeconds: seconds)
+    }
+
+    /// Tvorničke vrijednosti: 2:30 za složene, 1:30 za ostale.
+    public static let standard = RestDefaults(compoundSeconds: 150, otherSeconds: 90)
+
+    /// Zadana pauza nakon vježbe ili kruga superseta. Superset s barem jednom složenom vježbom
+    /// dobiva pauzu složenih, jer se odmor ravna prema najzahtjevnijoj vježbi u krugu.
+    /// Nil znači da se vrsta vježbe ne zna.
+    public func seconds(isCompound flags: [Bool?]) -> Int {
+        flags.contains(true) ? compoundSeconds : otherSeconds
     }
 }
 
@@ -116,5 +150,20 @@ public enum RecoveryAssessment {
             isStale: now.timeIntervalSince(lastActivityAt) > staleAfter,
             suggestedEnd: lastCompletedSetAt ?? startedAt
         )
+    }
+}
+
+extension UserSettings {
+    /// Zadane pauze iz Postavki.
+    public var restDefaults: RestDefaults {
+        RestDefaults(compoundSeconds: compoundRestSeconds, otherSeconds: defaultRestSeconds)
+    }
+}
+
+extension ExerciseCatalog {
+    /// Je li vježba složena, po ključu `ExerciseRef.key`. Nil za vlastitu vježbu i vježbu bez oznake.
+    public func isCompound(exerciseKey key: String) -> Bool? {
+        guard let id = ExerciseRef(key: key, name: "")?.catalogId, let exercise = exercise(withID: id) else { return nil }
+        return exercise.mechanic.map { $0 == .compound }
     }
 }

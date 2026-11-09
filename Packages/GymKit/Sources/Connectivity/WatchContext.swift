@@ -40,10 +40,12 @@ public struct PlannedExercisePayload: Codable, Sendable, Hashable {
     public var isCardio: Bool?
     /// Završene serije zadnjeg izvođenja, za redak "prošli put" na satu. Nil iz starije verzije aplikacije.
     public var previous: [PlannedSetPayload]?
+    /// Složena vježba iz kataloga (zadana pauza, `RestDefaults`). Nil kad se ne zna ili iz starije verzije aplikacije.
+    public var isCompound: Bool?
 
     public init(
         exercise: ExerciseRef, inputType: ExerciseInputType, restSeconds: Int? = nil, supersetGroup: Int? = nil,
-        sets: [PlannedSetPayload], isCardio: Bool? = nil, previous: [PlannedSetPayload]? = nil
+        sets: [PlannedSetPayload], isCardio: Bool? = nil, previous: [PlannedSetPayload]? = nil, isCompound: Bool? = nil
     ) {
         self.exercise = exercise
         self.inputType = inputType
@@ -51,6 +53,7 @@ public struct PlannedExercisePayload: Codable, Sendable, Hashable {
         self.supersetGroup = supersetGroup
         self.sets = sets
         self.isCardio = isCardio
+        self.isCompound = isCompound
         self.previous = previous
     }
 }
@@ -87,7 +90,10 @@ public struct WatchContextPayload: Codable, Sendable, Equatable {
     /// Predlošci izvan rasporeda (za trening koji nije na redu).
     public var templates: [PlannedWorkoutPayload]
     public var weightUnit: WeightUnit
+    /// Zadana pauza za izolacijske i ostale vježbe.
     public var defaultRestSeconds: Int
+    /// Zadana pauza za složene vježbe. Nil iz starije verzije aplikacije (tada vrijedi `defaultRestSeconds`).
+    public var compoundRestSeconds: Int?
     /// Korisnik je u aplikaciji uključio Apple Zdravlje: sat sprema trening u Zdravlje.
     public var savesToHealth: Bool
     public var generatedAt: Date

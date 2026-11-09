@@ -106,8 +106,12 @@ final class PhoneWatchSync {
     /// Kontekst za sat zna i koje su vježbe kardio (ikona vrste treninga, sažetak i štoperica na satu).
     private func contextBuilder(_ context: ModelContext) -> WatchContextBuilder {
         let custom = (try? context.fetch(FetchDescriptor<CustomExercise>())) ?? []
-        let info = ExerciseInfoBuilder.provider(catalog: AppServices.bundledCatalog, custom: custom)
-        return WatchContextBuilder(context: context, isCardio: ExerciseInfoBuilder.isCardio(info))
+        let catalog = AppServices.bundledCatalog
+        let info = ExerciseInfoBuilder.provider(catalog: catalog, custom: custom)
+        return WatchContextBuilder(
+            context: context, isCardio: ExerciseInfoBuilder.isCardio(info),
+            isCompound: { catalog?.isCompound(exerciseKey: $0) }
+        )
     }
 
     private func flush(sessionID: UUID) {

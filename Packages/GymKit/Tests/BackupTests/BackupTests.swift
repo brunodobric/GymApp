@@ -18,6 +18,7 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     let settings = try GymQueries(context: context).settings()
     settings.weightUnit = .pounds
     settings.defaultRestSeconds = 120
+    settings.compoundRestSeconds = 210
     settings.goal = .strength
     settings.experience = .intermediate
     settings.equipment = [.barbell, .dumbbell]
@@ -154,6 +155,7 @@ struct JSONBackupTests {
         #expect(try GymQueries(context: target).settings().startsWatchWorkout == false)
         let restored = try GymQueries(context: target).settings()
         #expect(restored.liveActivityFollowsApp == false)
+        #expect(restored.compoundRestSeconds == 210)
         #expect(restored.liveActivityTheme == .light)
         #expect(restored.liveActivityAccent == .pink)
         let measurements = try target.fetch(FetchDescriptor<BodyMeasurement>())

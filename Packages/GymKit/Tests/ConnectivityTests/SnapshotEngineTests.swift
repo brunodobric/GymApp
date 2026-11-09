@@ -78,6 +78,30 @@ struct SnapshotEngineTests {
         #expect(engine.snapshot.set(withID: set.id)?.isCompleted == false)
     }
 
+    @Test("Na satu vježba bez vlastite pauze dobiva zadanu prema vrsti")
+    func restByMechanic() throws {
+        var payload = plan()
+        payload.exercises[0].restSeconds = nil
+        payload.exercises[0].isCompound = true
+        var context = WatchContextPayload.empty
+        context.templates = [payload]
+        context.defaultRestSeconds = 90
+        context.compoundRestSeconds = 150
+        #expect(context.isCompound(row) == true)
+        #expect(context.isCompound(curl) == nil)
+
+        var engine = SnapshotEngine(snapshot: SnapshotEngine.start(payload, device: .watch, now: base))
+        let rowSet = engine.snapshot.exercises[0].orderedSets[1]
+        let timer = try engine.completeSet(
+            rowSet.id, restDefaults: context.restDefaults, isCompound: { context.isCompound($0) }, now: base
+        )
+        #expect(timer?.totalSeconds == 150)
+
+        // Kontekst iz starije verzije aplikacije nema pauzu za složene: vrijedi zadana za sve.
+        context.compoundRestSeconds = nil
+        #expect(context.restDefaults == RestDefaults(uniform: 90))
+    }
+
     @Test("Superset: bez pauze nakon prve vježbe, naizmjenične serije, zatim sljedeća vježba")
     func superset() throws {
         var engine = SnapshotEngine(snapshot: SnapshotEngine.start(plan(), device: .watch, now: base))

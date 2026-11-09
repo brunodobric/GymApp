@@ -312,6 +312,28 @@ struct RestTests {
         #expect(RestPolicy.seconds(positionInGroup: 0, groupSize: 1, configured: nil, defaultSeconds: 90) == 90)
     }
 
+    @Test("Zadana pauza prema vrsti vježbe: složene dulje, ostale i nepoznate kraće")
+    func restDefaultsByMechanic() {
+        let defaults = RestDefaults(compoundSeconds: 150, otherSeconds: 90)
+        #expect(defaults.seconds(isCompound: [true]) == 150)
+        #expect(defaults.seconds(isCompound: [false]) == 90)
+        #expect(defaults.seconds(isCompound: [nil]) == 90)
+        // Superset se ravna prema najzahtjevnijoj vježbi u krugu.
+        #expect(defaults.seconds(isCompound: [false, true]) == 150)
+        #expect(defaults.seconds(isCompound: [false, nil]) == 90)
+        #expect(RestDefaults(uniform: 120).seconds(isCompound: [true]) == 120)
+        #expect(RestDefaults.standard == RestDefaults(compoundSeconds: 150, otherSeconds: 90))
+    }
+
+    @Test("Postavke daju zadane pauze: tvornički 2:30 za složene i 1:30 za ostale")
+    func settingsRestDefaults() {
+        let settings = UserSettings()
+        #expect(settings.restDefaults == .standard)
+        settings.compoundRestSeconds = 180
+        settings.defaultRestSeconds = 60
+        #expect(settings.restDefaults == RestDefaults(compoundSeconds: 180, otherSeconds: 60))
+    }
+
     @Test("Naizmjenični redoslijed superseta")
     func supersetOrder() {
         let order = SupersetSequence.order(setCounts: [3, 2])
