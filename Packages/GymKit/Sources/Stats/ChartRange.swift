@@ -7,9 +7,6 @@ public enum ChartRange: Hashable, Sendable {
     /// Vlastiti raspon; oba datuma ulaze cijelim danom.
     case custom(from: Date, to: Date)
 
-    /// Gotovi rasponi za odabir (bez vlastitog).
-    public static let presets: [ChartRange] = [.months(1), .months(2), .months(6), .months(12), .all]
-
     /// Interval rasponu na dan `now`; nil za "sve". Vlastiti raspon s obrnutim datumima se okrene.
     public func interval(now: Date, calendar: Calendar = .current) -> DateInterval? {
         switch self {

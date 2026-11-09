@@ -27,11 +27,6 @@ public final class HealthWorkout {
     public var activeEnergyKilocalories: Double?
     public var distanceMeters: Double?
     public var averageHeartRate: Double?
-    /// Plan iz WorkoutKita po kojem je trening odrađen na satu. Nekadašnji kardio planovi; više se ne puni.
-    public var workoutPlanId: UUID?
-    /// Raspored i predložak s kojima je trening bio povezan (nekadašnji kardio planovi; više se ne puni).
-    public var scheduleId: UUID?
-    public var templateId: UUID?
 
     public init(healthKitWorkoutId: UUID, name: String, startedAt: Date, endedAt: Date) {
         self.healthKitWorkoutId = healthKitWorkoutId
@@ -53,9 +48,6 @@ public final class HealthWorkout {
         session.activeEnergyKilocalories = activeEnergyKilocalories
         session.distanceMeters = distanceMeters
         session.averageHeartRate = averageHeartRate
-        session.workoutPlanId = workoutPlanId
-        session.scheduleId = scheduleId
-        session.templateId = templateId
         return session
     }
 }
@@ -238,9 +230,6 @@ public struct HealthLocalStore {
                 workout.activeEnergyKilocalories = session.activeEnergyKilocalories
                 workout.distanceMeters = session.distanceMeters
                 workout.averageHeartRate = session.averageHeartRate
-                workout.workoutPlanId = session.workoutPlanId
-                workout.scheduleId = session.scheduleId
-                workout.templateId = session.templateId
                 context.insert(workout)
             }
             context.delete(session)

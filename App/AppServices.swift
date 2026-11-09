@@ -100,8 +100,6 @@ enum AppServices {
             Logger(subsystem: "com.brunodobric.gymapp", category: "Health")
                 .error("Premještanje podataka iz Zdravlja: \(String(describing: error))")
         }
-        // Stari id-jevi vježbi (katalog prije MoveKita) prelaze na nove, a stari kardio planovi u treninge.
-        migrateStoredData()
         PhoneWatchSync.shared.start(container: container)
         // Widgeti i komplikacije: nova snimka nakon svakog spremanja baze.
         WidgetRefresher.shared.start(container: container)
@@ -110,35 +108,9 @@ enum AppServices {
         MetricsReporter.shared.start()
     }
 
-    /// Javni katalog iz bundlea, za migraciju id-jeva i spremanje u Zdravlje (ekrani koriste `CatalogStore`).
+    /// Javni katalog iz bundlea, za radnje izvan ekrana: Zdravlje, widgeti, sat (ekrani koriste `CatalogStore`).
     static let bundledCatalog: ExerciseCatalog? = {
         guard let url = Bundle.main.url(forResource: "catalog", withExtension: "json", subdirectory: "Catalog") else { return nil }
         return try? ExerciseCatalog(data: Data(contentsOf: url))
     }()
-
-    /// Prevodi stare id-jeve kataloga u spremljenim treninzima i predlošcima (`CatalogIdMigration`)
-    /// i pretvara nekadašnje kardio planove za sat u obične treninge (`CardioPlanMigration`).
-    /// Poziva se pri pokretanju, nakon uvoza i nakon sinkronizacije, jer stari zapisi mogu stići i kasnije.
-    static func migrateStoredData() {
-        guard storeOpenError == nil else { return }
-        do {
-            if try CardioPlanMigration.migrate(in: container.mainContext) > 0 {
-                Logger(subsystem: "com.brunodobric.gymapp", category: "Planning").info("Kardio planovi pretvoreni u treninge")
-            }
-        } catch {
-            Logger(subsystem: "com.brunodobric.gymapp", category: "Planning")
-                .error("Pretvaranje kardio planova: \(String(describing: error))")
-        }
-        guard let catalog = bundledCatalog else { return }
-        do {
-            let result = try CatalogIdMigration.migrate(in: container.mainContext, catalog: catalog)
-            if result.changed {
-                Logger(subsystem: "com.brunodobric.gymapp", category: "Catalog")
-                    .info("Migracija kataloga: \(result.renamed) preimenovano, \(result.convertedToCustom) u vlastite vježbe")
-            }
-        } catch {
-            Logger(subsystem: "com.brunodobric.gymapp", category: "Catalog")
-                .error("Migracija id-jeva kataloga: \(String(describing: error))")
-        }
-    }
 }

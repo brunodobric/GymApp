@@ -213,8 +213,6 @@ struct TemplateDTO: Codable {
     var details: String
     var kindRaw: String
     var createdAt: Date
-    /// Kardio plan (faza 10). Nedostaje u starijim kopijama.
-    var cardioPlanRaw: String?
     var exercises: [TemplateExerciseDTO]
 
     init(_ template: WorkoutTemplate) {
@@ -223,7 +221,6 @@ struct TemplateDTO: Codable {
         details = template.details
         kindRaw = template.kindRaw
         createdAt = template.createdAt
-        cardioPlanRaw = template.cardioPlanRaw
         exercises = template.orderedExercises.map { exercise in
             TemplateExerciseDTO(
                 id: exercise.id, orderIndex: exercise.orderIndex, catalogId: exercise.exerciseCatalogId, customId: exercise.exerciseCustomId,
@@ -245,7 +242,6 @@ struct TemplateDTO: Codable {
         template.details = details
         template.kindRaw = kindRaw
         template.createdAt = createdAt
-        template.cardioPlanRaw = cardioPlanRaw
         context.insert(template)
         for item in exercises {
             let exercise = TemplateExercise(orderIndex: item.orderIndex, exercise: ExerciseRef(
@@ -420,8 +416,6 @@ struct SessionDTO: Codable {
     var activeEnergyKilocalories: Double?
     var healthKitWorkoutId: UUID?
     var isImportedFromWorkoutsApp: Bool
-    /// Plan iz WorkoutKita (faza 10). Nedostaje u starijim kopijama.
-    var workoutPlanId: UUID?
     var distanceMeters: Double?
     var averageHeartRate: Double?
     /// Napor treninga (session RPE). Nedostaje u starijim kopijama.
@@ -442,7 +436,6 @@ struct SessionDTO: Codable {
         activeEnergyKilocalories = session.activeEnergyKilocalories
         healthKitWorkoutId = session.healthKitWorkoutId
         isImportedFromWorkoutsApp = session.isImportedFromWorkoutsApp
-        workoutPlanId = session.workoutPlanId
         distanceMeters = session.distanceMeters
         averageHeartRate = session.averageHeartRate
         sessionRPE = session.sessionRPE
@@ -476,7 +469,6 @@ struct SessionDTO: Codable {
         session.activeEnergyKilocalories = activeEnergyKilocalories
         session.healthKitWorkoutId = healthKitWorkoutId
         session.isImportedFromWorkoutsApp = isImportedFromWorkoutsApp
-        session.workoutPlanId = workoutPlanId
         session.distanceMeters = distanceMeters
         session.averageHeartRate = averageHeartRate
         session.sessionRPE = sessionRPE

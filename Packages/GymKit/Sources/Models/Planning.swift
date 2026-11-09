@@ -66,9 +66,6 @@ extension GymSchemaV1 {
         public var details: String = ""
         public var kindRaw: String = WorkoutKind.strength.rawValue
         public var createdAt: Date = Date()
-        /// Plan nekadašnjeg kardio treninga za sat (JSON). Aplikacija ga više ne koristi
-        /// (`CardioPlanMigration`), a svojstvo ostaje jer se shema CloudKita samo proširuje.
-        public var cardioPlanRaw: String?
         @Relationship(deleteRule: .cascade, inverse: \TemplateExercise.template)
         public var exercises: [TemplateExercise]? = []
 

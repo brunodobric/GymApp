@@ -16,7 +16,7 @@ Uvjeti koji određuju kako radimo:
 * **Sirove datoteke ne smiju biti javno dostupne ni preuzimljive.** Repozitorij je javan, pa u njega ne idu klipovi, posteri, `metadata.json` ni MoveKit tekstovi (upute, česte greške, opisi), ni naši hrvatski prijevodi tih tekstova. Nema javnih poveznica na datoteke, a aplikacija nema izvoz klipova.
 * **Licenca i certifikat čuvaju se uz pakete** (`~/Documents/MoveKit/LICENSE.txt` i e-mail s potvrdom). License ID se ne piše u repozitorij.
 
-U repozitoriju su samo naši podaci: pravila mapiranja (`Tools/CatalogBuilder/mapping.json`), ispravke po vježbi (`overrides.json`), hrvatski nazivi (`names-hr.json`), tablica starih id-jeva (`legacy-ids.json`) i iz njih izgrađen `Resources/Catalog/catalog.json` (id, nazivi, kategorija, vrsta vježbe, mišići, oprema, vrsta unosa, regije mape mišića).
+U repozitoriju su samo naši podaci: pravila mapiranja (`Tools/CatalogBuilder/mapping.json`), ispravke po vježbi (`overrides.json`), hrvatski nazivi (`names-hr.json`) i iz njih izgrađen `Resources/Catalog/catalog.json` (id, nazivi, kategorija, vrsta vježbe, mišići, oprema, vrsta unosa, regije mape mišića).
 
 ## Gdje je što
 
@@ -48,9 +48,9 @@ python3 Tools/CatalogBuilder/build_catalog.py --movekit ~/Documents/MoveKit
 
 CI i klon repozitorija nemaju MoveKit dodatak. Aplikacija se normalno gradi i radi: katalog ima sve vježbe, nazive, mišiće i filtere, ali detalj vježbe nema klip ni upute (piše da upute nisu dostupne), a mreža kataloga nema sličice. `CatalogStore` gleda postoji li datoteka prije nego što je prikaže.
 
-## Stari id-jevi
+## Id-jevi vježbi
 
-Spremljeni treninzi, predlošci i izmjene ciklusa pamte vježbu po id-ju kataloga. `legacy-ids.json` za svih 187 vježbi starog kataloga daje MoveKit slug ili `null` kad para nema (8 vježbi). `CatalogIdMigration` u GymKitu prepisuje id-jeve pri pokretanju, nakon uvoza i nakon iCloud sinkronizacije. Vježba bez para postaje vlastita vježba istog naziva, pa povijest i rekordi ostaju. Usporedba vježbi je u projektnim datotekama (`movekit/usporedba-vjezbi.md`).
+Spremljeni treninzi, predlošci i izmjene ciklusa pamte vježbu po id-ju kataloga (MoveKit slug). Id postojeće vježbe se ne mijenja. Prijelaz sa starog kataloga (free-exercise-db) imao je migraciju id-jeva samo za razvojne buildove, a uklonjena je prije prvog izdanja. Usporedba vježbi je u projektnim datotekama (`movekit/usporedba-vjezbi.md`).
 
 ## Hrvatski prijevod uputa
 

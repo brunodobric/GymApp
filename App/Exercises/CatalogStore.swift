@@ -55,12 +55,6 @@ final class CatalogStore {
         return try? CatalogTexts.decode(data)
     }
 
-    /// Ima li build upute iz MoveKit dodatka (bez njega detalj vježbe kaže da uputa nema).
-    var hasTexts: Bool {
-        guard let mediaDirectory else { return false }
-        return FileManager.default.fileExists(atPath: mediaDirectory.appendingPathComponent("texts.json").path)
-    }
-
     /// Datoteka medija iz kataloga (npr. "Media/barbell-squat.mp4") ili nil ako je nema u buildu.
     /// Mediji su u bundleu i nikad ne idu u iCloud.
     func mediaURL(_ path: String) -> URL? {

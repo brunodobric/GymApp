@@ -40,7 +40,6 @@ public struct HealthImporter {
             workout.activeEnergyKilocalories = record.activeEnergyKilocalories.flatMap { $0 > 0 ? $0 : nil }
             workout.distanceMeters = record.distanceMeters.flatMap { $0 > 0 ? $0 : nil }
             workout.averageHeartRate = record.averageHeartRate.flatMap { $0 > 0 ? $0 : nil }
-            workout.workoutPlanId = record.workoutPlanId
             context.insert(workout)
             knownWorkouts.insert(record.uuid)
             imported += 1

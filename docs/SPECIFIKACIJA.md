@@ -38,7 +38,7 @@ Ovaj dokument sadrži ažuriranu i proširenu specifikaciju moderne iOS (Swift) 
 * Klipovi i posteri isporučuju se u bundleu (HEVC 1280 px, oko 110 MB za sve vježbe; On-Demand Resources ako veličina postane problem) i nikad ne idu u iCloud. Javni dio kataloga (`Resources/Catalog/catalog.json`: nazivi, mišići, oprema, vrsta unosa) je u repozitoriju, a upute, česte greške i mediji dolaze iz privatnog MoveKit dodatka (`Resources/MoveKit/`, ne commita se).
 * Custom vježbe žive u korisničkoj bazi koja se sinkronizira.
 * Korisnički podaci na službenu vježbu pokazuju preko stabilnog tekstualnog identifikatora (`catalogId`, MoveKit slug, npr. `barbell-squat`), a ne preko relacije između baza. Tako ažuriranje kataloga u novoj verziji aplikacije ne lomi povijest.
-* **Prijelaz s free-exercise-db (katalog verzije 2):** `catalog.json` ima tablicu `legacyIds` (stari id → novi slug ili `null`, iz `Tools/CatalogBuilder/legacy-ids.json`). Katalog stari id prepoznaje pri traženju, a `CatalogIdMigration` u GymKitu pri pokretanju, nakon uvoza i nakon sinkronizacije prepisuje spremljene id-jeve u treninzima, predlošcima i izmjenama ciklusa. Vježba bez para u MoveKitu (8 od 187) postaje vlastita vježba istog naziva, pa povijest i rekordi ostaju.
+* **Id vježbe se ne mijenja** nakon izdanja. Ako vježba iz kataloga ikad bude izbačena, katalog mora zadržati njezin id (ili aplikacija dobiva migraciju), da povijest i rekordi ostanu.
 
 ### Lokalizacija kataloga (HR + EN)
 * MoveKit postoji samo na engleskom. Hrvatski nazivi svih 582 vježbi su u `Tools/CatalogBuilder/names-hr.json` (javno, naš prijevod naziva). Prijevod uputa i čestih grešaka je MoveKit tekst, pa ide u privatni `translations-hr.json` uz paket; dok ga nema, upute se prikazuju na engleskom uz napomenu.
@@ -405,7 +405,6 @@ Korisnik gradi planove na tri razine:
 #### Notifikacije i pokretanje
 * Aplikacija šalje lokalne notifikacije kada dođe red na planirani trening (ako su uključene).
 * **Svi treninzi slažu se od vježbi**, i kardio: trčanje, bicikl ili veslanje su kardio vježbe u treningu (trajanje, udaljenost). Aplikacija ne stvara planove za aplikaciju Workout na satu (WorkoutKit) i ne zakazuje ih. Kardio koji korisnik odradi u aplikaciji Workout ili drugdje stiže kroz uvoz iz Zdravlja.
-  * Nekadašnji kardio planovi za sat (vrsta predloška `cardio`) pri pokretanju postaju obični treninzi istog naziva bez vježbi (`CardioPlanMigration`), a planovi koje je aplikacija zakazala na sat jednom se maknu.
 * **Za snagu:** Notifikacija otvara vlastitu Watch / iPhone aplikaciju za logging serija.
 
 ### Ponašanje notifikacija tijekom aktivnog treninga

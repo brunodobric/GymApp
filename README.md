@@ -8,7 +8,6 @@ Korisnici aplikaciju vide pod imenom **Apolon** (`CFBundleDisplayName` u `projec
 * [Plan izrade](docs/PLAN_IZRADE.md)
 * [Pravila dizajna (Apple HIG)](docs/DIZAJN.md)
 * [Pravo i privatnost](docs/PRAVNO_I_PRIVATNOST.md)
-* [Prototipi faze 0](docs/prototipi.md)
 
 ## Pokretanje
 

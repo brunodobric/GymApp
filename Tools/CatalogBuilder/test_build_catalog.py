@@ -123,13 +123,6 @@ class TextsTests(unittest.TestCase):
         self.assertNotIn("hr", texts["commonMistakes"])
 
 
-class LegacyTests(unittest.TestCase):
-    def test_unknown_target_fails(self):
-        with self.assertRaises(bc.BuildError):
-            bc.check_legacy({"Old": "missing"}, {"present"})
-        bc.check_legacy({"Old": "present", "Gone": None}, {"present"})
-
-
 class PublicFilesTests(unittest.TestCase):
     """Javne datoteke u repozitoriju moraju se slagati s generiranim katalogom."""
 
@@ -149,10 +142,8 @@ class PublicFilesTests(unittest.TestCase):
         for exercise in self.catalog["exercises"]:
             self.assertEqual(exercise["name"].get("hr"), names[exercise["id"]])
 
-    def test_legacy_ids_match(self):
-        legacy = {k: v for k, v in bc.load_json(TOOL / "legacy-ids.json").items() if not k.startswith("_")}
-        self.assertEqual(self.catalog["legacyIds"], legacy)
-        bc.check_legacy(legacy, self.ids)
+    def test_no_legacy_ids(self):
+        self.assertNotIn("legacyIds", self.catalog)
 
     def test_every_exercise_has_kind(self):
         for exercise in self.catalog["exercises"]:

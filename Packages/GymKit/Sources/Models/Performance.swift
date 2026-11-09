@@ -24,8 +24,6 @@ extension GymSchemaV1 {
         public var activeEnergyKilocalories: Double?
         public var healthKitWorkoutId: UUID?
         public var isImportedFromWorkoutsApp: Bool = false
-        /// Plan iz WorkoutKita po kojem je uvezeni trening odrađen na satu (veza s rasporedom, faza 10).
-        public var workoutPlanId: UUID?
         public var distanceMeters: Double?
         public var averageHeartRate: Double?
         /// Napor cijelog treninga od 1 do 10 (session RPE, Foster i sur. 2001), neobavezno nakon treninga.

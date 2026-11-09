@@ -224,8 +224,6 @@ private struct DataSettingsActions {
                     try CSVBackup.importAny(text, into: ModelContext(container))
                 }.value
             }
-            // Stara sigurnosna kopija može imati id-jeve vježbi iz starog kataloga.
-            AppServices.migrateStoredData()
             show("Uvoz je gotov.", String(localized: "Dodano: \(outcome.added). Preskočeno (već postoje): \(outcome.skipped)."))
         } catch ImportFileError.tooLarge {
             show("Uvoz nije uspio.", String(localized: "Datoteka je prevelika. Najveća veličina je 50 MB."))
