@@ -38,8 +38,9 @@ struct WatchWorkoutView: View {
 
 // MARK: - Serija
 
-/// Trenutna vježba i serija s velikim gumbom za kvačicu. Težina i ponavljanja mijenjaju se Digital Crownom:
-/// dodir na vrijednost bira koju kruna mijenja.
+/// Trenutna vježba i serija, raspoređeni po cijeloj visini: gore trajanje, puls i vježba, u sredini
+/// vrijednosti (Digital Crown, dodir bira polje) i "prošli put", a pri dnu kvačica.
+/// Serija s trajanjem (kardio, izdržaj) umjesto krune ima štopericu.
 struct WatchSetView: View {
     @Environment(WatchWorkoutStore.self) private var store
 
@@ -52,30 +53,55 @@ struct WatchSetView: View {
     }
 
     private func content(exercise: ExerciseSnapshot, set: SetSnapshot) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(exercise.exercise.name)
-                .font(.itemTitle)
-                .lineLimit(2)
-                .minimumScaleFactor(0.8)
-            Text(setLabel(exercise: exercise, set: set))
-                .font(.footnote)
-                .foregroundStyle(set.kind == .warmUp ? .orange : .secondary)
-            Spacer(minLength: 0)
-            WatchSetValuesEditor(exercise: exercise, set: set)
-            Spacer(minLength: 0)
-            HStack {
-                Button("Prethodna vježba", systemImage: "chevron.backward") { store.moveExercise(by: -1) }
-                    .disabled(!store.canMoveExercise(by: -1))
-                Button("Završi seriju", systemImage: "checkmark") { store.completeCurrentSet() }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.green)
-                Button("Sljedeća vježba", systemImage: "chevron.forward") { store.moveExercise(by: 1) }
-                    .disabled(!store.canMoveExercise(by: 1))
+        let usesStopwatch = WatchSetField.fields(for: exercise.inputType).contains(.duration)
+        return VStack(alignment: .leading, spacing: 4) {
+            header(exercise: exercise, set: set)
+            Spacer(minLength: 2)
+            if usesStopwatch {
+                WatchStopwatchView(exercise: exercise, set: set)
+            } else {
+                WatchSetValuesEditor(exercise: exercise, set: set)
+                previousLine(exercise: exercise, set: set)
+                Spacer(minLength: 2)
+                HStack {
+                    Button("Prethodna vježba", systemImage: "chevron.backward") { store.moveExercise(by: -1) }
+                        .disabled(!store.canMoveExercise(by: -1))
+                    Button("Završi seriju", systemImage: "checkmark") { store.completeCurrentSet() }
+                        .buttonStyle(.borderedProminent)
+                        .layoutPriority(1)
+                    Button("Sljedeća vježba", systemImage: "chevron.forward") { store.moveExercise(by: 1) }
+                        .disabled(!store.canMoveExercise(by: 1))
+                }
+                .labelStyle(.iconOnly)
+                .font(.title3.weight(.semibold))
             }
-            .labelStyle(.iconOnly)
-            .font(.title3)
         }
         .scenePadding(.horizontal)
+        .padding(.bottom, 6)
+    }
+
+    private func header(exercise: ExerciseSnapshot, set: SetSnapshot) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            WatchHeaderMetrics()
+            HStack(spacing: 5) {
+                if store.isCardio(exercise) {
+                    Image(systemName: "figure.run")
+                        .foregroundStyle(.tint)
+                        .accessibilityLabel(Text("Kardio"))
+                }
+                Text(exercise.exercise.name)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.75)
+            }
+            .font(.cardTitle)
+            HStack(spacing: 6) {
+                WatchSetBadge(number: exercise.workingNumber(ofSet: set.id), isCurrent: true)
+                Text(setLabel(exercise: exercise, set: set))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            .font(.footnote)
+        }
     }
 
     private func setLabel(exercise: ExerciseSnapshot, set: SetSnapshot) -> String {
@@ -85,12 +111,28 @@ struct WatchSetView: View {
         return set.kind == .warmUp ? base + " · " + String(localized: "zagrijavanje") : base
     }
 
+    @ViewBuilder
+    private func previousLine(exercise: ExerciseSnapshot, set: SetSnapshot) -> some View {
+        if let previous = store.previousSet(of: set, in: exercise) {
+            let text = WatchSetField.fields(for: exercise.inputType)
+                .map { $0.text(in: previous, unit: store.unit) }
+                .joined(separator: " × ")
+            Label(String(localized: "Prošli put \(text)"), systemImage: "arrow.counterclockwise")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .frame(maxWidth: .infinity)
+        }
+    }
+
     /// Vježba nema nezavršenih serija: dodaj seriju, idi dalje ili završi trening.
     private var exerciseDone: some View {
         ScrollView {
             VStack(spacing: 8) {
+                WatchHeaderMetrics()
                 if let exercise = store.currentExercise {
-                    Text(exercise.exercise.name).font(.itemTitle).multilineTextAlignment(.center)
+                    Text(exercise.exercise.name).font(.cardTitle).multilineTextAlignment(.center)
                 }
                 Text(store.showsFinishPrompt ? "Sve serije su gotove" : "Vježba je gotova")
                     .font(.footnote)
@@ -98,7 +140,6 @@ struct WatchSetView: View {
                 if store.showsFinishPrompt {
                     Button("Završi trening", systemImage: "flag.checkered") { store.finish() }
                         .buttonStyle(.borderedProminent)
-                        .tint(.green)
                 }
                 if let exercise = store.currentExercise {
                     Button("Dodaj seriju", systemImage: "plus") { store.addSet(to: exercise.id) }
@@ -111,22 +152,25 @@ struct WatchSetView: View {
     }
 }
 
-/// Vrijednosti serije. Odabrana vrijednost je obrubljena, a kruna je mijenja u koracima polja.
+/// Vrijednosti serije. Odabrana vrijednost je obrubljena naglasnom bojom, a kruna je mijenja u koracima polja.
 struct WatchSetValuesEditor: View {
     let exercise: ExerciseSnapshot
     let set: SetSnapshot
+    /// Polja koja se prikazuju; zadano sva polja vrste unosa (štoperica prikazuje samo udaljenost).
+    var only: [WatchSetField]?
+    var compact = false
 
     @Environment(WatchWorkoutStore.self) private var store
     @FocusState private var focused: WatchSetField?
     @State private var values: [WatchSetField: Double] = [:]
 
-    private var fields: [WatchSetField] { WatchSetField.fields(for: exercise.inputType) }
+    private var fields: [WatchSetField] { only ?? WatchSetField.fields(for: exercise.inputType) }
 
     var body: some View {
         HStack(spacing: 6) {
             ForEach(Array(fields.enumerated()), id: \.element) { index, field in
                 if index > 0 {
-                    Text(fields == [.duration, .distance] ? "·" : "×")
+                    Text(verbatim: fields == [.duration, .distance] ? "·" : "×")
                         .font(.title3)
                         .foregroundStyle(.secondary)
                 }
@@ -147,21 +191,25 @@ struct WatchSetValuesEditor: View {
             }
         )
         let range = field.range(unit: store.unit)
+        let isFocused = focused == field
         return VStack(spacing: 0) {
             Text(field.text(in: set, unit: store.unit))
-                .font(.system(.title2, design: .rounded, weight: .semibold).monospacedDigit())
+                .font(compact ? Font.metricSmall : Font.system(.largeTitle, design: .rounded, weight: .bold).monospacedDigit())
                 .lineLimit(1)
-                .minimumScaleFactor(0.6)
+                .minimumScaleFactor(0.5)
             Text(field.unitLabel(unit: store.unit))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, compact ? 2 : 6)
         .padding(.horizontal, 6)
         .frame(maxWidth: .infinity)
         .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(focused == field ? Color.green : Color.secondary.opacity(0.4), lineWidth: focused == field ? 2 : 1)
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(
+                    isFocused ? AnyShapeStyle(.tint) : AnyShapeStyle(Color.secondary.opacity(0.4)),
+                    lineWidth: isFocused ? 2.5 : 1
+                )
         }
         .focusable()
         .focused($focused, equals: field)
@@ -193,32 +241,85 @@ extension WatchSetField {
     }
 }
 
+// MARK: - Štoperica
+
+/// Serija s trajanjem: štoperica broji sama, a kvačica upisuje izmjereno vrijeme. Prije pokretanja se
+/// prikazuje upisano (ciljno) trajanje. Udaljenost se i dalje mijenja krunom.
+struct WatchStopwatchView: View {
+    let exercise: ExerciseSnapshot
+    let set: SetSnapshot
+    @Environment(WatchWorkoutStore.self) private var store
+    @ScaledMetric(relativeTo: .largeTitle) private var timeSize: CGFloat = 44
+
+    private var stopwatch: Stopwatch? {
+        store.stopwatch.flatMap { $0.setID == set.id ? $0 : nil }
+    }
+
+    private var hasDistance: Bool {
+        WatchSetField.fields(for: exercise.inputType).contains(.distance)
+    }
+
+    var body: some View {
+        VStack(spacing: 4) {
+            elapsed
+                .font(.system(size: timeSize, weight: .bold, design: .rounded).monospacedDigit())
+                .foregroundStyle(.yellow)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .frame(maxWidth: .infinity)
+            if (set.durationSeconds ?? 0) > 0, stopwatch != nil {
+                Text("Cilj \(WatchSetField.duration.text(in: set, unit: store.unit))")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 2)
+            HStack(spacing: 6) {
+                if hasDistance {
+                    WatchSetValuesEditor(exercise: exercise, set: set, only: [.distance], compact: true)
+                }
+                Button {
+                    store.toggleStopwatch(for: set.id)
+                } label: {
+                    Image(systemName: stopwatch?.isRunning == true ? "pause.fill" : "play.fill")
+                        .frame(maxWidth: hasDistance ? nil : .infinity)
+                }
+                .accessibilityLabel(stopwatch?.isRunning == true ? Text("Pauza") : Text("Pokreni"))
+                Button("Završi seriju", systemImage: "checkmark") { store.completeCurrentSet() }
+                    .labelStyle(.iconOnly)
+                    .buttonStyle(.borderedProminent)
+            }
+            .font(.title3.weight(.semibold))
+        }
+    }
+
+    @ViewBuilder
+    private var elapsed: some View {
+        if let stopwatch, stopwatch.isRunning {
+            Text(stopwatch.displayStart(at: .now), style: .timer)
+                .multilineTextAlignment(.center)
+        } else if let stopwatch {
+            Text(Duration.seconds(stopwatch.elapsedSeconds(at: .now)).formatted(.time(pattern: .minuteSecond)))
+        } else {
+            Text(WatchSetField.duration.text(in: set, unit: store.unit))
+        }
+    }
+}
+
 // MARK: - Odmor
 
-/// Odmor: veliko odbrojavanje, −10 / +10 i preskakanje. Na kraju sat zavibrira.
+/// Odmor: krug koji se prazni oko velikog odbrojavanja, sljedeća serija u krugu, a pri dnu −10 / +10
+/// i preskakanje. Lagani dodir 10 s prije kraja, a na kraju sat zavibrira.
 struct WatchRestView: View {
     let timer: RestTimer
     @Environment(WatchWorkoutStore.self) private var store
-    @ScaledMetric(relativeTo: .largeTitle) private var countdownSize: CGFloat = 48
+    @ScaledMetric(relativeTo: .largeTitle) private var countdownSize: CGFloat = 40
 
     var body: some View {
-        VStack(spacing: 6) {
-            Text("Odmor")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            Text(timerInterval: Date.now...max(timer.endsAt, Date.now), countsDown: true)
-                .font(.system(size: countdownSize, weight: .semibold, design: .rounded).monospacedDigit())
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-                .accessibilityLabel(Text("Preostali odmor"))
-            if let next = store.currentSet {
-                Text(nextText(exercise: next.exercise, set: next.set))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-            }
-            Spacer(minLength: 0)
+        VStack(spacing: 4) {
+            WatchHeaderMetrics()
+                .frame(maxWidth: .infinity, alignment: .leading)
+            ring
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             HStack {
                 Button("−10 s") { store.adjustRest(by: -10) }
                     .accessibilityLabel(Text("Skrati odmor za 10 sekundi"))
@@ -227,15 +328,52 @@ struct WatchRestView: View {
                 Button("+10 s") { store.adjustRest(by: 10) }
                     .accessibilityLabel(Text("Produlji odmor za 10 sekundi"))
             }
-            .font(.footnote)
+            .font(.footnote.weight(.semibold))
         }
         .scenePadding(.horizontal)
+        .padding(.bottom, 6)
+    }
+
+    private var ring: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.white.opacity(0.15), lineWidth: 8)
+            // Krug se osvježava jednom u sekundi, a animacija ga glatko prazni između otkucaja.
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                Circle()
+                    .trim(from: 0, to: 1 - timer.progress(at: context.date))
+                    .stroke(.tint, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.linear(duration: 1), value: context.date)
+            }
+            .accessibilityHidden(true)
+            VStack(spacing: 0) {
+                Text("Odmor")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Text(timerInterval: Date.now...max(timer.endsAt, Date.now), countsDown: true)
+                    .font(.system(size: countdownSize, weight: .bold, design: .rounded).monospacedDigit())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .multilineTextAlignment(.center)
+                    .accessibilityLabel(Text("Preostali odmor"))
+                if let next = store.currentSet {
+                    Text(nextText(exercise: next.exercise, set: next.set))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+        .padding(4)
     }
 
     private func nextText(exercise: ExerciseSnapshot, set: SetSnapshot) -> String {
         let values = WatchSetField.fields(for: exercise.inputType)
-            .map { "\($0.text(in: set, unit: store.unit)) \($0.unitLabel(unit: store.unit))" }
+            .map { $0.text(in: set, unit: store.unit) }
             .joined(separator: " × ")
-        return "\(exercise.exercise.name): \(values)"
+        return String(localized: "Sljedeće: \(values)")
     }
 }

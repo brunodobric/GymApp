@@ -9,12 +9,15 @@ import Training
 /// serijama i pretpunjenim vrijednostima koje bi dobio trening pokrenut na iPhoneu (`TemplateStarter`).
 public struct WatchContextBuilder {
     public let context: ModelContext
+    /// Je li vježba kardio, po ključu `ExerciseRef.key` (`ExerciseInfoBuilder.isCardio` u aplikaciji).
+    public let isCardio: (String) -> Bool
 
     /// Najviše predložaka u kontekstu (WatchConnectivity ima ograničenje veličine).
     public static let maxTemplates = 20
 
-    public init(context: ModelContext) {
+    public init(context: ModelContext, isCardio: @escaping (String) -> Bool = { _ in false }) {
         self.context = context
+        self.isCardio = isCardio
     }
 
     public func make(now: Date = Date()) throws -> WatchContextPayload {
@@ -34,10 +37,12 @@ public struct WatchContextBuilder {
                 }
                 return try payload(template: template, exercises: exercises, scheduleId: nil, scheduleName: nil)
             }
-        return WatchContextPayload(
+        var payload = WatchContextPayload(
             upcoming: upcoming, templates: Array(templates), weightUnit: settings.weightUnit,
             defaultRestSeconds: settings.defaultRestSeconds, savesToHealth: settings.wantsHealthKit, generatedAt: now
         )
+        payload.accent = settings.accent
+        return payload
     }
 
     /// Samo sljedeći trening prvog aktivnog rasporeda, s planiranim serijama (za widgete na iPhoneu).
@@ -73,7 +78,8 @@ public struct WatchContextBuilder {
             let sets = Self.plannedSets(previous: previous, targets: targets, inputType: planned.inputType)
             return PlannedExercisePayload(
                 exercise: planned.ref, inputType: planned.inputType, restSeconds: source?.restSeconds,
-                supersetGroup: group, sets: sets
+                supersetGroup: group, sets: sets, isCardio: isCardio(planned.ref.key),
+                previous: previous.map(PlannedSetPayload.init(values:))
             )
         }
         return PlannedWorkoutPayload(
@@ -119,12 +125,7 @@ public struct WatchContextBuilder {
             }
             result.append(values)
         }
-        return result.map {
-            PlannedSetPayload(
-                kind: $0.kind, weightKg: $0.weightKg, reps: $0.reps, extraWeightKg: $0.extraWeightKg,
-                durationSeconds: $0.durationSeconds, distanceMeters: $0.distanceMeters
-            )
-        }
+        return result.map(PlannedSetPayload.init(values:))
     }
 
     private static func apply(_ target: SetTarget, to values: inout SetValues, inputType: ExerciseInputType) {

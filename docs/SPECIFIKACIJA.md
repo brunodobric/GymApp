@@ -456,23 +456,27 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 * iPad nema Watch vezu i aktivni trening na Watchu ne prati uživo.
 
 #### Watch ekrani
+Sat je jednostavan: bilježi serije, vodi odmor i pokazuje vrijeme i vitalne znakove. Izgled prati aplikaciju na iPhoneu: naglasna boja iz postavki (stiže u kontekstu), ikona vrste treninga (snaga, kardio, snaga + kardio) i ista pravila za serije. Sadržaj ispunjava cijelu visinu zaslona.
+
 1. **Početni ekran**
-   * Sljedeći trening (naziv + dan)
-   * Gumb **Započni**
-2. **Aktivni trening**
-   * Trenutna vježba
-   * Trenutna serija (težina × reps)
-   * Veliki gumb za kompletiranje serije
-   * Rest timer (veliki broj + haptic)
-   * Gumb za sljedeću / prethodnu vježbu
+   * Kartica sljedećeg treninga svakog rasporeda: ikona vrste, naziv, broj vježbi i približno trajanje, gumb **Započni** na kartici
+   * Ostali treninzi ispod; dodir otvara pregled vježbi
+2. **Aktivni trening** (tri stranice: kontrole, serija ili odmor, popis vježbi)
+   * Gore trajanje treninga i puls, bez listanja
+   * Trenutna vježba i serija s brojem kao na iPhoneu (Z za zagrijavanje)
+   * Vrijednosti serije mijenjaju se Digital Crownom, ispod je "Prošli put"
+   * Serija s trajanjem (kardio, izdržaj) ima štopericu: kvačica upisuje izmjereno vrijeme, udaljenost se mijenja krunom
+   * Veliki gumb za kompletiranje serije, gumbi za sljedeću / prethodnu vježbu
+   * Popis vježbi: "2 od 4 serije", broj serije, trenutna serija istaknuta, kardio vježba s ikonom trčanja
+   * Kontrole: trajanje, puls, kalorije, broj serija i vježbi, Završi i Odbaci
 3. **Rest timer (kad je aktivan)**
-   * Veliki odbrojavač
-   * +10 / -10
-   * Haptic na kraju
+   * Krug koji se prazni oko velikog odbrojavanja i sljedeća serija
+   * +10 / -10 i preskakanje
+   * Lagani haptic 10 s prije kraja, jači na kraju
 4. **Sažetak (nakon završetka)**
-   * Trajanje
-   * Broj serija
-   * Gumb Zatvori
+   * Trajanje, serije (bez kardija), volumen, kardio u minutama, prosječni puls i kalorije
+   * Trening samo s kardiom nema serije ni volumen
+   * Gumb Gotovo
 
 ### Prečaci, Siri i Action button (App Intents)
 Aplikacija nudi akcije koje se same pojave u Prečacima, Spotlightu i na Action buttonu (`AppShortcutsProvider`), pa se mogu koristiti i u automatizacijama (npr. "kad stignem u teretanu").

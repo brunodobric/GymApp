@@ -1755,6 +1755,16 @@
         }
       }
     },
+    "Cilj %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal %@"
+          }
+        }
+      }
+    },
     "Cilj je manji od same šipke." : {
       "localizations" : {
         "en" : {
@@ -3441,6 +3451,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "My exercises"
+          }
+        }
+      }
+    },
+    "Pokreni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
+    "Vježbe: %lld od %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercises: %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Završeno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed"
           }
         }
       }
@@ -7277,16 +7317,6 @@
         }
       }
     },
-    "Serije: %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sets: %lld"
-          }
-        }
-      }
-    },
     "Sinkronizacija isključena" : {
       "localizations" : {
         "en" : {
@@ -9073,16 +9103,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exercises in records"
-          }
-        }
-      }
-    },
-    "Vježbe: %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exercises: %lld"
           }
         }
       }

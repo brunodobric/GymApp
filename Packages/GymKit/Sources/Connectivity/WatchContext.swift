@@ -36,16 +36,22 @@ public struct PlannedExercisePayload: Codable, Sendable, Hashable {
     /// Vježbe s istim brojem čine superset (broj vrijedi samo unutar jednog plana).
     public var supersetGroup: Int?
     public var sets: [PlannedSetPayload]
+    /// Kardio vježba (katalog ili vlastita vježba u kategoriji kardio). Nil iz starije verzije aplikacije.
+    public var isCardio: Bool?
+    /// Završene serije zadnjeg izvođenja, za redak "prošli put" na satu. Nil iz starije verzije aplikacije.
+    public var previous: [PlannedSetPayload]?
 
     public init(
         exercise: ExerciseRef, inputType: ExerciseInputType, restSeconds: Int? = nil, supersetGroup: Int? = nil,
-        sets: [PlannedSetPayload]
+        sets: [PlannedSetPayload], isCardio: Bool? = nil, previous: [PlannedSetPayload]? = nil
     ) {
         self.exercise = exercise
         self.inputType = inputType
         self.restSeconds = restSeconds
         self.supersetGroup = supersetGroup
         self.sets = sets
+        self.isCardio = isCardio
+        self.previous = previous
     }
 }
 
@@ -89,6 +95,8 @@ public struct WatchContextPayload: Codable, Sendable, Equatable {
     public var week: WidgetSnapshot.Week?
     /// Zadnja tjelesna težina u kg, za komplikaciju težine.
     public var bodyWeightKg: Double?
+    /// Naglasna boja iz postavki na iPhoneu. Nil iz starije verzije aplikacije (sat tada koristi plavu).
+    public var accent: AccentChoice?
 
     public init(
         upcoming: [PlannedWorkoutPayload], templates: [PlannedWorkoutPayload], weightUnit: WeightUnit,
