@@ -383,7 +383,7 @@ struct DashboardLayoutTests {
         try layout.add(.plateCalculator)
         #expect(try layout.add(.bodyWeight) == nil)
         #expect(try kinds(layout) == [.bodyWeight, .plateCalculator])
-        #expect(try layout.availableKinds() == [.thisWeek, .lastWorkout])
+        #expect(try layout.availableKinds() == [.thisWeek, .thisMonth, .thisYear, .lastWorkout])
     }
 
     @Test("Uklanjanje zatvara rupu u redoslijedu")

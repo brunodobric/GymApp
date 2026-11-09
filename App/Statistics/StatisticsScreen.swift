@@ -25,6 +25,8 @@ struct StatisticsScreen: View {
     @State private var heatmapDays = 30
     @State private var weeklySets: [String: RegionLoad] = [:]
     @State private var week: WeekProgress?
+    @State private var month: PeriodSummary?
+    @State private var year: PeriodSummary?
     @State private var frequency: [FrequencyPoint] = []
     @State private var heatmap: [String: RegionLoad] = [:]
     @State private var trends: [StrengthTrend] = []
@@ -78,13 +80,13 @@ struct StatisticsScreen: View {
                 }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)], spacing: 16) {
                     if sessionCount > 0 {
+                        if let week {
+                            OverviewCard(week: week, month: month, year: year)
+                        }
                         if let review {
                             WeeklyReviewCard(review: review, suggestions: suggestions, isPro: isPro)
                         }
                         SetsCard(weeks: $setsWeeks, loads: weeklySets)
-                        if let week {
-                            WeekLinkCard(progress: week)
-                        }
                         HeatmapCard(days: $heatmapDays, heatmap: heatmap, female: UserSettings.preferred(in: settingsList)?.bodyMapFemale ?? false)
                         StrengthTrendCard(trends: trends, isPro: isPro)
                         FrequencyCard(points: frequency)
@@ -124,9 +126,10 @@ struct StatisticsScreen: View {
         let end = now.addingTimeInterval(1)
         let setsStart = Calendar.current.date(byAdding: .day, value: -7 * setsWeeks, to: now) ?? now
         weeklySets = (try? engine.heatmap(from: setsStart, until: end, info: info)) ?? [:]
-        week = try? engine.weekProgress(
-            now: now, goal: settings?.trainingDaysPerWeek, isCardio: ExerciseInfoBuilder.isCardio(info)
-        )
+        let isCardio = ExerciseInfoBuilder.isCardio(info)
+        week = try? engine.weekProgress(now: now, goal: settings?.trainingDaysPerWeek, isCardio: isCardio)
+        month = try? engine.periodSummary(.month, containing: now, now: now, goal: settings?.trainingDaysPerWeek, isCardio: isCardio)
+        year = try? engine.periodSummary(.year, containing: now, now: now, goal: settings?.trainingDaysPerWeek, isCardio: isCardio)
         frequency = (try? engine.frequency(weeks: 12)) ?? []
         let start = Calendar.current.date(byAdding: .day, value: -heatmapDays, to: now) ?? now
         heatmap = (try? engine.heatmap(from: start, until: end, info: info)) ?? [:]

@@ -743,26 +743,88 @@ private struct OverviewMusclesCard: View {
 
 // MARK: - Kartica u Statistici
 
-/// Tekući tjedan ukratko, s poveznicom na pregled po tjednima, mjesecima i godinama.
-struct WeekLinkCard: View {
-    let progress: WeekProgress
+/// Kartica Pregled na vrhu Statistike: tekući tjedan (treninzi prema cilju, dani, serije i vrijeme) te
+/// mjesec i godina ukratko. Otvara Pregled na tjednu, a retci mjeseca i godine na svom razdoblju.
+struct OverviewCard: View {
+    let week: WeekProgress
+    let month: PeriodSummary?
+    let year: PeriodSummary?
 
     var body: some View {
-        StatisticsCard(title: "Ovaj tjedan") {
-            if let goal = progress.goal {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Text(progress.sessions, format: .number).font(.metric)
-                    Text("od \(goal) treninga").font(.subheadline).foregroundStyle(.secondary)
+        StatisticsCard(title: "Pregled") {
+            NavigationLink {
+                OverviewScreen()
+            } label: {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text("Ovaj tjedan").font(.subheadline.weight(.semibold))
+                        Spacer(minLength: 8)
+                        Image(systemName: "chevron.forward")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                            .accessibilityHidden(true)
+                    }
+                    weekCount
+                    if let fraction = week.goalFraction {
+                        ProgressView(value: fraction).accessibilityHidden(true)
+                    }
+                    WeekDaysStrip(progress: week)
+                    if week.sessions > 0 {
+                        PeriodFigures(hardSets: week.hardSets, cardioSeconds: week.cardioSeconds, totalSeconds: week.totalSeconds)
+                    }
                 }
-                .accessibilityElement(children: .combine)
-            } else {
-                Text("\(progress.sessions) treninga").font(.metric)
+                .contentShape(.rect)
             }
-            if progress.hardSets > 0 {
-                Text("\(progress.hardSets) tvrdih serija")
-                    .font(.subheadline).foregroundStyle(.secondary)
+            .buttonStyle(.plain)
+            if let month {
+                Divider()
+                periodRow(title: "Ovaj mjesec", summary: month)
             }
-            NavigationLink("Tjedan, mjesec i godina") { OverviewScreen() }
+            if let year {
+                Divider()
+                periodRow(title: "Ova godina", summary: year)
+            }
         }
+    }
+
+    @ViewBuilder
+    private var weekCount: some View {
+        if let goal = week.goal {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text(week.sessions, format: .number).font(.metric)
+                Text("od \(goal) treninga").font(.subheadline).foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .combine)
+        } else {
+            Text("\(week.sessions) treninga").font(.metric)
+        }
+    }
+
+    /// Npr. "Ovaj mjesec · 12 treninga · 2,8 tjedno"; dodir otvara Pregled na tom razdoblju.
+    private func periodRow(title: LocalizedStringKey, summary: PeriodSummary) -> some View {
+        NavigationLink {
+            OverviewScreen(period: summary.period)
+        } label: {
+            HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).font(.subheadline.weight(.semibold))
+                    Text(verbatim: detail(summary)).font(.subheadline).foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.forward")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+                    .accessibilityHidden(true)
+            }
+            .frame(minHeight: 44)
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func detail(_ summary: PeriodSummary) -> String {
+        var parts = [String(localized: "\(summary.sessions) treninga"), PeriodText.perWeek(summary)]
+        if summary.hardSets > 0 { parts.append(String(localized: "\(summary.hardSets) tvrdih serija")) }
+        return parts.joined(separator: " · ")
     }
 }

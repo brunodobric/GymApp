@@ -182,6 +182,8 @@ struct HomeScreen: View {
     private func cardView(_ kind: DashboardCardKind) -> some View {
         switch kind {
         case .thisWeek: ThisWeekCard()
+        case .thisMonth: PeriodCard(period: .month)
+        case .thisYear: PeriodCard(period: .year)
         case .lastWorkout:
             if let last = lastSession {
                 LastWorkoutCard(session: last, unit: unit)
