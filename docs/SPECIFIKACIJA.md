@@ -293,6 +293,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 * **1RM estimacija** i praćenje kroz vrijeme.
 * **Volume tracking** po mišićnim grupama (tjedno/mjesečno).
 * **Grafovi i vizualizacije:** Napredak težine, volumena, frekvencije.
+* **Graf napretka vježbe:** težina, procjena 1RM ili volumen po treningu, uz usporedbu s drugom vježbom. Raspon grafa bira se iznad njega: 1 mjesec, 2 mjeseca, 6 mjeseci, godina, sve (zadano) ili vlastiti raspon od–do. Os vremena pokriva cijeli odabrani raspon, a popis treninga ispod grafa ostaje cijeli.
 * **Body measurements** s grafovima.
 * **PR lista** s filterima i datumima.
 * **Muscle heatmap** koji prikazuje prosjek tvrdih serija tjedno po mišiću u zadnjih 30 dana, 90 dana ili godinu dana, na fiksnoj skali s legendom: ispod 5, 5 do 9, 10 do 20 (zona za rast) i iznad 20 serija. Ispod mape su glavni mišići s manje od 5 serija tjedno, a dodir mišića pokazuje serije tjedno, treninge tjedno i zadnji trening.
