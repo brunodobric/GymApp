@@ -63,10 +63,10 @@ extension WidgetSnapshot.Mix {
     }
 }
 
-/// Pozadina widgeta na početnom zaslonu: ista ploha kao kartice na Početnoj.
+/// Pozadina widgeta na početnom zaslonu: bijela u svijetloj i crna u tamnoj temi, kao Appleovi widgeti.
 struct CardBackground: View {
     var body: some View {
-        Color(.secondarySystemGroupedBackground)
+        Color(.systemBackground)
     }
 }
 
