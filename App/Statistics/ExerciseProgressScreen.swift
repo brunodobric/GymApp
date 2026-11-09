@@ -174,7 +174,7 @@ struct ExerciseProgressScreen: View {
                         PointMark(x: .value("Datum", item.date), y: .value(unit.symbol, item.value))
                             .foregroundStyle(by: .value("Vježba", item.series))
                     }
-                    .chartYScale(domain: .automatic(includesZero: false))
+                    .chartYScale(domain: ChartValueDomain.domain(for: visible.map(\.value)))
                     .chartXScale(domain: xDomain(visible))
                     .chartLegend(compared == nil ? .hidden : .visible)
                     .chartHeight(220, regular: 360)
