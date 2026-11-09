@@ -386,8 +386,8 @@ public struct WorkoutEngine {
 
     // MARK: Pomoćno
 
-    @discardableResult
     /// Dodaje seriju na kraj vježbe, ili ispred prve neodrađene serije kad je `beforeIncomplete` (zagrijavanje).
+    @discardableResult
     private func appendSet(
         to exercise: SessionExercise, kind: SetKind, previous: [SetValues], beforeIncomplete: Bool = false
     ) throws -> SetLog {
@@ -430,7 +430,6 @@ public struct WorkoutEngine {
         return []
     }
 
-    /// Završene serije iste vježbe u ranije završenim treninzima, od najnovijeg prema starijem.
     /// Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga.
     private func recordHistory(of ref: ExerciseRef, before session: Session?, inputType: ExerciseInputType) throws -> RecordHistory {
         var history = RecordHistory()

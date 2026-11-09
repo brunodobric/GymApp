@@ -57,7 +57,10 @@ struct SettingsScreen: View {
 
     private var systemScheme: ColorScheme? {
         guard settings != nil else { return nil }
-        return UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
+        // Shema zaslona (sustava), ne prozora: prozor može imati shemu prisilno postavljenu iz Postavki.
+        // `UIScreen.main` je zastario, pa se zaslon čita preko scene.
+        let screen = UIApplication.shared.connectedScenes.compactMap { ($0 as? UIWindowScene)?.screen }.first
+        return screen?.traitCollection.userInterfaceStyle == .dark ? .dark : .light
     }
 
     var body: some View {
