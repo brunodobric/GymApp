@@ -51,6 +51,22 @@ struct ExerciseProgressScreen: View {
         }
     }
 
+    /// Odabir raspona grafa; vlastiti raspon koristi datume `customFrom` i `customTo`.
+    private enum RangeChoice: String, CaseIterable, Identifiable {
+        case month, twoMonths, sixMonths, year, all, custom
+        var id: String { rawValue }
+        var title: LocalizedStringKey {
+            switch self {
+            case .month: "1 mjesec"
+            case .twoMonths: "2 mjeseca"
+            case .sixMonths: "6 mjeseci"
+            case .year: "Godina"
+            case .all: "Sve"
+            case .custom: "Vlastiti raspon"
+            }
+        }
+    }
+
     /// Točka grafa. Id je stabilan (vježba i datum), da graf ne crta sve iznova pri svakom iscrtavanju.
     private struct PlotPoint: Identifiable {
         let series: String
@@ -74,6 +90,9 @@ struct ExerciseProgressScreen: View {
     /// Vježbe za usporedbu, učitane jednom pri otvaranju.
     @State private var done: [DoneExercise] = []
     @State private var metric: Metric = .weight
+    @State private var rangeChoice: RangeChoice = .all
+    @State private var customFrom = Calendar.current.date(byAdding: .month, value: -3, to: .now) ?? .now
+    @State private var customTo = Date.now
     @State private var useBrzycki = false
     @State private var points: [ExercisePoint] = []
     /// Druga vježba na istom grafu (usporedba).
@@ -93,8 +112,31 @@ struct ExerciseProgressScreen: View {
         return kilograms.map { WeightConversion.displayValue(fromKilograms: $0, in: unit) }
     }
 
+    private var range: ChartRange {
+        switch rangeChoice {
+        case .month: .months(1)
+        case .twoMonths: .months(2)
+        case .sixMonths: .months(6)
+        case .year: .months(12)
+        case .all: .all
+        case .custom: .custom(from: customFrom, to: customTo)
+        }
+    }
+
     private var plotted: [PlotPoint] {
-        series(ref.name, points) + (compared.map { series($0.name, comparedPoints) } ?? [])
+        let now = Date.now
+        return series(ref.name, range.filter(points, now: now))
+            + (compared.map { series($0.name, range.filter(comparedPoints, now: now)) } ?? [])
+    }
+
+    /// Os x pokriva cijeli odabrani raspon, i kad su treninzi samo u dijelu njega; za "sve" od prve do zadnje točke.
+    private func xDomain(_ plotted: [PlotPoint]) -> ClosedRange<Date> {
+        if let interval = range.interval(now: .now) {
+            return interval.start...interval.end
+        }
+        let dates = plotted.map(\.date)
+        guard let first = dates.min(), let last = dates.max() else { return Date.now...Date.now }
+        return first...last
     }
 
     private func series(_ name: String, _ points: [ExercisePoint]) -> [PlotPoint] {
@@ -112,16 +154,28 @@ struct ExerciseProgressScreen: View {
                 if metric == .oneRepMax && isPro {
                     Toggle("Brzycki umjesto Epley", isOn: $useBrzycki)
                 }
+                Picker("Raspon", selection: $rangeChoice) {
+                    ForEach(RangeChoice.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.menu)
+                if rangeChoice == .custom {
+                    DatePicker("Od", selection: $customFrom, in: ...customTo, displayedComponents: .date)
+                    DatePicker("Do", selection: $customTo, in: customFrom...Date.now, displayedComponents: .date)
+                }
+                let visible = plotted
                 if points.count < 2 && compared == nil {
                     Text("Za graf trebaju barem dva treninga s ovom vježbom.").foregroundStyle(.secondary)
+                } else if visible.isEmpty {
+                    Text("U odabranom rasponu nema treninga s ovom vježbom.").foregroundStyle(.secondary)
                 } else {
-                    Chart(plotted) { item in
+                    Chart(visible) { item in
                         LineMark(x: .value("Datum", item.date), y: .value(unit.symbol, item.value))
                             .foregroundStyle(by: .value("Vježba", item.series))
                         PointMark(x: .value("Datum", item.date), y: .value(unit.symbol, item.value))
                             .foregroundStyle(by: .value("Vježba", item.series))
                     }
                     .chartYScale(domain: .automatic(includesZero: false))
+                    .chartXScale(domain: xDomain(visible))
                     .chartLegend(compared == nil ? .hidden : .visible)
                     .chartHeight(220, regular: 360)
                     .accessibilityLabel(Text(chartLabel))
