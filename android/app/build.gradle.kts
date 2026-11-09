@@ -1,6 +1,6 @@
 // Android aplikacija Apolon (mobitel). Plan: docs/android.md.
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.application")
     alias(libs.plugins.kotlin.compose)
 }
 
