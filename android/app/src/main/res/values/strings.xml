@@ -185,4 +185,23 @@
     <string name="note">Bilješka</string>
     <string name="note_hint">Kako je prošlo?</string>
     <string name="pr_rep_max_reps">Najteža serija od %1$d+ ponavljanja</string>
+    <string name="deleted_workout">Obrisan trening</string>
+    <string name="rest_day">Dan odmora</string>
+    <string name="add_workout">Dodaj trening</string>
+    <string name="add_rest_day">Dodaj dan odmora</string>
+    <string name="delete_schedule">Obriši raspored</string>
+    <string name="delete_schedule_title">Obrisati raspored?</string>
+    <string name="delete_schedule_message">Raspored se briše. Spremljeni treninzi i povijest ostaju.</string>
+    <string name="schedule_name">Naziv rasporeda</string>
+    <string name="active">Aktivan</string>
+    <string name="runs_until_off">Traje dok ga ne ugasim</string>
+    <string name="cycle_count">Broj ciklusa: %1$d</string>
+    <string name="sequence">Niz</string>
+    <string name="sequence_empty">Još nema treninga u nizu.</string>
+    <string name="move_up">Pomakni gore</string>
+    <string name="move_down">Pomakni dolje</string>
+    <string name="remove">Ukloni</string>
+    <string name="start_over">Pokreni ispočetka</string>
+    <string name="new_schedule">Novi raspored</string>
+    <string name="add">Dodaj</string>
 </resources>

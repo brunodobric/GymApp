@@ -177,4 +177,23 @@
     <string name="note">Note</string>
     <string name="note_hint">How did it go?</string>
     <string name="pr_rep_max_reps">Heaviest set of %1$d+ reps</string>
+    <string name="deleted_workout">Deleted workout</string>
+    <string name="rest_day">Rest day</string>
+    <string name="add_workout">Add workout</string>
+    <string name="add_rest_day">Add rest day</string>
+    <string name="delete_schedule">Delete schedule</string>
+    <string name="delete_schedule_title">Delete schedule?</string>
+    <string name="delete_schedule_message">The schedule is deleted. Saved workouts and history stay.</string>
+    <string name="schedule_name">Schedule name</string>
+    <string name="active">Active</string>
+    <string name="runs_until_off">Runs until I turn it off</string>
+    <string name="cycle_count">Cycles: %1$d</string>
+    <string name="sequence">Sequence</string>
+    <string name="sequence_empty">No workouts in the sequence yet.</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="remove">Remove</string>
+    <string name="start_over">Start over</string>
+    <string name="new_schedule">New schedule</string>
+    <string name="add">Add</string>
 </resources>

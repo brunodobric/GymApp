@@ -9,6 +9,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,14 +35,15 @@ import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.model.Schedule
 import com.brunodobric.gymapp.model.ScheduleItemKind
+import com.brunodobric.gymapp.planning.ScheduleEngine
 import com.brunodobric.gymapp.planning.TemplateEngine
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import java.text.Collator
 import java.util.UUID
 
 /**
- * Rasporedi, prvi korak: popis rasporeda i spremljenih treninga, novi trening i uređivač treninga.
- * Uređivač rasporeda i gotovi programi dolaze kasnije.
+ * Rasporedi, prvi korak: popis rasporeda i spremljenih treninga, novi raspored ili trening te njihovi
+ * uređivači. Gotovi programi dolaze kasnije.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +51,12 @@ fun SchedulesScreen(services: AppServices) {
     val store = services.store
     val revision = rememberStoreRevision(store)
     var openedTemplate by rememberSaveable { mutableStateOf<String?>(null) }
+    var openedSchedule by rememberSaveable { mutableStateOf<String?>(null) }
+    var creating by remember { mutableStateOf(false) }
+    openedSchedule?.let { id ->
+        ScheduleEditorScreen(services, UUID.fromString(id), onClose = { openedSchedule = null })
+        return
+    }
     openedTemplate?.let { id ->
         TemplateEditorScreen(services, UUID.fromString(id), onClose = { openedTemplate = null })
         return
@@ -60,14 +69,32 @@ fun SchedulesScreen(services: AppServices) {
         store.templates.sortedWith { a, b -> collator.compare(a.name, b.name) }
     }
     val newName = stringResource(R.string.new_workout_name)
+    val newScheduleName = stringResource(R.string.new_schedule)
 
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.tab_plans)) }) },
         floatingActionButton = {
-            SmallFloatingActionButton(onClick = {
-                val template = TemplateEngine(store).createTemplate(newName)
-                openedTemplate = template.id.toString()
-            }) { Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.new_workout)) }
+            Box {
+                SmallFloatingActionButton(onClick = { creating = true }) {
+                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add))
+                }
+                DropdownMenu(expanded = creating, onDismissRequest = { creating = false }) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.new_schedule)) },
+                        onClick = {
+                            creating = false
+                            openedSchedule = ScheduleEngine(store).createSchedule(newScheduleName).id.toString()
+                        },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.new_workout)) },
+                        onClick = {
+                            creating = false
+                            openedTemplate = TemplateEngine(store).createTemplate(newName).id.toString()
+                        },
+                    )
+                }
+            }
         },
     ) { padding ->
         LazyColumn(Modifier.padding(padding).fillMaxSize()) {
@@ -75,6 +102,7 @@ fun SchedulesScreen(services: AppServices) {
             if (schedules.isEmpty()) item { Empty(stringResource(R.string.schedules_empty)) }
             items(schedules, key = { "s" + it.id }) { schedule ->
                 ListItem(
+                    modifier = Modifier.clickable { openedSchedule = schedule.id.toString() },
                     headlineContent = { Text(schedule.name) },
                     supportingContent = { Text(scheduleSummary(schedule)) },
                     trailingContent = if (schedule.isActive) null else {
