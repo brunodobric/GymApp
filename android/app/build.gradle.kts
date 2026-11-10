@@ -35,6 +35,8 @@ android {
 androidComponents {
     onVariants { variant ->
         variant.sources.assets?.addStaticSourceDirectory(rootDir.resolve("../Resources/Catalog").canonicalPath)
+        // Crteži tijela za heatmap (MuscleMap, MIT) i tekst licence, isti kao na iOS-u.
+        variant.sources.assets?.addStaticSourceDirectory(rootDir.resolve("../Resources/BodyMap").canonicalPath)
     }
 }
 

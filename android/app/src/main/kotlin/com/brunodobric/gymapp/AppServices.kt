@@ -5,6 +5,8 @@ import com.brunodobric.gymapp.catalog.ExerciseCatalog
 import com.brunodobric.gymapp.data.ExerciseImages
 import com.brunodobric.gymapp.data.SqliteRecordPersistence
 import com.brunodobric.gymapp.model.GymStore
+import com.brunodobric.gymapp.stats.BodyMap
+import com.brunodobric.gymapp.stats.BodyMapDiagram
 
 /**
  * Usluge koje dijele svi ekrani. Katalog se učitava jednom i lijeno, izvan glavne niti kad ga ekran
@@ -23,6 +25,17 @@ class AppServices(context: Context) {
      * a teški izračuni rade nad kopijama podataka.
      */
     val store: GymStore by lazy { GymStore(SqliteRecordPersistence(appContext)) }
+
+    /** Crteži tijela (MuscleMap, MIT) po spolu i strani; prazno ako se datoteka ne može pročitati. */
+    val bodyMap: Map<String, BodyMapDiagram> by lazy {
+        runCatching {
+            appContext.assets.open("body.json").bufferedReader().use { BodyMap.decode(it.readText()) }
+        }.getOrDefault(emptyMap())
+    }
+
+    /** Tekst MIT licence crteža tijela, za "O aplikaciji". */
+    fun muscleMapLicense(): String =
+        runCatching { appContext.assets.open("LICENSE-MuscleMap.txt").bufferedReader().use { it.readText() } }.getOrDefault("")
 
     /** Slike vlastitih vježbi. */
     val exerciseImages: ExerciseImages by lazy { ExerciseImages(appContext) }

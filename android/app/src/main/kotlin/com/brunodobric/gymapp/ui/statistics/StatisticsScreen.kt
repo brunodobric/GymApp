@@ -44,6 +44,7 @@ import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.model.BodyMeasurementKind
 import com.brunodobric.gymapp.model.ExerciseRef
+import com.brunodobric.gymapp.model.Sex
 import com.brunodobric.gymapp.stats.BodyTracking
 import com.brunodobric.gymapp.stats.ExerciseInfoBuilder
 import com.brunodobric.gymapp.stats.ExercisePoint
@@ -161,7 +162,14 @@ fun StatisticsScreen(services: AppServices) {
             }
             SummaryCard(summary, locale, onShift = { step -> dateMillis = period.shift(date, step, calendar).toEpochMilli() })
 
-            MusclesCard(muscleDays, onDaysChange = { muscleDays = it }, loads = loads, locale = locale)
+            MusclesCard(
+                muscleDays,
+                onDaysChange = { muscleDays = it },
+                loads = loads,
+                locale = locale,
+                diagrams = services.bodyMap,
+                female = settings.sex == Sex.FEMALE,
+            )
             if (strengthTrends.isNotEmpty()) StrengthTrendCard(strengthTrends, locale)
 
             RecordsCard(records, settings.weightUnit, onShowAll = { showsRecords = true })

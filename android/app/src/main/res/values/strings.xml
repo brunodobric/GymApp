@@ -461,4 +461,16 @@
     <string name="lift_squat">Čučanj</string>
     <string name="lift_bench">Potisak s klupe</string>
     <string name="lift_deadlift">Mrtvo dizanje</string>
+    <string name="hard_sets_weekly">Tvrde serije tjedno</string>
+    <string name="legend_under_5">Ispod 5</string>
+    <string name="legend_5_9">5 do 9</string>
+    <string name="legend_10_20">10 do 20</string>
+    <string name="legend_over_20">Iznad 20</string>
+    <string name="region_weekly_sets">%1$s: %2$s serija tjedno</string>
+    <string name="sessions_per_week">Treninga tjedno: %1$s</string>
+    <string name="last_trained">Zadnji put: %1$s</string>
+    <string name="body_map_description">Prikaz tijela s opterećenjem. %1$s</string>
+    <string name="body_drawings">Crteži tijela</string>
+    <string name="musclemap_intro">Crteži tijela u heatmapu preuzeti su iz projekta MuscleMap (MIT licenca).</string>
+    <string name="tap_body_part">Dodirni dio tijela za detalje.</string>
 </resources>

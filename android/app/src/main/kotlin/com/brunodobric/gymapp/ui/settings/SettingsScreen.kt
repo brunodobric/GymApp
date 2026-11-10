@@ -1,6 +1,7 @@
 package com.brunodobric.gymapp.ui.settings
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -16,10 +18,12 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -37,6 +41,10 @@ import com.brunodobric.gymapp.ui.onboarding.ProgramRecommendationScreen
 @Composable
 fun SettingsScreen(services: AppServices, onClose: () -> Unit) {
     var showsRecommendation by rememberSaveable { mutableStateOf(false) }
+    var showsMuscleMapLicense by rememberSaveable { mutableStateOf(false) }
+    if (showsMuscleMapLicense) {
+        MuscleMapLicenseDialog(services, onDismiss = { showsMuscleMapLicense = false })
+    }
     if (showsRecommendation) {
         ProgramRecommendationScreen(services, onClose = { showsRecommendation = false })
         return
@@ -82,6 +90,11 @@ fun SettingsScreen(services: AppServices, onClose: () -> Unit) {
                 headlineContent = { Text(stringResource(R.string.settings_catalog)) },
                 trailingContent = { Text("MoveKit") },
             )
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.body_drawings)) },
+                trailingContent = { Text("MuscleMap") },
+                modifier = Modifier.clickable { showsMuscleMapLicense = true },
+            )
         }
     }
 }
@@ -97,3 +110,21 @@ internal fun SectionHeader(text: String) {
 }
 
 private fun appVersion(): String = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+
+/** Atribucija i tekst MIT licence crteža tijela (`MuscleMapLicenseScreen` na iOS-u). */
+@Composable
+private fun MuscleMapLicenseDialog(services: AppServices, onDismiss: () -> Unit) {
+    val license = remember { services.muscleMapLicense() }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("MuscleMap") },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                Text(stringResource(R.string.musclemap_intro))
+                Text("github.com/Jsplice/MuscleMap", modifier = Modifier.padding(vertical = 8.dp))
+                Text(license, style = MaterialTheme.typography.bodySmall)
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.done)) } },
+    )
+}
