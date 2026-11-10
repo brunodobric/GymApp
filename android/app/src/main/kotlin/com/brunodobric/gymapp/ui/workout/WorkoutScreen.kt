@@ -71,10 +71,12 @@ import com.brunodobric.gymapp.units.WeightConversion
 import com.brunodobric.gymapp.units.WeightFormatter
 import com.brunodobric.gymapp.units.WeightUnit
 import java.time.Duration
+import java.util.UUID
 import kotlinx.coroutines.launch
 
 /**
- * Trening u tijeku, prvi korak: vježbe sa serijama, unos težine i ponavljanja, kvačica s odmorom i završetak.
+ * Trening u tijeku, prvi korak: vježbe sa serijama, unos težine i ponavljanja, kvačica s odmorom i završetak
+ * sa sažetkom ([WorkoutSummaryScreen]).
  * Svaka izmjena odmah se sprema (`WorkoutEngine.touch`), pa prekinut trening ostaje sačuvan.
  * Izbornik vježbe dodaje zagrijavanje i izbacuje vježbu, a dodir na broj serije briše seriju; oboje se
  * može poništiti iz snackbara. Odmor se produljuje ili skraćuje za 15 s.
@@ -84,6 +86,11 @@ import kotlinx.coroutines.launch
 fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     val store = services.store
     rememberStoreRevision(store)
+    var finishedId by rememberSaveable { mutableStateOf<String?>(null) }
+    finishedId?.let { id ->
+        WorkoutSummaryScreen(services, UUID.fromString(id), onClose = onClose)
+        return
+    }
     val session = store.activeSession()
     if (session == null) {
         // Trening je završen ili odbačen (npr. iz obavijesti): ekran se zatvara.
@@ -152,7 +159,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                     TextButton(onClick = {
                         try {
                             WorkoutLifecycle.finish(session, store)
-                            onClose()
+                            finishedId = session.id.toString()
                         } catch (_: WorkoutError.NothingCompleted) {
                             confirmDiscard = true
                         }
