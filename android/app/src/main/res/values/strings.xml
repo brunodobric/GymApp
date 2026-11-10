@@ -558,4 +558,37 @@
     <string name="replaced_exercise">%1$s → %2$s</string>
     <string name="replace_exercise">Zamijeni vježbu</string>
     <string name="exercise_options">Mogućnosti vježbe</string>
+    <string name="widget_this_week">Ovaj tjedan</string>
+    <string name="widget_last_workout">Zadnji trening</string>
+    <string name="widget_no_workouts">Još nema odrađenih treninga.</string>
+    <string name="widget_no_records">Još nema rekorda.</string>
+    <string name="widget_no_scheduled">Nema zakazanog treninga</string>
+    <string name="widget_log_weight">Upiši težinu</string>
+    <string name="widget_latest_record">Zadnji rekord</string>
+    <string name="widget_record_description">Najnoviji osobni rekord.</string>
+    <string name="widget_next_description">Trening koji je na redu u rasporedu, s gumbom za početak.</string>
+    <string name="widget_week_description">Treninzi ovog tjedna prema tvom cilju i tjedni niz.</string>
+    <string name="widget_weight_description">Zadnja izmjerena težina i promjena u 30 dana.</string>
+    <string name="widget_last_description">Zadnji odrađeni trening i rekordi iz njega.</string>
+    <string name="widget_change_30_days">%1$s u 30 dana</string>
+    <string name="widget_total">Ukupno</string>
+    <string name="widget_next">Sljedeći</string>
+    <string name="widget_started_at">Od %1$s</string>
+    <string name="widget_today">Danas</string>
+    <string name="widget_yesterday">Jučer</string>
+    <plurals name="widget_weeks_in_row">
+        <item quantity="one">%d tjedan zaredom</item>
+        <item quantity="few">%d tjedna zaredom</item>
+        <item quantity="other">%d tjedana zaredom</item>
+    </plurals>
+    <plurals name="widget_of_goal">
+        <item quantity="one">od %d treninga</item>
+        <item quantity="few">od %d treninga</item>
+        <item quantity="other">od %d treninga</item>
+    </plurals>
+    <plurals name="widget_days_ago">
+        <item quantity="one">Prije %d dan</item>
+        <item quantity="few">Prije %d dana</item>
+        <item quantity="other">Prije %d dana</item>
+    </plurals>
 </resources>

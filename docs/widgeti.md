@@ -40,6 +40,13 @@ Sat nema bazu s iPhonea. Tjedni cilj i težina idu satu u kontekstu (`WatchConte
 `bodyWeightKg`, opcionalno, pa stariji sat i dalje čita kontekst). Aplikacija na satu ih sprema u
 `ComplicationState` (App Group), a komplikacije u `WatchWidgets/` ih čitaju.
 
+## Android
+
+Isti obrazac na Androidu (`docs/android.md`, 7.10): `android/domain/widgets` je port `WidgetData` i
+`WidgetSync` (snimka kao JSON s datumima u ISO 8601, u mapi aplikacije), a Glance widgeti su u
+`android/app/.../appwidgets/`. `WidgetRefresher` osvježava widgete samo kad se snimka promijeni i u ponoć.
+Poveznice su iste (`apolon://trening`, `apolon://povijest/<UUID>`…), a prima ih `MainActivity`.
+
 ## Provjera
 
 * `swift test --package-path Packages/GymKit` pokriva snimku (`WidgetDataTests`) i slaganje iz baze

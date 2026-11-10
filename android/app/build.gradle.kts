@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":core:planning"))
     implementation(project(":core:stats"))
     implementation(project(":domain:backup"))
+    implementation(project(":domain:widgets"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
@@ -57,5 +58,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.core.ktx)
+    // Widgeti na početnom zaslonu (Jetpack Glance, Apache 2.0).
+    implementation(libs.androidx.glance.appwidget)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

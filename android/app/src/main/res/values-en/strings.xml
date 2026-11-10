@@ -549,4 +549,34 @@
     <string name="replaced_exercise">%1$s → %2$s</string>
     <string name="replace_exercise">Replace exercise</string>
     <string name="exercise_options">Exercise options</string>
+    <string name="widget_this_week">This week</string>
+    <string name="widget_last_workout">Last workout</string>
+    <string name="widget_no_workouts">No workouts yet.</string>
+    <string name="widget_no_records">No records yet.</string>
+    <string name="widget_no_scheduled">No scheduled workout</string>
+    <string name="widget_log_weight">Log your weight</string>
+    <string name="widget_latest_record">Latest Record</string>
+    <string name="widget_record_description">Your most recent personal record.</string>
+    <string name="widget_next_description">The next workout in your schedule, with a button to start it.</string>
+    <string name="widget_week_description">This week\'s workouts against your goal, and your weekly streak.</string>
+    <string name="widget_weight_description">Your latest weight and the change over 30 days.</string>
+    <string name="widget_last_description">Your latest workout and its records.</string>
+    <string name="widget_change_30_days">%1$s in 30 days</string>
+    <string name="widget_total">Total</string>
+    <string name="widget_next">Next</string>
+    <string name="widget_started_at">Since %1$s</string>
+    <string name="widget_today">Today</string>
+    <string name="widget_yesterday">Yesterday</string>
+    <plurals name="widget_weeks_in_row">
+        <item quantity="one">%d week in a row</item>
+        <item quantity="other">%d weeks in a row</item>
+    </plurals>
+    <plurals name="widget_of_goal">
+        <item quantity="one">of %d workout</item>
+        <item quantity="other">of %d workouts</item>
+    </plurals>
+    <plurals name="widget_days_ago">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
 </resources>

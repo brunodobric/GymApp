@@ -13,6 +13,7 @@ import com.brunodobric.gymapp.ui.RootScreen
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.theme.ApolonTheme
 import com.brunodobric.gymapp.ui.theme.isDark
+import com.brunodobric.gymapp.widgets.WidgetLink
 
 class MainActivity : ComponentActivity() {
     /** Raste svaki put kad obavijest traži ekran treninga; RootScreen ga tada otvara. */
@@ -20,6 +21,9 @@ class MainActivity : ComponentActivity() {
 
     /** Raspored iz dodirnutog podsjetnika; RootScreen otvara njegov sljedeći trening i briše zahtjev. */
     private val openScheduleRequest = mutableStateOf<String?>(null)
+
+    /** Poveznica iz widgeta (`apolon://…`); RootScreen je otvara i briše zahtjev. */
+    private val widgetLinkRequest = mutableStateOf<WidgetLink?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -36,6 +40,8 @@ class MainActivity : ComponentActivity() {
                     openWorkoutRequests = openWorkoutRequests.intValue,
                     openScheduleRequest = openScheduleRequest.value,
                     onScheduleRequestHandled = { openScheduleRequest.value = null },
+                    widgetLink = widgetLinkRequest.value,
+                    onWidgetLinkHandled = { widgetLinkRequest.value = null },
                 )
             }
         }
@@ -51,5 +57,6 @@ class MainActivity : ComponentActivity() {
             openWorkoutRequests.intValue += 1
         }
         intent?.getStringExtra(ReminderNotifications.EXTRA_OPEN_SCHEDULE)?.let { openScheduleRequest.value = it }
+        intent?.dataString?.let(WidgetLink::parse)?.let { widgetLinkRequest.value = it }
     }
 }

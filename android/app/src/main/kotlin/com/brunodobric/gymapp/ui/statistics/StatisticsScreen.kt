@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.ui.OpenRequest
 import com.brunodobric.gymapp.model.BodyMeasurementKind
 import com.brunodobric.gymapp.model.ExerciseRef
 import com.brunodobric.gymapp.model.Sex
@@ -77,7 +79,7 @@ private const val FOUR_WEEKS = 28L * 24 * 3600
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StatisticsScreen(services: AppServices) {
+fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, onRequestHandled: () -> Unit = {}) {
     val store = services.store
     val revision = rememberStoreRevision(store)
     val locale = LocalConfiguration.current.locales[0]
@@ -86,6 +88,13 @@ fun StatisticsScreen(services: AppServices) {
     var dateMillis by rememberSaveable { mutableStateOf(Instant.now().toEpochMilli()) }
     var openedKey by rememberSaveable { mutableStateOf<String?>(null) }
     var showsBody by rememberSaveable { mutableStateOf(false) }
+    // Dodir na widget težine otvara praćenje tijela.
+    LaunchedEffect(bodyRequest) {
+        if (bodyRequest != null) {
+            showsBody = true
+            onRequestHandled()
+        }
+    }
     var showsRecords by rememberSaveable { mutableStateOf(false) }
     val date = Instant.ofEpochMilli(dateMillis)
 
