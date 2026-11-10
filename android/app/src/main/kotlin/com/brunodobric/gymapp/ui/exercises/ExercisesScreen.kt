@@ -35,6 +35,7 @@ import com.brunodobric.gymapp.catalog.ExerciseFilter
 import com.brunodobric.gymapp.catalog.ExerciseSearch
 import com.brunodobric.gymapp.catalog.ExerciseSummary
 import com.brunodobric.gymapp.ui.catalogLanguage
+import com.brunodobric.gymapp.ui.history.SessionDetailScreen
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import java.util.UUID
 
@@ -42,8 +43,9 @@ import java.util.UUID
 private const val NEW_EXERCISE = "new"
 
 /**
- * Popis vježbi kataloga i vlastitih vježbi s pretragom i filterom "Moje vježbe". Vlastita vježba se otvara
- * u uređivaču. Kartice vrsta, filteri po mišićima i detalj vježbe kataloga dolaze kasnije.
+ * Popis vježbi kataloga i vlastitih vježbi s pretragom i filterom "Moje vježbe". Dodir otvara detalj vježbe
+ * s poviješću, a vlastita vježba se iz detalja uređuje.
+ * Kartice vrsta i filteri po mišićima dolaze kasnije.
  */
 @Composable
 fun ExercisesScreen(services: AppServices) {
@@ -54,12 +56,34 @@ fun ExercisesScreen(services: AppServices) {
     var query by rememberSaveable { mutableStateOf("") }
     var onlyCustom by rememberSaveable { mutableStateOf(false) }
     var editing by rememberSaveable { mutableStateOf<String?>(null) }
+    // Otvoreni detalj: "c:<id kataloga>" ili "u:<uuid vlastite vježbe>", te trening otvoren iz povijesti vježbe.
+    var detail by rememberSaveable { mutableStateOf<String?>(null) }
+    var openedSession by rememberSaveable { mutableStateOf<String?>(null) }
 
     editing?.let { target ->
         CustomExerciseEditorScreen(
             services = services,
             exerciseId = if (target == NEW_EXERCISE) null else UUID.fromString(target),
             onClose = { editing = null },
+        )
+        return
+    }
+    openedSession?.let { id ->
+        SessionDetailScreen(services, UUID.fromString(id), onClose = { openedSession = null })
+        return
+    }
+    detail?.let { key ->
+        val source = if (key.startsWith("u:")) {
+            ExerciseSummary.Source.Custom(UUID.fromString(key.drop(2)))
+        } else {
+            ExerciseSummary.Source.Catalog(key.drop(2))
+        }
+        ExerciseDetailScreen(
+            services = services,
+            source = source,
+            onClose = { detail = null },
+            onEdit = { editing = it.toString() },
+            onOpenSession = { openedSession = it.toString() },
         )
         return
     }
@@ -89,7 +113,10 @@ fun ExercisesScreen(services: AppServices) {
             }
             LazyColumn {
                 items(results, key = { it.id }) { item ->
-                    val custom = item.source as? ExerciseSummary.Source.Custom
+                    val key = when (val source = item.source) {
+                        is ExerciseSummary.Source.Catalog -> "c:" + source.id
+                        is ExerciseSummary.Source.Custom -> "u:" + source.id
+                    }
                     val category = item.category
                     ListItem(
                         headlineContent = { Text(item.name) },
@@ -98,7 +125,7 @@ fun ExercisesScreen(services: AppServices) {
                         } else {
                             null
                         },
-                        modifier = if (custom != null) Modifier.clickable { editing = custom.id.toString() } else Modifier,
+                        modifier = Modifier.clickable { detail = key },
                     )
                     HorizontalDivider()
                 }

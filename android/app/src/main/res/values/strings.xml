@@ -377,4 +377,27 @@
     <string name="sex_footer">Spol treba samo za DOTS bodove u detaljnoj statistici.</string>
     <string name="suggest_schedule">Predloži raspored</string>
     <string name="suggest_schedule_footer">Gotov raspored prema cilju, danima, iskustvu i opremi. Postojeći rasporedi ostaju kakvi jesu.</string>
+    <string name="plates">Ploče</string>
+    <string name="your_history">Tvoja povijest</string>
+    <string name="in_workouts">u treninzima</string>
+    <string name="heaviest_set">najteža serija</string>
+    <string name="estimated_1rm">procjena 1RM</string>
+    <string name="most_reps">najviše ponavljanja</string>
+    <string name="longest">najdulje</string>
+    <string name="farthest">najdalje</string>
+    <string name="weights_in">Težine su u %1$s.</string>
+    <string name="warm_up_hidden">Zagrijavanje se ne prikazuje.</string>
+    <string name="tap_opens_workout">Dodir otvara cijeli trening.</string>
+    <string name="personal_record">Osobni rekord</string>
+    <string name="primary">Primarni</string>
+    <string name="secondary">Sekundarni</string>
+    <string name="details">Detalji</string>
+    <string name="level">Razina</string>
+    <string name="instructions">Upute</string>
+    <string name="instructions_unavailable">Upute za ovu vježbu nisu dostupne.</string>
+    <string name="edit">Uredi</string>
+    <string name="catalog_level_beginner">Početnik</string>
+    <string name="catalog_level_intermediate">Srednja razina</string>
+    <string name="catalog_level_advanced">Napredno</string>
+    <string name="workout_fallback">Trening</string>
 </resources>

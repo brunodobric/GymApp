@@ -369,4 +369,27 @@
     <string name="sex_footer">Sex is only needed for DOTS points in detailed statistics.</string>
     <string name="suggest_schedule">Suggest a schedule</string>
     <string name="suggest_schedule_footer">A ready-made schedule based on your goal, days, experience and equipment. Existing schedules stay as they are.</string>
+    <string name="plates">Plates</string>
+    <string name="your_history">Your history</string>
+    <string name="in_workouts">workouts</string>
+    <string name="heaviest_set">heaviest set</string>
+    <string name="estimated_1rm">estimated 1RM</string>
+    <string name="most_reps">most reps</string>
+    <string name="longest">longest</string>
+    <string name="farthest">farthest</string>
+    <string name="weights_in">Weights are in %1$s.</string>
+    <string name="warm_up_hidden">Warm-up sets are not shown.</string>
+    <string name="tap_opens_workout">Tap a workout to open it.</string>
+    <string name="personal_record">Personal record</string>
+    <string name="primary">Primary</string>
+    <string name="secondary">Secondary</string>
+    <string name="details">Details</string>
+    <string name="level">Level</string>
+    <string name="instructions">Instructions</string>
+    <string name="instructions_unavailable">Instructions for this exercise aren\'t available.</string>
+    <string name="edit">Edit</string>
+    <string name="catalog_level_beginner">Beginner</string>
+    <string name="catalog_level_intermediate">Intermediate</string>
+    <string name="catalog_level_advanced">Advanced</string>
+    <string name="workout_fallback">Workout</string>
 </resources>

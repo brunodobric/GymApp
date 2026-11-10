@@ -29,6 +29,7 @@ import com.brunodobric.gymapp.planning.ScheduleEngine
 import com.brunodobric.gymapp.planning.TemplateStarter
 import com.brunodobric.gymapp.training.WorkoutEngine
 import com.brunodobric.gymapp.ui.rememberStoreRevision
+import com.brunodobric.gymapp.ui.workout.PlateCalculatorDialog
 import com.brunodobric.gymapp.ui.rememberTicker
 import com.brunodobric.gymapp.units.DurationInput
 import java.time.Duration
@@ -44,6 +45,7 @@ fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit, onOpenSettings:
     val upcoming = remember(revision) { ScheduleEngine(store).upcomingWorkouts() }
     val startable = remember(revision, locale) { TemplateStarter.startable(store.templates, locale) }
     var showsPicker by remember { mutableStateOf(false) }
+    var showsPlates by remember { mutableStateOf(false) }
     // Aktivni rasporedi čiji su treninzi u izboru (prazno: izbor bez rasporeda).
     var pickerSchedules by remember { mutableStateOf<List<Schedule>>(emptyList()) }
 
@@ -108,5 +110,20 @@ fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit, onOpenSettings:
                 onStartEmpty = { start { WorkoutEngine(store).startSession(emptyName) } },
             )
         }
+        // Kalkulator ploča kao mala kartica, kao na iOS-u (`PlateCalculatorCard`).
+        Card(onClick = { showsPlates = true }, modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(stringResource(R.string.plates), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.plate_calculator),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+
+    if (showsPlates) {
+        PlateCalculatorDialog("", store.settings().weightUnit, store.settings(), onDismiss = { showsPlates = false })
     }
 }
