@@ -175,7 +175,7 @@ private val PLATE_OPTIONS = listOf(0.5, 1.25, 2.5, 5.0, 10.0, 15.0, 20.0, 25.0)
 
 /** Red s trenutnom vrijednošću; dodir otvara izbornik s ponuđenim vrijednostima. */
 @Composable
-private fun <T> ChoiceRow(title: String, value: String, options: List<T>, label: @Composable (T) -> String, onSelect: (T) -> Unit) {
+internal fun <T> ChoiceRow(title: String, value: String, options: List<T>, label: @Composable (T) -> String, onSelect: (T) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     Box {
         ListItem(
@@ -213,7 +213,7 @@ private fun RestRow(title: String, seconds: Int, onChange: (Int) -> Unit) {
 }
 
 @Composable
-private fun Footer(text: String) {
+internal fun Footer(text: String) {
     Column {
         Text(
             text,
@@ -225,7 +225,7 @@ private fun Footer(text: String) {
 }
 
 @StringRes
-private fun goalTitle(goal: TrainingGoal): Int = when (goal) {
+internal fun goalTitle(goal: TrainingGoal): Int = when (goal) {
     TrainingGoal.HYPERTROPHY -> R.string.goal_hypertrophy
     TrainingGoal.STRENGTH -> R.string.goal_strength
     TrainingGoal.RECOMPOSITION -> R.string.goal_recomposition
@@ -233,14 +233,14 @@ private fun goalTitle(goal: TrainingGoal): Int = when (goal) {
 }
 
 @StringRes
-private fun experienceTitle(level: ExperienceLevel): Int = when (level) {
+internal fun experienceTitle(level: ExperienceLevel): Int = when (level) {
     ExperienceLevel.BEGINNER -> R.string.level_beginner
     ExperienceLevel.INTERMEDIATE -> R.string.level_intermediate
     ExperienceLevel.ADVANCED -> R.string.level_advanced
 }
 
 @StringRes
-private fun presetTitle(preset: EquipmentPreset): Int = when (preset) {
+internal fun presetTitle(preset: EquipmentPreset): Int = when (preset) {
     EquipmentPreset.GYM -> R.string.preset_gym
     EquipmentPreset.HOME_GYM -> R.string.preset_home_gym
     EquipmentPreset.DUMBBELLS -> R.string.preset_dumbbells
@@ -248,7 +248,7 @@ private fun presetTitle(preset: EquipmentPreset): Int = when (preset) {
 }
 
 @StringRes
-private fun presetDetail(preset: EquipmentPreset): Int = when (preset) {
+internal fun presetDetail(preset: EquipmentPreset): Int = when (preset) {
     EquipmentPreset.GYM -> R.string.preset_gym_detail
     EquipmentPreset.HOME_GYM -> R.string.preset_home_gym_detail
     EquipmentPreset.DUMBBELLS -> R.string.preset_dumbbells_detail
@@ -256,7 +256,7 @@ private fun presetDetail(preset: EquipmentPreset): Int = when (preset) {
 }
 
 @StringRes
-private fun unitTitle(unit: WeightUnit): Int = when (unit) {
+internal fun unitTitle(unit: WeightUnit): Int = when (unit) {
     WeightUnit.KILOGRAMS -> R.string.kilograms
     WeightUnit.POUNDS -> R.string.pounds
 }

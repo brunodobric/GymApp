@@ -28,6 +28,7 @@ import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.ui.exercises.ExercisesScreen
 import com.brunodobric.gymapp.ui.history.HistoryScreen
 import com.brunodobric.gymapp.ui.home.HomeScreen
+import com.brunodobric.gymapp.ui.onboarding.OnboardingScreen
 import com.brunodobric.gymapp.ui.planning.SchedulesScreen
 import com.brunodobric.gymapp.ui.statistics.StatisticsScreen
 import com.brunodobric.gymapp.ui.settings.SettingsScreen
@@ -48,6 +49,12 @@ fun RootScreen(services: AppServices) {
     // Trening u tijeku je preko cijelog zaslona, kao na iPhoneu; tabovi ostaju ispod njega.
     var showsWorkout by rememberSaveable { mutableStateOf(false) }
     var showsSettings by rememberSaveable { mutableStateOf(false) }
+    // Prvo pokretanje: onboarding dok ga korisnik ne spremi ili preskoči.
+    rememberStoreRevision(services.store)
+    if (!services.store.settings().onboardingCompleted) {
+        OnboardingScreen(services)
+        return
+    }
     if (showsWorkout) {
         WorkoutScreen(services, onClose = { showsWorkout = false })
         return
