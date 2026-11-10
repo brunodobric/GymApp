@@ -25,3 +25,4 @@ __pycache__/
 # MoveKit dodatak: licencirani klipovi, posteri i upute ne smiju u javni repozitorij (docs/movekit.md)
 Resources/MoveKit/*
 !Resources/MoveKit/.gitkeep
+android/app/src/main/assets/movekit/

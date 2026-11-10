@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.ui.exercises
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import com.brunodobric.gymapp.catalog.ExerciseKind
 import com.brunodobric.gymapp.catalog.ExerciseSearch
 import com.brunodobric.gymapp.catalog.ExerciseSearchLabels
 import com.brunodobric.gymapp.catalog.ExerciseSummary
+import com.brunodobric.gymapp.catalog.featured
 import com.brunodobric.gymapp.ui.catalogLanguage
 import com.brunodobric.gymapp.ui.history.SessionDetailScreen
 import com.brunodobric.gymapp.ui.rememberStoreRevision
@@ -52,7 +54,7 @@ private const val NEW_EXERCISE = "new"
 /**
  * Popis vježbi kataloga i vlastitih vježbi s pretragom, brzim odabirom vrste i listom s filterima
  * (izvor, kategorija, oprema, mišić). Dodir otvara detalj vježbe s poviješću, a vlastita vježba se iz
- * detalja uređuje. Kartice vrsta sa sličicama dolaze kasnije.
+ * detalja uređuje. Bez upita i otvorenog popisa stoji početna kataloga s karticama vrsta ([ExerciseKindHome]).
  */
 @Composable
 fun ExercisesScreen(services: AppServices) {
@@ -62,6 +64,8 @@ fun ExercisesScreen(services: AppServices) {
     val catalog = remember(language) { services.catalog.summaries(language) }
     var filter by rememberSaveable(stateSaver = ExerciseFilterSaver) { mutableStateOf(ExerciseFilter()) }
     var showsFilters by rememberSaveable { mutableStateOf(false) }
+    // Popis otvoren s početne kataloga (kartica vrste, Sve vježbe, Moje vježbe). Pretraga ga otvara sama.
+    var listOpen by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     // Nazivi kategorija, mišića i opreme za pretragu: "triceps" pronalazi sve vježbe za triceps.
     val labels = remember(language) {
@@ -107,6 +111,20 @@ fun ExercisesScreen(services: AppServices) {
     val summaries = remember(revision, catalog) { store.customExercises.map { it.summary } + catalog }
     val results = remember(filter, summaries, labels) { ExerciseSearch.apply(filter, summaries, labels) }
 
+    val showsHome = !listOpen && filter.query.isEmpty()
+    BackHandler(enabled = !showsHome) {
+        listOpen = false
+        filter = ExerciseFilter()
+    }
+    val counts = remember(summaries) { ExerciseSearch.countsByKind(summaries) }
+    val customCount = remember(revision) { store.customExercises.count { !it.isArchived } }
+    val posters = remember {
+        val byKind = ExerciseKind.entries.associateWith { kind ->
+            services.catalog.featured(kind) { MoveKitAssets.hasPoster(context, it) }.mapNotNull { it.poster }
+        }
+        byKind::getValue
+    }
+
     if (showsFilters) {
         ExerciseFilterSheet(filter = filter, onChange = { filter = it }, onDismiss = { showsFilters = false })
     }
@@ -121,6 +139,17 @@ fun ExercisesScreen(services: AppServices) {
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             )
+            if (showsHome) {
+                ExerciseKindHome(counts, customCount, posters, onOpen = { route ->
+                    filter = when (route) {
+                        is ExerciseListRoute.Kind -> ExerciseFilter(kinds = setOf(route.kind))
+                        ExerciseListRoute.All -> ExerciseFilter()
+                        ExerciseListRoute.Custom -> ExerciseFilter(origin = ExerciseFilter.Origin.CUSTOM)
+                    }
+                    listOpen = true
+                })
+                return@Column
+            }
             // Vrsta (Sve, Zagrijavanje, Snaga, Istezanje, Kardio) i gumb za list s filterima.
             Row(
                 Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp),

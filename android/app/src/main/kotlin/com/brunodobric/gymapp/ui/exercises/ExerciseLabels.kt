@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.ui.exercises
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.Equipment
@@ -71,4 +72,13 @@ internal fun inputTypeTitle(type: ExerciseInputType): Int = when (type) {
     ExerciseInputType.ASSISTED -> R.string.input_assisted
     ExerciseInputType.DURATION -> R.string.input_duration
     ExerciseInputType.DURATION_DISTANCE -> R.string.input_duration_distance
+}
+
+/** Simbol na kartici vrste kad sličica nema (build bez MoveKit dodatka), kao `systemImage` na iOS-u. */
+@DrawableRes
+internal fun kindIcon(kind: ExerciseKind): Int = when (kind) {
+    ExerciseKind.WARM_UP -> R.drawable.ic_kind_warm_up
+    ExerciseKind.STRENGTH -> R.drawable.ic_kind_strength
+    ExerciseKind.STRETCHING -> R.drawable.ic_kind_stretching
+    ExerciseKind.CARDIO -> R.drawable.ic_kind_cardio
 }
