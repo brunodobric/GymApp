@@ -629,4 +629,6 @@
     <string name="cardio_skiing">Skijanje</string>
     <string name="cardio_other">Kardio</string>
     <string name="shortcut_start_template">Započni: %1$s</string>
+    <string name="all_exercises">Sve vježbe</string>
+    <string name="my_exercises">Moje vježbe</string>
 </resources>
