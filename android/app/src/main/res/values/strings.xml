@@ -274,4 +274,6 @@
     <string name="plates_bar_only">Samo šipka.</string>
     <string name="plates_achieved">Postižemo</string>
     <string name="plates_not_exact">Točna težina nije moguća s dostupnim pločama.</string>
+    <string name="bar_and_plates">Šipka i ploče</string>
+    <string name="plates_footer">Kalkulator ploča koristi ove ploče kad su jedinice kilogrami. Za funte koristi uobičajene ploče.</string>
 </resources>
