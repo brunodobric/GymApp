@@ -176,4 +176,13 @@
     <string name="more_options">Više</string>
     <string name="add_warm_up">Dodaj zagrijavanje</string>
     <string name="delete_set">Obriši seriju</string>
+    <string name="summary">Sažetak</string>
+    <string name="duration">Trajanje</string>
+    <string name="volume">Volumen</string>
+    <string name="hard_sets">Tvrde serije</string>
+    <string name="no_new_records">Danas nema novih rekorda.</string>
+    <string name="other_records">Još manjih rekorda: %1$d</string>
+    <string name="note">Bilješka</string>
+    <string name="note_hint">Kako je prošlo?</string>
+    <string name="pr_rep_max_reps">Najteža serija od %1$d+ ponavljanja</string>
 </resources>

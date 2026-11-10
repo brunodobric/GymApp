@@ -168,4 +168,13 @@
     <string name="more_options">More</string>
     <string name="add_warm_up">Add warm-up</string>
     <string name="delete_set">Delete set</string>
+    <string name="summary">Summary</string>
+    <string name="duration">Duration</string>
+    <string name="volume">Volume</string>
+    <string name="hard_sets">Hard sets</string>
+    <string name="no_new_records">No new records today.</string>
+    <string name="other_records">More minor records: %1$d</string>
+    <string name="note">Note</string>
+    <string name="note_hint">How did it go?</string>
+    <string name="pr_rep_max_reps">Heaviest set of %1$d+ reps</string>
 </resources>
