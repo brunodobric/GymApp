@@ -102,6 +102,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     val unit = settings.weightUnit
     var picking by rememberSaveable { mutableStateOf(false) }
     var confirmDiscard by remember { mutableStateOf(false) }
+    var plateTarget by rememberSaveable { mutableStateOf<String?>(null) }
     val now = rememberTicker()
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -207,6 +208,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                         engine.removeExercise(exercise)
                         offerUndo(exerciseRemoved) { engine.restoreExercise(exercise) }
                     },
+                    onPlates = { plateTarget = it },
                 )
             }
             item(key = "add") {
@@ -216,6 +218,10 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                 }
             }
         }
+    }
+
+    plateTarget?.let { target ->
+        PlateCalculatorDialog(target, unit, settings, onDismiss = { plateTarget = null })
     }
 
     if (confirmDiscard) {
@@ -262,6 +268,7 @@ private fun ExerciseCard(
     onAddWarmUp: () -> Unit,
     onDeleteSet: (SetLog) -> Unit,
     onRemove: () -> Unit,
+    onPlates: (String) -> Unit,
 ) {
     var menu by remember { mutableStateOf(false) }
     Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
@@ -293,7 +300,7 @@ private fun ExerciseCard(
             var working = 0
             for (set in exercise.orderedSets) {
                 val label = if (set.kind == SetKind.WARM_UP) stringResource(R.string.warm_up_short) else (++working).toString()
-                SetRow(label, set, exercise.inputType, unit, onChange, onToggle, onDelete = { onDeleteSet(set) })
+                SetRow(label, set, exercise.inputType, unit, onChange, onToggle, onDelete = { onDeleteSet(set) }, onPlates = onPlates)
             }
             TextButton(onClick = onAddSet) { Text(stringResource(R.string.add_set)) }
         }
@@ -310,6 +317,7 @@ private fun SetRow(
     onChange: () -> Unit,
     onToggle: (SetLog) -> Unit,
     onDelete: () -> Unit,
+    onPlates: (String) -> Unit,
 ) {
     var menu by remember { mutableStateOf(false) }
     val locale = LocalConfiguration.current.locales[0]
@@ -318,6 +326,15 @@ private fun SetRow(
         Box {
             Text(label, Modifier.width(24.dp).clickable { menu = true }, style = MaterialTheme.typography.bodyLarge)
             DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                if (inputType == ExerciseInputType.WEIGHT_REPS) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.plate_calculator)) },
+                        onClick = {
+                            menu = false
+                            onPlates(set.weightKg?.let(formatter::number) ?: "")
+                        },
+                    )
+                }
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.delete_set), color = MaterialTheme.colorScheme.error) },
                     onClick = {
