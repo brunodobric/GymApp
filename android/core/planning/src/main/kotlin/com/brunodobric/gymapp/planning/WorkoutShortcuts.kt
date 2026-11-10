@@ -46,6 +46,21 @@ class WorkoutShortcuts(private val store: GymStore) {
     fun startableTemplates(): List<WorkoutTemplate> = TemplateStarter.startable(store.templates)
 
     /**
+     * Spremljeni treninzi za dinamičke prečace na ikoni (samo Android): najprije oni koji su zadnji pokretani,
+     * zatim ostali po nazivu. Najviše [limit].
+     */
+    fun recentTemplates(limit: Int): List<WorkoutTemplate> {
+        val lastStarted = store.sessions.filter { it.templateId != null }
+            .groupBy { it.templateId }
+            .mapValues { (_, sessions) -> sessions.maxOf { it.startedAt } }
+        val startable = startableTemplates()
+        return startable.withIndex()
+            .sortedWith(compareByDescending<IndexedValue<WorkoutTemplate>> { lastStarted[it.value.id] ?: Instant.MIN }.thenBy { it.index })
+            .map { it.value }
+            .take(limit.coerceAtLeast(0))
+    }
+
+    /**
      * Pokreće spremljeni trening, a bez njega prazan trening s nazivom `emptyName`.
      *
      * Ako je odabrani trening u aktivnom rasporedu, pokreće se kao trening rasporeda (s izmjenama ciklusa),

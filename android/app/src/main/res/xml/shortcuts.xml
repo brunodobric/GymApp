@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Prečaci na ikoni aplikacije: iste poveznice kao widgeti (docs/android.md, 7.10). -->
+<!-- Statički prečaci na ikoni aplikacije: iste poveznice kao widgeti (docs/android.md, 7.10). Dinamičke
+     (spremljeni treninzi) objavljuje AppShortcuts. -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:enabled="true"
@@ -10,6 +11,18 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:data="apolon://zapocni"
+            android:targetClass="com.brunodobric.gymapp.MainActivity"
+            android:targetPackage="com.brunodobric.gymapp" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_notification"
+        android:shortcutId="empty_workout"
+        android:shortcutLongLabel="@string/empty_workout"
+        android:shortcutShortLabel="@string/empty_workout">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="apolon://prazan-trening"
             android:targetClass="com.brunodobric.gymapp.MainActivity"
             android:targetPackage="com.brunodobric.gymapp" />
     </shortcut>

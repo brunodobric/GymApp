@@ -616,4 +616,5 @@
     <string name="cardio_dance">Dance</string>
     <string name="cardio_skiing">Skiing</string>
     <string name="cardio_other">Cardio</string>
+    <string name="shortcut_start_template">Start: %1$s</string>
 </resources>

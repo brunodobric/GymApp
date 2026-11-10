@@ -29,6 +29,7 @@ import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.planning.ScheduleEngine
 import com.brunodobric.gymapp.planning.TemplateStarter
+import com.brunodobric.gymapp.planning.WorkoutShortcuts
 import com.brunodobric.gymapp.ui.exercises.ExercisesScreen
 import com.brunodobric.gymapp.ui.history.HistoryScreen
 import com.brunodobric.gymapp.ui.home.HomeScreen
@@ -88,6 +89,7 @@ fun RootScreen(
     // Zahtjevi koje Povijest i Statistika otvaraju kad stignu (dodir na widget).
     var historyRequest by remember { mutableStateOf<OpenRequest?>(null) }
     var bodyRequest by remember { mutableStateOf<OpenRequest?>(null) }
+    val emptyName = stringResource(R.string.workout_default_name)
     // Dodir na widget otvara dio aplikacije iz poveznice, kao `onOpenURL` na iOS-u (docs/widgeti.md).
     LaunchedEffect(widgetLink) {
         val link = widgetLink ?: return@LaunchedEffect
@@ -123,6 +125,16 @@ fun RootScreen(
                 showsWorkout = false
                 selected = Section.HISTORY
                 historyRequest = OpenRequest(link.id.toString())
+            }
+            // Prečaci na ikoni: trening u tijeku ima prednost, kao kod akcije "Započni trening" na iOS-u.
+            WidgetLink.EmptyWorkout -> {
+                WorkoutShortcuts(store).start(null, emptyName)
+                showsWorkout = true
+            }
+            is WidgetLink.StartTemplate -> {
+                // Obrisan ili prazan trening iz starog prečaca otvara Početnu.
+                runCatching { WorkoutShortcuts(store).start(link.id, emptyName) }
+                if (store.activeSession() != null) showsWorkout = true else selected = Section.HOME
             }
         }
     }

@@ -56,6 +56,28 @@ class WorkoutShortcutsTest {
     private val shortcuts = WorkoutShortcuts(store)
 
     @Test
+    fun `prečaci na ikoni nude zadnje pokretane treninge, a zatim ostale po nazivu`() {
+        val a = store.template("A")
+        val b = store.template("B")
+        val c = store.template("C")
+        store.template("Prazan", exercises = emptyList())
+        assertEquals(listOf(a.id, b.id), shortcuts.recentTemplates(2).map { it.id })
+
+        fun history(template: WorkoutTemplate, at: Instant) = store.insert(
+            Session(template.name, startedAt = at).also {
+                it.templateId = template.id
+                it.state = SessionState.FINISHED
+                it.endedAt = at.plusSeconds(3_600)
+            },
+        )
+        history(c, base)
+        history(b, base.plusSeconds(86_400))
+        history(c, base.minusSeconds(86_400))
+        assertEquals(listOf(b.id, c.id, a.id), shortcuts.recentTemplates(5).map { it.id })
+        assertTrue(shortcuts.recentTemplates(0).isEmpty())
+    }
+
+    @Test
     fun `bez odabranog treninga pokreće se prazan trening`() {
         val session = started(shortcuts.start(null, "Trening", base))
         assertEquals("Trening", session.name)
