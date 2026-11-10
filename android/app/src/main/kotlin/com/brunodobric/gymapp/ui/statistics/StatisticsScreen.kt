@@ -42,13 +42,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.model.BodyMeasurementKind
 import com.brunodobric.gymapp.model.ExerciseRef
+import com.brunodobric.gymapp.stats.BodyTracking
 import com.brunodobric.gymapp.stats.ExerciseInfoBuilder
 import com.brunodobric.gymapp.stats.ExercisePoint
 import com.brunodobric.gymapp.stats.OverviewPeriod
 import com.brunodobric.gymapp.stats.PeriodSummary
 import com.brunodobric.gymapp.stats.StatisticsEngine
 import com.brunodobric.gymapp.stats.StatsCalendar
+import com.brunodobric.gymapp.stats.dotsScore
+import com.brunodobric.gymapp.stats.effortDistribution
+import com.brunodobric.gymapp.stats.intensityDistribution
 import com.brunodobric.gymapp.stats.periodSummary
 import com.brunodobric.gymapp.training.PRKind
 import com.brunodobric.gymapp.ui.LineChart
@@ -63,8 +68,11 @@ import java.time.format.FormatStyle
 
 /**
  * Statistika: pregled tjedna, mjeseca ili godine, mišići (tvrde serije tjedno), trend snage po mišićima,
- * osobni rekordi, mjere tijela i napredak vježbe. Mapa tijela, savjeti, napor i DOTS dolaze kasnije.
+ * osobni rekordi, napor i intenzitet, DOTS, mjere tijela i napredak vježbe. Mapa tijela i savjeti dolaze kasnije.
  */
+/** Četiri tjedna u sekundama, razdoblje kartice Napor i intenzitet. */
+private const val FOUR_WEEKS = 28L * 24 * 3600
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsScreen(services: AppServices) {
@@ -114,6 +122,21 @@ fun StatisticsScreen(services: AppServices) {
         StatisticsEngine(store).heatmap(now.minusSeconds(muscleDays * 24L * 3600), now.plusSeconds(1), info)
     }
     val strengthTrends = remember(revision) { StatisticsEngine(store).strengthTrends(info = info) }
+    val effort = remember(revision) {
+        val now = Instant.now()
+        StatisticsEngine(store).effortDistribution(now.minusSeconds(FOUR_WEEKS), now.plusSeconds(1))
+    }
+    val intensity = remember(revision) {
+        val now = Instant.now()
+        StatisticsEngine(store).intensityDistribution(now.minusSeconds(FOUR_WEEKS), now.plusSeconds(1))
+    }
+    // DOTS uz spol i zadnju upisanu tjelesnu težinu, kao na iOS-u.
+    val dots = remember(revision) {
+        val sex = settings.sex
+        val bodyWeight = BodyTracking(store).latest(BodyMeasurementKind.WEIGHT)?.value
+        if (sex != null && bodyWeight != null && bodyWeight > 0) StatisticsEngine(store).dotsScore(bodyWeight, sex) else null
+    }
+    val weight = remember(settings.weightUnit, locale) { WeightFormatter(settings.weightUnit, locale) }
     val goal = settings.trainingDaysPerWeek
     val summary = remember(revision, period, dateMillis, calendar) {
         StatisticsEngine(store).periodSummary(period, date, goal = goal, calendar = calendar, isCardio = isCardio)
@@ -142,6 +165,8 @@ fun StatisticsScreen(services: AppServices) {
             if (strengthTrends.isNotEmpty()) StrengthTrendCard(strengthTrends, locale)
 
             RecordsCard(records, settings.weightUnit, onShowAll = { showsRecords = true })
+            if (effort.rated > 0 || intensity.total > 0) EffortIntensityCard(effort, intensity)
+            dots?.let { DotsCard(it, weight, locale) }
 
             Card(Modifier.fillMaxWidth()) {
                 ListItem(
