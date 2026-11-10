@@ -265,4 +265,13 @@
     <string name="set_without_targets">Cilj se upisuje u treningu</string>
     <string name="set_short">serija</string>
     <string name="rest_default">Zadano</string>
+    <string name="template_from_session">Novi trening iz ovog</string>
+    <string name="plate_calculator">Kalkulator ploča</string>
+    <string name="target_weight">Ciljna težina</string>
+    <string name="barbell">Šipka</string>
+    <string name="on_each_side">Na svaku stranu</string>
+    <string name="plates_below_bar">Cilj je manji od same šipke.</string>
+    <string name="plates_bar_only">Samo šipka.</string>
+    <string name="plates_achieved">Postižemo</string>
+    <string name="plates_not_exact">Točna težina nije moguća s dostupnim pločama.</string>
 </resources>

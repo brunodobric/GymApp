@@ -2,6 +2,7 @@ package com.brunodobric.gymapp.ui.history
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +13,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -38,11 +43,13 @@ import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.SetLog
+import com.brunodobric.gymapp.planning.TemplateEngine
 import com.brunodobric.gymapp.stats.HistoryQueries
 import com.brunodobric.gymapp.stats.StatisticsEngine
 import com.brunodobric.gymapp.stats.comparison
 import com.brunodobric.gymapp.training.SetMetrics
 import com.brunodobric.gymapp.training.values
+import com.brunodobric.gymapp.ui.planning.TemplateEditorScreen
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.NumberInput
@@ -58,7 +65,8 @@ import kotlin.math.roundToInt
 
 /**
  * Detalj završenog treninga, prvi korak: sažetak, usporedba s prošlim treningom istog predloška,
- * vježbe sa serijama, bilješke i brisanje. Uređivanje, mišići i "Spremi kao predložak" dolaze kasnije.
+ * vježbe sa serijama, bilješke, brisanje i "Novi trening iz ovog" (predložak se otvara u uređivaču).
+ * Uređivanje odrađenog treninga i mišići dolaze kasnije.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +75,14 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
     val revision = rememberStoreRevision(store)
     val session = remember(revision, sessionId) { store.sessions.firstOrNull { it.id == sessionId } }
     var confirmDelete by remember { mutableStateOf(false) }
+    var showsMenu by remember { mutableStateOf(false) }
+    var newTemplateId by rememberSaveable { mutableStateOf<UUID?>(null) }
+
+    newTemplateId?.let { id ->
+        // Uređivač sprema odmah, pa novi trening ostaje i kad se uređivač zatvori.
+        TemplateEditorScreen(services, id, onClose = { newTemplateId = null })
+        return
+    }
     BackHandler(onBack = onClose)
 
     if (session == null) {
@@ -101,6 +117,21 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
                 actions = {
                     IconButton(onClick = { confirmDelete = true }) {
                         Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_workout))
+                    }
+                    Box {
+                        IconButton(onClick = { showsMenu = true }) {
+                            Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.more_options))
+                        }
+                        DropdownMenu(expanded = showsMenu, onDismissRequest = { showsMenu = false }) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.template_from_session)) },
+                                enabled = session.orderedExercises.any { !it.isRemoved },
+                                onClick = {
+                                    showsMenu = false
+                                    newTemplateId = TemplateEngine(store).createTemplate(session).id
+                                },
+                            )
+                        }
                     }
                 },
             )

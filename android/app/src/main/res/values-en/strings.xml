@@ -257,4 +257,13 @@
     <string name="set_without_targets">Target is entered in the workout</string>
     <string name="set_short">set</string>
     <string name="rest_default">Default</string>
+    <string name="template_from_session">New workout from this one</string>
+    <string name="plate_calculator">Plate calculator</string>
+    <string name="target_weight">Target weight</string>
+    <string name="barbell">Barbell</string>
+    <string name="on_each_side">On each side</string>
+    <string name="plates_below_bar">The target is less than the bar alone.</string>
+    <string name="plates_bar_only">Bar only.</string>
+    <string name="plates_achieved">Achieved</string>
+    <string name="plates_not_exact">The exact weight isn\'t possible with the available plates.</string>
 </resources>
