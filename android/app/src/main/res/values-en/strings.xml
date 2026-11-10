@@ -591,4 +591,9 @@
     <string name="health_rationale_text">If you allow it, Apolon saves workouts you finish on your phone (time, duration, strength and cardio parts, name) and the weight you enter in the app to Health Connect. It reads nothing from Health Connect.</string>
     <string name="health_rationale_privacy">This data isn\'t sent to anyone, isn\'t used for advertising or marketing and isn\'t sold. It isn\'t included in backups. You can revoke permissions in Health Connect at any time, and Apolon works without them.</string>
     <string name="privacy_policy">Privacy policy</string>
+    <string name="health_point_workouts">Finished workouts are saved to Health Connect, so other apps like Google Fit, Samsung Health or Fitbit can see them.</string>
+    <string name="health_point_weight">The weight you enter is saved to Health Connect too.</string>
+    <string name="health_onboarding_footer">The app works without it. You can change this in Settings > Health Connect.</string>
+    <string name="health_connect_button">Connect Health Connect</string>
+    <string name="not_now">Not now</string>
 </resources>
