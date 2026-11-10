@@ -74,4 +74,10 @@
         <item quantity="one">%d new custom exercise</item>
         <item quantity="other">%d new custom exercises</item>
     </plurals>
+    <string name="delete_workout">Delete workout</string>
+    <string name="delete_workout_title">Delete workout?</string>
+    <string name="delete_workout_message">The workout and its sets will be permanently deleted, and records and statistics will be recalculated without it.</string>
+    <string name="volume_vs_previous">Volume %1$s vs. last workout</string>
+    <string name="warm_up_short">W</string>
+    <string name="notes">Notes</string>
 </resources>
