@@ -170,4 +170,10 @@
     <string name="records">Rekordi</string>
     <string name="records_no_match">Nema rekorda za ovaj filter.</string>
     <string name="exercise">Vježba</string>
+    <string name="undo">Poništi</string>
+    <string name="set_deleted">Serija obrisana</string>
+    <string name="exercise_removed">Vježba izbačena</string>
+    <string name="more_options">Više</string>
+    <string name="add_warm_up">Dodaj zagrijavanje</string>
+    <string name="delete_set">Obriši seriju</string>
 </resources>

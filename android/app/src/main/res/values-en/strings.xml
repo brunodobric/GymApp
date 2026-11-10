@@ -162,4 +162,10 @@
     <string name="records">Records</string>
     <string name="records_no_match">No records for this filter.</string>
     <string name="exercise">Exercise</string>
+    <string name="undo">Undo</string>
+    <string name="set_deleted">Set deleted</string>
+    <string name="exercise_removed">Exercise removed</string>
+    <string name="more_options">More</string>
+    <string name="add_warm_up">Add warm-up</string>
+    <string name="delete_set">Delete set</string>
 </resources>
