@@ -6,7 +6,6 @@
     <string name="tab_plans">Rasporedi</string>
     <string name="tab_exercises">Vježbe</string>
     <string name="tab_statistics">Statistika</string>
-    <string name="coming_soon">Uskoro na Androidu.</string>
     <string name="search_exercises">Traži vježbe</string>
     <string name="no_results">Nema rezultata</string>
     <string name="workout_default_name">Trening</string>
@@ -124,4 +123,18 @@
         <item quantity="few">%d serije</item>
         <item quantity="other">%d serija</item>
     </plurals>
+    <string name="period_week">Tjedan</string>
+    <string name="period_month">Mjesec</string>
+    <string name="period_year">Godina</string>
+    <string name="exercise_progress">Napredak vježbe</string>
+    <string name="previous_period">Prethodno razdoblje</string>
+    <string name="next_period">Sljedeće razdoblje</string>
+    <string name="stat_workouts">Treninzi</string>
+    <string name="stat_trained_days">Dani s treningom</string>
+    <string name="stat_hard_sets">Tvrde serije</string>
+    <string name="stat_time">Vrijeme</string>
+    <string name="stat_cardio">Kardio</string>
+    <string name="stat_per_week">Treninga tjedno (cilj)</string>
+    <string name="estimated_one_rep_max">Procjena 1RM</string>
+    <string name="heaviest_weight">Najveća težina</string>
 </resources>

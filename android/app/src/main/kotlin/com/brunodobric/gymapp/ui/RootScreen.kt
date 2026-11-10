@@ -11,7 +11,6 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -21,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -31,6 +29,7 @@ import com.brunodobric.gymapp.ui.exercises.ExercisesScreen
 import com.brunodobric.gymapp.ui.history.HistoryScreen
 import com.brunodobric.gymapp.ui.home.HomeScreen
 import com.brunodobric.gymapp.ui.planning.SchedulesScreen
+import com.brunodobric.gymapp.ui.statistics.StatisticsScreen
 import com.brunodobric.gymapp.ui.settings.SettingsScreen
 import com.brunodobric.gymapp.ui.workout.WorkoutScreen
 
@@ -81,15 +80,8 @@ fun RootScreen(services: AppServices) {
                 Section.HISTORY -> HistoryScreen(services)
                 Section.SCHEDULES -> SchedulesScreen(services)
                 Section.EXERCISES -> ExercisesScreen(services)
-                else -> Placeholder()
+                Section.STATISTICS -> StatisticsScreen(services)
             }
         }
-    }
-}
-
-@Composable
-private fun Placeholder() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(stringResource(R.string.coming_soon), style = MaterialTheme.typography.bodyLarge)
     }
 }
