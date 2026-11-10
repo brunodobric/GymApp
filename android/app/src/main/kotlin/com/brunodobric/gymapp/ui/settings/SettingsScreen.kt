@@ -26,8 +26,8 @@ import com.brunodobric.gymapp.BuildConfig
 import com.brunodobric.gymapp.R
 
 /**
- * Postavke, prvi korak: Podaci (izvoz, uvoz, brisanje) i O aplikaciji. Ostale kategorije s iOS-a
- * (profil, izgled, trening, ploče, obavijesti) dolaze kasnije.
+ * Postavke: Profil, Trening, Podaci (izvoz, uvoz, brisanje) i O aplikaciji. Ostale kategorije s iOS-a
+ * (izgled, ploče, obavijesti) dolaze kasnije.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +46,12 @@ fun SettingsScreen(services: AppServices, onClose: () -> Unit) {
         },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState())) {
+            SectionHeader(stringResource(R.string.settings_profile))
+            ProfileSettingsSection(services)
+            HorizontalDivider(Modifier.padding(vertical = 8.dp))
+            SectionHeader(stringResource(R.string.settings_training))
+            TrainingSettingsSection(services)
+            HorizontalDivider(Modifier.padding(vertical = 8.dp))
             SectionHeader(stringResource(R.string.settings_data))
             DataSettingsSection(services)
             HorizontalDivider(Modifier.padding(vertical = 8.dp))
