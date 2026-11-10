@@ -1,0 +1,205 @@
+package com.brunodobric.gymapp.ui.statistics
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.brunodobric.gymapp.AppServices
+import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.model.ExerciseRef
+import com.brunodobric.gymapp.stats.ExerciseInfoBuilder
+import com.brunodobric.gymapp.stats.ExercisePoint
+import com.brunodobric.gymapp.stats.ExerciseStatus
+import com.brunodobric.gymapp.stats.ExerciseTrendEntry
+import com.brunodobric.gymapp.stats.StatisticsEngine
+import com.brunodobric.gymapp.stats.TrendMeasure
+import com.brunodobric.gymapp.stats.exerciseTrend
+import com.brunodobric.gymapp.stats.repMaxTable
+import com.brunodobric.gymapp.ui.LineChart
+import com.brunodobric.gymapp.ui.rememberStoreRevision
+import com.brunodobric.gymapp.units.WeightFormatter
+import java.text.NumberFormat
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
+
+/**
+ * Napredak jedne vježbe (`ExerciseProgressScreen` na iOS-u): status u zadnjih 8 tjedana, crta procjene 1RM
+ * (ili najveće težine) po treningu, najteža serija po ponavljanjima i svi treninzi. Otvara se iz Statistike
+ * i s detalja vježbe ("Napredak i rekordi"). Usporedba s drugom vježbom i Brzycki dolaze kasnije.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onClose: () -> Unit) {
+    val store = services.store
+    val revision = rememberStoreRevision(store)
+    val engine = remember(store) { StatisticsEngine(store) }
+    val points = remember(revision, ref.key) { engine.progress(ref) }
+    val trend = remember(revision, ref.key) {
+        engine.exerciseTrend(ref, info = ExerciseInfoBuilder.provider(services.catalog, store.customExercises))
+    }
+    val repMax = remember(revision, ref.key) { engine.repMaxTable(ref) }
+    val unit = store.settings().weightUnit
+    val locale = LocalConfiguration.current.locales[0]
+    val weight = remember(unit, locale) { WeightFormatter(unit, locale) }
+    val formatter = remember(locale) {
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale).withZone(ZoneId.systemDefault())
+    }
+    BackHandler(onBack = onClose)
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(ref.name) },
+                navigationIcon = {
+                    IconButton(onClick = onClose) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                    }
+                },
+            )
+        },
+    ) { padding ->
+        Column(
+            Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            trend?.let { StatusCard(it, locale) }
+
+            val values = points.map { chartValue(it) }
+            val usesOneRepMax = points.any { it.estimatedOneRepMaxKg != null }
+            if (values.count { it > 0 } >= 2) {
+                Text(
+                    stringResource(if (usesOneRepMax) R.string.estimated_one_rep_max else R.string.heaviest_weight),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                LineChart(values, Modifier.fillMaxWidth().height(180.dp))
+                if (usesOneRepMax) {
+                    Text(
+                        stringResource(R.string.one_rep_max_footer),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            if (repMax.isNotEmpty()) {
+                Text(stringResource(R.string.rep_max_table), style = MaterialTheme.typography.titleSmall)
+                Card {
+                    repMax.forEachIndexed { index, entry ->
+                        if (index > 0) HorizontalDivider()
+                        ListItem(
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            headlineContent = { Text(stringResource(R.string.reps_plus, entry.reps)) },
+                            supportingContent = { Text(formatter.format(entry.date)) },
+                            trailingContent = { Text(weight.string(entry.weightKg)) },
+                        )
+                    }
+                }
+            }
+
+            Text(pluralStringResource(R.plurals.workout_count, points.size, points.size), style = MaterialTheme.typography.titleSmall)
+            Card {
+                points.reversed().forEachIndexed { index, point ->
+                    if (index > 0) HorizontalDivider()
+                    val oneRepMax = point.estimatedOneRepMaxKg
+                    ListItem(
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        headlineContent = {
+                            Text(if (point.bestWeightKg > 0) "${weight.string(point.bestWeightKg)} × ${point.bestReps}" else "× ${point.bestReps}")
+                        },
+                        supportingContent = { Text(formatter.format(point.date)) },
+                        trailingContent = if (oneRepMax != null) {
+                            { Text("1RM " + weight.string(oneRepMax)) }
+                        } else {
+                            null
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** Status napretka u zadnjih 8 tjedana i mjesečna promjena, s objašnjenjem kako se računa. */
+@Composable
+private fun StatusCard(entry: ExerciseTrendEntry, locale: Locale) {
+    val trend = entry.trend
+    val change = trend.monthlyChange
+    val measure = stringResource(if (entry.measure == TrendMeasure.ONE_REP_MAX) R.string.measure_one_rep_max else R.string.measure_reps)
+    Card(Modifier.fillMaxWidth()) {
+        ListItem(
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            headlineContent = { Text(stringResource(R.string.last_8_weeks)) },
+            supportingContent = if (change != null) {
+                { Text(stringResource(R.string.per_month, signedPercent(change, locale))) }
+            } else {
+                null
+            },
+            trailingContent = {
+                Text(stringResource(statusTitle(trend.status)), color = statusColor(trend.status), style = MaterialTheme.typography.titleSmall)
+            },
+        )
+    }
+    val footer = if (trend.status == ExerciseStatus.INSUFFICIENT_DATA) {
+        stringResource(R.string.status_footer_insufficient, measure)
+    } else {
+        stringResource(R.string.status_footer, measure, NumberFormat.getPercentInstance(locale).format(trend.noise))
+    }
+    Text(footer, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+internal fun statusTitle(status: ExerciseStatus): Int = when (status) {
+    ExerciseStatus.IMPROVING -> R.string.status_improving
+    ExerciseStatus.STABLE -> R.string.status_stable
+    ExerciseStatus.PLATEAU -> R.string.status_plateau
+    ExerciseStatus.DECLINING -> R.string.status_declining
+    ExerciseStatus.INSUFFICIENT_DATA -> R.string.status_insufficient
+}
+
+@Composable
+private fun statusColor(status: ExerciseStatus): Color = when (status) {
+    ExerciseStatus.IMPROVING -> Color(0xFF2E7D32)
+    ExerciseStatus.DECLINING -> MaterialTheme.colorScheme.error
+    ExerciseStatus.PLATEAU -> Color(0xFFEF6C00)
+    else -> MaterialTheme.colorScheme.onSurfaceVariant
+}
+
+/** Promjena s predznakom, npr. "+2,8 %" ili "−1 %" (`ChangeFormat.percent` na iOS-u). */
+internal fun signedPercent(change: Double, locale: Locale): String {
+    val format = NumberFormat.getPercentInstance(locale).apply { maximumFractionDigits = 1 }
+    val text = format.format(kotlin.math.abs(change))
+    return when {
+        change > 0 -> "+$text"
+        change < 0 -> "−$text"
+        else -> text
+    }
+}
+
+private fun chartValue(point: ExercisePoint): Double = point.estimatedOneRepMaxKg ?: point.bestWeightKg

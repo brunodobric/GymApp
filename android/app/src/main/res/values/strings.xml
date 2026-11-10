@@ -417,4 +417,19 @@
     <string name="filter_muscle">Mišić</string>
     <string name="reset_filters">Poništi filtere</string>
     <string name="done">Gotovo</string>
+    <string name="status_improving">Napreduje</string>
+    <string name="status_stable">Stoji</string>
+    <string name="status_plateau">Plato</string>
+    <string name="status_declining">Pada</string>
+    <string name="status_insufficient">Premalo podataka</string>
+    <string name="progress_and_records">Napredak i rekordi</string>
+    <string name="rep_max_table">Najteža serija po ponavljanjima</string>
+    <string name="reps_plus">%1$d+ ponavljanja</string>
+    <string name="last_8_weeks">Zadnjih 8 tjedana</string>
+    <string name="per_month">%1$s mjesečno</string>
+    <string name="status_footer_insufficient">Status se pojavi nakon 4 izvođenja u 8 tjedana. Mjeri se %1$s.</string>
+    <string name="status_footer">Mjeri se %1$s. Napredak se računa tek kad je veći od uobičajenog kolebanja ove vježbe (oko %2$s između treninga).</string>
+    <string name="measure_one_rep_max">procjena 1RM</string>
+    <string name="measure_reps">najviše ponavljanja</string>
+    <string name="one_rep_max_footer">Procjena 1RM računa se iz serija do 12 ponavljanja, uz ponavljanja u rezervi kad je upisan RPE ili RIR.</string>
 </resources>
