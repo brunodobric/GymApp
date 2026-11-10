@@ -103,6 +103,12 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     var confirmDiscard by remember { mutableStateOf(false) }
     var plateTarget by rememberSaveable { mutableStateOf<String?>(null) }
     val now = rememberTicker()
+    RestEndEffects(
+        endsAt = session.restTimerEndsAt,
+        soundEnabled = settings.restEndSoundEnabled,
+        notificationsEnabled = settings.restNotificationEnabled,
+        onExpired = { engine.cancelRest(session) },
+    )
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val undoLabel = stringResource(R.string.undo)

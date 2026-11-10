@@ -392,4 +392,12 @@
     <string name="catalog_level_intermediate">Intermediate</string>
     <string name="catalog_level_advanced">Advanced</string>
     <string name="workout_fallback">Workout</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="rest_end">End of rest</string>
+    <string name="rest_end_sound">End-of-rest sound</string>
+    <string name="rest_over">Rest is over</string>
+    <string name="rest_next_generic">Time for your next set.</string>
+    <string name="rest_next_body">Next: %1$s, set %2$d of %3$d.</string>
+    <string name="rest_channel_silent">End of rest (silent)</string>
+    <string name="rest_notification_footer">The end-of-rest notification arrives when the phone is locked or the app is in the background. Permission is requested the first time it is needed.</string>
 </resources>
