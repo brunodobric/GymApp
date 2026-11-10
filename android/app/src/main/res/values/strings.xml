@@ -533,4 +533,11 @@
     <string name="increase_duration">Produlji trajanje</string>
     <string name="increase_distance">Povećaj udaljenost</string>
     <string name="increase_weight">Povećaj težinu</string>
+    <string name="metric_weight">Težina</string>
+    <string name="metric_one_rep_max">1RM</string>
+    <string name="range_month">1 mjesec</string>
+    <string name="range_two_months">2 mjeseca</string>
+    <string name="range_six_months">6 mjeseci</string>
+    <string name="range_custom">Vlastiti raspon</string>
+    <string name="chart_range_empty">U odabranom rasponu nema treninga s ovom vježbom.</string>
 </resources>

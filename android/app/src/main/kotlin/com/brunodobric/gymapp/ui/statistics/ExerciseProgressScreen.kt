@@ -3,6 +3,7 @@ package com.brunodobric.gymapp.ui.statistics
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +21,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,12 +33,15 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -51,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.model.ExerciseRef
+import com.brunodobric.gymapp.stats.ChartRange
 import com.brunodobric.gymapp.stats.DoneExercises
 import com.brunodobric.gymapp.stats.ExerciseInfoBuilder
 import com.brunodobric.gymapp.stats.ExercisePoint
@@ -64,8 +72,12 @@ import com.brunodobric.gymapp.training.SetMetrics
 import com.brunodobric.gymapp.ui.ChartSeries
 import com.brunodobric.gymapp.ui.DatedLineChart
 import com.brunodobric.gymapp.ui.rememberStoreRevision
+import com.brunodobric.gymapp.units.WeightConversion
 import com.brunodobric.gymapp.units.WeightFormatter
+import com.brunodobric.gymapp.units.WeightUnit
 import java.text.NumberFormat
+import java.time.Duration
+import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -75,7 +87,7 @@ import java.util.Locale
  * Napredak jedne vježbe (`ExerciseProgressScreen` na iOS-u): status u zadnjih 8 tjedana, crta procjene 1RM
  * (ili najveće težine) po treningu, najteža serija po ponavljanjima i svi treninzi. Otvara se iz Statistike
  * i s detalja vježbe ("Napredak i rekordi"). Graf može usporediti drugu vježbu i računati 1RM po Brzyckom.
- * Izbor mjere (volumen) i raspona s iOS-a dolaze kasnije.
+ * Mjera (težina, 1RM, volumen) i raspon biraju se iznad grafa, kao na iOS-u.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,6 +98,11 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
     var useBrzycki by rememberSaveable { mutableStateOf(false) }
     var comparedKey by rememberSaveable { mutableStateOf<String?>(null) }
     var pickingCompared by remember { mutableStateOf(false) }
+    var metric by rememberSaveable { mutableStateOf(ProgressMetric.WEIGHT) }
+    var rangeChoice by rememberSaveable { mutableStateOf(RangeChoice.ALL) }
+    var customFrom by rememberSaveable { mutableLongStateOf(Instant.now().minus(Duration.ofDays(90)).toEpochMilli()) }
+    var customTo by rememberSaveable { mutableLongStateOf(Instant.now().toEpochMilli()) }
+    var pickingRange by remember { mutableStateOf(false) }
     val formula = if (useBrzycki) SetMetrics.OneRepMaxFormula.BRZYCKI else SetMetrics.OneRepMaxFormula.EPLEY
     val points = remember(revision, ref.key, formula) { engine.progress(ref, formula) }
     val locale = LocalConfiguration.current.locales[0]
@@ -122,20 +139,50 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
         ) {
             trend?.let { StatusCard(it, locale) }
 
-            val usesOneRepMax = (points + comparedPoints).any { it.estimatedOneRepMaxKg != null }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                ProgressMetric.entries.forEach { option ->
+                    FilterChip(
+                        selected = option == metric,
+                        onClick = { metric = option },
+                        label = { Text(stringResource(option.title)) },
+                    )
+                }
+            }
+            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                RangeChoice.entries.forEach { option ->
+                    FilterChip(
+                        selected = option == rangeChoice,
+                        onClick = {
+                            if (option == RangeChoice.CUSTOM) pickingRange = true else rangeChoice = option
+                        },
+                        label = { Text(stringResource(option.title)) },
+                    )
+                }
+            }
+            if (rangeChoice == RangeChoice.CUSTOM) {
+                Text(
+                    formatter.format(Instant.ofEpochMilli(customFrom)) + " – " + formatter.format(Instant.ofEpochMilli(customTo)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            val now = Instant.now()
+            val range = rangeChoice.range(customFrom, customTo)
             val mainColor = MaterialTheme.colorScheme.primary
             val comparedColor = MaterialTheme.colorScheme.tertiary
-            val lines = listOfNotNull(
-                ChartSeries(points.map { it.date.toEpochMilli() to chartValue(it) }, mainColor),
-                if (comparedRef != null) ChartSeries(comparedPoints.map { it.date.toEpochMilli() to chartValue(it) }, comparedColor) else null,
+            fun line(list: List<ExercisePoint>, color: Color) = ChartSeries(
+                range.filter(list, now).mapNotNull { point -> metric.value(point, unit)?.let { point.date.toEpochMilli() to it } },
+                color,
             )
-            if (points.count { chartValue(it) > 0 } < 2 && comparedRef == null) {
+            val lines = listOfNotNull(
+                line(points, mainColor),
+                if (comparedRef != null) line(comparedPoints, comparedColor) else null,
+            )
+            if (points.size < 2 && comparedRef == null) {
                 Text(stringResource(R.string.chart_needs_two), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            } else if (lines.all { line -> line.points.none { it.second > 0 } }) {
+                Text(stringResource(R.string.chart_range_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
             } else {
-                Text(
-                    stringResource(if (usesOneRepMax) R.string.estimated_one_rep_max else R.string.heaviest_weight),
-                    style = MaterialTheme.typography.titleSmall,
-                )
                 val chartLabel = if (compared != null) {
                     stringResource(R.string.progress_chart_compare, ref.name, compared.name)
                 } else {
@@ -149,7 +196,7 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
                     }
                 }
             }
-            if (usesOneRepMax) {
+            if (metric == ProgressMetric.ONE_REP_MAX) {
                 Text(
                     stringResource(R.string.one_rep_max_footer),
                     style = MaterialTheme.typography.bodySmall,
@@ -202,6 +249,36 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
                     )
                 }
             }
+        }
+    }
+
+    if (pickingRange) {
+        val state = rememberDateRangePickerState(
+            initialSelectedStartDateMillis = customFrom,
+            initialSelectedEndDateMillis = customTo,
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= Instant.now().toEpochMilli()
+            },
+        )
+        DatePickerDialog(
+            onDismissRequest = { pickingRange = false },
+            confirmButton = {
+                TextButton(
+                    enabled = state.selectedStartDateMillis != null,
+                    onClick = {
+                        val from = state.selectedStartDateMillis
+                        if (from != null) {
+                            customFrom = from
+                            customTo = state.selectedEndDateMillis ?: from
+                            rangeChoice = RangeChoice.CUSTOM
+                        }
+                        pickingRange = false
+                    },
+                ) { Text(stringResource(R.string.ok)) }
+            },
+            dismissButton = { TextButton(onClick = { pickingRange = false }) { Text(stringResource(R.string.cancel)) } },
+        ) {
+            DateRangePicker(state, Modifier.weight(1f))
         }
     }
 
@@ -303,4 +380,31 @@ internal fun signedPercent(change: Double, locale: Locale): String {
     }
 }
 
-private fun chartValue(point: ExercisePoint): Double = point.estimatedOneRepMaxKg ?: point.bestWeightKg
+/** Mjera na grafu napretka, kao `Metric` na iOS-u. Vrijednosti su u jedinici prikaza. */
+private enum class ProgressMetric(val title: Int) {
+    WEIGHT(R.string.metric_weight), ONE_REP_MAX(R.string.metric_one_rep_max), VOLUME(R.string.volume);
+
+    fun value(point: ExercisePoint, unit: WeightUnit): Double? {
+        val kilograms = when (this) {
+            WEIGHT -> point.bestWeightKg
+            ONE_REP_MAX -> point.estimatedOneRepMaxKg
+            VOLUME -> point.volumeKg
+        }
+        return kilograms?.let { WeightConversion.displayValue(it, unit) }
+    }
+}
+
+/** Raspon grafa; vlastiti raspon koristi spremljene datume od–do (`RangeChoice` na iOS-u). */
+private enum class RangeChoice(val title: Int) {
+    MONTH(R.string.range_month), TWO_MONTHS(R.string.range_two_months), SIX_MONTHS(R.string.range_six_months),
+    YEAR(R.string.period_year), ALL(R.string.filter_all), CUSTOM(R.string.range_custom);
+
+    fun range(fromMillis: Long, toMillis: Long): ChartRange = when (this) {
+        MONTH -> ChartRange.Months(1)
+        TWO_MONTHS -> ChartRange.Months(2)
+        SIX_MONTHS -> ChartRange.Months(6)
+        YEAR -> ChartRange.Months(12)
+        ALL -> ChartRange.All
+        CUSTOM -> ChartRange.Custom(Instant.ofEpochMilli(fromMillis), Instant.ofEpochMilli(toMillis))
+    }
+}
