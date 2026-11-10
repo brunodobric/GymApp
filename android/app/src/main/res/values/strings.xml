@@ -78,4 +78,10 @@
         <item quantity="few">%d nove vlastite vježbe</item>
         <item quantity="other">%d novih vlastitih vježbi</item>
     </plurals>
+    <string name="delete_workout">Obriši trening</string>
+    <string name="delete_workout_title">Obrisati trening?</string>
+    <string name="delete_workout_message">Trening i njegove serije bit će trajno obrisani, a rekordi i statistika preračunat će se bez njega.</string>
+    <string name="volume_vs_previous">Volumen %1$s u odnosu na prošli trening</string>
+    <string name="warm_up_short">Z</string>
+    <string name="notes">Bilješke</string>
 </resources>
