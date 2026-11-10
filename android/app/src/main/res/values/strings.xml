@@ -445,4 +445,20 @@
     <string name="region_inner_thigh">Nutarnje bedro</string>
     <string name="region_outer_thigh">Vanjsko bedro</string>
     <string name="region_upper_back">Gornja leđa</string>
+    <string name="effort_intensity">Napor i intenzitet</string>
+    <string name="effort">Napor</string>
+    <string name="intensity">Intenzitet</string>
+    <string name="effort_empty">Upiši RPE ili RIR uz serije da vidiš koliko blizu otkaza treniraš.</string>
+    <string name="effort_footer">Ponavljanja u rezervi, zadnja 4 tjedna. Za rast mišića najbolje rade serije blizu otkaza (0 do 3), a za snagu blizina otkaza manje znači (Robinson i sur. 2024).</string>
+    <string name="effort_unrated">Bez ocjene: %1$d.</string>
+    <string name="intensity_empty">Intenzitet se pojavi uz vježbe s težinom.</string>
+    <string name="intensity_footer">Težina serije prema najboljoj procjeni 1RM vježbe, zadnja 4 tjedna. Iznad 85 posto je trening maksimalne snage.</string>
+    <string name="dots_points">DOTS bodovi</string>
+    <string name="not_done">Nije rađeno</string>
+    <string name="total">Zbroj</string>
+    <string name="dots_footer">Zbroj najbolje procjene 1RM triju dizanja u zadnjih 12 tjedana, prilagođen tjelesnoj težini (%1$s). Služi za usporedbu s drugima; za vlastiti napredak gledaj trend vježbe.</string>
+    <string name="dots_missing">Bodovi se računaju kad su u razdoblju rađena sva tri dizanja.</string>
+    <string name="lift_squat">Čučanj</string>
+    <string name="lift_bench">Potisak s klupe</string>
+    <string name="lift_deadlift">Mrtvo dizanje</string>
 </resources>

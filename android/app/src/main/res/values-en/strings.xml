@@ -437,4 +437,20 @@
     <string name="region_inner_thigh">Inner thigh</string>
     <string name="region_outer_thigh">Outer thigh</string>
     <string name="region_upper_back">Upper back</string>
+    <string name="effort_intensity">Effort and intensity</string>
+    <string name="effort">Effort</string>
+    <string name="intensity">Intensity</string>
+    <string name="effort_empty">Log RPE or RIR with your sets to see how close to failure you train.</string>
+    <string name="effort_footer">Reps in reserve, last 4 weeks. Sets close to failure (0 to 3) work best for muscle growth, while proximity to failure matters less for strength (Robinson et al. 2024).</string>
+    <string name="effort_unrated">Unrated: %1$d.</string>
+    <string name="intensity_empty">Intensity appears with weighted exercises.</string>
+    <string name="intensity_footer">Set weight relative to the exercise\'s best estimated 1RM, last 4 weeks. Above 85 percent is maximal strength training.</string>
+    <string name="dots_points">DOTS points</string>
+    <string name="not_done">Not done</string>
+    <string name="total">Total</string>
+    <string name="dots_footer">Total of the best estimated 1RM of the three lifts in the last 12 weeks, adjusted for body weight (%1$s). Use it to compare with others; for your own progress, look at the exercise trend.</string>
+    <string name="dots_missing">Points are calculated once all three lifts have been done in this period.</string>
+    <string name="lift_squat">Squat</string>
+    <string name="lift_bench">Bench press</string>
+    <string name="lift_deadlift">Deadlift</string>
 </resources>
