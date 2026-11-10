@@ -295,6 +295,15 @@ internal fun NotificationSettingsSection(services: AppServices) {
     rememberStoreRevision(store)
     val settings = store.settings()
     ListItem(
+        headlineContent = { Text(stringResource(R.string.schedule_reminders)) },
+        trailingContent = {
+            Switch(checked = settings.notificationsEnabled, onCheckedChange = {
+                settings.notificationsEnabled = it
+                store.save()
+            })
+        },
+    )
+    ListItem(
         headlineContent = { Text(stringResource(R.string.rest_end)) },
         trailingContent = {
             Switch(checked = settings.restNotificationEnabled, onCheckedChange = {

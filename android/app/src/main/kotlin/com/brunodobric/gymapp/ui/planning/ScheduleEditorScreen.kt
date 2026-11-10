@@ -55,9 +55,9 @@ import java.text.Collator
 import java.util.UUID
 
 /**
- * Uređivač rasporeda, prvi korak: naziv, aktivnost, broj ciklusa, niz treninga i dana odmora (dodavanje,
+ * Uređivač rasporeda: naziv, aktivnost, broj ciklusa, podsjetnici, niz treninga i dana odmora (dodavanje,
  * redoslijed strelicama, uklanjanje), pokretanje ispočetka i brisanje. Promjene se spremaju odmah.
- * Podsjetnici, preskočeni treninzi i tijek "Spremi / Izađi bez spremanja" s iOS-a dolaze kasnije.
+ * Podsjetnici su u [ScheduleReminderCard]. Preskočeni treninzi i tijek "Spremi / Izađi bez spremanja" s iOS-a dolaze kasnije.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -156,6 +156,8 @@ fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, onClose: () ->
                     )
                 }
             }
+
+            ScheduleReminderCard(store, schedule)
 
             Text(stringResource(R.string.sequence), style = MaterialTheme.typography.titleMedium)
             if (items.none { it.kind == ScheduleItemKind.WORKOUT }) {

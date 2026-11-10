@@ -479,4 +479,17 @@
     <string name="all_sets_done">Sve serije su gotove</string>
     <string name="next_exercise_short">Sljedeće: %1$s</string>
     <string name="confirm_set">Potvrdi seriju</string>
+    <string name="reminders">Podsjetnici</string>
+    <string name="time">Vrijeme</string>
+    <string name="reminder_flexible">Fleksibilno</string>
+    <string name="reminder_fixed_days">Fiksni dani</string>
+    <string name="reminder_footer">Podsjetnik se ne šalje ako je taj dan već odrađen trening iz rasporeda, niti tijekom aktivnog treninga.</string>
+    <string name="schedule_reminders">Podsjetnici rasporeda</string>
+    <string name="reminder_body">Vrijeme za trening.</string>
+    <string name="reminder_body_workout">Vrijeme za trening: %1$s</string>
+    <plurals name="reminder_gap_days">
+        <item quantity="one">%d dan nakon zadnjeg treninga</item>
+        <item quantity="few">%d dana nakon zadnjeg treninga</item>
+        <item quantity="other">%d dana nakon zadnjeg treninga</item>
+    </plurals>
 </resources>

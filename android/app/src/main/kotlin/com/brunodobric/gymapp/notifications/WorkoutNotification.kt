@@ -32,6 +32,7 @@ object WorkoutNotification {
     private const val NOTIFICATION_ID = 1002
     private const val CONFIRM_REQUEST_CODE = 1003
     internal const val OPEN_REQUEST_CODE = 1004
+    private const val OPEN_APP_REQUEST_CODE = 1005
     internal const val ACTION_CONFIRM = "com.brunodobric.gymapp.CONFIRM_SET"
     internal const val EXTRA_SET_ID = "setId"
 
@@ -57,6 +58,15 @@ object WorkoutNotification {
             Intent(context, MainActivity::class.java)
                 .putExtra(EXTRA_OPEN_WORKOUT, true)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
+    /** Intent koji samo otvara aplikaciju (podsjetnici rasporeda: Početna prikazuje sljedeći trening). */
+    fun openAppIntent(context: Context): PendingIntent =
+        PendingIntent.getActivity(
+            context,
+            OPEN_APP_REQUEST_CODE,
+            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
