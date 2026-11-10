@@ -2,6 +2,7 @@ package com.brunodobric.gymapp
 
 import android.content.Context
 import com.brunodobric.gymapp.catalog.ExerciseCatalog
+import com.brunodobric.gymapp.data.ExerciseImages
 import com.brunodobric.gymapp.data.SqliteRecordPersistence
 import com.brunodobric.gymapp.model.GymStore
 
@@ -22,4 +23,7 @@ class AppServices(context: Context) {
      * a teški izračuni rade nad kopijama podataka.
      */
     val store: GymStore by lazy { GymStore(SqliteRecordPersistence(appContext)) }
+
+    /** Slike vlastitih vježbi. */
+    val exerciseImages: ExerciseImages by lazy { ExerciseImages(appContext) }
 }

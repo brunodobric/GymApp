@@ -32,4 +32,50 @@
         <item quantity="few">%d serije</item>
         <item quantity="other">%d serija</item>
     </plurals>
+    <string name="settings">Postavke</string>
+    <string name="settings_data">Podaci</string>
+    <string name="settings_about">O aplikaciji</string>
+    <string name="settings_version">Verzija</string>
+    <string name="settings_catalog">Katalog vježbi</string>
+    <string name="export_json">Izvezi sve podatke (JSON)</string>
+    <string name="export_history_csv">Izvezi treninge (CSV)</string>
+    <string name="export_body_csv">Izvezi mjerenja tijela (CSV)</string>
+    <string name="import_from_file">Uvezi iz datoteke</string>
+    <string name="delete_all_data">Obriši sve podatke</string>
+    <string name="data_footer">JSON je puna sigurnosna kopija. CSV datoteke možeš uvesti natrag u aplikaciju, a uvesti možeš i CSV s treninzima iz druge aplikacije. Postojeći zapisi se pri uvozu ne mijenjaju.</string>
+    <string name="export_failed">Izvoz nije uspio.</string>
+    <string name="export_failed_message">Podaci se nisu mogli pripremiti.</string>
+    <string name="export_write_failed_message">Datoteka nije spremljena.</string>
+    <string name="import_done">Uvoz je gotov.</string>
+    <string name="import_done_message">Dodano: %1$d. Preskočeno (već postoje): %2$d.</string>
+    <string name="import_failed">Uvoz nije uspio.</string>
+    <string name="import_too_large">Datoteka je prevelika. Najveća veličina je 50 MB.</string>
+    <string name="import_newer_version">Datoteka je iz novije verzije aplikacije.</string>
+    <string name="import_invalid_csv">CSV nije ispravan (redak %1$d). Ništa nije uvezeno.</string>
+    <string name="import_not_backup">Ovo nije sigurnosna kopija ove aplikacije.</string>
+    <string name="import_foreign_failed">Treninzi se nisu mogli spremiti. Ništa nije uvezeno.</string>
+    <string name="foreign_import_title">Uvoz treninga iz druge aplikacije</string>
+    <string name="import_action">Uvezi</string>
+    <string name="delete_all_title">Obriši sve podatke?</string>
+    <string name="delete_all_message">Briše sve treninge, predloške, rasporede, vlastite vježbe, mjerenja i postavke s ovog uređaja.</string>
+    <string name="delete_export_first">Prvo izvezi sigurnosnu kopiju</string>
+    <string name="delete_continue">Nastavi s brisanjem</string>
+    <string name="delete_confirm_title">Jesi li siguran?</string>
+    <string name="delete_confirm_message">Ovo se ne može poništiti.</string>
+    <string name="delete_all">Obriši sve</string>
+    <string name="data_deleted">Podaci su obrisani.</string>
+    <string name="data_deleted_message">Aplikacija je vraćena na početno stanje.</string>
+    <string name="delete_failed">Brisanje nije uspjelo.</string>
+    <string name="delete_failed_message">Pokušaj ponovno.</string>
+    <string name="ok">U redu</string>
+    <plurals name="foreign_import_workouts">
+        <item quantity="one">%d novi trening</item>
+        <item quantity="few">%d nova treninga</item>
+        <item quantity="other">%d novih treninga</item>
+    </plurals>
+    <plurals name="foreign_import_new_custom">
+        <item quantity="one">%d nova vlastita vježba</item>
+        <item quantity="few">%d nove vlastite vježbe</item>
+        <item quantity="other">%d novih vlastitih vježbi</item>
+    </plurals>
 </resources>
