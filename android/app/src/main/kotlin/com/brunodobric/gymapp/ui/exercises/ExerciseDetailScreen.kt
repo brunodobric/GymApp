@@ -25,7 +25,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -47,6 +51,7 @@ import com.brunodobric.gymapp.training.PRKind
 import com.brunodobric.gymapp.training.SetValues
 import com.brunodobric.gymapp.ui.catalogLanguage
 import com.brunodobric.gymapp.ui.rememberStoreRevision
+import com.brunodobric.gymapp.ui.statistics.ExerciseProgressScreen
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.NumberInput
 import com.brunodobric.gymapp.units.WeightFormatter
@@ -58,7 +63,7 @@ import java.util.UUID
 /**
  * Detalj vježbe, kao `ExerciseDetailScreen` na iOS-u: mišići, detalji, upute (samo kad su MoveKit tekstovi u
  * buildu) i "Tvoja povijest" sa svim izvođenjima. Dodir izvođenja otvara trening. Vlastita vježba ima "Uredi".
- * Klip, napredak i rekordi po vježbi dolaze kasnije.
+ * "Napredak i rekordi" otvara graf napretka iz Statistike. Klip dolazi kasnije.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,6 +84,11 @@ fun ExerciseDetailScreen(
     val ref = catalogExercise?.let { ExerciseRef.catalog(it.id, it.displayName(language)) } ?: customExercise?.ref
     if (ref == null) {
         LaunchedEffect(Unit) { onClose() }
+        return
+    }
+    var showsProgress by rememberSaveable { mutableStateOf(false) }
+    if (showsProgress) {
+        ExerciseProgressScreen(services, ref, onClose = { showsProgress = false })
         return
     }
     val settings = store.settings()
@@ -159,6 +169,11 @@ fun ExerciseDetailScreen(
                     PerformanceRow(performance, weight, dates.format(performance.date)) { onOpenSession(performance.sessionId) }
                     HorizontalDivider()
                 }
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.progress_and_records)) },
+                    modifier = Modifier.clickable { showsProgress = true },
+                )
+                HorizontalDivider()
                 val usesWeight = history.performances.any { it.inputType in WEIGHTED }
                 Secondary(
                     listOfNotNull(

@@ -409,4 +409,19 @@
     <string name="filter_muscle">Muscle</string>
     <string name="reset_filters">Reset filters</string>
     <string name="done">Done</string>
+    <string name="status_improving">Improving</string>
+    <string name="status_stable">Steady</string>
+    <string name="status_plateau">Plateau</string>
+    <string name="status_declining">Declining</string>
+    <string name="status_insufficient">Not enough data</string>
+    <string name="progress_and_records">Progress and records</string>
+    <string name="rep_max_table">Heaviest set by reps</string>
+    <string name="reps_plus">%1$d+ reps</string>
+    <string name="last_8_weeks">Last 8 weeks</string>
+    <string name="per_month">%1$s per month</string>
+    <string name="status_footer_insufficient">The status appears after 4 sessions in 8 weeks. Measured: %1$s.</string>
+    <string name="status_footer">Measured: %1$s. Progress only counts when it is larger than this exercise\'s usual variation (about %2$s between workouts).</string>
+    <string name="measure_one_rep_max">estimated 1RM</string>
+    <string name="measure_reps">most reps</string>
+    <string name="one_rep_max_footer">Estimated 1RM is calculated from sets of up to 12 reps, including reps in reserve when RPE or RIR is logged.</string>
 </resources>
