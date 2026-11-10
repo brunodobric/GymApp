@@ -10,7 +10,7 @@ class BodyTrackingException : IllegalArgumentException("Neispravna vrijednost mj
 
 /**
  * Praćenje tijela: mjere se spremaju u metričkim jedinicama (kg za težinu, cm za ostalo).
- * Mjerenja iz Health Connecta na Androidu još ne postoje, pa su ovdje samo ručni unosi.
+ * Uz ručne unose su i težina i visina iz Health Connecta ([GymStore.health]).
  */
 class BodyTracking(val store: GymStore) {
 
@@ -35,9 +35,11 @@ class BodyTracking(val store: GymStore) {
         return add(BodyMeasurementKind.WEIGHT, kilograms, date)
     }
 
-    /** Povijest jedne mjere, od najstarije. Za vlastitu mjeru se razlikuje po nazivu. */
+    /** Povijest jedne mjere, od najstarije, s mjerenjima iz Health Connecta. Za vlastitu mjeru se razlikuje po nazivu. */
     fun measurements(kind: BodyMeasurementKind, customName: String? = null): List<BodyMeasurement> {
-        val found = store.bodyMeasurements.filter { it.kindRaw == kind.raw }.sortedBy { it.date }
+        val manual = store.bodyMeasurements.filter { it.kindRaw == kind.raw }
+        val health = store.health.measurements.filter { it.kind == kind }.map { it.makeMeasurement() }
+        val found = (manual + health).sortedBy { it.date }
         if (kind != BodyMeasurementKind.CUSTOM) return found
         return found.filter { it.customName == customName }
     }
@@ -63,7 +65,13 @@ class BodyTracking(val store: GymStore) {
         store.bodyMeasurements.filter { it.kind == BodyMeasurementKind.CUSTOM }
             .mapNotNull { it.customName }.filter { it.isNotEmpty() }.toSortedSet().toList()
 
+    /** Mjerenje iz Health Connecta briše se iz lokalne baze (u Health Connectu ostaje). */
     fun delete(measurement: BodyMeasurement) {
+        if (store.health.measurements.any { it.id == measurement.id }) {
+            store.health.deleteMeasurement(measurement.id)
+            store.healthChanged()
+            return
+        }
         store.delete(measurement)
         store.save()
     }

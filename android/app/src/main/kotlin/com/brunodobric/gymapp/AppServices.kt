@@ -4,9 +4,11 @@ import android.content.Context
 import com.brunodobric.gymapp.catalog.ExerciseCatalog
 import com.brunodobric.gymapp.data.ExerciseImages
 import com.brunodobric.gymapp.data.SqliteRecordPersistence
+import com.brunodobric.gymapp.health.HealthLocalFile
 import com.brunodobric.gymapp.model.GymStore
 import com.brunodobric.gymapp.stats.BodyMap
 import com.brunodobric.gymapp.stats.BodyMapDiagram
+import java.io.File
 
 /**
  * Usluge koje dijele svi ekrani. Katalog se učitava jednom i lijeno, izvan glavne niti kad ga ekran
@@ -24,7 +26,13 @@ class AppServices(context: Context) {
      * Korisnička baza (`ModelContext` na iOS-u). Učitava se pri prvom pristupu; ekrani je koriste s glavne niti,
      * a teški izračuni rade nad kopijama podataka.
      */
-    val store: GymStore by lazy { GymStore(SqliteRecordPersistence(appContext)) }
+    val store: GymStore by lazy { GymStore(SqliteRecordPersistence(appContext)).also { it.health = healthLocal } }
+
+    /**
+     * Lokalna baza podataka iz Health Connecta (`HealthLocal` na iOS-u): kardio treninzi drugih aplikacija, težina i
+     * visina. Datoteka je izvan korisničke baze i ne ide u sigurnosnu kopiju (data_extraction_rules.xml).
+     */
+    val healthLocal: HealthLocalFile by lazy { HealthLocalFile(File(File(appContext.filesDir, "health"), "local.json")) }
 
     /** Crteži tijela (MuscleMap, MIT) po spolu i strani; prazno ako se datoteka ne može pročitati. */
     val bodyMap: Map<String, BodyMapDiagram> by lazy {

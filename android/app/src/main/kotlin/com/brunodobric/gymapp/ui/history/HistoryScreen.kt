@@ -70,10 +70,13 @@ fun HistoryScreen(services: AppServices, openRequest: OpenRequest? = null, onReq
                 modifier = Modifier.clickable { openedId = session.id.toString() },
                 headlineContent = { Text(session.name) },
                 supportingContent = {
-                    Text(
-                        formatter.format(session.startedAt) + " · " + DurationInput.format(seconds) + " · " +
-                            pluralStringResource(R.plurals.completed_sets, sets, sets),
-                    )
+                    // Uvezeni kardio trening nema serija: umjesto njih piše odakle je.
+                    val detail = if (session.isImportedFromWorkoutsApp) {
+                        stringResource(R.string.from_health_connect)
+                    } else {
+                        pluralStringResource(R.plurals.completed_sets, sets, sets)
+                    }
+                    Text(formatter.format(session.startedAt) + " · " + DurationInput.format(seconds) + " · " + detail)
                 },
             )
             HorizontalDivider()

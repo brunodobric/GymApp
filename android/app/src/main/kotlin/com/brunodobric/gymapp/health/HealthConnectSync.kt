@@ -25,12 +25,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Upisuje završene treninge i ručno unesenu težinu u Health Connect (`HealthService` na iOS-u, smjer prema Zdravlju).
- * Nakon spremanja baze (s odgodom od dvije sekunde) uspoređuje bazu sa zapisom već upisanog ([HealthLedger]) i šalje
- * samo razliku. Zapisi imaju `clientRecordId` = id treninga ili mjerenja, pa ponovni upis zamjenjuje stari zapis.
- * Zapis o upisanom je datoteka u mapi aplikacije koja ne ide u sigurnosnu kopiju (data_extraction_rules.xml).
+ * Usklađivanje s Health Connectom (`HealthService` na iOS-u).
+ *
+ * Upis: nakon spremanja baze (s odgodom od dvije sekunde) uspoređuje bazu sa zapisom već upisanog ([HealthLedger])
+ * i šalje samo razliku. Zapisi imaju `clientRecordId` = id treninga ili mjerenja, pa ponovni upis zamjenjuje stari.
+ *
+ * Čitanje: kad je aplikacija na zaslonu ([sync] iz `MainActivity.onResume`; Health Connect čitanje u pozadini ne
+ * dopušta bez posebne dozvole) čita kardio treninge drugih aplikacija iz zadnjih 30 dana te težinu i visinu iz zadnje
+ * godine u lokalnu bazu ([HealthLocalFile]). Obje datoteke su u mapi aplikacije koja ne ide u sigurnosnu kopiju.
  */
-class HealthConnectExporter(context: Context, private val services: AppServices) {
+class HealthConnectSync(context: Context, private val services: AppServices) {
     private val appContext = context.applicationContext
     private val handler = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -58,6 +62,7 @@ class HealthConnectExporter(context: Context, private val services: AppServices)
         if (!services.store.settings().wantsHealthKit || !HealthConnect.isAvailable(appContext)) return
         running = scope.launch {
             runCatching { export() }
+            runCatching { import() }
             if (again) {
                 again = false
                 schedule()
@@ -67,7 +72,7 @@ class HealthConnectExporter(context: Context, private val services: AppServices)
 
     private suspend fun export() {
         val client = HealthConnectClient.getOrCreate(appContext)
-        if (!client.permissionController.getGrantedPermissions().containsAll(HealthConnect.PERMISSIONS)) return
+        if (!client.permissionController.getGrantedPermissions().containsAll(HealthConnect.WRITE_PERMISSIONS)) return
         val ledger = withContext(Dispatchers.IO) { readLedger() }
         // Baza se čita na glavnoj niti, a Health Connect i datoteka u pozadini.
         val store = services.store
@@ -92,6 +97,29 @@ class HealthConnectExporter(context: Context, private val services: AppServices)
             records.chunked(BATCH).forEach { client.insertRecords(it) }
             writeLedger(plan.ledger)
         }
+    }
+
+    /** Čita samo vrste za koje je dozvola dana; novi zapisi idu u lokalnu bazu i osvježavaju ekrane. */
+    private suspend fun import() {
+        val client = HealthConnectClient.getOrCreate(appContext)
+        val granted = client.permissionController.getGrantedPermissions()
+        val reader = HealthConnectReader(client, granted)
+        val local = services.healthLocal
+        val known = HealthImporter.knownRecordIds(local.data)
+        val now = Instant.now()
+        val workouts = withContext(Dispatchers.IO) {
+            reader.cardioWorkouts(HealthImportWindow.start(HealthImportWindow.WORKOUT_DAYS, now), now, skip = known)
+        }
+        val body = withContext(Dispatchers.IO) {
+            reader.bodySamples(HealthImportWindow.start(HealthImportWindow.BODY_DAYS, now), now)
+        }
+        val own = appContext.packageName
+        val names = HealthActivityNames(appContext)
+        val (afterWorkouts, newWorkouts) = HealthImporter.importWorkouts(local.data, workouts, own, names::title)
+        val (afterBody, newSamples) = HealthImporter.importBodySamples(afterWorkouts, body, own)
+        if (newWorkouts + newSamples == 0) return
+        withContext(Dispatchers.IO) { local.replace(afterBody) }
+        services.store.healthChanged()
     }
 
     private fun readLedger(): HealthLedger =

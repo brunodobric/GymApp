@@ -56,7 +56,7 @@ internal fun HealthSettingsSection(services: AppServices) {
     }
 
     val request = rememberLauncherForActivityResult(PermissionController.createRequestPermissionResultContract()) { result ->
-        val all = result.containsAll(HealthConnect.PERMISSIONS)
+        val all = result.containsAll(HealthConnect.WRITE_PERMISSIONS)
         granted = all
         denied = !all
         if (all) enable()

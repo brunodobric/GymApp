@@ -73,7 +73,8 @@ import kotlin.math.roundToInt
 fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> Unit) {
     val store = services.store
     val revision = rememberStoreRevision(store)
-    val session = remember(revision, sessionId) { store.sessions.firstOrNull { it.id == sessionId } }
+    // Vlastiti trening ili kardio trening uvezen iz Health Connecta (samo za čitanje).
+    val session = remember(revision, sessionId) { HistoryQueries(store).session(sessionId) }
     var confirmDelete by remember { mutableStateOf(false) }
     var showsMenu by remember { mutableStateOf(false) }
     var newTemplateId by rememberSaveable { mutableStateOf<UUID?>(null) }
@@ -103,7 +104,9 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
         exercise.sets.filter { it.isCompleted }.sumOf { SetMetrics.volume(it.values, exercise.inputType) }
     }
     val seconds = session.endedAt?.let { Duration.between(session.startedAt, it).seconds.toInt() } ?: 0
-    val comparison = remember(revision, sessionId) { StatisticsEngine(store).comparison(session) }
+    val comparison = remember(revision, sessionId) {
+        if (session.isImportedFromWorkoutsApp) null else StatisticsEngine(store).comparison(session)
+    }
 
     Scaffold(
         topBar = {
@@ -118,7 +121,7 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
                     IconButton(onClick = { confirmDelete = true }) {
                         Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_workout))
                     }
-                    Box {
+                    if (!session.isImportedFromWorkoutsApp) Box {
                         IconButton(onClick = { showsMenu = true }) {
                             Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.more_options))
                         }
@@ -144,11 +147,45 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(formatter.format(session.startedAt), style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    DurationInput.format(seconds) + " · " + pluralStringResource(R.plurals.completed_sets, completedSets, completedSets) +
-                        (if (volume > 0) " · " + weight.string(volume) else ""),
+                    if (session.isImportedFromWorkoutsApp) {
+                        DurationInput.format(seconds)
+                    } else {
+                        DurationInput.format(seconds) + " · " + pluralStringResource(R.plurals.completed_sets, completedSets, completedSets) +
+                            (if (volume > 0) " · " + weight.string(volume) else "")
+                    },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+
+            // Udaljenost, puls i kalorije samo kad postoje (iz Health Connecta ili kopije s iOS-a); bez procjene.
+            val healthLines = listOfNotNull(
+                session.distanceMeters?.takeIf { it > 0 }?.let {
+                    stringResource(R.string.distance) to stringResource(R.string.km_value, NumberInput.format(it / 1000))
+                },
+                session.averageHeartRate?.takeIf { it > 0 }?.let {
+                    stringResource(R.string.average_heart_rate) to stringResource(R.string.heart_rate_value, it.toInt())
+                },
+                session.activeEnergyKilocalories?.takeIf { it > 0 }?.let {
+                    stringResource(R.string.active_calories) to stringResource(R.string.kcal_value, Math.round(it).toInt())
+                },
+            )
+            if (healthLines.isNotEmpty() || session.isImportedFromWorkoutsApp) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    healthLines.forEach { (label, value) ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                            Text(value, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                    if (session.isImportedFromWorkoutsApp) {
+                        Text(
+                            stringResource(R.string.imported_from_health_connect),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
             }
 
             comparison?.volumeChange?.let { change ->

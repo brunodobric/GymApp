@@ -210,10 +210,12 @@ private fun MeasurementDetailScreen(services: AppServices, kind: BodyMeasurement
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             headlineContent = { Text(BodyFormat.text(measurement.value, kind, unit)) },
                             supportingContent = {
-                                val source = if (measurement.source == MeasurementSource.HEALTH_KIT) {
-                                    " · " + stringResource(R.string.from_apple_health)
-                                } else {
-                                    ""
+                                // Iz Health Connecta (lokalna baza) ili iz Zdravlja na iPhoneu (kopija s iOS-a).
+                                val source = when {
+                                    store.health.measurements.any { it.id == measurement.id } ->
+                                        " · " + stringResource(R.string.from_health_connect)
+                                    measurement.source == MeasurementSource.HEALTH_KIT -> " · " + stringResource(R.string.from_apple_health)
+                                    else -> ""
                                 }
                                 Text(formatter.format(measurement.date) + source)
                             },
