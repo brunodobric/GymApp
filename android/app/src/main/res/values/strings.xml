@@ -591,4 +591,5 @@
         <item quantity="few">Prije %d dana</item>
         <item quantity="other">Prije %d dana</item>
     </plurals>
+    <string name="shortcut_start_next">Započni sljedeći trening</string>
 </resources>

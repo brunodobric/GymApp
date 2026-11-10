@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Prečaci na ikoni aplikacije: iste poveznice kao widgeti (docs/android.md, 7.10). -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_notification"
+        android:shortcutId="start_next_workout"
+        android:shortcutLongLabel="@string/shortcut_start_next"
+        android:shortcutShortLabel="@string/start_workout">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="apolon://zapocni"
+            android:targetClass="com.brunodobric.gymapp.MainActivity"
+            android:targetPackage="com.brunodobric.gymapp" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_notification"
+        android:shortcutId="log_weight"
+        android:shortcutLongLabel="@string/widget_log_weight"
+        android:shortcutShortLabel="@string/widget_log_weight">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="apolon://tezina"
+            android:targetClass="com.brunodobric.gymapp.MainActivity"
+            android:targetPackage="com.brunodobric.gymapp" />
+    </shortcut>
+</shortcuts>
