@@ -473,4 +473,10 @@
     <string name="body_drawings">Crteži tijela</string>
     <string name="musclemap_intro">Crteži tijela u heatmapu preuzeti su iz projekta MuscleMap (MIT licenca).</string>
     <string name="tap_body_part">Dodirni dio tijela za detalje.</string>
+    <string name="workout_notification_set">%1$s · serija %2$d od %3$d</string>
+    <string name="workout_notification_rest">Odmor · %1$s</string>
+    <string name="workout_notification_progress">%1$d od %2$d serija</string>
+    <string name="all_sets_done">Sve serije su gotove</string>
+    <string name="next_exercise_short">Sljedeće: %1$s</string>
+    <string name="confirm_set">Potvrdi seriju</string>
 </resources>

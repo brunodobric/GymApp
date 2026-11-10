@@ -16,6 +16,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,11 +45,18 @@ enum class Section(@StringRes val title: Int, val icon: ImageVector) {
 }
 
 @Composable
-fun RootScreen(services: AppServices) {
+fun RootScreen(services: AppServices, openWorkoutRequests: Int = 0) {
     var selected by rememberSaveable { mutableStateOf(Section.HOME) }
     // Trening u tijeku je preko cijelog zaslona, kao na iPhoneu; tabovi ostaju ispod njega.
     var showsWorkout by rememberSaveable { mutableStateOf(false) }
     var showsSettings by rememberSaveable { mutableStateOf(false) }
+    // Dodir obavijesti treninga ili kraja odmora otvara ekran treninga, ako trening još traje.
+    LaunchedEffect(openWorkoutRequests) {
+        if (openWorkoutRequests > 0 && services.store.activeSession() != null) {
+            showsSettings = false
+            showsWorkout = true
+        }
+    }
     // Prvo pokretanje: onboarding dok ga korisnik ne spremi ili preskoči.
     rememberStoreRevision(services.store)
     if (!services.store.settings().onboardingCompleted) {

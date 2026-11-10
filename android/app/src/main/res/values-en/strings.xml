@@ -465,4 +465,10 @@
     <string name="body_drawings">Body drawings</string>
     <string name="musclemap_intro">The body drawings in the heatmap come from the MuscleMap project (MIT license).</string>
     <string name="tap_body_part">Tap a body part for details.</string>
+    <string name="workout_notification_set">%1$s · set %2$d of %3$d</string>
+    <string name="workout_notification_rest">Rest · %1$s</string>
+    <string name="workout_notification_progress">%1$d of %2$d sets</string>
+    <string name="all_sets_done">All sets done</string>
+    <string name="next_exercise_short">Next: %1$s</string>
+    <string name="confirm_set">Confirm set</string>
 </resources>
