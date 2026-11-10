@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.ui.planning
 
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.model.Schedule
 import com.brunodobric.gymapp.planning.Program
 import com.brunodobric.gymapp.planning.ProgramInstaller
 import com.brunodobric.gymapp.planning.ProgramLibrary
@@ -55,13 +57,7 @@ fun ProgramsScreen(services: AppServices, onClose: () -> Unit) {
     fun install(program: Program) {
         try {
             // Ponavljanja prema cilju i iskustvu, vježbe prema opremi iz profila.
-            val profile = TrainingProfile.from(store.settings())
-            val schedule = ProgramInstaller(store).install(
-                program,
-                profile,
-                name = context.getString(programTitle(program)),
-                workoutName = { workout -> workoutTitle(workout)?.let(context::getString) ?: workout.name },
-            ) { id -> services.catalog.exercise(id)?.displayName(language) ?: id }
+            val schedule = installProgram(services, context, language, program, TrainingProfile.from(store.settings()))
             added = schedule.name
         } catch (_: Exception) {
             failed = true
@@ -125,9 +121,23 @@ fun ProgramsScreen(services: AppServices, onClose: () -> Unit) {
     }
 }
 
+/** Dodaje program s nazivima na jeziku sučelja (`ProgramAdder` na iOS-u). Dijele ga Programi i onboarding. */
+internal fun installProgram(
+    services: AppServices,
+    context: Context,
+    language: String,
+    program: Program,
+    profile: TrainingProfile,
+): Schedule = ProgramInstaller(services.store).install(
+    program,
+    profile,
+    name = context.getString(programTitle(program)),
+    workoutName = { workout -> workoutTitle(workout)?.let(context::getString) ?: workout.name },
+) { id -> services.catalog.exercise(id)?.displayName(language) ?: id }
+
 /** Nazivi programa na jeziku sučelja (u modulu planning su hrvatski, kao u GymKitu). */
 @StringRes
-private fun programTitle(program: Program): Int = when (program.id) {
+internal fun programTitle(program: Program): Int = when (program.id) {
     "basic-full-body-2" -> R.string.program_basic_full_body_2
     "beginner-full-body-3" -> R.string.program_beginner_full_body_3
     "full-body-3" -> R.string.program_full_body_3
@@ -137,7 +147,7 @@ private fun programTitle(program: Program): Int = when (program.id) {
 }
 
 @StringRes
-private fun programDetails(program: Program): Int = when (program.id) {
+internal fun programDetails(program: Program): Int = when (program.id) {
     "basic-full-body-2" -> R.string.program_basic_full_body_2_details
     "beginner-full-body-3" -> R.string.program_beginner_full_body_3_details
     "full-body-3" -> R.string.program_full_body_3_details
@@ -147,7 +157,7 @@ private fun programDetails(program: Program): Int = when (program.id) {
 }
 
 @StringRes
-private fun workoutTitle(workout: ProgramWorkout): Int? = when (workout.key) {
+internal fun workoutTitle(workout: ProgramWorkout): Int? = when (workout.key) {
     "basicA", "beginnerA", "fullA" -> R.string.program_workout_full_a
     "basicB", "beginnerB", "fullB" -> R.string.program_workout_full_b
     "fullC" -> R.string.program_workout_full_c
