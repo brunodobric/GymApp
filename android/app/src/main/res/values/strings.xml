@@ -518,4 +518,11 @@
     <string name="suggestion_increase_load_detail">Zadnja tri treninga s istom težinom imala su 4 ili više ponavljanja u rezervi. Dodaj jedan korak težine.</string>
     <string name="suggestion_missed_muscle">%1$s: %2$d dana bez treninga</string>
     <string name="suggestion_missed_muscle_detail">Mišić je ranije bio u treninzima. Ako to nije namjerno, vrati ga u raspored.</string>
+    <string name="chart_needs_two">Za graf trebaju barem dva treninga s ovom vježbom.</string>
+    <string name="progress_chart">Graf napretka vježbe %1$s</string>
+    <string name="progress_chart_compare">Graf napretka vježbi %1$s i %2$s</string>
+    <string name="brzycki_instead_of_epley">Brzycki umjesto Epley</string>
+    <string name="compare_with">Usporedba: %1$s</string>
+    <string name="compare_other_exercise">Usporedi s drugom vježbom</string>
+    <string name="no_comparison">Bez usporedbe</string>
 </resources>
