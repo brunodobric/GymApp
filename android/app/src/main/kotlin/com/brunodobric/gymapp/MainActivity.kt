@@ -6,6 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import com.brunodobric.gymapp.notifications.ReminderNotifications
 import com.brunodobric.gymapp.notifications.WorkoutNotification
 import com.brunodobric.gymapp.ui.RootScreen
 import com.brunodobric.gymapp.ui.rememberStoreRevision
@@ -15,6 +17,9 @@ import com.brunodobric.gymapp.ui.theme.isDark
 class MainActivity : ComponentActivity() {
     /** Raste svaki put kad obavijest traži ekran treninga; RootScreen ga tada otvara. */
     private val openWorkoutRequests = mutableIntStateOf(0)
+
+    /** Raspored iz dodirnutog podsjetnika; RootScreen otvara njegov sljedeći trening i briše zahtjev. */
+    private val openScheduleRequest = mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -26,7 +31,12 @@ class MainActivity : ComponentActivity() {
             rememberStoreRevision(services.store)
             val settings = services.store.settings()
             ApolonTheme(accentRaw = settings.accentColorRaw, darkTheme = settings.theme.isDark()) {
-                RootScreen(services, openWorkoutRequests = openWorkoutRequests.intValue)
+                RootScreen(
+                    services,
+                    openWorkoutRequests = openWorkoutRequests.intValue,
+                    openScheduleRequest = openScheduleRequest.value,
+                    onScheduleRequestHandled = { openScheduleRequest.value = null },
+                )
             }
         }
     }
@@ -40,5 +50,6 @@ class MainActivity : ComponentActivity() {
         if (intent?.getBooleanExtra(WorkoutNotification.EXTRA_OPEN_WORKOUT, false) == true) {
             openWorkoutRequests.intValue += 1
         }
+        intent?.getStringExtra(ReminderNotifications.EXTRA_OPEN_SCHEDULE)?.let { openScheduleRequest.value = it }
     }
 }

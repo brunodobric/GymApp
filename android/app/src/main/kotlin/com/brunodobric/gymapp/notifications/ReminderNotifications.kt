@@ -10,6 +10,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.brunodobric.gymapp.ApolonApplication
+import com.brunodobric.gymapp.MainActivity
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.model.GymStore
 import com.brunodobric.gymapp.planning.PlannedReminder
@@ -30,6 +31,10 @@ object ReminderNotifications {
     internal const val EXTRA_TITLE = "title"
     internal const val EXTRA_BODY = "body"
     internal const val EXTRA_ID = "id"
+    internal const val EXTRA_SCHEDULE_ID = "scheduleId"
+
+    /** U namjeri za MainActivity: raspored čiji sljedeći trening treba otvoriti. */
+    const val EXTRA_OPEN_SCHEDULE = "openSchedule"
 
     fun createChannel(context: Context) {
         val manager = context.getSystemService(NotificationManager::class.java) ?: return
@@ -50,6 +55,7 @@ object ReminderNotifications {
                 intent.putExtra(EXTRA_TITLE, reminder.scheduleName)
                     .putExtra(EXTRA_BODY, body(context, reminder))
                     .putExtra(EXTRA_ID, reminder.identifier)
+                    .putExtra(EXTRA_SCHEDULE_ID, reminder.scheduleId.toString())
             }
             val pending = PendingIntent.getBroadcast(
                 context,
@@ -68,14 +74,26 @@ object ReminderNotifications {
         reminder.workoutName?.let { context.getString(R.string.reminder_body_workout, it) }
             ?: context.getString(R.string.reminder_body)
 
-    internal fun show(context: Context, id: String, title: String, body: String) {
+    /** Dodir na podsjetnik otvara sljedeći trening rasporeda, kao `NotificationRouter` na iOS-u. */
+    private fun openScheduleIntent(context: Context, scheduleId: String): PendingIntent =
+        PendingIntent.getActivity(
+            context,
+            // Svaki raspored ima svoju namjeru, da dva podsjetnika ne dijele isti raspored.
+            FIRST_REQUEST_CODE + MAX_ALARMS + (scheduleId.hashCode() and 0xFFFF),
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .putExtra(EXTRA_OPEN_SCHEDULE, scheduleId),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
+    internal fun show(context: Context, id: String, title: String, body: String, scheduleId: String?) {
         if (RestNotifications.needsPermission(context)) return
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(body)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
-            .setContentIntent(WorkoutNotification.openAppIntent(context))
+            .setContentIntent(scheduleId?.let { openScheduleIntent(context, it) } ?: WorkoutNotification.openAppIntent(context))
             .setAutoCancel(true)
             .build()
         try {
@@ -120,7 +138,7 @@ class ReminderAlarmReceiver : BroadcastReceiver() {
         if (app.services.store.activeSession() != null) return
         val title = intent.getStringExtra(ReminderNotifications.EXTRA_TITLE) ?: return
         val body = intent.getStringExtra(ReminderNotifications.EXTRA_BODY) ?: context.getString(R.string.reminder_body)
-        ReminderNotifications.show(context, id, title, body)
+        ReminderNotifications.show(context, id, title, body, intent.getStringExtra(ReminderNotifications.EXTRA_SCHEDULE_ID))
     }
 }
 

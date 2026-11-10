@@ -536,4 +536,17 @@
     <string name="replace_image">Replace photo</string>
     <string name="remove_image">Remove photo</string>
     <string name="image_load_failed">The photo couldn\'t be loaded.</string>
+    <string name="no_next_workout">No next workout</string>
+    <string name="upcoming_workout">Next workout</string>
+    <string name="replaced_this_cycle">Replaced in this cycle</string>
+    <string name="drop_exercise">Remove</string>
+    <string name="replace">Replace</string>
+    <string name="cycle_changes">Changes for this cycle only</string>
+    <string name="cycle_changes_footer">The schedule and workout stay unchanged for the next cycles.</string>
+    <string name="skip_this_workout">Skip this workout</string>
+    <string name="skip_this_workout_footer">A skipped workout doesn\'t count in this cycle. You can undo it in the schedule editor while the cycle is in progress.</string>
+    <string name="removed_exercise">Removed: %1$s</string>
+    <string name="replaced_exercise">%1$s → %2$s</string>
+    <string name="replace_exercise">Replace exercise</string>
+    <string name="exercise_options">Exercise options</string>
 </resources>
