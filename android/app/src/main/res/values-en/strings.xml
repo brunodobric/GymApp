@@ -516,4 +516,12 @@
     <string name="compare_with">Comparison: %1$s</string>
     <string name="compare_other_exercise">Compare with another exercise</string>
     <string name="no_comparison">No comparison</string>
+    <string name="decrease_reps">Decrease reps</string>
+    <string name="decrease_duration">Decrease duration</string>
+    <string name="decrease_distance">Decrease distance</string>
+    <string name="decrease_weight">Decrease weight</string>
+    <string name="increase_reps">Increase reps</string>
+    <string name="increase_duration">Increase duration</string>
+    <string name="increase_distance">Increase distance</string>
+    <string name="increase_weight">Increase weight</string>
 </resources>
