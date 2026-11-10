@@ -268,4 +268,16 @@
     <string name="plates_not_exact">The exact weight isn\'t possible with the available plates.</string>
     <string name="bar_and_plates">Bar and plates</string>
     <string name="plates_footer">The plate calculator uses these plates when units are kilograms. For pounds it uses standard plates.</string>
+    <string name="settings_appearance">Display</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="accent_color">Color</string>
+    <string name="accent_blue">Apollo blue</string>
+    <string name="accent_indigo">Indigo</string>
+    <string name="accent_purple">Purple</string>
+    <string name="accent_pink">Pink</string>
+    <string name="accent_teal">Teal</string>
+    <string name="accent_graphite">Graphite</string>
 </resources>

@@ -276,4 +276,16 @@
     <string name="plates_not_exact">Točna težina nije moguća s dostupnim pločama.</string>
     <string name="bar_and_plates">Šipka i ploče</string>
     <string name="plates_footer">Kalkulator ploča koristi ove ploče kad su jedinice kilogrami. Za funte koristi uobičajene ploče.</string>
+    <string name="settings_appearance">Prikaz</string>
+    <string name="theme">Tema</string>
+    <string name="theme_system">Sustav</string>
+    <string name="theme_light">Svijetla</string>
+    <string name="theme_dark">Tamna</string>
+    <string name="accent_color">Boja</string>
+    <string name="accent_blue">Apolon plava</string>
+    <string name="accent_indigo">Indigo</string>
+    <string name="accent_purple">Ljubičasta</string>
+    <string name="accent_pink">Roza</string>
+    <string name="accent_teal">Tirkizna</string>
+    <string name="accent_graphite">Grafit</string>
 </resources>

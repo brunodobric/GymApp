@@ -6,6 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.brunodobric.gymapp.model.AppTheme
 
 /**
  * Naglasne boje, iste kao `AccentPalette` na iOS-u (Shared/Design/AccentPalette.swift): svaka ima svijetlu
@@ -45,4 +46,12 @@ fun ApolonTheme(
         lightColorScheme(primary = accent.light, onPrimary = Color.White)
     }
     MaterialTheme(colorScheme = colors, content = content)
+}
+
+/** Je li tema tamna: "Sustav" prati postavku uređaja. */
+@Composable
+fun AppTheme.isDark(): Boolean = when (this) {
+    AppTheme.SYSTEM -> isSystemInDarkTheme()
+    AppTheme.LIGHT -> false
+    AppTheme.DARK -> true
 }
