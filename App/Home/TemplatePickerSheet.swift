@@ -10,16 +10,21 @@ enum WorkoutChoice {
     case template(WorkoutTemplate)
 }
 
-/// Izbor treninga za pokretanje: popis treninga snage, dodir pokreće odabrani.
-/// Uz raspored su gore njegovi treninzi (`ScheduleEngine.workoutChoices`), a ispod ostali spremljeni treninzi;
-/// bez rasporeda samo spremljeni (`TemplateStarter.startable`). Pokretanje radi Početna tek kad se list zatvori.
-struct TemplatePickerSheet: View {
-    /// Raspored iz kojeg je izbor otvoren, ili nil.
-    var schedule: Schedule?
-    /// Treninzi rasporeda, redom niza.
-    var scheduled: [PlannedWorkout] = []
+/// Treninzi jednog aktivnog rasporeda u izboru treninga.
+struct ScheduleChoices {
+    let schedule: Schedule
+    /// Treninzi rasporeda, redom niza (`ScheduleEngine.workoutChoices`).
+    let workouts: [PlannedWorkout]
     /// Sljedeći trening rasporeda, označen u popisu.
-    var nextItemID: UUID?
+    let nextItemID: UUID?
+}
+
+/// Izbor treninga za pokretanje: popis treninga snage, dodir pokreće odabrani.
+/// S aktivnim rasporedima gore su njihovi treninzi, svaki raspored u svom odjeljku, a ispod ostali spremljeni
+/// treninzi; bez rasporeda samo spremljeni (`TemplateStarter.startable`). Pokretanje radi Početna tek kad se list zatvori.
+struct TemplatePickerSheet: View {
+    /// Aktivni rasporedi iz kojih je izbor otvoren; prazno kad je otvoren bez rasporeda.
+    var groups: [ScheduleChoices] = []
     let templates: [WorkoutTemplate]
     let onSelect: (WorkoutChoice) -> Void
 
@@ -28,11 +33,16 @@ struct TemplatePickerSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                if let schedule, !scheduled.isEmpty {
-                    Section(schedule.name) {
-                        ForEach(scheduled, id: \.item.id) { planned in
-                            row(.planned(planned)) {
-                                TemplatePickerRow(template: planned.template, isNext: planned.item.id == nextItemID)
+                if !groups.isEmpty {
+                    ForEach(groups, id: \.schedule.id) { group in
+                        Section(group.schedule.name) {
+                            ForEach(group.workouts, id: \.item.id) { planned in
+                                row(.planned(planned)) {
+                                    TemplatePickerRow(
+                                        template: planned.template,
+                                        isNext: planned.item.id == group.nextItemID
+                                    )
+                                }
                             }
                         }
                     }
@@ -54,9 +64,9 @@ struct TemplatePickerSheet: View {
         .presentationDetents([.medium, .large])
     }
 
-    /// Spremljeni treninzi koji nisu u rasporedu.
+    /// Spremljeni treninzi koji nisu ni u jednom od prikazanih rasporeda.
     private var otherTemplates: [WorkoutTemplate] {
-        let inSchedule = Set(scheduled.map(\.template.id))
+        let inSchedule = Set(groups.flatMap { $0.workouts.map(\.template.id) })
         return templates.filter { !inSchedule.contains($0.id) }
     }
 
