@@ -432,4 +432,17 @@
     <string name="measure_one_rep_max">procjena 1RM</string>
     <string name="measure_reps">najviše ponavljanja</string>
     <string name="one_rep_max_footer">Procjena 1RM računa se iz serija do 12 ponavljanja, uz ponavljanja u rezervi kad je upisan RPE ili RIR.</string>
+    <string name="strength_trend">Trend snage po mišićima</string>
+    <string name="strength_trend_caption">Promjena procjene 1RM glavnih vježbi mjesečno, zadnjih 8 tjedana.</string>
+    <string name="exercises_count">Vježbi: %1$d</string>
+    <string name="weeks_4">4 tjedna</string>
+    <string name="weeks_12">12 tjedana</string>
+    <string name="muscles_empty">U ovom razdoblju još nema treninga.</string>
+    <string name="muscles_all_ok">Svi glavni mišići imaju barem 5 tvrdih serija tjedno.</string>
+    <string name="muscles_lagging">Ispod 5 serija tjedno: %1$s</string>
+    <string name="muscles_footer">Prosjek tvrdih serija tjedno. Siva zona je 10 do 20 serija, raspon u kojem istraživanja nalaze najbolji rast mišića. Serija u kojoj mišić pomaže broji se kao pola, a serija s RPE ispod 6 se ne broji.</string>
+    <string name="region_abs">Trbuh</string>
+    <string name="region_inner_thigh">Nutarnje bedro</string>
+    <string name="region_outer_thigh">Vanjsko bedro</string>
+    <string name="region_upper_back">Gornja leđa</string>
 </resources>

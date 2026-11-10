@@ -424,4 +424,17 @@
     <string name="measure_one_rep_max">estimated 1RM</string>
     <string name="measure_reps">most reps</string>
     <string name="one_rep_max_footer">Estimated 1RM is calculated from sets of up to 12 reps, including reps in reserve when RPE or RIR is logged.</string>
+    <string name="strength_trend">Strength trend by muscle</string>
+    <string name="strength_trend_caption">Monthly change in estimated 1RM of main exercises, last 8 weeks.</string>
+    <string name="exercises_count">Exercises: %1$d</string>
+    <string name="weeks_4">4 weeks</string>
+    <string name="weeks_12">12 weeks</string>
+    <string name="muscles_empty">No workouts in this period yet.</string>
+    <string name="muscles_all_ok">All major muscles have at least 5 hard sets per week.</string>
+    <string name="muscles_lagging">Under 5 sets per week: %1$s</string>
+    <string name="muscles_footer">Average hard sets per week. The grey zone is 10 to 20 sets, the range where research finds the best muscle growth. A set where the muscle assists counts as half, and a set below RPE 6 does not count.</string>
+    <string name="region_abs">Core</string>
+    <string name="region_inner_thigh">Inner thigh</string>
+    <string name="region_outer_thigh">Outer thigh</string>
+    <string name="region_upper_back">Upper back</string>
 </resources>
