@@ -56,6 +56,7 @@ import com.brunodobric.gymapp.stats.dotsScore
 import com.brunodobric.gymapp.stats.effortDistribution
 import com.brunodobric.gymapp.stats.intensityDistribution
 import com.brunodobric.gymapp.stats.periodSummary
+import com.brunodobric.gymapp.stats.weeklyReview
 import com.brunodobric.gymapp.training.PRKind
 import com.brunodobric.gymapp.ui.LineChart
 import com.brunodobric.gymapp.ui.body.BodyScreen
@@ -123,6 +124,9 @@ fun StatisticsScreen(services: AppServices) {
         StatisticsEngine(store).heatmap(now.minusSeconds(muscleDays * 24L * 3600), now.plusSeconds(1), info)
     }
     val strengthTrends = remember(revision) { StatisticsEngine(store).strengthTrends(info = info) }
+    val weekly = remember(revision, settings.goal, settings.trainingDaysPerWeek) {
+        StatisticsEngine(store).weeklyReview(goal = settings.goal, plannedPerWeek = settings.trainingDaysPerWeek, info = info)
+    }
     val effort = remember(revision) {
         val now = Instant.now()
         StatisticsEngine(store).effortDistribution(now.minusSeconds(FOUR_WEEKS), now.plusSeconds(1))
@@ -161,6 +165,7 @@ fun StatisticsScreen(services: AppServices) {
                 }
             }
             SummaryCard(summary, locale, onShift = { step -> dateMillis = period.shift(date, step, calendar).toEpochMilli() })
+            WeeklyReviewCard(weekly.first, weekly.second, locale)
 
             MusclesCard(
                 muscleDays,

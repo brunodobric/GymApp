@@ -483,4 +483,30 @@
         <item quantity="one">%d day after the last workout</item>
         <item quantity="other">%d days after the last workout</item>
     </plurals>
+    <string name="tips">Tips</string>
+    <string name="last_four_weeks">Last 4 weeks</string>
+    <string name="review_good_count">Good: %1$d of %2$d</string>
+    <string name="review_strength">Strength</string>
+    <string name="review_volume">Volume</string>
+    <string name="review_consistency">Consistency</string>
+    <string name="review_strength_hint">Needs at least 4 sessions of the same exercise in 8 weeks.</string>
+    <string name="review_volume_hint">No hard sets yet.</string>
+    <string name="review_effort_hint">Log RPE or RIR in at least 10 sets.</string>
+    <string name="tips_disclaimer">Tips are general and based on strength training research. They are not medical advice.</string>
+    <string name="review_good">Good</string>
+    <string name="review_fair">Could be better</string>
+    <string name="review_attention">Needs attention</string>
+    <string name="review_no_data">No data</string>
+    <string name="suggestion_deload">Take an easier week</string>
+    <string name="suggestion_deload_detail">Estimated 1RM is dropping on %1$d exercises. A week with half the sets and lighter weight helps recovery (Bell et al. 2023).</string>
+    <string name="suggestion_fewer_days">Try a schedule with fewer days</string>
+    <string name="suggestion_fewer_days_detail">Over the last 4 weeks you averaged %1$s workouts per week, out of %2$d planned in total. A schedule you actually follow does more than a harder one.</string>
+    <string name="suggestion_add_sets">Add 2 sets per week: %1$s</string>
+    <string name="suggestion_add_sets_detail">%1$s has been steady for 4 weeks, and the muscle gets fewer than 10 hard sets per week. More sets bring more progress (Pelland et al. 2024).</string>
+    <string name="suggestion_reduce_volume">Reduce volume: %1$s</string>
+    <string name="suggestion_reduce_volume_detail">%1$s has been steady for 4 weeks with more than 20 hard sets per week. Fewer sets or an easier week can help recovery.</string>
+    <string name="suggestion_increase_load">Increase weight: %1$s</string>
+    <string name="suggestion_increase_load_detail">The last three workouts at the same weight had 4 or more reps in reserve. Add one weight step.</string>
+    <string name="suggestion_missed_muscle">%1$s: %2$d days without training</string>
+    <string name="suggestion_missed_muscle_detail">This muscle used to be in your workouts. If that wasn\'t on purpose, add it back to your schedule.</string>
 </resources>
