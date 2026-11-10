@@ -54,7 +54,6 @@ import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.ExerciseInputType
-import com.brunodobric.gymapp.catalog.ExerciseSummary
 import com.brunodobric.gymapp.catalog.Mechanic
 import com.brunodobric.gymapp.model.SessionExercise
 import com.brunodobric.gymapp.model.SetKind
@@ -126,8 +125,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
         ExercisePicker(
             services = services,
             onPick = { summary ->
-                val input = (summary.source as? ExerciseSummary.Source.Catalog)
-                    ?.let { services.catalog.exercise(it.id)?.inputType } ?: ExerciseInputType.WEIGHT_REPS
+                val input = inputTypeOf(services, summary)
                 engine.addExercise(summary.ref, input, session)
                 picking = false
             },

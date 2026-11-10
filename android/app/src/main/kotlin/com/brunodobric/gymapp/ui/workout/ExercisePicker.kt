@@ -34,14 +34,18 @@ import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.ExerciseFilter
 import com.brunodobric.gymapp.catalog.ExerciseSearch
 import com.brunodobric.gymapp.catalog.ExerciseSummary
+import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.ui.catalogLanguage
+import com.brunodobric.gymapp.ui.rememberStoreRevision
 
 /** Odabir vježbe za trening: katalog s pretragom. Vlastite vježbe i filteri dolaze s tabom Vježbe. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExercisePicker(services: AppServices, onPick: (ExerciseSummary) -> Unit, onClose: () -> Unit) {
     val language = catalogLanguage()
-    val summaries = remember(language) { services.catalog.summaries(language) }
+    val revision = rememberStoreRevision(services.store)
+    val catalog = remember(language) { services.catalog.summaries(language) }
+    val summaries = remember(revision, catalog) { services.store.customExercises.map { it.summary } + catalog }
     var query by rememberSaveable { mutableStateOf("") }
     val results = remember(query, summaries) { ExerciseSearch.apply(ExerciseFilter(query = query), summaries) }
 
@@ -78,3 +82,9 @@ fun ExercisePicker(services: AppServices, onPick: (ExerciseSummary) -> Unit, onC
         }
     }
 }
+
+/** Vrsta unosa odabrane vježbe: iz kataloga ili iz vlastite vježbe. */
+internal fun inputTypeOf(services: AppServices, summary: ExerciseSummary): ExerciseInputType = when (val source = summary.source) {
+    is ExerciseSummary.Source.Catalog -> services.catalog.exercise(source.id)?.inputType
+    is ExerciseSummary.Source.Custom -> services.store.customExercise(source.id)?.inputType
+} ?: ExerciseInputType.WEIGHT_REPS

@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.ExerciseInputType
-import com.brunodobric.gymapp.catalog.ExerciseSummary
 import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.TemplateExercise
 import com.brunodobric.gymapp.model.TemplateSet
@@ -54,6 +53,7 @@ import com.brunodobric.gymapp.model.ref
 import com.brunodobric.gymapp.planning.TemplateEngine
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.workout.ExercisePicker
+import com.brunodobric.gymapp.ui.workout.inputTypeOf
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.NumberInput
 import com.brunodobric.gymapp.units.WeightConversion
@@ -99,8 +99,7 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () ->
         ExercisePicker(
             services = services,
             onPick = { summary ->
-                val input = (summary.source as? ExerciseSummary.Source.Catalog)
-                    ?.let { services.catalog.exercise(it.id)?.inputType } ?: ExerciseInputType.WEIGHT_REPS
+                val input = inputTypeOf(services, summary)
                 engine.addExercise(summary.ref, input, template)
                 picking = false
             },
