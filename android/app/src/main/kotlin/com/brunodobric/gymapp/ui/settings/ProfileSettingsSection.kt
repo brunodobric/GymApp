@@ -32,7 +32,9 @@ import com.brunodobric.gymapp.model.ExperienceLevel
 import com.brunodobric.gymapp.model.OnboardingAnswers
 import com.brunodobric.gymapp.model.TrainingGoal
 import com.brunodobric.gymapp.ui.rememberStoreRevision
+import com.brunodobric.gymapp.training.PlateCalculator
 import com.brunodobric.gymapp.units.DurationInput
+import com.brunodobric.gymapp.units.NumberInput
 import com.brunodobric.gymapp.units.WeightUnit
 
 /**
@@ -130,6 +132,46 @@ fun TrainingSettingsSection(services: AppServices) {
         },
     )
 }
+
+/** Šipka (5 do 30 kg, korak 2,5 kg) i ploče koje korisnik ima, za kalkulator ploča. Sve u kg, kao na iOS-u. */
+@Composable
+internal fun PlatesSettingsSection(services: AppServices) {
+    val store = services.store
+    rememberStoreRevision(store)
+    val settings = store.settings()
+    val barbell = settings.barbellWeightKg
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.barbell)) },
+        trailingContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TextButton(enabled = barbell > 5.0, onClick = {
+                    settings.barbellWeightKg = maxOf(5.0, barbell - 2.5)
+                    store.save()
+                }) { Text("−") }
+                Text(NumberInput.format(barbell) + " kg")
+                TextButton(enabled = barbell < 30.0, onClick = {
+                    settings.barbellWeightKg = minOf(30.0, barbell + 2.5)
+                    store.save()
+                }) { Text("+") }
+            }
+        },
+    )
+    val available = settings.availablePlatesKg
+    PLATE_OPTIONS.forEach { plate ->
+        ListItem(
+            headlineContent = { Text(NumberInput.format(plate) + " kg") },
+            trailingContent = {
+                Switch(checked = available.any { it == plate }, onCheckedChange = { enabled ->
+                    settings.availablePlatesKg = PlateCalculator.setting(plate, enabled, settings.availablePlatesKg)
+                    store.save()
+                })
+            },
+        )
+    }
+    Footer(stringResource(R.string.plates_footer))
+}
+
+private val PLATE_OPTIONS = listOf(0.5, 1.25, 2.5, 5.0, 10.0, 15.0, 20.0, 25.0)
 
 /** Red s trenutnom vrijednošću; dodir otvara izbornik s ponuđenim vrijednostima. */
 @Composable

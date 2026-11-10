@@ -36,7 +36,7 @@ Ovaj odjeljak vrijedi ispred svega ispod njega.
   * **Rasporedi:** rasporedi i treninzi, novi raspored ili trening, uređivači i gotovi programi (nazivi na jeziku sučelja, kao `ProgramLabels`).
   * **Statistika:** pregled tjedna, mjeseca i godine, osobni rekordi (svi rekordi s pretragom i filtrom), mjere tijela s grafom i napredak vježbe.
   * **Postavke:** Profil (cilj, dani, iskustvo, oprema), Trening (jedinice, zadana pauza, rekordi), Podaci i O aplikaciji.
-  * **Još nije preneseno:** onboarding i preporuka programa, obavijest u tijeku i podsjetnici, Health Connect, widgeti, mišići i trendovi u statistici, vlastite vježbe i detalj vježbe iz kataloga, kalkulator ploča, izgled (tema i boja), sinkronizacija. Aplikacija je dosad provjerena samo buildom na CI-ju, ne na uređaju.
+  * **Još nije preneseno:** onboarding i preporuka programa, obavijest u tijeku i podsjetnici, Health Connect, widgeti, mišići i trendovi u statistici, vlastite vježbe i detalj vježbe iz kataloga, kalkulator ploča na Početnoj, izgled (tema i boja), sinkronizacija. Aplikacija je dosad provjerena samo buildom na CI-ju, ne na uređaju.
 * **Okruženje za izradu:** u ovom oblaku `dl.google.com` je blokiran, pa se Android SDK ne može instalirati. Čisti Kotlin moduli (logika i testovi) grade se i testiraju ovdje, a aplikacija se gradi na GitHub Actionsu (Ubuntu runner ima Android SDK). Za lokalni build aplikacije ovdje treba dopustiti `dl.google.com` u mrežnim postavkama okruženja.
 
 **Nova procjena za mobitel:** oko 36 tjedana sa sinkronizacijom (faze 0 do 8, 10, 12, 13, 14), oko 33 bez nje.

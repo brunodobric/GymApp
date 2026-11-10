@@ -266,4 +266,6 @@
     <string name="plates_bar_only">Bar only.</string>
     <string name="plates_achieved">Achieved</string>
     <string name="plates_not_exact">The exact weight isn\'t possible with the available plates.</string>
+    <string name="bar_and_plates">Bar and plates</string>
+    <string name="plates_footer">The plate calculator uses these plates when units are kilograms. For pounds it uses standard plates.</string>
 </resources>
