@@ -1,0 +1,129 @@
+package com.brunodobric.gymapp.ui.planning
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.brunodobric.gymapp.AppServices
+import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.model.Schedule
+import com.brunodobric.gymapp.model.ScheduleItemKind
+import com.brunodobric.gymapp.planning.TemplateEngine
+import com.brunodobric.gymapp.ui.rememberStoreRevision
+import java.text.Collator
+import java.util.UUID
+
+/**
+ * Rasporedi, prvi korak: popis rasporeda i spremljenih treninga, novi trening i uređivač treninga.
+ * Uređivač rasporeda i gotovi programi dolaze kasnije.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SchedulesScreen(services: AppServices) {
+    val store = services.store
+    val revision = rememberStoreRevision(store)
+    var openedTemplate by rememberSaveable { mutableStateOf<String?>(null) }
+    openedTemplate?.let { id ->
+        TemplateEditorScreen(services, UUID.fromString(id), onClose = { openedTemplate = null })
+        return
+    }
+
+    val locale = LocalConfiguration.current.locales[0]
+    val schedules = remember(revision) { store.schedules.sortedBy { it.createdAt } }
+    val templates = remember(revision, locale) {
+        val collator = Collator.getInstance(locale)
+        store.templates.sortedWith { a, b -> collator.compare(a.name, b.name) }
+    }
+    val newName = stringResource(R.string.new_workout_name)
+
+    Scaffold(
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.tab_plans)) }) },
+        floatingActionButton = {
+            SmallFloatingActionButton(onClick = {
+                val template = TemplateEngine(store).createTemplate(newName)
+                openedTemplate = template.id.toString()
+            }) { Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.new_workout)) }
+        },
+    ) { padding ->
+        LazyColumn(Modifier.padding(padding).fillMaxSize()) {
+            item { Header(stringResource(R.string.schedules_section)) }
+            if (schedules.isEmpty()) item { Empty(stringResource(R.string.schedules_empty)) }
+            items(schedules, key = { "s" + it.id }) { schedule ->
+                ListItem(
+                    headlineContent = { Text(schedule.name) },
+                    supportingContent = { Text(scheduleSummary(schedule)) },
+                    trailingContent = if (schedule.isActive) null else {
+                        { AssistChip(onClick = {}, enabled = false, label = { Text(stringResource(R.string.inactive)) }) }
+                    },
+                )
+                HorizontalDivider()
+            }
+            item { Header(stringResource(R.string.workouts_section)) }
+            if (templates.isEmpty()) item { Empty(stringResource(R.string.workouts_empty)) }
+            items(templates, key = { "t" + it.id }) { template ->
+                val count = template.exercises.size
+                ListItem(
+                    modifier = Modifier.clickable { openedTemplate = template.id.toString() },
+                    headlineContent = { Text(template.name) },
+                    supportingContent = { Text(pluralStringResource(R.plurals.exercise_count, count, count)) },
+                )
+                HorizontalDivider()
+            }
+        }
+    }
+}
+
+/** "4 treninga, ciklus 2 od 8" ili "4 treninga, ciklus 2" (isto kao na iOS-u). */
+@Composable
+private fun scheduleSummary(schedule: Schedule): String {
+    val workouts = schedule.items.count { it.kind == ScheduleItemKind.WORKOUT }
+    val count = pluralStringResource(R.plurals.workout_count, workouts, workouts)
+    val cycles = schedule.cycleCount
+    return if (cycles != null) {
+        stringResource(R.string.schedule_cycle_of, count, minOf(schedule.currentCycle, cycles), cycles)
+    } else {
+        stringResource(R.string.schedule_cycle, count, schedule.currentCycle)
+    }
+}
+
+@Composable
+private fun Header(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp),
+    )
+}
+
+@Composable
+private fun Empty(text: String) {
+    Box(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}

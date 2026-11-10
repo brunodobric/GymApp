@@ -100,4 +100,28 @@
         <item quantity="few">%d vježbe</item>
         <item quantity="other">%d vježbi</item>
     </plurals>
+    <string name="new_workout_name">Novi trening</string>
+    <string name="new_workout">Novi trening</string>
+    <string name="schedules_section">Rasporedi</string>
+    <string name="schedules_empty">Još nema rasporeda. Gotovi programi i uređivač rasporeda stižu na Android uskoro; dotad ih možeš uvesti sigurnosnom kopijom.</string>
+    <string name="inactive">Neaktivan</string>
+    <string name="workouts_section">Treninzi</string>
+    <string name="workouts_empty">Još nema treninga.</string>
+    <string name="schedule_cycle_of">%1$s, ciklus %2$d od %3$d</string>
+    <string name="schedule_cycle">%1$s, ciklus %2$d</string>
+    <string name="template_name">Naziv</string>
+    <string name="delete_template">Obriši trening</string>
+    <string name="delete_template_title">Obrisati trening?</string>
+    <string name="delete_template_message">Spremljeni trening se briše. Odrađeni treninzi ostaju u povijesti.</string>
+    <string name="remove_exercise">Ukloni vježbu</string>
+    <plurals name="workout_count">
+        <item quantity="one">%d trening</item>
+        <item quantity="few">%d treninga</item>
+        <item quantity="other">%d treninga</item>
+    </plurals>
+    <plurals name="set_count">
+        <item quantity="one">%d serija</item>
+        <item quantity="few">%d serije</item>
+        <item quantity="other">%d serija</item>
+    </plurals>
 </resources>
