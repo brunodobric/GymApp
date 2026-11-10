@@ -30,6 +30,7 @@ import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.ui.exercises.ExercisesScreen
 import com.brunodobric.gymapp.ui.history.HistoryScreen
 import com.brunodobric.gymapp.ui.home.HomeScreen
+import com.brunodobric.gymapp.ui.planning.SchedulesScreen
 import com.brunodobric.gymapp.ui.settings.SettingsScreen
 import com.brunodobric.gymapp.ui.workout.WorkoutScreen
 
@@ -78,6 +79,7 @@ fun RootScreen(services: AppServices) {
                     onOpenSettings = { showsSettings = true },
                 )
                 Section.HISTORY -> HistoryScreen(services)
+                Section.SCHEDULES -> SchedulesScreen(services)
                 Section.EXERCISES -> ExercisesScreen(services)
                 else -> Placeholder()
             }

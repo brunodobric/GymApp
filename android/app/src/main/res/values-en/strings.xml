@@ -94,4 +94,26 @@
         <item quantity="one">%d exercise</item>
         <item quantity="other">%d exercises</item>
     </plurals>
+    <string name="new_workout_name">New workout</string>
+    <string name="new_workout">New workout</string>
+    <string name="schedules_section">Schedules</string>
+    <string name="schedules_empty">No schedules yet. Ready-made programs and the schedule editor are coming to Android soon; until then you can import them with a backup.</string>
+    <string name="inactive">Inactive</string>
+    <string name="workouts_section">Workouts</string>
+    <string name="workouts_empty">No workouts yet.</string>
+    <string name="schedule_cycle_of">%1$s, cycle %2$d of %3$d</string>
+    <string name="schedule_cycle">%1$s, cycle %2$d</string>
+    <string name="template_name">Name</string>
+    <string name="delete_template">Delete workout</string>
+    <string name="delete_template_title">Delete workout?</string>
+    <string name="delete_template_message">The saved workout will be deleted. Completed workouts stay in your history.</string>
+    <string name="remove_exercise">Remove exercise</string>
+    <plurals name="workout_count">
+        <item quantity="one">%d workout</item>
+        <item quantity="other">%d workouts</item>
+    </plurals>
+    <plurals name="set_count">
+        <item quantity="one">%d set</item>
+        <item quantity="other">%d sets</item>
+    </plurals>
 </resources>
