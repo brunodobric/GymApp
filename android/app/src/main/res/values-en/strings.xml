@@ -509,4 +509,11 @@
     <string name="suggestion_increase_load_detail">The last three workouts at the same weight had 4 or more reps in reserve. Add one weight step.</string>
     <string name="suggestion_missed_muscle">%1$s: %2$d days without training</string>
     <string name="suggestion_missed_muscle_detail">This muscle used to be in your workouts. If that wasn\'t on purpose, add it back to your schedule.</string>
+    <string name="chart_needs_two">The chart needs at least two workouts with this exercise.</string>
+    <string name="progress_chart">Progress chart for %1$s</string>
+    <string name="progress_chart_compare">Progress chart for %1$s and %2$s</string>
+    <string name="brzycki_instead_of_epley">Brzycki instead of Epley</string>
+    <string name="compare_with">Comparison: %1$s</string>
+    <string name="compare_other_exercise">Compare with another exercise</string>
+    <string name="no_comparison">No comparison</string>
 </resources>
