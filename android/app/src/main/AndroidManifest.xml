@@ -28,6 +28,9 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <receiver
@@ -109,5 +112,15 @@
         <receiver
             android:name=".appwidgets.WidgetMidnightReceiver"
             android:exported="false" />
+        <service
+            android:name=".appwidgets.StartWorkoutTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_notification"
+            android:label="@string/start_workout"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>
