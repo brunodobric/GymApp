@@ -50,6 +50,7 @@ import com.brunodobric.gymapp.stats.PeriodSummary
 import com.brunodobric.gymapp.stats.StatisticsEngine
 import com.brunodobric.gymapp.stats.StatsCalendar
 import com.brunodobric.gymapp.stats.periodSummary
+import com.brunodobric.gymapp.training.PRKind
 import com.brunodobric.gymapp.ui.LineChart
 import com.brunodobric.gymapp.ui.body.BodyScreen
 import com.brunodobric.gymapp.ui.rememberStoreRevision
@@ -62,7 +63,7 @@ import java.time.format.FormatStyle
 
 /**
  * Statistika, prvi korak: pregled tjedna, mjeseca ili godine i napredak vježbe (procjena 1RM ili najveća
- * težina kroz vrijeme) te mjere tijela. Rekordi, mišići, trendovi i tjedni pregled dolaze kasnije.
+ * težina kroz vrijeme), osobni rekordi i mjere tijela. Mišići, trendovi i tjedni pregled dolaze kasnije.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,6 +76,7 @@ fun StatisticsScreen(services: AppServices) {
     var dateMillis by rememberSaveable { mutableStateOf(Instant.now().toEpochMilli()) }
     var openedKey by rememberSaveable { mutableStateOf<String?>(null) }
     var showsBody by rememberSaveable { mutableStateOf(false) }
+    var showsRecords by rememberSaveable { mutableStateOf(false) }
     val date = Instant.ofEpochMilli(dateMillis)
 
     val exercises = remember(revision) {
@@ -83,6 +85,14 @@ fun StatisticsScreen(services: AppServices) {
             .flatMap { session -> session.orderedExercises.filter { exercise -> !exercise.isRemoved && exercise.sets.any { it.isCompleted } } }
             .distinctBy { it.exerciseKey }
             .map { it.exercise }
+    }
+    val settings = store.settings()
+    val records = remember(revision) {
+        StatisticsEngine(store).personalRecords(PRKind.tracked(settings), settings.prExcludedExerciseKeys)
+    }
+    if (showsRecords) {
+        RecordsScreen(records, settings.weightUnit, onClose = { showsRecords = false })
+        return
     }
     if (showsBody) {
         BodyScreen(services, onClose = { showsBody = false })
@@ -99,7 +109,7 @@ fun StatisticsScreen(services: AppServices) {
     val isCardio = remember(revision) {
         ExerciseInfoBuilder.isCardio(ExerciseInfoBuilder.provider(services.catalog, store.customExercises))
     }
-    val goal = store.settings().trainingDaysPerWeek
+    val goal = settings.trainingDaysPerWeek
     val summary = remember(revision, period, dateMillis, calendar) {
         StatisticsEngine(store).periodSummary(period, date, goal = goal, calendar = calendar, isCardio = isCardio)
     }
@@ -122,6 +132,8 @@ fun StatisticsScreen(services: AppServices) {
                 }
             }
             SummaryCard(summary, locale, onShift = { step -> dateMillis = period.shift(date, step, calendar).toEpochMilli() })
+
+            RecordsCard(records, settings.weightUnit, onShowAll = { showsRecords = true })
 
             Card(Modifier.fillMaxWidth()) {
                 ListItem(
