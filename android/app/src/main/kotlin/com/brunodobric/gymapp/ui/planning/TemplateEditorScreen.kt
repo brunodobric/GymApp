@@ -42,6 +42,7 @@ import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.catalog.ExerciseSummary
+import com.brunodobric.gymapp.model.ref
 import com.brunodobric.gymapp.planning.TemplateEngine
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.workout.ExercisePicker
