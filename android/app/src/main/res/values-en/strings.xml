@@ -336,7 +336,6 @@
     <string name="muscles">Muscles</string>
     <string name="remove_exercise_title">Remove exercise?</string>
     <string name="remove_exercise_message">If the exercise has been used in a workout, it will only be archived and your history stays.</string>
-    <string name="my_exercises">My exercises</string>
     <string name="welcome">Welcome</string>
     <string name="onboarding_intro">A few questions for a workout suggestion. Everything is optional and you can change it in Settings.</string>
     <string name="skip">Skip</string>
@@ -400,4 +399,14 @@
     <string name="rest_next_body">Next: %1$s, set %2$d of %3$d.</string>
     <string name="rest_channel_silent">End of rest (silent)</string>
     <string name="rest_notification_footer">The end-of-rest notification arrives when the phone is locked or the app is in the background. Permission is requested the first time it is needed.</string>
+    <string name="filters">Filters</string>
+    <string name="filters_count">Filters (%1$d)</string>
+    <string name="filter_source">Source</string>
+    <string name="filter_all">All</string>
+    <string name="filter_official">Official</string>
+    <string name="filter_custom">Custom</string>
+    <string name="show_archived">Show archived</string>
+    <string name="filter_muscle">Muscle</string>
+    <string name="reset_filters">Reset filters</string>
+    <string name="done">Done</string>
 </resources>

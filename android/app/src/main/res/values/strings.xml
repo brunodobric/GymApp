@@ -344,7 +344,6 @@
     <string name="muscles">Mišići</string>
     <string name="remove_exercise_title">Ukloniti vježbu?</string>
     <string name="remove_exercise_message">Ako je vježba već korištena u treningu, samo će se arhivirati i povijest ostaje.</string>
-    <string name="my_exercises">Moje vježbe</string>
     <string name="welcome">Dobro došli</string>
     <string name="onboarding_intro">Nekoliko pitanja za prijedlog treninga. Sve je neobavezno i možeš promijeniti u Postavkama.</string>
     <string name="skip">Preskoči</string>
@@ -408,4 +407,14 @@
     <string name="rest_next_body">Sljedeće: %1$s, serija %2$d od %3$d.</string>
     <string name="rest_channel_silent">Kraj odmora (bez zvuka)</string>
     <string name="rest_notification_footer">Obavijest o kraju odmora stiže kad je mobitel zaključan ili je aplikacija u pozadini. Dopuštenje se traži kad prvi put zatreba.</string>
+    <string name="filters">Filteri</string>
+    <string name="filters_count">Filteri (%1$d)</string>
+    <string name="filter_source">Izvor</string>
+    <string name="filter_all">Sve</string>
+    <string name="filter_official">Službene</string>
+    <string name="filter_custom">Vlastite</string>
+    <string name="show_archived">Prikaži arhivirane</string>
+    <string name="filter_muscle">Mišić</string>
+    <string name="reset_filters">Poništi filtere</string>
+    <string name="done">Gotovo</string>
 </resources>
