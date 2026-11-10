@@ -44,7 +44,8 @@ fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit, onOpenSettings:
     val upcoming = remember(revision) { ScheduleEngine(store).upcomingWorkouts() }
     val startable = remember(revision, locale) { TemplateStarter.startable(store.templates, locale) }
     var showsPicker by remember { mutableStateOf(false) }
-    var pickerSchedule by remember { mutableStateOf<Schedule?>(null) }
+    // Aktivni rasporedi čiji su treninzi u izboru (prazno: izbor bez rasporeda).
+    var pickerSchedules by remember { mutableStateOf<List<Schedule>>(emptyList()) }
 
     fun start(begin: () -> Unit) {
         showsPicker = false
@@ -53,11 +54,19 @@ fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit, onOpenSettings:
     }
 
     if (showsPicker) {
-        val schedule = pickerSchedule
-        val scheduled = remember(revision, schedule) { schedule?.let { ScheduleEngine(store).workoutChoices(it) } ?: emptyList() }
+        val schedules = pickerSchedules
+        val groups = remember(revision, schedules) {
+            val engine = ScheduleEngine(store)
+            schedules.distinctBy { it.id }.map { schedule ->
+                ScheduleChoices(
+                    schedule = schedule,
+                    workouts = engine.workoutChoices(schedule),
+                    nextItemId = upcoming.firstOrNull { it.schedule.id == schedule.id }?.item?.id,
+                )
+            }.filter { it.workouts.isNotEmpty() }
+        }
         TemplatePickerDialog(
-            scheduled = scheduled,
-            nextItemId = upcoming.firstOrNull { it.schedule.id == schedule?.id }?.item?.id,
+            groups = groups,
             templates = startable,
             onPlanned = { planned -> start { TemplateStarter(store).start(planned) } },
             onTemplate = { template -> start { TemplateStarter(store).start(template) } },
@@ -90,10 +99,10 @@ fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit, onOpenSettings:
             StartWorkoutCard(
                 planned = upcoming,
                 templateCount = startable.size,
-                offersOtherWorkout = { planned -> startable.any { it.id != planned.template.id } },
+                offersOtherWorkout = upcoming.map { it.template.id }.toSet().let { next -> startable.any { it.id !in next } },
                 onStart = { planned -> start { TemplateStarter(store).start(planned) } },
-                onChooseTemplate = { schedule ->
-                    pickerSchedule = schedule
+                onChooseTemplate = { schedules ->
+                    pickerSchedules = schedules
                     showsPicker = true
                 },
                 onStartEmpty = { start { WorkoutEngine(store).startSession(emptyName) } },

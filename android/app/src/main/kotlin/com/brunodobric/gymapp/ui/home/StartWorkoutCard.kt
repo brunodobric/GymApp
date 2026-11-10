@@ -35,16 +35,19 @@ import java.util.UUID
 
 /**
  * Kartica za početak treninga (`StartWorkoutCard` na iOS-u). Svaki red je jedan način početka: sljedeći
- * trening svakog rasporeda, ispod njega izbor drugog treninga, i prazan trening. Bez aktivnog rasporeda,
+ * trening svakog rasporeda, ispod svih njih jedan red za izbor drugog treninga (iz bilo kojeg aktivnog
+ * rasporeda ili spremljenog), i prazan trening. Bez aktivnog rasporeda,
  * a sa spremljenim treninzima, prvi red otvara njihov popis.
  */
 @Composable
 fun StartWorkoutCard(
     planned: List<PlannedWorkout>,
     templateCount: Int,
-    offersOtherWorkout: (PlannedWorkout) -> Boolean,
+    /** Postoji li trening koji se može pokrenuti umjesto sljedećih (red "Odaberi drugi trening"). */
+    offersOtherWorkout: Boolean,
     onStart: (PlannedWorkout) -> Unit,
-    onChooseTemplate: (Schedule?) -> Unit,
+    /** Izbor treninga: s aktivnim rasporedima njihovi treninzi i ostali spremljeni, bez njih samo spremljeni. */
+    onChooseTemplate: (List<Schedule>) -> Unit,
     onStartEmpty: () -> Unit,
 ) {
     val offersTemplates = templateCount > 0 && planned.isEmpty()
@@ -58,15 +61,16 @@ fun StartWorkoutCard(
                 onClick = { onStart(workout) },
             )
             HorizontalDivider()
-            if (offersOtherWorkout(workout)) {
-                StartRow(
-                    icon = Icons.AutoMirrored.Filled.List,
-                    prominent = false,
-                    title = stringResource(R.string.choose_other_workout),
-                    onClick = { onChooseTemplate(workout.schedule) },
-                )
-                HorizontalDivider()
-            }
+        }
+        // Jedan red za sve rasporede: s dva aktivna rasporeda red ispod svakog bio bi isti izbor dvaput.
+        if (planned.isNotEmpty() && offersOtherWorkout) {
+            StartRow(
+                icon = Icons.AutoMirrored.Filled.List,
+                prominent = false,
+                title = stringResource(R.string.choose_other_workout),
+                onClick = { onChooseTemplate(planned.map { it.schedule }) },
+            )
+            HorizontalDivider()
         }
         if (offersTemplates) {
             StartRow(
@@ -74,7 +78,7 @@ fun StartWorkoutCard(
                 prominent = true,
                 title = stringResource(R.string.choose_workout),
                 subtitle = pluralStringResource(R.plurals.saved_workouts, templateCount, templateCount),
-                onClick = { onChooseTemplate(null) },
+                onClick = { onChooseTemplate(emptyList()) },
             )
             HorizontalDivider()
         }
@@ -115,33 +119,38 @@ private fun StartRow(
     )
 }
 
-/** Izbor treninga (`TemplatePickerSheet`): s rasporedom njegovi treninzi pa ostali spremljeni, bez njega samo spremljeni. */
+/** Treninzi jednog aktivnog rasporeda u izboru, sa sljedećim označenim (`ScheduleChoices` na iOS-u). */
+data class ScheduleChoices(val schedule: Schedule, val workouts: List<PlannedWorkout>, val nextItemId: UUID?)
+
+/**
+ * Izbor treninga (`TemplatePickerSheet`): uz rasporede njihovi treninzi, svaki raspored u svom odjeljku,
+ * pa ostali spremljeni; bez rasporeda samo spremljeni.
+ */
 @Composable
 fun TemplatePickerDialog(
-    scheduled: List<PlannedWorkout>,
-    nextItemId: UUID?,
+    groups: List<ScheduleChoices>,
     templates: List<WorkoutTemplate>,
     onPlanned: (PlannedWorkout) -> Unit,
     onTemplate: (WorkoutTemplate) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val inSchedule = scheduled.map { it.template.id }.toSet()
-    val others = templates.filter { it.id !in inSchedule }
+    val inSchedules = groups.flatMap { group -> group.workouts.map { it.template.id } }.toSet()
+    val others = templates.filter { it.id !in inSchedules }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.choose_workout)) },
         text = {
             Column(Modifier.heightIn(max = 480.dp).verticalScroll(rememberScrollState())) {
-                if (scheduled.isNotEmpty()) {
-                    SectionLabel(scheduled.first().schedule.name)
-                    scheduled.forEach { planned ->
+                groups.forEach { group ->
+                    SectionLabel(group.schedule.name)
+                    group.workouts.forEach { planned ->
                         PickerRow(
                             planned.template,
-                            note = if (planned.item.id == nextItemId) stringResource(R.string.next_workout) else null,
+                            note = if (planned.item.id == group.nextItemId) stringResource(R.string.next_workout) else null,
                         ) { onPlanned(planned) }
                     }
-                    if (others.isNotEmpty()) SectionLabel(stringResource(R.string.other_workouts))
                 }
+                if (groups.isNotEmpty() && others.isNotEmpty()) SectionLabel(stringResource(R.string.other_workouts))
                 others.forEach { template -> PickerRow(template, note = null) { onTemplate(template) } }
             }
         },
