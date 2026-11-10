@@ -20,6 +20,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -30,6 +31,9 @@
 
         <receiver
             android:name=".notifications.RestAlarmReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".notifications.WorkoutActionReceiver"
             android:exported="false" />
     </application>
 </manifest>
