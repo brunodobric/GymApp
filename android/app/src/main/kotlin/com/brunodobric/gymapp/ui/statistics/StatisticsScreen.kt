@@ -1,7 +1,6 @@
 package com.brunodobric.gymapp.ui.statistics
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,10 +35,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -54,6 +50,8 @@ import com.brunodobric.gymapp.stats.PeriodSummary
 import com.brunodobric.gymapp.stats.StatisticsEngine
 import com.brunodobric.gymapp.stats.StatsCalendar
 import com.brunodobric.gymapp.stats.periodSummary
+import com.brunodobric.gymapp.ui.LineChart
+import com.brunodobric.gymapp.ui.body.BodyScreen
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.WeightFormatter
@@ -64,7 +62,7 @@ import java.time.format.FormatStyle
 
 /**
  * Statistika, prvi korak: pregled tjedna, mjeseca ili godine i napredak vježbe (procjena 1RM ili najveća
- * težina kroz vrijeme). Rekordi, mišići, trendovi i tjedni pregled dolaze kasnije.
+ * težina kroz vrijeme) te mjere tijela. Rekordi, mišići, trendovi i tjedni pregled dolaze kasnije.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,6 +74,7 @@ fun StatisticsScreen(services: AppServices) {
     var period by rememberSaveable { mutableStateOf(OverviewPeriod.WEEK) }
     var dateMillis by rememberSaveable { mutableStateOf(Instant.now().toEpochMilli()) }
     var openedKey by rememberSaveable { mutableStateOf<String?>(null) }
+    var showsBody by rememberSaveable { mutableStateOf(false) }
     val date = Instant.ofEpochMilli(dateMillis)
 
     val exercises = remember(revision) {
@@ -84,6 +83,10 @@ fun StatisticsScreen(services: AppServices) {
             .flatMap { session -> session.orderedExercises.filter { exercise -> !exercise.isRemoved && exercise.sets.any { it.isCompleted } } }
             .distinctBy { it.exerciseKey }
             .map { it.exercise }
+    }
+    if (showsBody) {
+        BodyScreen(services, onClose = { showsBody = false })
+        return
     }
     openedKey?.let { key ->
         val ref = exercises.firstOrNull { it.key == key }
@@ -119,6 +122,15 @@ fun StatisticsScreen(services: AppServices) {
                 }
             }
             SummaryCard(summary, locale, onShift = { step -> dateMillis = period.shift(date, step, calendar).toEpochMilli() })
+
+            Card(Modifier.fillMaxWidth()) {
+                ListItem(
+                    modifier = Modifier.clickable { showsBody = true },
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    headlineContent = { Text(stringResource(R.string.body)) },
+                    supportingContent = { Text(stringResource(R.string.body_subtitle)) },
+                )
+            }
 
             Text(stringResource(R.string.exercise_progress), style = MaterialTheme.typography.titleMedium)
             if (exercises.isEmpty()) {
@@ -246,25 +258,3 @@ private fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onCl
 }
 
 private fun chartValue(point: ExercisePoint): Double = point.estimatedOneRepMaxKg ?: point.bestWeightKg
-
-/** Jednostavna crta bez osi: vrijednosti po redu, skalirane između najmanje i najveće. */
-@Composable
-private fun LineChart(values: List<Double>, modifier: Modifier) {
-    val color = MaterialTheme.colorScheme.primary
-    Canvas(modifier) {
-        val shown = values.filter { it > 0 }
-        if (shown.size < 2) return@Canvas
-        val low = shown.min()
-        val high = shown.max()
-        val span = (high - low).takeIf { it > 0 } ?: 1.0
-        val step = size.width / (shown.size - 1)
-        val path = Path()
-        shown.forEachIndexed { index, value ->
-            val x = index * step
-            val y = size.height - ((value - low) / span * size.height * 0.9 + size.height * 0.05).toFloat()
-            if (index == 0) path.moveTo(x, y) else path.lineTo(x, y)
-            drawCircle(color, radius = 3.dp.toPx(), center = Offset(x, y))
-        }
-        drawPath(path, color, style = Stroke(width = 2.dp.toPx()))
-    }
-}

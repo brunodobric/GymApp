@@ -129,4 +129,24 @@
     <string name="stat_per_week">Workouts per week (goal)</string>
     <string name="estimated_one_rep_max">Estimated 1RM</string>
     <string name="heaviest_weight">Heaviest weight</string>
+    <string name="body">Body</string>
+    <string name="body_subtitle">Weight and measurements</string>
+    <string name="body_weight">Weight</string>
+    <string name="body_height">Height</string>
+    <string name="body_waist">Waist</string>
+    <string name="body_chest">Chest</string>
+    <string name="body_arm">Arm</string>
+    <string name="body_leg">Leg</string>
+    <string name="body_custom">Custom measure</string>
+    <string name="no_entries">No entries</string>
+    <string name="no_entries_yet">No entries yet.</string>
+    <string name="add_entry">Add entry</string>
+    <string name="from_apple_health">From Apple Health</string>
+    <string name="delete_entry">Delete entry</string>
+    <string name="delete_entry_title">Delete entry?</string>
+    <string name="new_entry">New entry</string>
+    <string name="value">Value</string>
+    <string name="enter_number">Enter a number.</string>
+    <string name="value_must_be_positive">Value must be greater than zero.</string>
+    <string name="save">Save</string>
 </resources>
