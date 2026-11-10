@@ -6,6 +6,8 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Bundle
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
@@ -121,7 +123,14 @@ object WorkoutNotification {
         }
         val setId = status.nextSetId
         val body = if (next != null) "$text\n$next" else text
-        if (setId != null && values.isNotEmpty()) {
+        if (supportsLiveUpdate()) {
+            // Android 16+: Live Update (čip u statusnoj traci i vrh zaključanog zaslona). Sustav promovira samo
+            // obavijest bez vlastitog izgleda, pa su vrijednosti sljedeće serije u tekstu, a − i + su u aplikaciji.
+            val planned = values.joinToString(" · ") { valueLabel(it) }
+            val expandedText = listOfNotNull(text, planned.takeIf { it.isNotEmpty() }, next).joinToString("\n")
+            builder.setStyle(NotificationCompat.BigTextStyle().bigText(expandedText))
+            builder.addExtras(Bundle().apply { putBoolean(EXTRA_REQUEST_PROMOTED_ONGOING, true) })
+        } else if (setId != null && values.isNotEmpty()) {
             // Proširena obavijest s gumbima − i + uz vrijednosti sljedeće serije, kao Live Activity.
             val expanded = setValuesView(context, body, setId, values)
             builder.setStyle(NotificationCompat.DecoratedCustomViewStyle()).setCustomBigContentView(expanded)
@@ -160,12 +169,7 @@ object WorkoutNotification {
                 return@forEachIndexed
             }
             view.setViewVisibility(row.container, View.VISIBLE)
-            val label = if (value.unitSymbol.isEmpty()) {
-                if (value.field == SetField.REPS) "${value.text} ×" else value.text
-            } else {
-                "${value.text} ${value.unitSymbol}"
-            }
-            view.setTextViewText(row.value, label)
+            view.setTextViewText(row.value, valueLabel(value))
             view.setContentDescription(row.minus, context.getString(decreaseLabel(value.field)))
             view.setContentDescription(row.plus, context.getString(increaseLabel(value.field)))
             view.setBoolean(row.minus, "setEnabled", value.canDecrease)
@@ -177,6 +181,20 @@ object WorkoutNotification {
     }
 
     private class SetRow(val container: Int, val minus: Int, val value: Int, val plus: Int)
+
+    /** "80 kg", "8 ×" ili trajanje, kao uz gumbe − i +. */
+    private fun valueLabel(value: LiveSetValue): String = if (value.unitSymbol.isEmpty()) {
+        if (value.field == SetField.REPS) "${value.text} ×" else value.text
+    } else {
+        "${value.text} ${value.unitSymbol}"
+    }
+
+    /** Live Update postoji od Androida 16 (API 36). */
+    private fun supportsLiveUpdate(): Boolean = Build.VERSION.SDK_INT >= LIVE_UPDATE_SDK
+
+    /** `Notification.EXTRA_REQUEST_PROMOTED_ONGOING` (API 36); NotificationCompat 1.15 ga još nema. */
+    private const val EXTRA_REQUEST_PROMOTED_ONGOING = "android.requestPromotedOngoing"
+    private const val LIVE_UPDATE_SDK = 36
 
     /** Opisi gumba za TalkBack, isti kao u Live Activityju (`SetValueLabels` na iOS-u). */
     private fun decreaseLabel(field: SetField): Int = when (field) {
