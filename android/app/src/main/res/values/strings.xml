@@ -525,4 +525,12 @@
     <string name="compare_with">Usporedba: %1$s</string>
     <string name="compare_other_exercise">Usporedi s drugom vježbom</string>
     <string name="no_comparison">Bez usporedbe</string>
+    <string name="decrease_reps">Smanji ponavljanja</string>
+    <string name="decrease_duration">Skrati trajanje</string>
+    <string name="decrease_distance">Smanji udaljenost</string>
+    <string name="decrease_weight">Smanji težinu</string>
+    <string name="increase_reps">Povećaj ponavljanja</string>
+    <string name="increase_duration">Produlji trajanje</string>
+    <string name="increase_distance">Povećaj udaljenost</string>
+    <string name="increase_weight">Povećaj težinu</string>
 </resources>
