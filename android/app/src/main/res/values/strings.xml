@@ -603,4 +603,9 @@
     <string name="health_rationale_text">Ako dopustiš, Apolon u Health Connect upisuje treninge koje završiš na mobitelu (vrijeme, trajanje, dijelove snage i kardija, naziv) i težinu koju uneseš u aplikaciji. Ništa ne čita iz Health Connecta.</string>
     <string name="health_rationale_privacy">Ti podaci se ne šalju nikome, ne koriste se za oglase ni marketing i ne prodaju se. Ne idu u sigurnosnu kopiju. Dozvole možeš povući u Health Connectu u bilo kojem trenutku, a Apolon radi i bez njih.</string>
     <string name="privacy_policy">Pravila privatnosti</string>
+    <string name="health_point_workouts">Završeni treninzi upisuju se u Health Connect, pa ih vide i druge aplikacije, npr. Google Fit, Samsung Health ili Fitbit.</string>
+    <string name="health_point_weight">Težina koju uneseš također se upisuje u Health Connect.</string>
+    <string name="health_onboarding_footer">Aplikacija radi i bez toga. Odluku možeš promijeniti u Postavkama > Health Connect.</string>
+    <string name="health_connect_button">Poveži s Health Connectom</string>
+    <string name="not_now">Ne sada</string>
 </resources>

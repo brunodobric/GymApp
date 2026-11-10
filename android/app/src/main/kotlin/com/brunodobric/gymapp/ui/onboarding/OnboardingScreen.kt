@@ -1,6 +1,7 @@
 package com.brunodobric.gymapp.ui.onboarding
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -34,15 +36,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.health.connect.client.PermissionController
+import com.brunodobric.gymapp.ApolonApplication
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.rawValueOf
+import com.brunodobric.gymapp.health.HealthConnect
 import com.brunodobric.gymapp.model.EquipmentPreset
 import com.brunodobric.gymapp.model.ExperienceLevel
 import com.brunodobric.gymapp.model.OnboardingAnswers
@@ -71,8 +77,8 @@ import com.brunodobric.gymapp.units.WeightUnit
 
 /**
  * Prvo pokretanje, kao `OnboardingScreen` na iOS-u: jedna stranica s profilom treninga i tijelom, pa prijedlog
- * gotovog rasporeda kad je korisnik odgovorio o treningu. Sve osim jedinica je neobavezno. Zaslon o
- * zdravstvenim podacima dolazi s Health Connectom, a dotad se sprema da korisnik to nije odabrao.
+ * gotovog rasporeda kad je korisnik odgovorio o treningu, i na kraju zaslon o Health Connectu (ako je na
+ * uređaju), s izričitim pristankom ili odbijanjem. Sve osim jedinica je neobavezno.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,6 +99,11 @@ fun OnboardingScreen(services: AppServices) {
     var showsRecommendation by rememberSaveable { mutableStateOf(false) }
     var pendingProgramId by rememberSaveable { mutableStateOf<String?>(null) }
     var failed by remember { mutableStateOf(false) }
+    // Odabir prije zaslona o Health Connectu: preskočeno, program i novi cilj dana.
+    var showsHealth by rememberSaveable { mutableStateOf(false) }
+    var skipped by rememberSaveable { mutableStateOf(false) }
+    var chosenProgramId by rememberSaveable { mutableStateOf<String?>(null) }
+    var chosenDaysGoal by rememberSaveable { mutableStateOf<Int?>(null) }
 
     val unit = WeightUnit.entries.firstOrNull { it.raw == unitRaw } ?: WeightUnit.KILOGRAMS
     val preset = EquipmentPreset.entries.firstOrNull { it.raw == presetRaw }
@@ -108,15 +119,34 @@ fun OnboardingScreen(services: AppServices) {
     )
     val profile = TrainingProfile.from(answers)
 
-    /** Sprema odgovore (onboarding je time obavljen) i po želji dodaje program. */
-    fun complete(program: Program?, newDaysGoal: Int? = null) {
+    /** Sprema odgovore (onboarding je time obavljen i zaslon se zatvara) i po želji dodaje program. */
+    fun complete(wantsHealth: Boolean) {
         try {
-            val final = if (newDaysGoal != null) answers.copy(daysPerWeek = newDaysGoal) else answers
-            OnboardingApplier(store).apply(final)
-            program?.let { installProgram(services, context, language, it, TrainingProfile.from(final)) }
+            if (skipped) {
+                OnboardingApplier(store).skip(wantsHealthKit = wantsHealth)
+            } else {
+                val goal = chosenDaysGoal
+                val final = (if (goal != null) answers.copy(daysPerWeek = goal) else answers).copy(wantsHealthKit = wantsHealth)
+                OnboardingApplier(store).apply(final)
+                val program = chosenProgramId?.let { id -> ProgramLibrary.all.firstOrNull { it.id == id } }
+                program?.let { installProgram(services, context, language, it, TrainingProfile.from(final)) }
+            }
+            if (wantsHealth) (context.applicationContext as ApolonApplication).health.sync()
         } catch (_: Exception) {
             failed = true
         }
+    }
+
+    /** Zaslon o Health Connectu, ako je Health Connect na uređaju; inače onboarding odmah završava. */
+    fun askHealth() {
+        if (HealthConnect.isAvailable(context)) showsHealth = true else complete(wantsHealth = false)
+    }
+
+    /** Odabir u prijedlogu. Novi cilj dana tjedno kad je korisnik u upozorenju pristao smanjiti ga. */
+    fun choose(program: Program?, newDaysGoal: Int? = null) {
+        chosenProgramId = program?.id
+        chosenDaysGoal = newDaysGoal
+        askHealth()
     }
 
     if (failed) {
@@ -127,15 +157,25 @@ fun OnboardingScreen(services: AppServices) {
         )
     }
 
+    if (showsHealth) {
+        val back = {
+            showsHealth = false
+            skipped = false
+        }
+        BackHandler { back() }
+        HealthPage(onBack = back, onAnswer = { complete(wantsHealth = it) })
+        return
+    }
+
     if (showsRecommendation) {
         BackHandler { showsRecommendation = false }
         RecommendationPage(
             profile = profile,
             onBack = { showsRecommendation = false },
             onChoose = { program ->
-                if (profile.lowerDaysGoal(program) != null) pendingProgramId = program.id else complete(program)
+                if (profile.lowerDaysGoal(program) != null) pendingProgramId = program.id else choose(program)
             },
-            onSkip = { complete(null) },
+            onSkip = { choose(null) },
         )
         val pending = pendingProgramId?.let { id -> ProgramLibrary.all.firstOrNull { it.id == id } }
         val lower = pending?.let(profile::lowerDaysGoal)
@@ -148,13 +188,13 @@ fun OnboardingScreen(services: AppServices) {
                 confirmButton = {
                     TextButton(onClick = {
                         pendingProgramId = null
-                        complete(pending, newDaysGoal = lower)
+                        choose(pending, newDaysGoal = lower)
                     }) { Text(stringResource(R.string.days_goal_lower, lower)) }
                 },
                 dismissButton = {
                     TextButton(onClick = {
                         pendingProgramId = null
-                        complete(pending)
+                        choose(pending)
                     }) { Text(stringResource(R.string.days_goal_keep, goal)) }
                 },
             )
@@ -167,10 +207,13 @@ fun OnboardingScreen(services: AppServices) {
             TopAppBar(
                 title = { Text(stringResource(R.string.welcome)) },
                 actions = {
-                    TextButton(onClick = { OnboardingApplier(store).skip() }) { Text(stringResource(R.string.skip)) }
+                    TextButton(onClick = {
+                        skipped = true
+                        askHealth()
+                    }) { Text(stringResource(R.string.skip)) }
                     TextButton(onClick = {
                         // Prijedlog samo kad ima na temelju čega, inače odmah kraj.
-                        if (profile.hasAnswers) showsRecommendation = true else complete(null)
+                        if (profile.hasAnswers) showsRecommendation = true else choose(null)
                     }) { Text(stringResource(R.string.save)) }
                 },
             )
@@ -346,4 +389,51 @@ private fun reasonText(reason: RecommendationReason): String = when (reason) {
 internal fun sexTitle(sex: Sex): Int = when (sex) {
     Sex.FEMALE -> R.string.sex_female
     Sex.MALE -> R.string.sex_male
+}
+
+/**
+ * Health Connect u onboardingu (zaslon o Apple Zdravlju na iOS-u): objašnjenje prije sustavskog lista dozvola.
+ * [onAnswer] dobiva jesu li dane sve dozvole; "Ne sada" sprema da korisnik to nije odabrao.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HealthPage(onBack: () -> Unit, onAnswer: (Boolean) -> Unit) {
+    val request = rememberLauncherForActivityResult(PermissionController.createRequestPermissionResultContract()) { granted ->
+        onAnswer(granted.containsAll(HealthConnect.PERMISSIONS))
+    }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                    }
+                },
+            )
+        },
+    ) { padding ->
+        Column(
+            Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(stringResource(R.string.health_connect), style = MaterialTheme.typography.headlineMedium)
+            Column(Modifier.widthIn(max = 560.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(stringResource(R.string.health_point_workouts), style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.health_point_weight), style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    stringResource(R.string.health_onboarding_footer),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Button(onClick = { request.launch(HealthConnect.PERMISSIONS) }, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.health_connect_button))
+            }
+            TextButton(onClick = { onAnswer(false) }, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.not_now))
+            }
+        }
+    }
 }
