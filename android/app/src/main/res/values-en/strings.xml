@@ -5,7 +5,6 @@
     <string name="tab_plans">Schedules</string>
     <string name="tab_exercises">Exercises</string>
     <string name="tab_statistics">Statistics</string>
-    <string name="coming_soon">Coming soon on Android.</string>
     <string name="search_exercises">Search exercises</string>
     <string name="no_results">No results</string>
     <string name="workout_default_name">Workout</string>
@@ -116,4 +115,18 @@
         <item quantity="one">%d set</item>
         <item quantity="other">%d sets</item>
     </plurals>
+    <string name="period_week">Week</string>
+    <string name="period_month">Month</string>
+    <string name="period_year">Year</string>
+    <string name="exercise_progress">Exercise progress</string>
+    <string name="previous_period">Previous period</string>
+    <string name="next_period">Next period</string>
+    <string name="stat_workouts">Workouts</string>
+    <string name="stat_trained_days">Days trained</string>
+    <string name="stat_hard_sets">Hard sets</string>
+    <string name="stat_time">Time</string>
+    <string name="stat_cardio">Cardio</string>
+    <string name="stat_per_week">Workouts per week (goal)</string>
+    <string name="estimated_one_rep_max">Estimated 1RM</string>
+    <string name="heaviest_weight">Heaviest weight</string>
 </resources>
