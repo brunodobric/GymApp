@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Sustavska sigurnosna kopija (Auto Backup u korisnikov Google Drive) i prijenos na novi mobitel:
-  samo korisnička baza i slike vlastitih vježbi. Podaci iz Health Connecta (kasnije zasebna baza) i
+  samo korisnička baza i slike vlastitih vježbi. Zapis o upisanom u Health Connect (files/health) i
   MoveKit sadržaj ne idu u kopiju (docs/android.md, odjeljci 5 i 6).
 -->
 <data-extraction-rules>

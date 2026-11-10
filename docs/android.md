@@ -35,8 +35,9 @@ Ovaj odjeljak vrijedi ispred svega ispod njega.
   * **Povijest:** popis i detalj treninga s usporedbom i brisanjem.
   * **Rasporedi:** rasporedi i treninzi, novi raspored ili trening, uređivači i gotovi programi (nazivi na jeziku sučelja, kao `ProgramLabels`).
   * **Statistika:** pregled tjedna, mjeseca i godine, osobni rekordi (svi rekordi s pretragom i filtrom), mjere tijela s grafom i napredak vježbe.
-  * **Postavke:** Profil (cilj, dani, iskustvo, oprema), Trening (jedinice, zadana pauza, rekordi), Podaci i O aplikaciji.
-  * **Još nije preneseno:** zaslon o zdravstvenim podacima u onboardingu, Live Update (Android 16), Health Connect, dinamički prečaci za spremljene treninge, klip na detalju vježbe, kartice vrsta sa sličicama u katalogu, sinkronizacija. Aplikacija je dosad provjerena samo buildom na CI-ju, ne na uređaju.
+  * **Postavke:** Profil (cilj, dani, iskustvo, oprema), Trening (jedinice, zadana pauza, rekordi), Health Connect, Podaci i O aplikaciji.
+  * **Health Connect (upis):** završeni treninzi s mobitela i ručno unesena težina idu u Health Connect kad korisnik to uključi u Postavkama (`HealthConnectExporter`, logika u `domain/health`). Trening je jedan `ExerciseSessionRecord`; s kardijem je `OTHER_WORKOUT` s dijelovima snage i kardija, iste podjele vremena kao na iOS-u. Prvi upis nosi treninge iz zadnjih 30 dana i težine iz zadnje godine, a izmjena ili brisanje u aplikaciji mijenja i zapis u Health Connectu. Što je upisano pamti datoteka `files/health/exported.txt`, koja ne ide u sigurnosnu kopiju.
+  * **Još nije preneseno:** zaslon o zdravstvenim podacima u onboardingu, Live Update (Android 16), čitanje iz Health Connecta (kardio treninzi drugih aplikacija, težina i visina, lokalna baza `health-local`), dinamički prečaci za spremljene treninge, klip na detalju vježbe, kartice vrsta sa sličicama u katalogu, sinkronizacija. Aplikacija je dosad provjerena samo buildom na CI-ju, ne na uređaju.
 * **Okruženje za izradu:** u ovom oblaku `dl.google.com` je blokiran, pa se Android SDK ne može instalirati. Čisti Kotlin moduli (logika i testovi) grade se i testiraju ovdje, a aplikacija se gradi na GitHub Actionsu (Ubuntu runner ima Android SDK). Za lokalni build aplikacije ovdje treba dopustiti `dl.google.com` u mrežnim postavkama okruženja.
 
 **Nova procjena za mobitel:** oko 36 tjedana sa sinkronizacijom (faze 0 do 8, 10, 12, 13, 14), oko 33 bez nje.
@@ -267,6 +268,7 @@ Logika je u potpunosti iz GymKita (`ScheduleEngine`, `TemplateEngine`, `Programs
 * Dozvole samo za tipove koji se koriste, traže se tek kad korisnik odabere povezivanje. Aplikacija mora imati ekran s objašnjenjem dozvola (Health Connect ga traži) i poveznicu na pravila privatnosti.
 * **Google Play:** prijava zdravstvenih dozvola (Health apps declaration) u Play Consoleu, s obrazloženjem svake dozvole. Health Connect podaci se ne smiju koristiti za oglase ni slati trećima, a ostaju u lokalnoj bazi i ne idu u sigurnosnu kopiju ni sinkronizaciju.
 * Na uređajima s Androidom 13 i starijim Health Connect je zasebna aplikacija iz Play Storea; aplikacija nudi instalaciju.
+* **Stanje:** upis treninga i težine je gotov (dozvole `WRITE_EXERCISE` i `WRITE_WEIGHT`, ekran s objašnjenjem `HealthPermissionsActivity` za Android 13 i 14+). Čitanje i lokalna baza još nisu prenesene.
 
 ### 7.9 Wear OS aplikacija (umjesto Apple Watcha)
 

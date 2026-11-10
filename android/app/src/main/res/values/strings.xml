@@ -592,4 +592,15 @@
         <item quantity="other">Prije %d dana</item>
     </plurals>
     <string name="shortcut_start_next">Započni sljedeći trening</string>
+    <string name="health_connect">Health Connect</string>
+    <string name="health_write_workouts">Upisuj treninge i težinu</string>
+    <string name="health_permissions">Dozvole u Health Connectu</string>
+    <string name="health_install">Instaliraj Health Connect</string>
+    <string name="health_install_footer">Za upis treninga treba aplikacija Health Connect ili njezina novija verzija.</string>
+    <string name="health_footer">Apolon upisuje treninge koje završiš na mobitelu i težinu koju uneseš, a prvi put i treninge iz zadnjih 30 dana. Ništa ne čita iz Health Connecta. Ti podaci ne idu u sigurnosnu kopiju, ne dijele se i ne koriste se za oglase.</string>
+    <string name="health_denied">Bez dozvola Apolon ne može upisivati u Health Connect. Dozvole mijenjaš u Health Connectu.</string>
+    <string name="health_rationale_title">Apolon i Health Connect</string>
+    <string name="health_rationale_text">Ako dopustiš, Apolon u Health Connect upisuje treninge koje završiš na mobitelu (vrijeme, trajanje, dijelove snage i kardija, naziv) i težinu koju uneseš u aplikaciji. Ništa ne čita iz Health Connecta.</string>
+    <string name="health_rationale_privacy">Ti podaci se ne šalju nikome, ne koriste se za oglase ni marketing i ne prodaju se. Ne idu u sigurnosnu kopiju. Dozvole možeš povući u Health Connectu u bilo kojem trenutku, a Apolon radi i bez njih.</string>
+    <string name="privacy_policy">Pravila privatnosti</string>
 </resources>
