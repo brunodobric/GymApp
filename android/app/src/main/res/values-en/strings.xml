@@ -453,4 +453,16 @@
     <string name="lift_squat">Squat</string>
     <string name="lift_bench">Bench press</string>
     <string name="lift_deadlift">Deadlift</string>
+    <string name="hard_sets_weekly">Hard sets per week</string>
+    <string name="legend_under_5">Under 5</string>
+    <string name="legend_5_9">5 to 9</string>
+    <string name="legend_10_20">10 to 20</string>
+    <string name="legend_over_20">Over 20</string>
+    <string name="region_weekly_sets">%1$s: %2$s sets per week</string>
+    <string name="sessions_per_week">Workouts per week: %1$s</string>
+    <string name="last_trained">Last trained: %1$s</string>
+    <string name="body_map_description">Body view with load. %1$s</string>
+    <string name="body_drawings">Body drawings</string>
+    <string name="musclemap_intro">The body drawings in the heatmap come from the MuscleMap project (MIT license).</string>
+    <string name="tap_body_part">Tap a body part for details.</string>
 </resources>
