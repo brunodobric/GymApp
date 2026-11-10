@@ -144,7 +144,9 @@ fun DataSettingsSection(services: AppServices) {
         ActionRow(stringResource(R.string.export_history_csv)) { export(ExportKind.HISTORY) }
         ActionRow(stringResource(R.string.export_body_csv)) { export(ExportKind.BODY) }
         ActionRow(stringResource(R.string.import_from_file)) {
-            importer.launch(arrayOf("application/json", "text/*", "application/octet-stream"))
+            // Sve vrste datoteka: CSV često stiže kao application/vnd.ms-excel, application/csv ili bez vrste
+            // (e-pošta, Drive, Preuzimanja), pa bi uži popis takve datoteke zasivio. Sadržaj se ionako provjerava.
+            importer.launch(arrayOf("*/*"))
         }
         ActionRow(stringResource(R.string.delete_all_data), destructive = true) { showsDeleteStart = true }
         Text(
@@ -265,6 +267,7 @@ private fun read(context: Context, uri: Uri): String {
             output.write(buffer, 0, count)
             if (output.size() > MAX_IMPORT_BYTES) throw ImportTooLarge()
         }
-        output.toString(Charsets.UTF_8.name())
+        // BOM na početku (Excel, Numbers) bi pokvario prvi naziv stupca, kao što ga iOS pri čitanju uklanja.
+        output.toString(Charsets.UTF_8.name()).removePrefix("\uFEFF")
     }
 }
