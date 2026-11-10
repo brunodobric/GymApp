@@ -43,7 +43,7 @@ import java.util.UUID
 
 /**
  * Rasporedi, prvi korak: popis rasporeda i spremljenih treninga, novi raspored ili trening te njihovi
- * uređivači. Gotovi programi dolaze kasnije.
+ * uređivači te gotovi programi.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +53,11 @@ fun SchedulesScreen(services: AppServices) {
     var openedTemplate by rememberSaveable { mutableStateOf<String?>(null) }
     var openedSchedule by rememberSaveable { mutableStateOf<String?>(null) }
     var creating by remember { mutableStateOf(false) }
+    var showsPrograms by rememberSaveable { mutableStateOf(false) }
+    if (showsPrograms) {
+        ProgramsScreen(services, onClose = { showsPrograms = false })
+        return
+    }
     openedSchedule?.let { id ->
         ScheduleEditorScreen(services, UUID.fromString(id), onClose = { openedSchedule = null })
         return
@@ -84,6 +89,13 @@ fun SchedulesScreen(services: AppServices) {
                         onClick = {
                             creating = false
                             openedSchedule = ScheduleEngine(store).createSchedule(newScheduleName).id.toString()
+                        },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.ready_programs)) },
+                        onClick = {
+                            creating = false
+                            showsPrograms = true
                         },
                     )
                     DropdownMenuItem(
