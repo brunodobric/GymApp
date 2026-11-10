@@ -1,6 +1,8 @@
 package com.brunodobric.gymapp.ui.workout
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,9 +17,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
@@ -25,6 +30,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -33,6 +42,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,10 +71,13 @@ import com.brunodobric.gymapp.units.WeightConversion
 import com.brunodobric.gymapp.units.WeightFormatter
 import com.brunodobric.gymapp.units.WeightUnit
 import java.time.Duration
+import kotlinx.coroutines.launch
 
 /**
  * Trening u tijeku, prvi korak: vježbe sa serijama, unos težine i ponavljanja, kvačica s odmorom i završetak.
  * Svaka izmjena odmah se sprema (`WorkoutEngine.touch`), pa prekinut trening ostaje sačuvan.
+ * Izbornik vježbe dodaje zagrijavanje i izbacuje vježbu, a dodir na broj serije briše seriju; oboje se
+ * može poništiti iz snackbara. Odmor se produljuje ili skraćuje za 15 s.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,6 +96,20 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     var picking by rememberSaveable { mutableStateOf(false) }
     var confirmDiscard by remember { mutableStateOf(false) }
     val now = rememberTicker()
+    val snackbar = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val undoLabel = stringResource(R.string.undo)
+    val setDeleted = stringResource(R.string.set_deleted)
+    val exerciseRemoved = stringResource(R.string.exercise_removed)
+
+    /** Poruka s "Poništi"; prethodna poruka se zamjenjuje. */
+    fun offerUndo(message: String, undo: () -> Unit) {
+        snackbar.currentSnackbarData?.dismiss()
+        scope.launch {
+            val result = snackbar.showSnackbar(message, actionLabel = undoLabel, duration = SnackbarDuration.Short)
+            if (result == SnackbarResult.ActionPerformed) undo()
+        }
+    }
 
     BackHandler(enabled = picking) { picking = false }
     BackHandler(enabled = !picking, onBack = onClose)
@@ -106,6 +133,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(
                 title = {
@@ -139,7 +167,11 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
         ) {
             engine.restTimer(session)?.takeIf { it.remaining(now) > 0 }?.let { timer ->
                 item(key = "rest") {
-                    RestCard(remaining = timer.remaining(now).toInt(), onSkip = { engine.cancelRest(session) })
+                    RestCard(
+                        remaining = timer.remaining(now).toInt(),
+                        onAdjust = { delta -> engine.adjustRest(session, delta) },
+                        onSkip = { engine.cancelRest(session) },
+                    )
                 }
             }
             items(engine.visibleExercises(session), key = { it.id.toString() }) { exercise ->
@@ -159,6 +191,15 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                         }
                     },
                     onAddSet = { engine.addSet(exercise) },
+                    onAddWarmUp = { engine.addSet(exercise, SetKind.WARM_UP) },
+                    onDeleteSet = { set ->
+                        val removed = engine.removeSet(set)
+                        offerUndo(setDeleted) { engine.restoreSet(removed, exercise) }
+                    },
+                    onRemove = {
+                        engine.removeExercise(exercise)
+                        offerUndo(exerciseRemoved) { engine.restoreExercise(exercise) }
+                    },
                 )
             }
             item(key = "add") {
@@ -190,13 +231,15 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
 }
 
 @Composable
-private fun RestCard(remaining: Int, onSkip: () -> Unit) {
+private fun RestCard(remaining: Int, onAdjust: (Int) -> Unit, onSkip: () -> Unit) {
     Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text(stringResource(R.string.rest), style = MaterialTheme.typography.labelLarge)
                 Text(DurationInput.format(remaining), style = MaterialTheme.typography.headlineMedium)
             }
+            TextButton(onClick = { onAdjust(-15) }) { Text("−15") }
+            TextButton(onClick = { onAdjust(15) }) { Text("+15") }
             TextButton(onClick = onSkip) { Text(stringResource(R.string.skip_rest)) }
         }
     }
@@ -209,14 +252,41 @@ private fun ExerciseCard(
     onChange: () -> Unit,
     onToggle: (SetLog) -> Unit,
     onAddSet: () -> Unit,
+    onAddWarmUp: () -> Unit,
+    onDeleteSet: (SetLog) -> Unit,
+    onRemove: () -> Unit,
 ) {
+    var menu by remember { mutableStateOf(false) }
     Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(exercise.exerciseName, style = MaterialTheme.typography.titleMedium)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(exercise.exerciseName, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Box {
+                    IconButton(onClick = { menu = true }) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.more_options))
+                    }
+                    DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.add_warm_up)) },
+                            onClick = {
+                                menu = false
+                                onAddWarmUp()
+                            },
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.remove_exercise), color = MaterialTheme.colorScheme.error) },
+                            onClick = {
+                                menu = false
+                                onRemove()
+                            },
+                        )
+                    }
+                }
+            }
             var working = 0
             for (set in exercise.orderedSets) {
-                val label = if (set.kind == SetKind.WARM_UP) "W" else (++working).toString()
-                SetRow(label, set, exercise.inputType, unit, onChange, onToggle)
+                val label = if (set.kind == SetKind.WARM_UP) stringResource(R.string.warm_up_short) else (++working).toString()
+                SetRow(label, set, exercise.inputType, unit, onChange, onToggle, onDelete = { onDeleteSet(set) })
             }
             TextButton(onClick = onAddSet) { Text(stringResource(R.string.add_set)) }
         }
@@ -232,11 +302,24 @@ private fun SetRow(
     unit: WeightUnit,
     onChange: () -> Unit,
     onToggle: (SetLog) -> Unit,
+    onDelete: () -> Unit,
 ) {
+    var menu by remember { mutableStateOf(false) }
     val locale = LocalConfiguration.current.locales[0]
     val formatter = remember(unit, locale) { WeightFormatter(unit, locale) }
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(label, Modifier.width(24.dp), style = MaterialTheme.typography.bodyLarge)
+        Box {
+            Text(label, Modifier.width(24.dp).clickable { menu = true }, style = MaterialTheme.typography.bodyLarge)
+            DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.delete_set), color = MaterialTheme.colorScheme.error) },
+                    onClick = {
+                        menu = false
+                        onDelete()
+                    },
+                )
+            }
+        }
         when (inputType) {
             ExerciseInputType.WEIGHT_REPS, ExerciseInputType.WEIGHTED_BODYWEIGHT, ExerciseInputType.ASSISTED -> {
                 val weight = if (inputType == ExerciseInputType.WEIGHT_REPS) set.weightKg else set.extraWeightKg
