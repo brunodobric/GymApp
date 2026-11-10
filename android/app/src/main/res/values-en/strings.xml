@@ -149,4 +149,17 @@
     <string name="enter_number">Enter a number.</string>
     <string name="value_must_be_positive">Value must be greater than zero.</string>
     <string name="save">Save</string>
+    <string name="pr_rep_max">Heaviest set</string>
+    <string name="pr_exercise_volume">Exercise volume</string>
+    <string name="pr_max_reps">Most reps</string>
+    <string name="pr_lowest_assistance">Least assistance</string>
+    <string name="pr_longest_duration">Longest duration</string>
+    <string name="pr_longest_distance">Longest distance</string>
+    <string name="reps_short">%1$d reps</string>
+    <string name="personal_records">Personal records</string>
+    <string name="records_empty">Records appear when you beat earlier workouts.</string>
+    <string name="all_records">All records</string>
+    <string name="records">Records</string>
+    <string name="records_no_match">No records for this filter.</string>
+    <string name="exercise">Exercise</string>
 </resources>

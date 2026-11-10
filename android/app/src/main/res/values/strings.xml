@@ -157,4 +157,17 @@
     <string name="enter_number">Upiši broj.</string>
     <string name="value_must_be_positive">Vrijednost mora biti veća od nule.</string>
     <string name="save">Spremi</string>
+    <string name="pr_rep_max">Najteža serija</string>
+    <string name="pr_exercise_volume">Volumen vježbe</string>
+    <string name="pr_max_reps">Najviše ponavljanja</string>
+    <string name="pr_lowest_assistance">Najmanja pomoć</string>
+    <string name="pr_longest_duration">Najduže trajanje</string>
+    <string name="pr_longest_distance">Najveća udaljenost</string>
+    <string name="reps_short">%1$d pon.</string>
+    <string name="personal_records">Osobni rekordi</string>
+    <string name="records_empty">Rekordi se pojave kad nadmašiš ranije treninge.</string>
+    <string name="all_records">Svi rekordi</string>
+    <string name="records">Rekordi</string>
+    <string name="records_no_match">Nema rekorda za ovaj filter.</string>
+    <string name="exercise">Vježba</string>
 </resources>
