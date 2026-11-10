@@ -57,6 +57,6 @@ class MainActivity : ComponentActivity() {
             openWorkoutRequests.intValue += 1
         }
         intent?.getStringExtra(ReminderNotifications.EXTRA_OPEN_SCHEDULE)?.let { openScheduleRequest.value = it }
-        intent?.dataString?.let(WidgetLink::parse)?.let { widgetLinkRequest.value = it }
+        intent?.dataString?.let { WidgetLink.parse(it) }?.let { widgetLinkRequest.value = it }
     }
 }

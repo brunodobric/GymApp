@@ -36,7 +36,6 @@ import androidx.glance.layout.Column
 import androidx.glance.layout.ColumnScope
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
-import androidx.glance.layout.defaultWeight
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
@@ -280,7 +279,7 @@ class RecordWidgetReceiver : GlanceAppWidgetReceiver() {
 
 // MARK: Dijelovi
 
-private val background = DayNightColor(day = Color.White, night = Color.Black)
+private val widgetBackground = DayNightColor(day = Color.White, night = Color.Black)
 private val primaryText = DayNightColor(day = Color(0xFF111111), night = Color.White)
 private val secondaryText = DayNightColor(day = Color(0xFF6B6B70), night = Color(0xFF9A9AA0))
 private val fill = DayNightColor(day = Color(0xFFE5E5EA), night = Color(0xFF2C2C2E))
@@ -305,7 +304,7 @@ private fun open(context: Context, link: WidgetLink): Action = actionStartActivi
 private fun WidgetFrame(link: WidgetLink, content: @Composable ColumnScope.() -> Unit) {
     val context = LocalContext.current
     Column(
-        GlanceModifier.fillMaxSize().appWidgetBackground().cornerRadius(20.dp).background(background)
+        GlanceModifier.fillMaxSize().appWidgetBackground().cornerRadius(20.dp).background(widgetBackground)
             .padding(14.dp).clickable(open(context, link)),
     ) { content() }
 }
