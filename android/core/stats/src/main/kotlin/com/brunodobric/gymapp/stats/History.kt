@@ -3,6 +3,7 @@ package com.brunodobric.gymapp.stats
 import com.brunodobric.gymapp.model.GymStore
 import com.brunodobric.gymapp.model.Session
 import com.brunodobric.gymapp.model.WorkoutKind
+import com.brunodobric.gymapp.model.mergedSessions
 import java.time.Instant
 
 enum class HistorySort { NEWEST_FIRST, OLDEST_FIRST }
@@ -32,23 +33,44 @@ data class HistoryFilter(val kinds: Set<WorkoutKind> = emptySet(), val sort: His
     }
 }
 
-/** Povijest odrađenih treninga: popis, dani s treningom za kalendar i brisanje. */
+/**
+ * Povijest odrađenih treninga: popis, dani s treningom za kalendar i brisanje. Uz vlastite treninge su i kardio
+ * treninzi iz Health Connecta ([GymStore.health]), kao na iOS-u s treninzima iz Zdravlja.
+ */
 class HistoryQueries(private val store: GymStore) {
 
-    fun sessions(filter: HistoryFilter = HistoryFilter()): List<Session> = filter.apply(store.finishedSessions())
+    /** Završeni vlastiti treninzi i treninzi iz Health Connecta u rasponu [from, to), od najnovijeg. */
+    fun finished(from: Instant = Instant.MIN, to: Instant = Instant.MAX): List<Session> = mergedSessions(
+        store.finishedSessions(from, to),
+        store.health.workouts.filter { it.startedAt >= from && it.startedAt < to },
+    )
+
+    fun sessions(filter: HistoryFilter = HistoryFilter()): List<Session> = filter.apply(finished())
 
     /** Početak svakog dana u rasponu u kojem postoji odrađen trening (točkice u kalendaru). */
     fun workoutDays(interval: DateInterval, calendar: StatsCalendar = StatsCalendar.system()): Set<Instant> =
-        store.finishedSessions(interval.start, interval.end).map { calendar.startOfDay(it.startedAt) }.toSet()
+        finished(interval.start, interval.end).map { calendar.startOfDay(it.startedAt) }.toSet()
 
     /** Treninzi odrađeni određenog dana, od najranijeg. */
     fun sessions(day: Instant, calendar: StatsCalendar = StatsCalendar.system()): List<Session> {
         val interval = calendar.dayInterval(day)
-        return store.finishedSessions(interval.start, interval.end).reversed()
+        return finished(interval.start, interval.end).reversed()
     }
 
-    /** Briše trening zajedno s vježbama i serijama. Raspored se ne vraća unatrag. */
+    /** Trening po id-ju: vlastiti ili uvezeni iz Health Connecta. */
+    fun session(id: java.util.UUID): Session? =
+        store.sessions.firstOrNull { it.id == id } ?: store.health.workouts.firstOrNull { it.id == id }?.makeSession()
+
+    /**
+     * Briše trening zajedno s vježbama i serijama. Raspored se ne vraća unatrag. Uvezeni trening briše se samo
+     * iz lokalne baze (u Health Connectu ostaje).
+     */
     fun delete(session: Session) {
+        if (session.isImportedFromWorkoutsApp && store.health.workouts.any { it.id == session.id }) {
+            store.health.deleteWorkout(session.id)
+            store.healthChanged()
+            return
+        }
         store.delete(session)
         store.save()
     }

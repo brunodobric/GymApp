@@ -61,6 +61,15 @@ class GymStore(internal val persistence: RecordPersistence = InMemoryPersistence
 
     private val listeners = mutableListOf<(Long) -> Unit>()
 
+    /** Podaci iz Health Connecta (zasebna lokalna baza): samo za prikaz, ne spremaju se ovdje ni u kopiju. */
+    var health: HealthLocalSource = HealthLocalSource.None
+
+    /** Lokalni podaci iz Health Connecta su se promijenili: ekrani se osvježavaju kao nakon spremanja. */
+    fun healthChanged() {
+        revision++
+        listeners.toList().forEach { it(revision) }
+    }
+
     /** Zadnje spremljeno stanje, po (vrsta, id). */
     private var saved: Map<Pair<String, String>, StoredRecord> = emptyMap()
 

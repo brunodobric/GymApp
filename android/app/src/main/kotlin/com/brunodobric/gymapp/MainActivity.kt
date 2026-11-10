@@ -47,6 +47,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /** Health Connect dopušta čitanje samo dok je aplikacija na zaslonu: novi podaci čitaju se pri svakom povratku. */
+    override fun onResume() {
+        super.onResume()
+        (application as ApolonApplication).health.sync()
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handle(intent)

@@ -399,7 +399,7 @@ internal fun sexTitle(sex: Sex): Int = when (sex) {
 @Composable
 private fun HealthPage(onBack: () -> Unit, onAnswer: (Boolean) -> Unit) {
     val request = rememberLauncherForActivityResult(PermissionController.createRequestPermissionResultContract()) { granted ->
-        onAnswer(granted.containsAll(HealthConnect.PERMISSIONS))
+        onAnswer(granted.containsAll(HealthConnect.WRITE_PERMISSIONS))
     }
     Scaffold(
         topBar = {

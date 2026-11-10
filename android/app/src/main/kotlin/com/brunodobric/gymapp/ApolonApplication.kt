@@ -2,7 +2,7 @@ package com.brunodobric.gymapp
 
 import android.app.Application
 import com.brunodobric.gymapp.appwidgets.WidgetRefresher
-import com.brunodobric.gymapp.health.HealthConnectExporter
+import com.brunodobric.gymapp.health.HealthConnectSync
 import com.brunodobric.gymapp.notifications.ReminderNotifications
 import com.brunodobric.gymapp.notifications.ReminderScheduler
 import com.brunodobric.gymapp.notifications.RestNotificationScheduler
@@ -27,8 +27,8 @@ class ApolonApplication : Application() {
     lateinit var widgets: WidgetRefresher
         private set
 
-    /** Upis završenih treninga i težine u Health Connect, kad ga korisnik uključi. */
-    lateinit var health: HealthConnectExporter
+    /** Upis u Health Connect i čitanje iz njega, kad ga korisnik uključi. */
+    lateinit var health: HealthConnectSync
         private set
 
     override fun onCreate() {
@@ -41,6 +41,6 @@ class ApolonApplication : Application() {
         ReminderNotifications.createChannel(this)
         reminders = ReminderScheduler(this, services.store).also { it.start() }
         widgets = WidgetRefresher(this, services).also { it.start() }
-        health = HealthConnectExporter(this, services).also { it.start() }
+        health = HealthConnectSync(this, services).also { it.start() }
     }
 }

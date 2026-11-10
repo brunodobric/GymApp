@@ -213,6 +213,9 @@ fun DataSettingsSection(services: AppServices) {
                     showsDeleteConfirm = false
                     message = try {
                         DataReset.deleteAll(store)
+                        // Lokalni podaci iz Health Connecta brišu se s ostalima; u Health Connectu ostaju.
+                        services.healthLocal.clear()
+                        store.healthChanged()
                         Message(R.string.data_deleted, R.string.data_deleted_message)
                     } catch (_: Exception) {
                         Message(R.string.delete_failed, R.string.delete_failed_message)
