@@ -400,4 +400,12 @@
     <string name="catalog_level_intermediate">Srednja razina</string>
     <string name="catalog_level_advanced">Napredno</string>
     <string name="workout_fallback">Trening</string>
+    <string name="settings_notifications">Obavijesti</string>
+    <string name="rest_end">Kraj odmora</string>
+    <string name="rest_end_sound">Zvuk kraja odmora</string>
+    <string name="rest_over">Odmor je gotov</string>
+    <string name="rest_next_generic">Vrijeme za sljedeću seriju.</string>
+    <string name="rest_next_body">Sljedeće: %1$s, serija %2$d od %3$d.</string>
+    <string name="rest_channel_silent">Kraj odmora (bez zvuka)</string>
+    <string name="rest_notification_footer">Obavijest o kraju odmora stiže kad je mobitel zaključan ili je aplikacija u pozadini. Dopuštenje se traži kad prvi put zatreba.</string>
 </resources>

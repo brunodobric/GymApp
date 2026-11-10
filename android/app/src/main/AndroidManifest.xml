@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Obavijest o kraju odmora: dopuštenje se traži na ekranu treninga. Točan alarm samo kad ga
+         korisnik dopusti; inače alarm s prozorom od nekoliko sekundi (docs/android.md). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <application
         android:name=".ApolonApplication"
         android:allowBackup="true"
@@ -22,5 +27,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".notifications.RestAlarmReceiver"
+            android:exported="false" />
     </application>
 </manifest>

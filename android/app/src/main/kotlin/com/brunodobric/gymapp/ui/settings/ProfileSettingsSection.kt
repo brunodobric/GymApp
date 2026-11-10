@@ -141,6 +141,15 @@ fun TrainingSettingsSection(services: AppServices) {
     }
     Footer(stringResource(R.string.rest_footer))
     ListItem(
+        headlineContent = { Text(stringResource(R.string.rest_end_sound)) },
+        trailingContent = {
+            Switch(checked = settings.restEndSoundEnabled, onCheckedChange = {
+                settings.restEndSoundEnabled = it
+                store.save()
+            })
+        },
+    )
+    ListItem(
         headlineContent = { Text(stringResource(R.string.records_pr)) },
         trailingContent = {
             Switch(checked = settings.prEnabled, onCheckedChange = {
@@ -277,4 +286,22 @@ internal fun presetDetail(preset: EquipmentPreset): Int = when (preset) {
 internal fun unitTitle(unit: WeightUnit): Int = when (unit) {
     WeightUnit.KILOGRAMS -> R.string.kilograms
     WeightUnit.POUNDS -> R.string.pounds
+}
+
+/** Obavijest o kraju odmora (`NotificationSettingsSection` na iOS-u). Podsjetnici rasporeda dolaze kasnije. */
+@Composable
+internal fun NotificationSettingsSection(services: AppServices) {
+    val store = services.store
+    rememberStoreRevision(store)
+    val settings = store.settings()
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.rest_end)) },
+        trailingContent = {
+            Switch(checked = settings.restNotificationEnabled, onCheckedChange = {
+                settings.restNotificationEnabled = it
+                store.save()
+            })
+        },
+    )
+    Footer(stringResource(R.string.rest_notification_footer))
 }

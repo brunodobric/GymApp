@@ -31,8 +31,7 @@ import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.ui.onboarding.ProgramRecommendationScreen
 
 /**
- * Postavke: Profil, Trening, Podaci (izvoz, uvoz, brisanje) i O aplikaciji. Ostale kategorije s iOS-a
- * (izgled, ploče, obavijesti) dolaze kasnije.
+ * Postavke: Profil, Prikaz, Trening, Obavijesti, Šipka i ploče, Podaci (izvoz, uvoz, brisanje) i O aplikaciji.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,6 +63,9 @@ fun SettingsScreen(services: AppServices, onClose: () -> Unit) {
             HorizontalDivider(Modifier.padding(vertical = 8.dp))
             SectionHeader(stringResource(R.string.settings_training))
             TrainingSettingsSection(services)
+            HorizontalDivider(Modifier.padding(vertical = 8.dp))
+            SectionHeader(stringResource(R.string.settings_notifications))
+            NotificationSettingsSection(services)
             HorizontalDivider(Modifier.padding(vertical = 8.dp))
             SectionHeader(stringResource(R.string.bar_and_plates))
             PlatesSettingsSection(services)
