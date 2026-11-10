@@ -121,6 +121,9 @@ fun ExerciseDetailScreen(
         },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState())) {
+            customExercise?.imageFile?.let(services.exerciseImages::file)?.let { file ->
+                ExerciseImage(file, ref.name, Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+            }
             val primary = catalogExercise?.primaryMuscles ?: customExercise?.muscles.orEmpty()
             val secondary = catalogExercise?.secondaryMuscles.orEmpty()
             if (primary.isNotEmpty()) {

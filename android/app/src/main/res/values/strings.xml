@@ -540,4 +540,9 @@
     <string name="range_six_months">6 mjeseci</string>
     <string name="range_custom">Vlastiti raspon</string>
     <string name="chart_range_empty">U odabranom rasponu nema treninga s ovom vježbom.</string>
+    <string name="image">Slika</string>
+    <string name="choose_image">Odaberi sliku</string>
+    <string name="replace_image">Zamijeni sliku</string>
+    <string name="remove_image">Ukloni sliku</string>
+    <string name="image_load_failed">Slika se nije mogla učitati.</string>
 </resources>
