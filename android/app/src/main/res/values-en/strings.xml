@@ -471,4 +471,16 @@
     <string name="all_sets_done">All sets done</string>
     <string name="next_exercise_short">Next: %1$s</string>
     <string name="confirm_set">Confirm set</string>
+    <string name="reminders">Reminders</string>
+    <string name="time">Time</string>
+    <string name="reminder_flexible">Flexible</string>
+    <string name="reminder_fixed_days">Fixed days</string>
+    <string name="reminder_footer">No reminder is sent if a workout from the schedule was already done that day, or during an active workout.</string>
+    <string name="schedule_reminders">Schedule reminders</string>
+    <string name="reminder_body">Time to work out.</string>
+    <string name="reminder_body_workout">Time to work out: %1$s</string>
+    <plurals name="reminder_gap_days">
+        <item quantity="one">%d day after the last workout</item>
+        <item quantity="other">%d days after the last workout</item>
+    </plurals>
 </resources>

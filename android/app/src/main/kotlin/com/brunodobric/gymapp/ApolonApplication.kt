@@ -1,6 +1,8 @@
 package com.brunodobric.gymapp
 
 import android.app.Application
+import com.brunodobric.gymapp.notifications.ReminderNotifications
+import com.brunodobric.gymapp.notifications.ReminderScheduler
 import com.brunodobric.gymapp.notifications.RestNotificationScheduler
 import com.brunodobric.gymapp.notifications.RestNotifications
 import com.brunodobric.gymapp.notifications.WorkoutNotification
@@ -15,6 +17,10 @@ class ApolonApplication : Application() {
     lateinit var workoutNotifications: WorkoutNotificationUpdater
         private set
 
+    /** Podsjetnici rasporeda; ponovno se zakazuju nakon pokretanja telefona i promjene vremena. */
+    lateinit var reminders: ReminderScheduler
+        private set
+
     override fun onCreate() {
         super.onCreate()
         services = AppServices(this)
@@ -22,5 +28,7 @@ class ApolonApplication : Application() {
         RestNotificationScheduler(this, services.store).start()
         WorkoutNotification.createChannel(this)
         workoutNotifications = WorkoutNotificationUpdater(this, services.store).also { it.start() }
+        ReminderNotifications.createChannel(this)
+        reminders = ReminderScheduler(this, services.store).also { it.start() }
     }
 }
