@@ -254,4 +254,7 @@
     <string name="other_exercises">Other exercises</string>
     <string name="rest_footer">Compound exercises such as squats, deadlifts and presses need longer rest than isolation exercises. Rest set on an exercise takes precedence.</string>
     <string name="records_pr">Records (PR)</string>
+    <string name="set_without_targets">Target is entered in the workout</string>
+    <string name="set_short">set</string>
+    <string name="rest_default">Default</string>
 </resources>

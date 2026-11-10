@@ -262,4 +262,7 @@
     <string name="other_exercises">Ostale vježbe</string>
     <string name="rest_footer">Složene vježbe, poput čučnja, mrtvog dizanja i potiska, traže dulji odmor od izolacijskih. Pauza postavljena na vježbi ima prednost.</string>
     <string name="records_pr">Rekordi (PR)</string>
+    <string name="set_without_targets">Cilj se upisuje u treningu</string>
+    <string name="set_short">serija</string>
+    <string name="rest_default">Zadano</string>
 </resources>
