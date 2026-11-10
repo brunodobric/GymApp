@@ -134,6 +134,7 @@ class WidgetDataTest {
         val links = listOf(
             WidgetLink.Home, WidgetLink.StartWorkout, WidgetLink.ActiveWorkout, WidgetLink.Week, WidgetLink.BodyWeight,
             WidgetLink.LastWorkout, WidgetLink.Session(UUID.fromString("6E1F2A3B-4C5D-4E6F-8A9B-0C1D2E3F4A5B")),
+            WidgetLink.EmptyWorkout, WidgetLink.StartTemplate(UUID.fromString("6E1F2A3B-4C5D-4E6F-8A9B-0C1D2E3F4A5B")),
         )
         links.forEach { assertEquals(it, WidgetLink.parse(it.uri)) }
     }
@@ -146,6 +147,8 @@ class WidgetDataTest {
         assertNull(WidgetLink.parse("https://apolon.app/trening"))
         assertNull(WidgetLink.parse("apolon://nepoznato"))
         assertNull(WidgetLink.parse("apolon://povijest/nije-uuid"))
+        assertNull(WidgetLink.parse("apolon://zapocni/nije-uuid"))
+        assertEquals(WidgetLink.StartWorkout, WidgetLink.parse("apolon://zapocni/"))
     }
 
     @Test

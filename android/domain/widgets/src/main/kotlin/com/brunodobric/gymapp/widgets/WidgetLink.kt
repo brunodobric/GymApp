@@ -29,16 +29,23 @@ sealed class WidgetLink(internal val host: String) {
     /** Određeni odrađeni trening (npr. onaj s rekordom). */
     data class Session(val id: UUID) : WidgetLink("povijest")
 
+    /** Pokreće prazan trening (prečac na ikoni; samo Android). */
+    data object EmptyWorkout : WidgetLink("prazan-trening")
+
+    /** Pokreće spremljeni trening (dinamički prečac na ikoni; samo Android). */
+    data class StartTemplate(val id: UUID) : WidgetLink("zapocni")
+
     val uri: String
         get() = when (this) {
             is Session -> "$SCHEME://$host/${id.toString().uppercase(Locale.ROOT)}"
+            is StartTemplate -> "$SCHEME://$host/${id.toString().uppercase(Locale.ROOT)}"
             else -> "$SCHEME://$host"
         }
 
     companion object {
         const val SCHEME = "apolon"
 
-        private val simple: List<WidgetLink> get() = listOf(Home, StartWorkout, ActiveWorkout, Week, BodyWeight, LastWorkout)
+        private val simple: List<WidgetLink> get() = listOf(Home, StartWorkout, ActiveWorkout, Week, BodyWeight, LastWorkout, EmptyWorkout)
 
         /** Poveznica iz zapisa; null za tuđu ili nepoznatu poveznicu. */
         fun parse(uri: String): WidgetLink? {
@@ -46,10 +53,12 @@ sealed class WidgetLink(internal val host: String) {
             if (!uri.lowercase(Locale.ROOT).startsWith(prefix)) return null
             val rest = uri.substring(prefix.length).trimEnd('/')
             val host = rest.substringBefore('/').lowercase(Locale.ROOT)
-            if (host == "povijest") {
-                val id = rest.substringAfterLast('/', "")
-                return runCatching { UUID.fromString(id) }.getOrNull()?.takeIf { it.toString().equals(id, ignoreCase = true) }?.let(::Session)
+            fun id(): UUID? {
+                val text = rest.substringAfterLast('/', "")
+                return runCatching { UUID.fromString(text) }.getOrNull()?.takeIf { it.toString().equals(text, ignoreCase = true) }
             }
+            if (host == "povijest") return id()?.let(::Session)
+            if (host == "zapocni" && rest.contains('/')) return id()?.let(::StartTemplate)
             return simple.firstOrNull { it.host == host }
         }
     }

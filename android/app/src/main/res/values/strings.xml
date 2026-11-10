@@ -628,4 +628,5 @@
     <string name="cardio_dance">Ples</string>
     <string name="cardio_skiing">Skijanje</string>
     <string name="cardio_other">Kardio</string>
+    <string name="shortcut_start_template">Započni: %1$s</string>
 </resources>

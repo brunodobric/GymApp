@@ -39,6 +39,7 @@ class WidgetRefresher(context: Context, private val services: AppServices) {
     private val handler = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val pending = Runnable { refresh() }
+    private val shortcuts = AppShortcuts(context)
 
     fun start() {
         services.store.addListener { schedule() }
@@ -66,6 +67,8 @@ class WidgetRefresher(context: Context, private val services: AppServices) {
                 recordText = { recordText(appContext, it, weight) },
             ).make()
         }.getOrNull() ?: return
+        // Dinamički prečaci na ikoni prate iste promjene kao widgeti.
+        shortcuts.update(store)
         val changed = runCatching { widgetSnapshots(appContext).save(snapshot) }.getOrDefault(false)
         if (changed || force) scope.launch { ApolonWidgets.updateAll(appContext) }
         scheduleMidnight()
