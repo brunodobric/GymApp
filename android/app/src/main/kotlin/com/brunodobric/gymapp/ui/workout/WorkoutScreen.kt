@@ -123,7 +123,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                 actions = {
                     TextButton(onClick = {
                         try {
-                            engine.finishSession(session)
+                            WorkoutLifecycle.finish(session, store)
                             onClose()
                         } catch (_: WorkoutError.NothingCompleted) {
                             confirmDiscard = true
@@ -178,7 +178,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
             confirmButton = {
                 TextButton(onClick = {
                     confirmDiscard = false
-                    engine.discardSession(session)
+                    WorkoutLifecycle.discard(session, store)
                     onClose()
                 }) { Text(stringResource(R.string.discard_workout)) }
             },
