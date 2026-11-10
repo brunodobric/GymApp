@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":core:stats"))
     implementation(project(":domain:backup"))
     implementation(project(":domain:widgets"))
+    implementation(project(":domain:health"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
@@ -60,5 +61,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     // Widgeti na početnom zaslonu (Jetpack Glance, Apache 2.0).
     implementation(libs.androidx.glance.appwidget)
+    // Upis treninga i težine u Health Connect (Jetpack, Apache 2.0).
+    implementation(libs.androidx.health.connect)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

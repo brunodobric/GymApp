@@ -580,4 +580,15 @@
         <item quantity="other">%d days ago</item>
     </plurals>
     <string name="shortcut_start_next">Start next workout</string>
+    <string name="health_connect">Health Connect</string>
+    <string name="health_write_workouts">Save workouts and weight</string>
+    <string name="health_permissions">Health Connect permissions</string>
+    <string name="health_install">Install Health Connect</string>
+    <string name="health_install_footer">Saving workouts needs the Health Connect app or a newer version of it.</string>
+    <string name="health_footer">Apolon saves workouts you finish on your phone and the weight you enter, and the first time also workouts from the last 30 days. It reads nothing from Health Connect. This data isn\'t included in backups, isn\'t shared and isn\'t used for advertising.</string>
+    <string name="health_denied">Without permissions, Apolon can\'t save to Health Connect. You can change them in Health Connect.</string>
+    <string name="health_rationale_title">Apolon and Health Connect</string>
+    <string name="health_rationale_text">If you allow it, Apolon saves workouts you finish on your phone (time, duration, strength and cardio parts, name) and the weight you enter in the app to Health Connect. It reads nothing from Health Connect.</string>
+    <string name="health_rationale_privacy">This data isn\'t sent to anyone, isn\'t used for advertising or marketing and isn\'t sold. It isn\'t included in backups. You can revoke permissions in Health Connect at any time, and Apolon works without them.</string>
+    <string name="privacy_policy">Privacy policy</string>
 </resources>
