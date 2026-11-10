@@ -492,4 +492,30 @@
         <item quantity="few">%d dana nakon zadnjeg treninga</item>
         <item quantity="other">%d dana nakon zadnjeg treninga</item>
     </plurals>
+    <string name="tips">Savjeti</string>
+    <string name="last_four_weeks">Zadnja 4 tjedna</string>
+    <string name="review_good_count">Dobro: %1$d od %2$d</string>
+    <string name="review_strength">Snaga</string>
+    <string name="review_volume">Volumen</string>
+    <string name="review_consistency">Redovitost</string>
+    <string name="review_strength_hint">Treba barem 4 izvođenja iste vježbe u 8 tjedana.</string>
+    <string name="review_volume_hint">Još nema tvrdih serija.</string>
+    <string name="review_effort_hint">Upiši RPE ili RIR u barem 10 serija.</string>
+    <string name="tips_disclaimer">Savjeti su opći i temelje se na istraživanjima treninga snage, nisu medicinska preporuka.</string>
+    <string name="review_good">Dobro</string>
+    <string name="review_fair">Može bolje</string>
+    <string name="review_attention">Treba pažnju</string>
+    <string name="review_no_data">Nema podataka</string>
+    <string name="suggestion_deload">Napravi lakši tjedan</string>
+    <string name="suggestion_deload_detail">Procjena 1RM pada na %1$d vježbe. Tjedan s pola serija i lakšom težinom pomaže oporavku (Bell i sur. 2023).</string>
+    <string name="suggestion_fewer_days">Probaj raspored s manje dana</string>
+    <string name="suggestion_fewer_days_detail">U zadnja 4 tjedna prosjek je %1$s treninga tjedno od planiranih %2$d ukupno. Raspored koji stvarno odradiš daje više od zahtjevnijeg.</string>
+    <string name="suggestion_add_sets">Dodaj 2 serije tjedno: %1$s</string>
+    <string name="suggestion_add_sets_detail">%1$s stoji 4 tjedna, a mišić ima manje od 10 tvrdih serija tjedno. Više serija daje više napretka (Pelland i sur. 2024).</string>
+    <string name="suggestion_reduce_volume">Smanji volumen: %1$s</string>
+    <string name="suggestion_reduce_volume_detail">%1$s stoji 4 tjedna uz više od 20 tvrdih serija tjedno. Manje serija ili lakši tjedan može pomoći oporavku.</string>
+    <string name="suggestion_increase_load">Povećaj težinu: %1$s</string>
+    <string name="suggestion_increase_load_detail">Zadnja tri treninga s istom težinom imala su 4 ili više ponavljanja u rezervi. Dodaj jedan korak težine.</string>
+    <string name="suggestion_missed_muscle">%1$s: %2$d dana bez treninga</string>
+    <string name="suggestion_missed_muscle_detail">Mišić je ranije bio u treninzima. Ako to nije namjerno, vrati ga u raspored.</string>
 </resources>

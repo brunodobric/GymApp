@@ -138,6 +138,6 @@ private fun BarChart(entries: List<Pair<String, Int>>) {
 }
 
 @Composable
-private fun Secondary(text: String) {
-    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+internal fun Secondary(text: String, modifier: Modifier = Modifier) {
+    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = modifier)
 }
