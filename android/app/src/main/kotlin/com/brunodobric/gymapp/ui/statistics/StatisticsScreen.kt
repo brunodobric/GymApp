@@ -62,8 +62,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 /**
- * Statistika, prvi korak: pregled tjedna, mjeseca ili godine i napredak vježbe (procjena 1RM ili najveća
- * težina kroz vrijeme), osobni rekordi i mjere tijela. Mišići, trendovi i tjedni pregled dolaze kasnije.
+ * Statistika: pregled tjedna, mjeseca ili godine, mišići (tvrde serije tjedno), trend snage po mišićima,
+ * osobni rekordi, mjere tijela i napredak vježbe. Mapa tijela, savjeti, napor i DOTS dolaze kasnije.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,9 +106,14 @@ fun StatisticsScreen(services: AppServices) {
         }
     }
 
-    val isCardio = remember(revision) {
-        ExerciseInfoBuilder.isCardio(ExerciseInfoBuilder.provider(services.catalog, store.customExercises))
+    val info = remember(revision) { ExerciseInfoBuilder.provider(services.catalog, store.customExercises) }
+    val isCardio = remember(info) { ExerciseInfoBuilder.isCardio(info) }
+    var muscleDays by rememberSaveable { mutableStateOf(MUSCLE_PERIODS.first()) }
+    val loads = remember(revision, muscleDays) {
+        val now = Instant.now()
+        StatisticsEngine(store).heatmap(now.minusSeconds(muscleDays * 24L * 3600), now.plusSeconds(1), info)
     }
+    val strengthTrends = remember(revision) { StatisticsEngine(store).strengthTrends(info = info) }
     val goal = settings.trainingDaysPerWeek
     val summary = remember(revision, period, dateMillis, calendar) {
         StatisticsEngine(store).periodSummary(period, date, goal = goal, calendar = calendar, isCardio = isCardio)
@@ -132,6 +137,9 @@ fun StatisticsScreen(services: AppServices) {
                 }
             }
             SummaryCard(summary, locale, onShift = { step -> dateMillis = period.shift(date, step, calendar).toEpochMilli() })
+
+            MusclesCard(muscleDays, onDaysChange = { muscleDays = it }, loads = loads, locale = locale)
+            if (strengthTrends.isNotEmpty()) StrengthTrendCard(strengthTrends, locale)
 
             RecordsCard(records, settings.weightUnit, onShowAll = { showsRecords = true })
 
