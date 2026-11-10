@@ -545,4 +545,17 @@
     <string name="replace_image">Zamijeni sliku</string>
     <string name="remove_image">Ukloni sliku</string>
     <string name="image_load_failed">Slika se nije mogla učitati.</string>
+    <string name="no_next_workout">Nema sljedećeg treninga</string>
+    <string name="upcoming_workout">Sljedeći trening</string>
+    <string name="replaced_this_cycle">Zamijenjeno u ovom ciklusu</string>
+    <string name="drop_exercise">Izbaci</string>
+    <string name="replace">Zamijeni</string>
+    <string name="cycle_changes">Izmjene samo za ovaj ciklus</string>
+    <string name="cycle_changes_footer">Raspored i trening ostaju nepromijenjeni za sljedeće cikluse.</string>
+    <string name="skip_this_workout">Preskoči ovaj trening</string>
+    <string name="skip_this_workout_footer">Preskočeni trening se ne računa u ovom ciklusu. Poništiti ga možeš u uređivaču rasporeda dok je ciklus u tijeku.</string>
+    <string name="removed_exercise">Izbačeno: %1$s</string>
+    <string name="replaced_exercise">%1$s → %2$s</string>
+    <string name="replace_exercise">Zamijeni vježbu</string>
+    <string name="exercise_options">Mogućnosti vježbe</string>
 </resources>

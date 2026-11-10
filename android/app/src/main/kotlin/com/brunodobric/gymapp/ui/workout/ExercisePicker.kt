@@ -41,7 +41,12 @@ import com.brunodobric.gymapp.ui.rememberStoreRevision
 /** Odabir vježbe za trening: katalog s pretragom. Vlastite vježbe i filteri dolaze s tabom Vježbe. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExercisePicker(services: AppServices, onPick: (ExerciseSummary) -> Unit, onClose: () -> Unit) {
+fun ExercisePicker(
+    services: AppServices,
+    onPick: (ExerciseSummary) -> Unit,
+    onClose: () -> Unit,
+    title: String = stringResource(R.string.add_exercise),
+) {
     val language = catalogLanguage()
     val revision = rememberStoreRevision(services.store)
     val catalog = remember(language) { services.catalog.summaries(language) }
@@ -52,7 +57,7 @@ fun ExercisePicker(services: AppServices, onPick: (ExerciseSummary) -> Unit, onC
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.add_exercise)) },
+                title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
                         Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.close))
