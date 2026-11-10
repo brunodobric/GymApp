@@ -137,4 +137,24 @@
     <string name="stat_per_week">Treninga tjedno (cilj)</string>
     <string name="estimated_one_rep_max">Procjena 1RM</string>
     <string name="heaviest_weight">Najveća težina</string>
+    <string name="body">Tijelo</string>
+    <string name="body_subtitle">Težina i opsezi</string>
+    <string name="body_weight">Težina</string>
+    <string name="body_height">Visina</string>
+    <string name="body_waist">Struk</string>
+    <string name="body_chest">Prsa</string>
+    <string name="body_arm">Ruka</string>
+    <string name="body_leg">Noga</string>
+    <string name="body_custom">Vlastita mjera</string>
+    <string name="no_entries">Nema unosa</string>
+    <string name="no_entries_yet">Još nema unosa.</string>
+    <string name="add_entry">Dodaj unos</string>
+    <string name="from_apple_health">Iz Apple Zdravlja</string>
+    <string name="delete_entry">Obriši unos</string>
+    <string name="delete_entry_title">Obrisati unos?</string>
+    <string name="new_entry">Novi unos</string>
+    <string name="value">Vrijednost</string>
+    <string name="enter_number">Upiši broj.</string>
+    <string name="value_must_be_positive">Vrijednost mora biti veća od nule.</string>
+    <string name="save">Spremi</string>
 </resources>
