@@ -7,32 +7,63 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.model.Schedule
+import com.brunodobric.gymapp.planning.ScheduleEngine
+import com.brunodobric.gymapp.planning.TemplateStarter
 import com.brunodobric.gymapp.training.WorkoutEngine
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.rememberTicker
 import com.brunodobric.gymapp.units.DurationInput
 import java.time.Duration
 
-/** Početna, prvi korak: nastavak treninga u tijeku ili početak praznog treninga. Kartice dolaze kasnije. */
+/** Početna, prvi korak: nastavak treninga u tijeku ili kartica za početak treninga. Ostale kartice dolaze kasnije. */
 @Composable
 fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit, onOpenSettings: () -> Unit) {
     val store = services.store
-    rememberStoreRevision(store)
+    val revision = rememberStoreRevision(store)
     val active = store.activeSession()
     val emptyName = stringResource(R.string.workout_default_name)
+    val locale = LocalConfiguration.current.locales[0]
+    val upcoming = remember(revision) { ScheduleEngine(store).upcomingWorkouts() }
+    val startable = remember(revision, locale) { TemplateStarter.startable(store.templates, locale) }
+    var showsPicker by remember { mutableStateOf(false) }
+    var pickerSchedule by remember { mutableStateOf<Schedule?>(null) }
+
+    fun start(begin: () -> Unit) {
+        showsPicker = false
+        begin()
+        onOpenWorkout()
+    }
+
+    if (showsPicker) {
+        val schedule = pickerSchedule
+        val scheduled = remember(revision, schedule) { schedule?.let { ScheduleEngine(store).workoutChoices(it) } ?: emptyList() }
+        TemplatePickerDialog(
+            scheduled = scheduled,
+            nextItemId = upcoming.firstOrNull { it.schedule.id == schedule?.id }?.item?.id,
+            templates = startable,
+            onPlanned = { planned -> start { TemplateStarter(store).start(planned) } },
+            onTemplate = { template -> start { TemplateStarter(store).start(template) } },
+            onDismiss = { showsPicker = false },
+        )
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -56,15 +87,17 @@ fun HomeScreen(services: AppServices, onOpenWorkout: () -> Unit, onOpenSettings:
                 }
             }
         } else {
-            Button(
-                onClick = {
-                    WorkoutEngine(store).startSession(emptyName)
-                    onOpenWorkout()
+            StartWorkoutCard(
+                planned = upcoming,
+                templateCount = startable.size,
+                offersOtherWorkout = { planned -> startable.any { it.id != planned.template.id } },
+                onStart = { planned -> start { TemplateStarter(store).start(planned) } },
+                onChooseTemplate = { schedule ->
+                    pickerSchedule = schedule
+                    showsPicker = true
                 },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(stringResource(R.string.start_empty_workout))
-            }
+                onStartEmpty = { start { WorkoutEngine(store).startSession(emptyName) } },
+            )
         }
     }
 }
