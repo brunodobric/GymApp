@@ -59,6 +59,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.Locale
 import java.time.format.TextStyle as DayTextStyle
 
 /**
@@ -165,7 +166,7 @@ class WeekWidget : SnapshotWidget() {
                             .background(if (day.isTrained) accent else if (isToday) secondaryText else fill),
                     ) {}
                     Text(
-                        calendar.date(day.date).dayOfWeek.getDisplayName(DayTextStyle.NARROW_STANDALONE, context.resources.configuration.locales[0]),
+                        calendar.date(day.date).dayOfWeek.getDisplayName(DayTextStyle.NARROW_STANDALONE, Locale.getDefault()),
                         style = TextStyle(fontSize = 11.sp, color = secondaryText),
                     )
                 }
