@@ -366,4 +366,7 @@
     <string name="reason_level_advanced">for advanced</string>
     <string name="reason_equipment">only exercises for your equipment</string>
     <string name="answers_failed">Your answers couldn\'t be saved.</string>
+    <string name="sex_footer">Sex is only needed for DOTS points in detailed statistics.</string>
+    <string name="suggest_schedule">Suggest a schedule</string>
+    <string name="suggest_schedule_footer">A ready-made schedule based on your goal, days, experience and equipment. Existing schedules stay as they are.</string>
 </resources>

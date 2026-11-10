@@ -240,7 +240,13 @@ fun OnboardingScreen(services: AppServices) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun RecommendationPage(profile: TrainingProfile, onBack: () -> Unit, onChoose: (Program) -> Unit, onSkip: () -> Unit) {
+/** Prijedlog gotovih programa. Iz onboardinga ima uvod i "Složit ću sam" ([onSkip]), iz Postavki nema. */
+internal fun RecommendationPage(
+    profile: TrainingProfile,
+    onBack: () -> Unit,
+    onChoose: (Program) -> Unit,
+    onSkip: (() -> Unit)? = null,
+) {
     val recommendations = remember(profile) { ProgramRecommender.recommend(profile) }
     Scaffold(
         topBar = {
@@ -258,11 +264,13 @@ private fun RecommendationPage(profile: TrainingProfile, onBack: () -> Unit, onC
             Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                stringResource(R.string.recommendation_intro),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            if (onSkip != null) {
+                Text(
+                    stringResource(R.string.recommendation_intro),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             recommendations.forEachIndexed { index, item ->
                 Text(
                     stringResource(if (index == 0) R.string.recommended else R.string.other_option),
@@ -292,7 +300,9 @@ private fun RecommendationPage(profile: TrainingProfile, onBack: () -> Unit, onC
                     }
                 }
             }
-            TextButton(onClick = onSkip) { Text(stringResource(R.string.build_myself)) }
+            if (onSkip != null) {
+                TextButton(onClick = onSkip) { Text(stringResource(R.string.build_myself)) }
+            }
         }
     }
 }
@@ -333,7 +343,7 @@ private fun reasonText(reason: RecommendationReason): String = when (reason) {
 }
 
 @StringRes
-private fun sexTitle(sex: Sex): Int = when (sex) {
+internal fun sexTitle(sex: Sex): Int = when (sex) {
     Sex.FEMALE -> R.string.sex_female
     Sex.MALE -> R.string.sex_male
 }

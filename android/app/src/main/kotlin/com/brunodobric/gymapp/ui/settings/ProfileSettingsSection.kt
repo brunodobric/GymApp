@@ -30,7 +30,9 @@ import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.model.EquipmentPreset
 import com.brunodobric.gymapp.model.ExperienceLevel
 import com.brunodobric.gymapp.model.OnboardingAnswers
+import com.brunodobric.gymapp.model.Sex
 import com.brunodobric.gymapp.model.TrainingGoal
+import com.brunodobric.gymapp.ui.onboarding.sexTitle
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.training.PlateCalculator
 import com.brunodobric.gymapp.units.DurationInput
@@ -39,10 +41,10 @@ import com.brunodobric.gymapp.units.WeightUnit
 
 /**
  * Postavke > Profil: cilj, dani tjedno, iskustvo i oprema, isti podaci kao u onboardingu. Gotovi programi
- * prema njima biraju ponavljanja i vježbe. Spol i prijedlog rasporeda s iOS-a dolaze kasnije.
+ * prema njima biraju ponavljanja i vježbe. Spol i prijedlog rasporeda su kao na iOS-u.
  */
 @Composable
-fun ProfileSettingsSection(services: AppServices) {
+fun ProfileSettingsSection(services: AppServices, onSuggestSchedule: () -> Unit) {
     val store = services.store
     rememberStoreRevision(store)
     val settings = store.settings()
@@ -95,6 +97,22 @@ fun ProfileSettingsSection(services: AppServices) {
         )
     }
     Footer(stringResource(R.string.equipment_footer))
+
+    ChoiceRow(
+        title = stringResource(R.string.sex),
+        value = settings.sex?.let { stringResource(sexTitle(it)) } ?: none,
+        options = listOf(null) + Sex.entries,
+        label = { it?.let { sex -> stringResource(sexTitle(sex)) } ?: none },
+    ) {
+        settings.sex = it
+        store.save()
+    }
+    Footer(stringResource(R.string.sex_footer))
+    ListItem(
+        modifier = Modifier.clickable(onClick = onSuggestSchedule),
+        headlineContent = { Text(stringResource(R.string.suggest_schedule)) },
+    )
+    Footer(stringResource(R.string.suggest_schedule_footer))
 }
 
 /** Postavke > Trening: jedinice, zadana pauza i rekordi. */

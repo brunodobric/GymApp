@@ -374,4 +374,7 @@
     <string name="reason_level_advanced">za napredne</string>
     <string name="reason_equipment">samo vježbe za tvoju opremu</string>
     <string name="answers_failed">Odgovori se nisu mogli spremiti.</string>
+    <string name="sex_footer">Spol treba samo za DOTS bodove u detaljnoj statistici.</string>
+    <string name="suggest_schedule">Predloži raspored</string>
+    <string name="suggest_schedule_footer">Gotov raspored prema cilju, danima, iskustvu i opremi. Postojeći rasporedi ostaju kakvi jesu.</string>
 </resources>
