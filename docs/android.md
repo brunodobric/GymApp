@@ -36,7 +36,7 @@ Ovaj odjeljak vrijedi ispred svega ispod njega.
   * **Rasporedi:** rasporedi i treninzi, novi raspored ili trening, uređivači i gotovi programi (nazivi na jeziku sučelja, kao `ProgramLabels`).
   * **Statistika:** pregled tjedna, mjeseca i godine, osobni rekordi (svi rekordi s pretragom i filtrom), mjere tijela s grafom i napredak vježbe.
   * **Postavke:** Profil (cilj, dani, iskustvo, oprema), Trening (jedinice, zadana pauza, rekordi), Podaci i O aplikaciji.
-  * **Još nije preneseno:** zaslon o zdravstvenim podacima u onboardingu, Live Update (Android 16), Health Connect, widgeti, klip na detalju vježbe, kartice vrsta sa sličicama u katalogu, sinkronizacija. Aplikacija je dosad provjerena samo buildom na CI-ju, ne na uređaju.
+  * **Još nije preneseno:** zaslon o zdravstvenim podacima u onboardingu, Live Update (Android 16), Health Connect, pločica i prečaci, klip na detalju vježbe, kartice vrsta sa sličicama u katalogu, sinkronizacija. Aplikacija je dosad provjerena samo buildom na CI-ju, ne na uređaju.
 * **Okruženje za izradu:** u ovom oblaku `dl.google.com` je blokiran, pa se Android SDK ne može instalirati. Čisti Kotlin moduli (logika i testovi) grade se i testiraju ovdje, a aplikacija se gradi na GitHub Actionsu (Ubuntu runner ima Android SDK). Za lokalni build aplikacije ovdje treba dopustiti `dl.google.com` u mrežnim postavkama okruženja.
 
 **Nova procjena za mobitel:** oko 36 tjedana sa sinkronizacijom (faze 0 do 8, 10, 12, 13, 14), oko 33 bez nje.
@@ -296,6 +296,7 @@ Isti ekrani i ista pravila kao na satu (specifikacija, "Watch ekrani"), u Compos
 * **Pločica "Započni trening"** u Brzim postavkama (`TileService`) i statički prečaci na ikoni aplikacije: Započni sljedeći trening, Prazan trening, Upiši težinu. Dinamički prečaci za spremljene treninge.
 * **Prečaci koji rade u pozadini** (Završi trening, Upiši tjelesnu težinu): na Androidu nema sustava kao Prečaci. Završi trening je gumb u obavijesti u tijeku, a Upiši težinu otvara mali dijalog aplikacije. Logika ostaje u `WorkoutShortcuts` i `BodyTracking.addShortcutWeight`.
 * **Deep linkovi `apolon://`** (`WidgetLink`) kao intent filter, za widgete, obavijest i prečace.
+* **Napravljeno:** modul `domain/widgets` je port `WidgetData` i `WidgetSync` s istim testovima (snimka, tjedan, poveznice, spremanje i slaganje iz baze). U aplikaciji je pet Glance widgeta (`appwidgets/ApolonWidgets.kt`) s jednim izgledom svaki (`SizeMode.Single`), bijelom pozadinom i crnom u tamnoj temi. `WidgetRefresher` sekundu nakon spremanja baze slaže snimku u `files/widgets` i osvježava widgete samo kad se promijeni, a nepreciznim alarmom i u ponoć. Dodir na widget šalje poveznicu `apolon://…` u `MainActivity`: Početna, trening u tijeku, pokretanje sljedećeg treninga (▶), Statistika, praćenje tijela, zadnji trening ili trening s rekordom. Krivulja težine je slika (Glance nema crtanje). Još nije: izgled prema veličini (`SizeMode.Responsive`), pločica i prečaci.
 
 ### 7.11 Lokalizacija i pristupačnost
 

@@ -41,6 +41,7 @@ Odgovori za App Privacy u App Store Connectu (vrijede dok aplikacija nema server
 | free-exercise-db | Unlicense | **Više se ne koristi** (zamijenjen MoveKitom u studenom 2026). |
 | Everkinetic (github.com/everkinetic/data) | CC BY-SA 4.0, © Greg Priday i suradnici | **Više se ne koristi** (izbačeno u studenom 2026). Starije verzije aplikacije sadrže izmijenjene crteže. Njihova javna kopija pod istom licencom ostaje u povijesti ovog repozitorija: `Resources/Drawings/` na commitu `52fe599`. |
 | MuscleMap (github.com/Jsplice/MuscleMap) | MIT, © 2026 Jsplice / MuscleMap contributors | SVG putanje muškog i ženskog tijela za heatmap (samo vektori, bez fotografija). Pretvara ih `scripts/convert-musclemap.py` u `Resources/BodyMap/body.json`. Copyright napomena i tekst licence (`LICENSE-MuscleMap.txt`) su u "O aplikaciji" na iOS-u i Androidu. |
+| Jetpack Glance (androidx.glance:glance-appwidget) | Apache 2.0, © The Android Open Source Project | Android: widgeti na početnom zaslonu. Googleova biblioteka otvorenog koda (Jetpack), bez prikupljanja podataka. |
 
 ## Ne vrijedi sada, ali treba provjeriti ako se uvede
 

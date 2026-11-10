@@ -153,7 +153,10 @@ class ReminderRescheduleReceiver : BroadcastReceiver() {
             Intent.ACTION_MY_PACKAGE_REPLACED,
             Intent.ACTION_TIME_CHANGED,
             Intent.ACTION_TIMEZONE_CHANGED,
-            -> (context.applicationContext as? ApolonApplication)?.reminders?.refresh(force = true)
+            -> (context.applicationContext as? ApolonApplication)?.let {
+                it.reminders.refresh(force = true)
+                it.widgets.refresh(force = true)
+            }
         }
     }
 }

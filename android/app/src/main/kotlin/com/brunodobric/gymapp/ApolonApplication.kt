@@ -1,6 +1,7 @@
 package com.brunodobric.gymapp
 
 import android.app.Application
+import com.brunodobric.gymapp.appwidgets.WidgetRefresher
 import com.brunodobric.gymapp.notifications.ReminderNotifications
 import com.brunodobric.gymapp.notifications.ReminderScheduler
 import com.brunodobric.gymapp.notifications.RestNotificationScheduler
@@ -21,6 +22,10 @@ class ApolonApplication : Application() {
     lateinit var reminders: ReminderScheduler
         private set
 
+    /** Snimka za widgete na početnom zaslonu; osvježava se nakon spremanja i u ponoć. */
+    lateinit var widgets: WidgetRefresher
+        private set
+
     override fun onCreate() {
         super.onCreate()
         services = AppServices(this)
@@ -30,5 +35,6 @@ class ApolonApplication : Application() {
         workoutNotifications = WorkoutNotificationUpdater(this, services.store).also { it.start() }
         ReminderNotifications.createChannel(this)
         reminders = ReminderScheduler(this, services.store).also { it.start() }
+        widgets = WidgetRefresher(this, services).also { it.start() }
     }
 }

@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -26,6 +27,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.planning.ScheduleEngine
+import com.brunodobric.gymapp.planning.TemplateStarter
 import com.brunodobric.gymapp.ui.exercises.ExercisesScreen
 import com.brunodobric.gymapp.ui.history.HistoryScreen
 import com.brunodobric.gymapp.ui.home.HomeScreen
@@ -35,6 +38,7 @@ import com.brunodobric.gymapp.ui.planning.UpcomingWorkoutScreen
 import com.brunodobric.gymapp.ui.statistics.StatisticsScreen
 import com.brunodobric.gymapp.ui.settings.SettingsScreen
 import com.brunodobric.gymapp.ui.workout.WorkoutScreen
+import com.brunodobric.gymapp.widgets.WidgetLink
 import java.util.UUID
 
 /** Pet glavnih dijelova aplikacije, isti kao tabovi na iOS-u (specifikacija, odjeljak 3). */
@@ -46,12 +50,17 @@ enum class Section(@StringRes val title: Int, val icon: ImageVector) {
     STATISTICS(R.string.tab_statistics, Icons.Filled.Star),
 }
 
+/** Jednokratni zahtjev za otvaranje (npr. treninga iz widgeta); novi zahtjev s istom vrijednošću je ipak nov. */
+class OpenRequest(val value: String)
+
 @Composable
 fun RootScreen(
     services: AppServices,
     openWorkoutRequests: Int = 0,
     openScheduleRequest: String? = null,
     onScheduleRequestHandled: () -> Unit = {},
+    widgetLink: WidgetLink? = null,
+    onWidgetLinkHandled: () -> Unit = {},
 ) {
     var selected by rememberSaveable { mutableStateOf(Section.HOME) }
     // Trening u tijeku je preko cijelog zaslona, kao na iPhoneu; tabovi ostaju ispod njega.
@@ -74,6 +83,47 @@ fun RootScreen(
         if (services.store.activeSession() == null) {
             showsSettings = false
             upcomingSchedule = id
+        }
+    }
+    // Zahtjevi koje Povijest i Statistika otvaraju kad stignu (dodir na widget).
+    var historyRequest by remember { mutableStateOf<OpenRequest?>(null) }
+    var bodyRequest by remember { mutableStateOf<OpenRequest?>(null) }
+    // Dodir na widget otvara dio aplikacije iz poveznice, kao `onOpenURL` na iOS-u (docs/widgeti.md).
+    LaunchedEffect(widgetLink) {
+        val link = widgetLink ?: return@LaunchedEffect
+        onWidgetLinkHandled()
+        val store = services.store
+        showsSettings = false
+        upcomingSchedule = null
+        when (link) {
+            WidgetLink.Home -> selected = Section.HOME
+            WidgetLink.ActiveWorkout -> if (store.activeSession() != null) showsWorkout = true else selected = Section.HOME
+            WidgetLink.StartWorkout -> {
+                // Nastavlja trening u tijeku ili pokreće sljedeći trening rasporeda; bez rasporeda otvara Početnu.
+                if (store.activeSession() == null) {
+                    ScheduleEngine(store).upcomingWorkouts().firstOrNull()?.let { TemplateStarter(store).start(it) }
+                }
+                if (store.activeSession() != null) showsWorkout = true else selected = Section.HOME
+            }
+            WidgetLink.Week -> {
+                showsWorkout = false
+                selected = Section.STATISTICS
+            }
+            WidgetLink.BodyWeight -> {
+                showsWorkout = false
+                selected = Section.STATISTICS
+                bodyRequest = OpenRequest("body")
+            }
+            WidgetLink.LastWorkout -> {
+                showsWorkout = false
+                selected = Section.HISTORY
+                historyRequest = store.finishedSessions().firstOrNull()?.let { OpenRequest(it.id.toString()) }
+            }
+            is WidgetLink.Session -> {
+                showsWorkout = false
+                selected = Section.HISTORY
+                historyRequest = OpenRequest(link.id.toString())
+            }
         }
     }
     // Prvo pokretanje: onboarding dok ga korisnik ne spremi ili preskoči.
@@ -123,10 +173,10 @@ fun RootScreen(
                     onOpenWorkout = { showsWorkout = true },
                     onOpenSettings = { showsSettings = true },
                 )
-                Section.HISTORY -> HistoryScreen(services)
+                Section.HISTORY -> HistoryScreen(services, historyRequest, onRequestHandled = { historyRequest = null })
                 Section.SCHEDULES -> SchedulesScreen(services)
                 Section.EXERCISES -> ExercisesScreen(services)
-                Section.STATISTICS -> StatisticsScreen(services)
+                Section.STATISTICS -> StatisticsScreen(services, bodyRequest, onRequestHandled = { bodyRequest = null })
             }
         }
     }

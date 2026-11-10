@@ -49,5 +49,65 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <!-- Widgeti na početnom zaslonu (Glance); čitaju snimku koju slaže WidgetRefresher (docs/widgeti.md). -->
+        <receiver
+            android:name=".appwidgets.NextWorkoutWidgetReceiver"
+            android:exported="true"
+            android:label="@string/upcoming_workout">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_next" />
+        </receiver>
+        <receiver
+            android:name=".appwidgets.WeekWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_this_week">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_week" />
+        </receiver>
+        <receiver
+            android:name=".appwidgets.BodyWeightWidgetReceiver"
+            android:exported="true"
+            android:label="@string/body_weight">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_weight" />
+        </receiver>
+        <receiver
+            android:name=".appwidgets.LastWorkoutWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_last_workout">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_last" />
+        </receiver>
+        <receiver
+            android:name=".appwidgets.RecordWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_latest_record">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_record" />
+        </receiver>
+        <receiver
+            android:name=".appwidgets.WidgetMidnightReceiver"
+            android:exported="false" />
     </application>
 </manifest>
