@@ -46,6 +46,7 @@ import com.brunodobric.gymapp.catalog.Muscle
 import com.brunodobric.gymapp.catalog.rawValueOf
 import com.brunodobric.gymapp.model.CustomExercise
 import com.brunodobric.gymapp.model.CustomExerciseStore
+import java.io.File
 import java.util.UUID
 
 /**
@@ -66,6 +67,9 @@ fun CustomExerciseEditorScreen(services: AppServices, exerciseId: UUID?, onClose
     var inputRaw by rememberSaveable { mutableStateOf(exercise?.inputTypeRaw ?: ExerciseInputType.WEIGHT_REPS.raw) }
     var musclesRaw by rememberSaveable { mutableStateOf(exercise?.musclesRaw ?: "") }
     var confirmRemove by remember { mutableStateOf(false) }
+    // Nova slika čeka u privremenoj datoteci do spremanja; uklanjanje se također primjenjuje tek tada.
+    var pendingImagePath by rememberSaveable { mutableStateOf<String?>(null) }
+    var removesImage by rememberSaveable { mutableStateOf(false) }
     BackHandler(onBack = onClose)
 
     val kind = rawValueOf<ExerciseKind>(kindRaw) ?: ExerciseKind.STRENGTH
@@ -85,6 +89,16 @@ fun CustomExerciseEditorScreen(services: AppServices, exerciseId: UUID?, onClose
         target.inputType = inputType
         // Redoslijed mišića je stabilan (kao u katalogu), ne ovisi o redoslijedu odabira.
         target.muscles = Muscle.entries.filter { it in muscles }
+        val images = services.exerciseImages
+        val pending = pendingImagePath?.let(::File)
+        if (pending != null || removesImage) {
+            target.imageFile?.let(images::delete)
+            target.imageFile = null
+        }
+        if (pending != null) {
+            target.imageFile = runCatching { pending.readBytes() }.getOrNull()?.let { images.save(target.id, it) }
+            pending.delete()
+        }
         store.save()
         onClose()
     }
@@ -127,6 +141,21 @@ fun CustomExerciseEditorScreen(services: AppServices, exerciseId: UUID?, onClose
                 minLines = 2,
                 maxLines = 6,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            )
+            val shownImage = pendingImagePath?.let(::File)
+                ?: exercise?.imageFile?.takeIf { !removesImage }?.let(services.exerciseImages::file)
+            ExerciseImageSection(
+                shown = shownImage,
+                name = name,
+                onPicked = { file ->
+                    pendingImagePath?.let { File(it).delete() }
+                    pendingImagePath = file.path
+                },
+                onRemove = {
+                    pendingImagePath?.let { File(it).delete() }
+                    pendingImagePath = null
+                    removesImage = true
+                },
             )
             PickerRow(stringResource(R.string.exercise_kind), stringResource(kindTitle(kind)), ExerciseKind.entries, { stringResource(kindTitle(it)) }) {
                 kindRaw = it.raw

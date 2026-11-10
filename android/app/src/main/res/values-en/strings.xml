@@ -531,4 +531,9 @@
     <string name="range_six_months">6 months</string>
     <string name="range_custom">Custom range</string>
     <string name="chart_range_empty">No workouts with this exercise in the selected range.</string>
+    <string name="image">Photo</string>
+    <string name="choose_image">Choose photo</string>
+    <string name="replace_image">Replace photo</string>
+    <string name="remove_image">Remove photo</string>
+    <string name="image_load_failed">The photo couldn\'t be loaded.</string>
 </resources>
