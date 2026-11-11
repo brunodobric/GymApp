@@ -179,6 +179,42 @@ object LiveSetEditor {
         return true
     }
 
+    /**
+     * Prošli put za seriju: vrijednosti serije iste vrste na istom mjestu u zadnjem izvođenju vježbe
+     * (`SmartDefaults`), npr. "82,5 kg\n8 ×". Null kad vježba još nije rađena.
+     */
+    fun previousText(
+        set: SetLog,
+        inputType: ExerciseInputType,
+        previous: List<SetValues>,
+        unit: WeightUnit,
+        locale: Locale = Locale.getDefault(),
+    ): String? {
+        val sameKind = set.exercise?.orderedSets?.filter { it.kind == set.kind } ?: listOf(set)
+        val position = sameKind.indexOfFirst { it.id == set.id }.coerceAtLeast(0)
+        val old = SmartDefaults.defaults(position, set.kind, previous) ?: return null
+        val weight = WeightFormatter(unit, locale)
+        return when (inputType) {
+            ExerciseInputType.WEIGHT_REPS -> {
+                val kilograms = old.weightKg ?: return null
+                val reps = old.reps ?: return null
+                "${weight.string(kilograms)}\n$reps ×"
+            }
+            ExerciseInputType.BODYWEIGHT -> old.reps?.let { "$it ×" }
+            ExerciseInputType.WEIGHTED_BODYWEIGHT, ExerciseInputType.ASSISTED -> {
+                val reps = old.reps ?: return null
+                "${weight.string(old.extraWeightKg ?: 0.0)}\n$reps ×"
+            }
+            ExerciseInputType.DURATION -> old.durationSeconds?.let(::durationText)
+            ExerciseInputType.DURATION_DISTANCE -> listOfNotNull(
+                old.durationSeconds?.let(::durationText),
+                old.distanceMeters?.let { "${NumberFormat.getIntegerInstance(locale).format(it)} m" },
+            ).joinToString("\n").ifEmpty { null }
+        }
+    }
+
+    private fun durationText(seconds: Int): String = "%d:%02d".format(seconds / 60, seconds % 60)
+
     private fun snapshot(set: SetLog) =
         SetFieldValues(set.weightKg, set.reps, set.extraWeightKg, set.durationSeconds, set.distanceMeters)
 }

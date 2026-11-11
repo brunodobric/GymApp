@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.model.EffortScale
 import com.brunodobric.gymapp.model.EquipmentPreset
 import com.brunodobric.gymapp.model.ExperienceLevel
 import com.brunodobric.gymapp.model.OnboardingAnswers
@@ -129,6 +130,16 @@ fun TrainingSettingsSection(services: AppServices) {
         label = { stringResource(unitTitle(it)) },
     ) {
         settings.weightUnit = it
+        store.save()
+    }
+    // Napor serije kao RPE ili RIR (RIR = 10 − RPE), kao na iOS-u. Sprema se uvijek kao RPE.
+    ChoiceRow(
+        title = stringResource(R.string.effort),
+        value = effortTitle(settings.effortScale),
+        options = EffortScale.entries,
+        label = { effortTitle(it) },
+    ) {
+        settings.effortScale = it
         store.save()
     }
     RestRow(stringResource(R.string.compound_exercises), settings.compoundRestSeconds) {
@@ -314,3 +325,5 @@ internal fun NotificationSettingsSection(services: AppServices) {
     )
     Footer(stringResource(R.string.rest_notification_footer))
 }
+
+private fun effortTitle(scale: EffortScale): String = if (scale == EffortScale.RPE) "RPE" else "RIR"

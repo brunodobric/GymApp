@@ -154,4 +154,33 @@ class LiveSetEditorTest {
         assertTrue(LiveSetEditor.adjust(set, SetField.DISTANCE, -1, kg))
         assertEquals(350.0, set.distanceMeters)
     }
+
+    @Test
+    fun `prosli put prema mjestu serije`() {
+        val engine = WorkoutEngine(GymStore())
+        val session = engine.startSession("A", now = start)
+        val exercise = engine.addExercise(ExerciseRef.catalog("bench", "Potisak s klupe"), ExerciseInputType.WEIGHT_REPS, session, now = start)
+        val previous = listOf(SetValues(weightKg = 30.0, reps = 12), SetValues(weightKg = 32.5, reps = 10))
+        val sets = exercise.orderedSets
+        assertEquals("30 kg\n12 ×", LiveSetEditor.previousText(sets[0], ExerciseInputType.WEIGHT_REPS, previous, kg, hr))
+        assertEquals("32,5 kg\n10 ×", LiveSetEditor.previousText(sets[1], ExerciseInputType.WEIGHT_REPS, previous, kg, hr))
+        assertEquals("32,5 kg\n10 ×", LiveSetEditor.previousText(sets[2], ExerciseInputType.WEIGHT_REPS, previous, kg, hr))
+        assertNull(LiveSetEditor.previousText(sets[0], ExerciseInputType.WEIGHT_REPS, emptyList(), kg))
+    }
+
+    @Test
+    fun `prosli put za vlastitu tezinu i kardio`() {
+        val engine = WorkoutEngine(GymStore())
+        val session = engine.startSession("A", now = start)
+        val pullUps = engine.addExercise(ExerciseRef.catalog("row", "Veslanje"), ExerciseInputType.BODYWEIGHT, session, now = start)
+        val run = engine.addExercise(ExerciseRef.catalog("bench", "Potisak s klupe"), ExerciseInputType.DURATION_DISTANCE, session, now = start)
+        assertEquals("8 ×", LiveSetEditor.previousText(pullUps.orderedSets[0], ExerciseInputType.BODYWEIGHT, listOf(SetValues(reps = 8)), kg))
+        assertEquals(
+            "1:30\n400 m",
+            LiveSetEditor.previousText(
+                run.orderedSets[0], ExerciseInputType.DURATION_DISTANCE,
+                listOf(SetValues(durationSeconds = 90, distanceMeters = 400.0)), kg, hr,
+            ),
+        )
+    }
 }
