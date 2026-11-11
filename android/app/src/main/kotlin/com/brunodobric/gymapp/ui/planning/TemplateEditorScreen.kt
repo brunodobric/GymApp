@@ -51,6 +51,7 @@ import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.TemplateExercise
 import com.brunodobric.gymapp.model.TemplateSet
+import com.brunodobric.gymapp.model.WorkoutTemplate
 import com.brunodobric.gymapp.model.ref
 import com.brunodobric.gymapp.planning.TemplateEngine
 import com.brunodobric.gymapp.planning.TemplateSnapshot
@@ -71,7 +72,14 @@ import java.util.UUID
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TemplateEditorScreen(services: AppServices, templateId: UUID, isNew: Boolean = false, onClose: () -> Unit) {
+fun TemplateEditorScreen(
+    services: AppServices,
+    templateId: UUID,
+    isNew: Boolean = false,
+    // Novi trening iz rasporeda se odbacuje zajedno sa stavkom niza (`ScheduleEngine.discardNewWorkout`).
+    discardNew: ((WorkoutTemplate) -> Unit)? = null,
+    onClose: () -> Unit,
+) {
     val store = services.store
     val revision = rememberStoreRevision(store)
     val template = remember(revision, templateId) { store.template(templateId) }
@@ -99,7 +107,11 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, isNew: Boolean
     }
 
     fun discard() {
-        if (isNew) engine.delete(template) else snapshot?.restore(template, store)
+        when {
+            !isNew -> snapshot?.restore(template, store)
+            discardNew != null -> discardNew(template)
+            else -> engine.delete(template)
+        }
         onClose()
     }
 

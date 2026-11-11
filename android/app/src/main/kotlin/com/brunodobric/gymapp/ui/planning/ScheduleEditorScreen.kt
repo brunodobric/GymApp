@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -58,7 +59,7 @@ import java.util.UUID
 
 /**
  * Uređivač rasporeda: naziv, aktivnost, broj ciklusa, podsjetnici, niz treninga i dana odmora (dodavanje,
- * redoslijed strelicama, uklanjanje), pokretanje ispočetka i brisanje. Podsjetnici su u [ScheduleReminderCard].
+ * redoslijed strelicama, uklanjanje, novi trening iz niza), preskočeni treninzi s Vrati, pokretanje ispočetka i brisanje. Podsjetnici su u [ScheduleReminderCard].
  * Kao na iOS-u, ✓ sprema, a natrag s promjenama pita Spremi ili Izađi bez spremanja: novi raspored ([isNew])
  * se tada briše, a postojeći vraća iz [ScheduleSnapshot] (polja, niz i izmjene ciklusa).
  */
@@ -73,6 +74,8 @@ fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, isNew: Boolean
     var picking by rememberSaveable { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
     var asksToSave by remember { mutableStateOf(false) }
+    // Novi trening stvoren iz niza: otvara se u uređivaču, a izlazak bez spremanja ga uklanja i iz niza.
+    var createdTemplate by rememberSaveable { mutableStateOf<String?>(null) }
     // Stanje pri otvaranju: snimka za "Izađi bez spremanja" i brojač spremanja za pitanje ima li promjena.
     val snapshot = remember(scheduleId) {
         store.schedules.firstOrNull { it.id == scheduleId }?.let { ScheduleSnapshot(it, store) }
@@ -101,11 +104,24 @@ fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, isNew: Boolean
         val changed = isNew || revision != openedRevision || name.trim() != openedName
         if (changed) asksToSave = true else onClose()
     }
+
+    createdTemplate?.let { id ->
+        TemplateEditorScreen(
+            services,
+            UUID.fromString(id),
+            isNew = true,
+            discardNew = { engine.discardNewWorkout(it, schedule) },
+            onClose = { createdTemplate = null },
+        )
+        return
+    }
     BackHandler { leave() }
 
     val items = schedule.orderedItems
     val deletedName = stringResource(R.string.deleted_workout)
     val restDay = stringResource(R.string.rest_day)
+    val newWorkoutName = stringResource(R.string.new_workout_name)
+    val skipped = remember(revision) { engine.skippedWorkouts(schedule) }
 
     Scaffold(
         topBar = {
@@ -198,6 +214,17 @@ fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, isNew: Boolean
                                 modifier = Modifier.weight(1f),
                                 color = if (item.kind == ScheduleItemKind.REST_DAY) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
                             )
+                            // Preskočeni trening se može vratiti dok je ciklus u tijeku, kao na iOS-u.
+                            skipped.firstOrNull { it.change.scheduleItemId == item.id }?.let { skip ->
+                                Text(
+                                    stringResource(R.string.skipped),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                TextButton(onClick = { engine.unskip(skip.change, schedule) }) {
+                                    Text(stringResource(R.string.restore_skipped))
+                                }
+                            }
                             IconButton(enabled = index > 0, onClick = { engine.moveItems(schedule, listOf(index), index - 1) }) {
                                 Icon(Icons.Filled.KeyboardArrowUp, contentDescription = stringResource(R.string.move_up))
                             }
@@ -230,9 +257,15 @@ fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, isNew: Boolean
             title = { Text(stringResource(R.string.add_workout)) },
             text = {
                 Column(Modifier.heightIn(max = 400.dp).verticalScroll(rememberScrollState())) {
-                    if (templates.isEmpty()) {
-                        Text(stringResource(R.string.workouts_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
+                    ListItem(
+                        modifier = Modifier.clickable {
+                            picking = false
+                            createdTemplate = engine.addNewWorkout(newWorkoutName, schedule).id.toString()
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        headlineContent = { Text(stringResource(R.string.new_workout)) },
+                        leadingContent = { Icon(Icons.Filled.Add, contentDescription = null) },
+                    )
                     templates.forEach { template ->
                         ListItem(
                             modifier = Modifier.clickable {

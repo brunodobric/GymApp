@@ -634,4 +634,6 @@
     <string name="separate_superset">Separate</string>
     <string name="superset_no_partner">First add an exercise to pair it with in a superset.</string>
     <string name="rep_range">Range %1$d–%2$d</string>
+    <string name="skipped">Skipped</string>
+    <string name="restore_skipped">Restore</string>
 </resources>

@@ -646,4 +646,6 @@
     <string name="separate_superset">Izdvoji</string>
     <string name="superset_no_partner">Prvo dodaj vježbu s kojom ćeš je spojiti u superset.</string>
     <string name="rep_range">Raspon %1$d–%2$d</string>
+    <string name="skipped">Preskočeno</string>
+    <string name="restore_skipped">Vrati</string>
 </resources>
