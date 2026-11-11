@@ -115,6 +115,24 @@ struct ForeignWorkoutsCSVTests {
         #expect(ForeignWorkoutsCSV.parseDuration("53\u{00A0}min") == 3180)
     }
 
+    @Test("Izvoz s Androida: prazan prvi redak, oznaka h i bilješka uz vježbu")
+    func androidExport() throws {
+        let text = "\n\"Day 1 · Week 11 · New plan\";\"2026-11-09 19:51 h\";\"43 min\"\n"
+            + "\"1. Incline Bench Press · Dumbbells · 10 reps\"\n#;KG;REPS\n1;36;9\n"
+            + "\"2. Leg Extensions · Machine · 10 reps\";\"Nisam napravio\"\n#;KG;REPS\n1;40;10\n"
+        #expect(ForeignWorkoutsCSV.matches(text))
+        let workouts = try ForeignWorkoutsCSV.parse(text, timeZone: utc)
+        let workout = try #require(workouts.first)
+        #expect(workouts.count == 1)
+        #expect(workout.startedAt == utcDate(2026, 11, 9, 19, 51))
+        #expect(workout.durationSeconds == 2580)
+        #expect(workout.exercises.map(\.note) == ["", "Nisam napravio"])
+        #expect(workout.exercises.last?.name == "Leg Extensions")
+        #expect(ForeignWorkoutImport.notes(for: workout) == "Week 11 · New plan\nLeg Extensions: Nisam napravio")
+        #expect(ForeignWorkoutsCSV.parseDate("2026-11-09 7:51 h", timeZone: utc) == utcDate(2026, 11, 9, 7, 51))
+        #expect(ForeignWorkoutsCSV.parseDate("2026-11-09 24:10 h", timeZone: utc) == nil)
+    }
+
     @Test("Tekst datoteke: UTF-8 i UTF-16 s BOM-om daju isti tekst")
     func importTextEncodings() {
         let text = "\"Push · Day 1\";\"2026-11-02 4:27 pm\";\"53 min\"\n"
