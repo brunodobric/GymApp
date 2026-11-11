@@ -712,4 +712,9 @@
     <string name="discard_changes">Odbaci izmjene</string>
     <string name="keep_editing">Nastavi uređivati</string>
     <string name="nothing_completed_save">Trening bez ijedne završene serije ne može se spremiti.</string>
+    <string name="decrease">Smanji</string>
+    <string name="increase">Povećaj</string>
+    <string name="start_short">Započni</string>
+    <string name="cycle_of">ciklus %1$d od %2$d</string>
+    <string name="more_exercises">+ još %1$d</string>
 </resources>

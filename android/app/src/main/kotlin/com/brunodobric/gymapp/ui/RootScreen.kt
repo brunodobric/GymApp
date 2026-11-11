@@ -1,6 +1,11 @@
 package com.brunodobric.gymapp.ui
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,9 +16,11 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.brunodobric.gymapp.AppServices
@@ -144,61 +152,79 @@ fun RootScreen(
         OnboardingScreen(services)
         return
     }
-    if (showsWorkout) {
-        WorkoutScreen(services, onClose = { showsWorkout = false })
-        return
-    }
-    upcomingSchedule?.let { id ->
-        UpcomingWorkoutScreen(
-            services,
-            UUID.fromString(id),
-            onClose = { upcomingSchedule = null },
-            onStarted = {
-                upcomingSchedule = null
-                showsWorkout = true
+    val mainTabs: @Composable () -> Unit = {
+        Scaffold(
+            bottomBar = {
+                NavigationBar {
+                    Section.entries.forEach { section ->
+                        NavigationBarItem(
+                            selected = section == selected,
+                            onClick = { selected = section },
+                            icon = { Icon(section.icon, contentDescription = null) },
+                            label = { Text(stringResource(section.title)) },
+                        )
+                    }
+                }
             },
-        )
-        return
-    }
-    if (showsSettings) {
-        SettingsScreen(services, onClose = { showsSettings = false })
-        return
-    }
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                Section.entries.forEach { section ->
-                    NavigationBarItem(
-                        selected = section == selected,
-                        onClick = { selected = section },
-                        icon = { Icon(section.icon, contentDescription = null) },
-                        label = { Text(stringResource(section.title)) },
+        ) { padding ->
+            Box(Modifier.padding(padding).fillMaxSize()) {
+                when (selected) {
+                    Section.HOME -> HomeScreen(
+                        services,
+                        onOpenWorkout = { showsWorkout = true },
+                        onOpenSettings = { showsSettings = true },
+                        workoutShown = showsWorkout,
+                        onOpenStatistics = { selected = Section.STATISTICS },
+                        onOpenSession = { session ->
+                            selected = Section.HISTORY
+                            historyRequest = OpenRequest(session.id.toString())
+                        },
+                        onOpenBody = {
+                            selected = Section.STATISTICS
+                            bodyRequest = OpenRequest("body")
+                        },
                     )
+                    Section.HISTORY -> HistoryScreen(services, historyRequest, onRequestHandled = { historyRequest = null })
+                    Section.SCHEDULES -> SchedulesScreen(services)
+                    Section.EXERCISES -> ExercisesScreen(services)
+                    Section.STATISTICS -> StatisticsScreen(services, bodyRequest, onRequestHandled = { bodyRequest = null })
                 }
             }
-        },
-    ) { padding ->
-        Box(Modifier.padding(padding).fillMaxSize()) {
-            when (selected) {
-                Section.HOME -> HomeScreen(
-                    services,
-                    onOpenWorkout = { showsWorkout = true },
-                    onOpenSettings = { showsSettings = true },
-                    onOpenStatistics = { selected = Section.STATISTICS },
-                    onOpenSession = { session ->
-                        selected = Section.HISTORY
-                        historyRequest = OpenRequest(session.id.toString())
-                    },
-                    onOpenBody = {
-                        selected = Section.STATISTICS
-                        bodyRequest = OpenRequest("body")
-                    },
-                )
-                Section.HISTORY -> HistoryScreen(services, historyRequest, onRequestHandled = { historyRequest = null })
-                Section.SCHEDULES -> SchedulesScreen(services)
-                Section.EXERCISES -> ExercisesScreen(services)
-                Section.STATISTICS -> StatisticsScreen(services, bodyRequest, onRequestHandled = { bodyRequest = null })
+        }
+    }
+    // Trening leži iznad ostatka aplikacije: "natrag" ga sažima prema kartici na Početnoj, a dodir kartice
+    // ga ponovno otvara (zoom prijelaz na iOS-u).
+    Box(Modifier.fillMaxSize()) {
+        val upcomingId = upcomingSchedule
+        when {
+            upcomingId != null -> UpcomingWorkoutScreen(
+                services,
+                UUID.fromString(upcomingId),
+                onClose = { upcomingSchedule = null },
+                onStarted = {
+                    upcomingSchedule = null
+                    showsWorkout = true
+                },
+            )
+            showsSettings -> SettingsScreen(services, onClose = { showsSettings = false })
+            else -> mainTabs()
+        }
+        AnimatedVisibility(
+            visible = showsWorkout,
+            enter = fadeIn() + scaleIn(initialScale = 0.4f, transformOrigin = WORKOUT_CARD_ORIGIN),
+            exit = fadeOut() + scaleOut(targetScale = 0.4f, transformOrigin = WORKOUT_CARD_ORIGIN),
+        ) {
+            Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                WorkoutScreen(services, onClose = {
+                    // Natrag sažima trening u karticu na Početnoj, pa se vraća na taj tab.
+                    selected = Section.HOME
+                    showsWorkout = false
+                })
             }
         }
     }
 }
+
+/** Kartica treninga na Početnoj je pri vrhu ekrana, pa se ekran treninga sažima prema njoj. */
+private val WORKOUT_CARD_ORIGIN = TransformOrigin(0.5f, 0.18f)
+

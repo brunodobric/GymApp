@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,9 +46,6 @@ import com.brunodobric.gymapp.training.WorkoutError
 import com.brunodobric.gymapp.ui.workout.WorkoutLifecycle
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.workout.PlateCalculatorDialog
-import com.brunodobric.gymapp.ui.rememberTicker
-import com.brunodobric.gymapp.units.DurationInput
-import java.time.Duration
 import java.time.Instant
 
 /**
@@ -66,6 +62,8 @@ fun HomeScreen(
     onOpenStatistics: () -> Unit = {},
     onOpenSession: (Session) -> Unit = {},
     onOpenBody: () -> Unit = {},
+    /** Ekran treninga je otvoren iznad Početne: ponuda za prekinut trening se ne pokazuje. */
+    workoutShown: Boolean = false,
 ) {
     val store = services.store
     val revision = rememberStoreRevision(store)
@@ -82,7 +80,7 @@ fun HomeScreen(
         layout.upgradeToWeekCard()
         layout.seedDefaults()
     }
-    RecoveryPrompt(services, onContinue = onOpenWorkout)
+    if (!workoutShown) RecoveryPrompt(services, onContinue = onOpenWorkout)
     // Aktivni rasporedi čiji su treninzi u izboru (prazno: izbor bez rasporeda).
     var pickerSchedules by remember { mutableStateOf<List<Schedule>>(emptyList()) }
 
@@ -125,16 +123,12 @@ fun HomeScreen(
             }
         }
         if (active != null) {
-            val now = rememberTicker()
-            Card(onClick = onOpenWorkout, modifier = Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(stringResource(R.string.workout_in_progress), style = MaterialTheme.typography.labelLarge)
-                    Text(active.name, style = MaterialTheme.typography.titleLarge)
-                    val seconds = Duration.between(active.startedAt, now).seconds.coerceAtLeast(0).toInt()
-                    Text(DurationInput.format(seconds), style = MaterialTheme.typography.bodyMedium)
-                }
-            }
+            // Trening u tijeku: kartica s upravljanjem serijom, kao ActiveWorkoutCard na iOS-u.
+            ActiveWorkoutCard(services, revision, onOpen = onOpenWorkout)
         } else {
+            upcoming.firstOrNull()?.let { next ->
+                NextWorkoutHero(next, onStart = { start { TemplateStarter(store).start(next) } })
+            }
             StartWorkoutCard(
                 planned = upcoming,
                 templateCount = startable.size,
@@ -145,6 +139,7 @@ fun HomeScreen(
                     showsPicker = true
                 },
                 onStartEmpty = { start { WorkoutEngine(store).startSession(emptyName) } },
+                skipsFirst = upcoming.isNotEmpty(),
             )
         }
         val kinds = remember(revision) { layout.cards().mapNotNull { it.kind } }
