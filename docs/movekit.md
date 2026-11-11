@@ -34,7 +34,7 @@ Jednom: `brew install ffmpeg`.
 ```sh
 scripts/movekit.sh      # pretvori klipove i postere, napravi texts.json i kopira sve u Resources/MoveKit/
 xcodegen generate
-scripts/movekit-android.sh --apk   # Android: posteri u assets/movekit/ i debug APK (treba Android SDK)
+scripts/movekit-android.sh --apk   # Android: klipovi, posteri i upute u assets/movekit/ i debug APK (treba Android SDK)
 ```
 
 APK s posterima smije se dati samo poimence odabranim testerima, nikad preko javne poveznice ni GitHub Actionsa.

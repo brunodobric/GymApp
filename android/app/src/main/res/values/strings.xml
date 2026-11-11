@@ -631,4 +631,6 @@
     <string name="shortcut_start_template">Započni: %1$s</string>
     <string name="all_exercises">Sve vježbe</string>
     <string name="my_exercises">Moje vježbe</string>
+    <string name="pause_animation">Pauziraj animaciju</string>
+    <string name="play_animation">Pokreni animaciju</string>
 </resources>
