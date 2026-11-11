@@ -73,6 +73,23 @@ object Csv {
     }
 }
 
+/** Tekst uvezene datoteke iz bajtova. */
+object ImportText {
+    /**
+     * UTF-8, ili UTF-16 kad datoteka počinje njegovim BOM-om (neke aplikacije i Excel tako izvoze CSV).
+     * BOM se uklanja, da prvi naziv stupca ostane ispravan.
+     */
+    fun decode(bytes: ByteArray): String {
+        fun starts(vararg prefix: Int) = bytes.size >= prefix.size && prefix.indices.all { (bytes[it].toInt() and 0xFF) == prefix[it] }
+        val charset = when {
+            starts(0xFF, 0xFE) -> Charsets.UTF_16LE
+            starts(0xFE, 0xFF) -> Charsets.UTF_16BE
+            else -> Charsets.UTF_8
+        }
+        return String(bytes, charset).removePrefix("\uFEFF")
+    }
+}
+
 /** Datumi u CSV-u: ISO 8601 s milisekundama (UTC), pa su čitljivi i vraćaju se bez gubitka u milisekundi. */
 object CsvDate {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX").withZone(ZoneOffset.UTC)

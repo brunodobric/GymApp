@@ -122,6 +122,49 @@ class ForeignImportTest {
         }
 
         @Test
+        fun `datum s drugog uredaja - neprekinuti razmak, PM, tocke i sekunde`() {
+            val expected = utcDate(2026, 11, 2, 16, 27)
+            assertEquals(expected, ForeignWorkoutsCsv.parseDate("2026-11-02 4:27\u202Fpm", utc))
+            assertEquals(expected, ForeignWorkoutsCsv.parseDate("2026-11-02 4:27\u00A0PM", utc))
+            assertEquals(expected, ForeignWorkoutsCsv.parseDate("2026-11-02 4:27 p.m.", utc))
+            assertEquals(expected, ForeignWorkoutsCsv.parseDate("2026-11-02 4:27 p. m.", utc))
+            assertEquals(expected, ForeignWorkoutsCsv.parseDate("2026-11-02 16:27:05", utc))
+            assertNull(ForeignWorkoutsCsv.parseDate("2026-11-02 4:27 popodne", utc))
+            assertNull(ForeignWorkoutsCsv.parseDate("2026-11-02 16:27:75", utc))
+            assertEquals(3180, ForeignWorkoutsCsv.parseDuration("53\u00A0min"))
+        }
+
+        @Test
+        fun `tekst datoteke - UTF-8 i UTF-16 s BOM-om daju isti tekst`() {
+            val text = "\"Push · Day 1\";\"2026-11-02 4:27 pm\";\"53 min\"\n"
+            val bom = "\uFEFF"
+            assertEquals(text, ImportText.decode(text.toByteArray(Charsets.UTF_8)))
+            assertEquals(text, ImportText.decode((bom + text).toByteArray(Charsets.UTF_8)))
+            assertEquals(text, ImportText.decode((bom + text).toByteArray(Charsets.UTF_16LE)))
+            assertEquals(text, ImportText.decode((bom + text).toByteArray(Charsets.UTF_16BE)))
+            assertTrue(ForeignWorkoutsCsv.matches(ImportText.decode((bom + text).toByteArray(Charsets.UTF_16LE))))
+        }
+
+        @Test
+        fun `datoteka s drugog uredaja - isti trening i isti kljuc uz drugi razdjelnik i razmak`() {
+            val original = "\"Push · Day 1\";\"2026-11-02 4:27 pm\";\"53 min\"\n\"1. Plank · Bodyweight\"\n#;MINS\n1;1\n"
+            val reference = ForeignWorkoutsCsv.parse(original, utc).single()
+            val variants = listOf(
+                original.replace("4:27 pm", "4:27\u202FPM"),
+                original.replace(';', ','),
+                original.replace(';', '\t'),
+            )
+            for (variant in variants) {
+                assertTrue(ForeignWorkoutsCsv.matches(variant))
+                val workout = ForeignWorkoutsCsv.parse(variant, utc).single()
+                assertEquals(reference.startedAt, workout.startedAt)
+                assertEquals(60, workout.exercises.single().sets.single().durationSeconds)
+            }
+            // Razmak ispred "pm" ne mijenja ključ; veličina slova ostaje dio ključa kako je zapisana.
+            assertEquals(reference.stableId, ForeignWorkoutsCsv.parse(original.replace("4:27 pm", "4:27\u202Fpm"), utc).single().stableId)
+        }
+
+        @Test
         fun `vlastita tezina + teret, prazne serije i trajanje u minutama`() {
             val exercises = ForeignWorkoutsCsv.parse(fixture(), utc).flatMap { it.exercises }
 

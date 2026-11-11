@@ -102,6 +102,51 @@ struct ForeignWorkoutsCSVTests {
         #expect(ForeignWorkoutsCSV.parseDate("53 min", timeZone: utc) == nil)
     }
 
+    @Test("Datum s drugog uređaja: neprekinuti razmak, PM, točke i sekunde")
+    func datesFromOtherDevices() {
+        let expected = utcDate(2026, 11, 2, 16, 27)
+        #expect(ForeignWorkoutsCSV.parseDate("2026-11-02 4:27\u{202F}pm", timeZone: utc) == expected)
+        #expect(ForeignWorkoutsCSV.parseDate("2026-11-02 4:27\u{00A0}PM", timeZone: utc) == expected)
+        #expect(ForeignWorkoutsCSV.parseDate("2026-11-02 4:27 p.m.", timeZone: utc) == expected)
+        #expect(ForeignWorkoutsCSV.parseDate("2026-11-02 4:27 p. m.", timeZone: utc) == expected)
+        #expect(ForeignWorkoutsCSV.parseDate("2026-11-02 16:27:05", timeZone: utc) == expected)
+        #expect(ForeignWorkoutsCSV.parseDate("2026-11-02 4:27 popodne", timeZone: utc) == nil)
+        #expect(ForeignWorkoutsCSV.parseDate("2026-11-02 16:27:75", timeZone: utc) == nil)
+        #expect(ForeignWorkoutsCSV.parseDuration("53\u{00A0}min") == 3180)
+    }
+
+    @Test("Tekst datoteke: UTF-8 i UTF-16 s BOM-om daju isti tekst")
+    func importTextEncodings() {
+        let text = "\"Push · Day 1\";\"2026-11-02 4:27 pm\";\"53 min\"\n"
+        let withBOM = "\u{FEFF}" + text
+        #expect(ImportText.decode(Data(text.utf8)) == text)
+        #expect(ImportText.decode(Data(withBOM.utf8)) == text)
+        #expect(ImportText.decode(withBOM.data(using: .utf16LittleEndian) ?? Data()) == text)
+        #expect(ImportText.decode(withBOM.data(using: .utf16BigEndian) ?? Data()) == text)
+        #expect(ForeignWorkoutsCSV.matches(ImportText.decode(withBOM.data(using: .utf16LittleEndian) ?? Data())))
+    }
+
+    @Test("Datoteka s drugog uređaja: isti trening i isti ključ uz drugi razdjelnik i razmak")
+    func variantsFromOtherDevices() throws {
+        let original = "\"Push · Day 1\";\"2026-11-02 4:27 pm\";\"53 min\"\n\"1. Plank · Bodyweight\"\n#;MINS\n1;1\n"
+        let reference = try #require(try ForeignWorkoutsCSV.parse(original, timeZone: utc).first)
+        let variants = [
+            original.replacingOccurrences(of: "4:27 pm", with: "4:27\u{202F}PM"),
+            original.replacingOccurrences(of: ";", with: ","),
+            original.replacingOccurrences(of: ";", with: "\t")
+        ]
+        for variant in variants {
+            #expect(ForeignWorkoutsCSV.matches(variant))
+            let workouts = try ForeignWorkoutsCSV.parse(variant, timeZone: utc)
+            #expect(workouts.count == 1)
+            #expect(workouts.first?.startedAt == reference.startedAt)
+            #expect(workouts.first?.exercises.first?.sets.first?.durationSeconds == 60)
+        }
+        // Razmak ispred "pm" ne mijenja ključ; veličina slova ostaje dio ključa kako je zapisana.
+        let spaced = try ForeignWorkoutsCSV.parse(original.replacingOccurrences(of: "4:27 pm", with: "4:27\u{202F}pm"), timeZone: utc)
+        #expect(spaced.first?.stableID == reference.stableID)
+    }
+
     @Test("Vlastita težina + teret, prazne serije i trajanje u minutama")
     func specialValues() throws {
         let workouts = try ForeignWorkoutsCSV.parse(fixture(), timeZone: utc)

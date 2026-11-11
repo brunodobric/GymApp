@@ -316,7 +316,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
 * **Export / Import:**
   * Export u CSV i JSON.
   * Import iz CSV-a (vlastiti backup — format koji app i exportira).
-  * **Import treninga iz druge aplikacije:** CSV s točkom-zarezom u kojem svaki trening počinje zaglavljem `"Naziv · Day N · Week N · Plan";"2026-11-02 4:27 pm";"53 min"`, a ispod su vježbe (`"1. Naziv · Oprema · 10 reps"`) s tablicama serija (`#;KG;REPS` ili `#;MINS`). Aplikacija sama prepozna format pri "Uvezi iz datoteke".
+  * **Import treninga iz druge aplikacije:** CSV s točkom-zarezom u kojem svaki trening počinje zaglavljem `"Naziv · Day N · Week N · Plan";"2026-11-02 4:27 pm";"53 min"`, a ispod su vježbe (`"1. Naziv · Oprema · 10 reps"`) s tablicama serija (`#;KG;REPS` ili `#;MINS`). Aplikacija sama prepozna format pri "Uvezi iz datoteke". Prihvaća i sitne razlike istog izvoza s drugog uređaja: zarez ili tabulator kao razdjelnik, neprekinuti razmak ispred "pm", "PM" ili "p.m.", sekunde u vremenu i datoteku u UTF-16.
     * Prije uvoza prikazuje se pregled: broj novih i već uvezenih treninga, razdoblje, broj serija i kamo ide koja vježba (katalog, postojeća ili nova vlastita vježba).
     * Vježbe se povezuju s katalogom prema nazivu i opremi (`ForeignExerciseMatcher` u GymKitu). Vježba bez pravog para u katalogu postaje vlastita vježba; ako vlastita vježba istog naziva već postoji, koristi se ona.
     * Vrijednost s `+` ("+12.5") je vlastita težina + teret, a `-` prazna serija koja se ne uvozi. Datum je lokalno vrijeme uređaja.

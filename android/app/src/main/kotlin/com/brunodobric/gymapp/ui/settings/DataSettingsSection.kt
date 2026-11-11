@@ -33,6 +33,7 @@ import com.brunodobric.gymapp.backup.CsvBackup
 import com.brunodobric.gymapp.backup.DataReset
 import com.brunodobric.gymapp.backup.ForeignWorkoutImport
 import com.brunodobric.gymapp.backup.ForeignWorkoutsCsv
+import com.brunodobric.gymapp.backup.ImportText
 import com.brunodobric.gymapp.backup.JsonBackup
 import com.brunodobric.gymapp.ui.catalogLanguage
 import java.io.ByteArrayOutputStream
@@ -267,7 +268,6 @@ private fun read(context: Context, uri: Uri): String {
             output.write(buffer, 0, count)
             if (output.size() > MAX_IMPORT_BYTES) throw ImportTooLarge()
         }
-        // BOM na početku (Excel, Numbers) bi pokvario prvi naziv stupca, kao što ga iOS pri čitanju uklanja.
-        output.toString(Charsets.UTF_8.name()).removePrefix("\uFEFF")
+        ImportText.decode(output.toByteArray())
     }
 }
