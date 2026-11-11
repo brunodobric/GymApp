@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simbol postavki Podaci: tri složena diska (vlastiti crtež, bez vanjskih resursa). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:fillType="evenOdd"
+        android:pathData="M4,3L20,3A1,1 0 0,1 21,4L21,8A1,1 0 0,1 20,9L4,9A1,1 0 0,1 3,8L3,4A1,1 0 0,1 4,3ZM6,5L6,7L8,7L8,5ZM4,10L20,10A1,1 0 0,1 21,11L21,14A1,1 0 0,1 20,15L4,15A1,1 0 0,1 3,14L3,11A1,1 0 0,1 4,10ZM6,11.5L6,13.5L8,13.5L8,11.5ZM4,16L20,16A1,1 0 0,1 21,17L21,20A1,1 0 0,1 20,21L4,21A1,1 0 0,1 3,20L3,17A1,1 0 0,1 4,16ZM6,17.5L6,19.5L8,19.5L8,17.5Z" />
+</vector>

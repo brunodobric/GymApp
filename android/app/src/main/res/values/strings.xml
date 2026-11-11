@@ -647,4 +647,6 @@
     <string name="import_exercises_header">Vježbe</string>
     <string name="import_exercises_footer">Vježbe kojih nema u katalogu dodaju se kao tvoje vlastite vježbe. Prazne serije se ne uvoze.</string>
     <string name="import_new_custom">Nova vlastita vježba</string>
+    <string name="expand_exercise">Otvori vježbu</string>
+    <string name="collapse_exercise">Zatvori vježbu</string>
 </resources>

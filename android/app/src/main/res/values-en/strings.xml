@@ -637,4 +637,6 @@
     <string name="import_exercises_header">Exercises</string>
     <string name="import_exercises_footer">Exercises that aren\'t in the catalog are added as your custom exercises. Empty sets aren\'t imported.</string>
     <string name="import_new_custom">New custom exercise</string>
+    <string name="expand_exercise">Expand exercise</string>
+    <string name="collapse_exercise">Collapse exercise</string>
 </resources>
