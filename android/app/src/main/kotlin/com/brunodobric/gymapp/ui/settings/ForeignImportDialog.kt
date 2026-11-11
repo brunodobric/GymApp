@@ -69,10 +69,10 @@ internal fun ForeignImportDialog(preview: ForeignWorkoutImport.Preview, onImport
             },
         ) { padding ->
             LazyColumn(Modifier.padding(padding).fillMaxSize()) {
-                item { Header(stringResource(R.string.import_workouts_header)) }
-                item { Value(stringResource(R.string.import_new_workouts), numbers.format(preview.newWorkouts.size)) }
+                item { ImportHeader(stringResource(R.string.import_workouts_header)) }
+                item { ImportValue(stringResource(R.string.import_new_workouts), numbers.format(preview.newWorkouts.size)) }
                 if (preview.alreadyImported > 0) {
-                    item { Value(stringResource(R.string.import_already_imported), numbers.format(preview.alreadyImported)) }
+                    item { ImportValue(stringResource(R.string.import_already_imported), numbers.format(preview.alreadyImported)) }
                 }
                 val first = preview.firstDate
                 val last = preview.lastDate
@@ -82,19 +82,19 @@ internal fun ForeignImportDialog(preview: ForeignWorkoutImport.Preview, onImport
                     } else {
                         dates.format(first) + " – " + dates.format(last)
                     }
-                    item { Value(stringResource(R.string.import_period), period) }
+                    item { ImportValue(stringResource(R.string.import_period), period) }
                 }
-                item { Value(stringResource(R.string.import_sets), numbers.format(preview.setCount)) }
+                item { ImportValue(stringResource(R.string.import_sets), numbers.format(preview.setCount)) }
                 if (preview.newWorkouts.isEmpty()) {
-                    item { Footer(stringResource(R.string.import_all_imported)) }
+                    item { ImportFooter(stringResource(R.string.import_all_imported)) }
                 }
                 if (preview.exercises.isNotEmpty()) {
-                    item { Header(stringResource(R.string.import_exercises_header)) }
+                    item { ImportHeader(stringResource(R.string.import_exercises_header)) }
                     items(preview.exercises, key = { it.id }) { mapping ->
                         MappingRow(mapping)
                         HorizontalDivider()
                     }
-                    item { Footer(stringResource(R.string.import_exercises_footer)) }
+                    item { ImportFooter(stringResource(R.string.import_exercises_footer)) }
                 }
             }
         }
@@ -102,7 +102,7 @@ internal fun ForeignImportDialog(preview: ForeignWorkoutImport.Preview, onImport
 }
 
 @Composable
-private fun Value(label: String, value: String) {
+private fun ImportValue(label: String, value: String) {
     ListItem(
         headlineContent = { Text(label) },
         trailingContent = { Text(value, style = MaterialTheme.typography.bodyLarge) },
@@ -138,7 +138,7 @@ private fun MappingRow(mapping: ForeignWorkoutImport.ExerciseMapping) {
 }
 
 @Composable
-private fun Header(text: String) {
+private fun ImportHeader(text: String) {
     Text(
         text,
         style = MaterialTheme.typography.titleSmall,
@@ -148,7 +148,7 @@ private fun Header(text: String) {
 }
 
 @Composable
-private fun Footer(text: String) {
+private fun ImportFooter(text: String) {
     Text(
         text,
         style = MaterialTheme.typography.bodySmall,
