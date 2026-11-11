@@ -66,16 +66,6 @@
     <string name="delete_failed">Brisanje nije uspjelo.</string>
     <string name="delete_failed_message">Pokušaj ponovno.</string>
     <string name="ok">U redu</string>
-    <plurals name="foreign_import_workouts">
-        <item quantity="one">%d novi trening</item>
-        <item quantity="few">%d nova treninga</item>
-        <item quantity="other">%d novih treninga</item>
-    </plurals>
-    <plurals name="foreign_import_new_custom">
-        <item quantity="one">%d nova vlastita vježba</item>
-        <item quantity="few">%d nove vlastite vježbe</item>
-        <item quantity="other">%d novih vlastitih vježbi</item>
-    </plurals>
     <string name="delete_workout">Obriši trening</string>
     <string name="delete_workout_title">Obrisati trening?</string>
     <string name="delete_workout_message">Trening i njegove serije bit će trajno obrisani, a rekordi i statistika preračunat će se bez njega.</string>
@@ -633,4 +623,28 @@
     <string name="my_exercises">Moje vježbe</string>
     <string name="pause_animation">Pauziraj animaciju</string>
     <string name="play_animation">Pokreni animaciju</string>
+    <string name="save_changes_title">Spremiti promjene?</string>
+    <string name="save_changes_message">Promjene još nisu spremljene.</string>
+    <string name="save_schedule_title">Spremiti raspored?</string>
+    <string name="save_schedule_message">Novi raspored još nije spremljen.</string>
+    <string name="save_workout_title">Spremiti trening?</string>
+    <string name="save_workout_message">Novi trening još nije spremljen.</string>
+    <string name="leave_without_saving">Izađi bez spremanja</string>
+    <string name="superset">Superset</string>
+    <string name="leave_superset">Izbaci iz superseta</string>
+    <string name="superset_with">Superset s</string>
+    <string name="separate_superset">Izdvoji</string>
+    <string name="superset_no_partner">Prvo dodaj vježbu s kojom ćeš je spojiti u superset.</string>
+    <string name="rep_range">Raspon %1$d–%2$d</string>
+    <string name="skipped">Preskočeno</string>
+    <string name="restore_skipped">Vrati</string>
+    <string name="import_new_workouts">Novi treninzi</string>
+    <string name="import_already_imported">Već uvezeni</string>
+    <string name="import_period">Razdoblje</string>
+    <string name="import_sets">Serije</string>
+    <string name="import_workouts_header">Treninzi</string>
+    <string name="import_all_imported">Svi treninzi iz ove datoteke već su uvezeni.</string>
+    <string name="import_exercises_header">Vježbe</string>
+    <string name="import_exercises_footer">Vježbe kojih nema u katalogu dodaju se kao tvoje vlastite vježbe. Prazne serije se ne uvoze.</string>
+    <string name="import_new_custom">Nova vlastita vježba</string>
 </resources>

@@ -80,8 +80,8 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
     var newTemplateId by rememberSaveable { mutableStateOf<UUID?>(null) }
 
     newTemplateId?.let { id ->
-        // Uređivač sprema odmah, pa novi trening ostaje i kad se uređivač zatvori.
-        TemplateEditorScreen(services, id, onClose = { newTemplateId = null })
+        // Novi trening iz ovog: izlazak bez spremanja ga briše.
+        TemplateEditorScreen(services, id, isNew = true, onClose = { newTemplateId = null })
         return
     }
     BackHandler(onBack = onClose)

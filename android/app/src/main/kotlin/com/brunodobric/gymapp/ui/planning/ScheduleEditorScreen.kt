@@ -13,6 +13,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -50,18 +52,20 @@ import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.model.ScheduleItemKind
 import com.brunodobric.gymapp.planning.ScheduleEngine
+import com.brunodobric.gymapp.planning.ScheduleSnapshot
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import java.text.Collator
 import java.util.UUID
 
 /**
  * Uređivač rasporeda: naziv, aktivnost, broj ciklusa, podsjetnici, niz treninga i dana odmora (dodavanje,
- * redoslijed strelicama, uklanjanje), pokretanje ispočetka i brisanje. Promjene se spremaju odmah.
- * Podsjetnici su u [ScheduleReminderCard]. Preskočeni treninzi i tijek "Spremi / Izađi bez spremanja" s iOS-a dolaze kasnije.
+ * redoslijed strelicama, uklanjanje, novi trening iz niza), preskočeni treninzi s Vrati, pokretanje ispočetka i brisanje. Podsjetnici su u [ScheduleReminderCard].
+ * Kao na iOS-u, ✓ sprema, a natrag s promjenama pita Spremi ili Izađi bez spremanja: novi raspored ([isNew])
+ * se tada briše, a postojeći vraća iz [ScheduleSnapshot] (polja, niz i izmjene ciklusa).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, onClose: () -> Unit) {
+fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, isNew: Boolean = false, onClose: () -> Unit) {
     val store = services.store
     val revision = rememberStoreRevision(store)
     val schedule = remember(revision, scheduleId) { store.schedules.firstOrNull { it.id == scheduleId } }
@@ -69,38 +73,71 @@ fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, onClose: () ->
     var name by rememberSaveable(scheduleId) { mutableStateOf(schedule?.name ?: "") }
     var picking by rememberSaveable { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
+    var asksToSave by remember { mutableStateOf(false) }
+    // Novi trening stvoren iz niza: otvara se u uređivaču, a izlazak bez spremanja ga uklanja i iz niza.
+    var createdTemplate by rememberSaveable { mutableStateOf<String?>(null) }
+    // Stanje pri otvaranju: snimka za "Izađi bez spremanja" i brojač spremanja za pitanje ima li promjena.
+    val snapshot = remember(scheduleId) {
+        store.schedules.firstOrNull { it.id == scheduleId }?.let { ScheduleSnapshot(it, store) }
+    }
+    val openedRevision = remember(scheduleId) { store.revision }
+    val openedName = remember(scheduleId) { store.schedules.firstOrNull { it.id == scheduleId }?.name ?: "" }
 
     if (schedule == null) {
         LaunchedEffect(Unit) { onClose() }
         return
     }
 
-    fun close() {
+    fun save() {
         val trimmed = name.trim()
-        if (trimmed.isNotEmpty() && trimmed != schedule.name) {
-            schedule.name = trimmed
-            store.save()
-        }
+        if (trimmed.isNotEmpty() && trimmed != schedule.name) schedule.name = trimmed
+        store.save()
         onClose()
     }
-    BackHandler { close() }
+
+    fun discard() {
+        if (isNew) engine.delete(schedule) else snapshot?.restore(schedule, store)
+        onClose()
+    }
+
+    fun leave() {
+        val changed = isNew || revision != openedRevision || name.trim() != openedName
+        if (changed) asksToSave = true else onClose()
+    }
+
+    createdTemplate?.let { id ->
+        TemplateEditorScreen(
+            services,
+            UUID.fromString(id),
+            isNew = true,
+            discardNew = { engine.discardNewWorkout(it, schedule) },
+            onClose = { createdTemplate = null },
+        )
+        return
+    }
+    BackHandler { leave() }
 
     val items = schedule.orderedItems
     val deletedName = stringResource(R.string.deleted_workout)
     val restDay = stringResource(R.string.rest_day)
+    val newWorkoutName = stringResource(R.string.new_workout_name)
+    val skipped = remember(revision) { engine.skippedWorkouts(schedule) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(name.ifBlank { schedule.name }) },
                 navigationIcon = {
-                    IconButton(onClick = { close() }) {
+                    IconButton(onClick = { leave() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { confirmDelete = true }) {
                         Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_schedule))
+                    }
+                    IconButton(onClick = { save() }) {
+                        Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.save))
                     }
                 },
             )
@@ -177,6 +214,17 @@ fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, onClose: () ->
                                 modifier = Modifier.weight(1f),
                                 color = if (item.kind == ScheduleItemKind.REST_DAY) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
                             )
+                            // Preskočeni trening se može vratiti dok je ciklus u tijeku, kao na iOS-u.
+                            skipped.firstOrNull { it.change.scheduleItemId == item.id }?.let { skip ->
+                                Text(
+                                    stringResource(R.string.skipped),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                TextButton(onClick = { engine.unskip(skip.change, schedule) }) {
+                                    Text(stringResource(R.string.restore_skipped))
+                                }
+                            }
                             IconButton(enabled = index > 0, onClick = { engine.moveItems(schedule, listOf(index), index - 1) }) {
                                 Icon(Icons.Filled.KeyboardArrowUp, contentDescription = stringResource(R.string.move_up))
                             }
@@ -209,9 +257,15 @@ fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, onClose: () ->
             title = { Text(stringResource(R.string.add_workout)) },
             text = {
                 Column(Modifier.heightIn(max = 400.dp).verticalScroll(rememberScrollState())) {
-                    if (templates.isEmpty()) {
-                        Text(stringResource(R.string.workouts_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
+                    ListItem(
+                        modifier = Modifier.clickable {
+                            picking = false
+                            createdTemplate = engine.addNewWorkout(newWorkoutName, schedule).id.toString()
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        headlineContent = { Text(stringResource(R.string.new_workout)) },
+                        leadingContent = { Icon(Icons.Filled.Add, contentDescription = null) },
+                    )
                     templates.forEach { template ->
                         ListItem(
                             modifier = Modifier.clickable {
@@ -226,6 +280,22 @@ fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, onClose: () ->
             },
             confirmButton = {},
             dismissButton = { TextButton(onClick = { picking = false }) { Text(stringResource(R.string.cancel)) } },
+        )
+    }
+
+    if (asksToSave) {
+        SaveChangesDialog(
+            item = EditedItem.SCHEDULE,
+            isNew = isNew,
+            onSave = {
+                asksToSave = false
+                save()
+            },
+            onDiscard = {
+                asksToSave = false
+                discard()
+            },
+            onDismiss = { asksToSave = false },
         )
     }
 

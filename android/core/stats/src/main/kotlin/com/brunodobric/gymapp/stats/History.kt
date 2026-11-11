@@ -3,7 +3,6 @@ package com.brunodobric.gymapp.stats
 import com.brunodobric.gymapp.model.GymStore
 import com.brunodobric.gymapp.model.Session
 import com.brunodobric.gymapp.model.WorkoutKind
-import com.brunodobric.gymapp.model.mergedSessions
 import java.time.Instant
 
 enum class HistorySort { NEWEST_FIRST, OLDEST_FIRST }
@@ -40,10 +39,7 @@ data class HistoryFilter(val kinds: Set<WorkoutKind> = emptySet(), val sort: His
 class HistoryQueries(private val store: GymStore) {
 
     /** Završeni vlastiti treninzi i treninzi iz Health Connecta u rasponu [from, to), od najnovijeg. */
-    fun finished(from: Instant = Instant.MIN, to: Instant = Instant.MAX): List<Session> = mergedSessions(
-        store.finishedSessions(from, to),
-        store.health.workouts.filter { it.startedAt >= from && it.startedAt < to },
-    )
+    fun finished(from: Instant = Instant.MIN, to: Instant = Instant.MAX): List<Session> = store.finishedSessions(from, to)
 
     fun sessions(filter: HistoryFilter = HistoryFilter()): List<Session> = filter.apply(finished())
 

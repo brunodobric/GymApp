@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -49,8 +51,10 @@ import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.TemplateExercise
 import com.brunodobric.gymapp.model.TemplateSet
+import com.brunodobric.gymapp.model.WorkoutTemplate
 import com.brunodobric.gymapp.model.ref
 import com.brunodobric.gymapp.planning.TemplateEngine
+import com.brunodobric.gymapp.planning.TemplateSnapshot
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.workout.ExercisePicker
 import com.brunodobric.gymapp.ui.workout.inputTypeOf
@@ -63,12 +67,19 @@ import java.util.UUID
 
 /**
  * Uređivač spremljenog treninga: naziv, vježbe s redoslijedom, serije s ciljanom težinom i ponavljanjima te
- * odmor po vježbi. Promjene se spremaju odmah. Superserije, rasponi ponavljanja i tijek
- * "Spremi / Izađi bez spremanja" s iOS-a dolaze kasnije.
+ * odmor po vježbi, superset sa sljedećom vježbom i raspon ponavljanja ispod polja. Kao na iOS-u, ✓ sprema, a natrag s promjenama pita Spremi ili Izađi bez spremanja:
+ * nova stavka ([isNew]) se tada briše, a postojeća vraća iz [TemplateSnapshot].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () -> Unit) {
+fun TemplateEditorScreen(
+    services: AppServices,
+    templateId: UUID,
+    isNew: Boolean = false,
+    // Novi trening iz rasporeda se odbacuje zajedno sa stavkom niza (`ScheduleEngine.discardNewWorkout`).
+    discardNew: ((WorkoutTemplate) -> Unit)? = null,
+    onClose: () -> Unit,
+) {
     val store = services.store
     val revision = rememberStoreRevision(store)
     val template = remember(revision, templateId) { store.template(templateId) }
@@ -77,23 +88,40 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () ->
     var confirmDelete by remember { mutableStateOf(false) }
     var name by rememberSaveable(templateId) { mutableStateOf(template?.name ?: "") }
     val unit = store.settings().weightUnit
+    // Stanje pri otvaranju: snimka za "Izađi bez spremanja" i brojač spremanja za pitanje ima li promjena.
+    val snapshot = remember(templateId) { store.template(templateId)?.let(::TemplateSnapshot) }
+    val openedRevision = remember(templateId) { store.revision }
+    val openedName = remember(templateId) { store.template(templateId)?.name ?: "" }
+    var asksToSave by remember { mutableStateOf(false) }
 
     if (template == null) {
         LaunchedEffect(Unit) { onClose() }
         return
     }
 
-    fun close() {
+    fun save() {
         val trimmed = name.trim()
-        if (trimmed.isNotEmpty() && trimmed != template.name) {
-            template.name = trimmed
-            store.save()
+        if (trimmed.isNotEmpty() && trimmed != template.name) template.name = trimmed
+        store.save()
+        onClose()
+    }
+
+    fun discard() {
+        when {
+            !isNew -> snapshot?.restore(template, store)
+            discardNew != null -> discardNew(template)
+            else -> engine.delete(template)
         }
         onClose()
     }
 
+    fun leave() {
+        val changed = isNew || revision != openedRevision || name.trim() != openedName
+        if (changed) asksToSave = true else onClose()
+    }
+
     BackHandler(enabled = picking) { picking = false }
-    BackHandler(enabled = !picking) { close() }
+    BackHandler(enabled = !picking) { leave() }
 
     if (picking) {
         ExercisePicker(
@@ -113,13 +141,16 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () ->
             TopAppBar(
                 title = { Text(name.ifBlank { template.name }) },
                 navigationIcon = {
-                    IconButton(onClick = { close() }) {
+                    IconButton(onClick = { leave() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { confirmDelete = true }) {
                         Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_template))
+                    }
+                    IconButton(onClick = { save() }) {
+                        Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.save))
                     }
                 },
             )
@@ -138,9 +169,14 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () ->
             )
             val exercises = template.orderedExercises
             exercises.forEachIndexed { index, exercise ->
+                val next = exercises.getOrNull(index + 1)
                 ExerciseCard(
                     exercise = exercise,
                     unit = unit,
+                    // Kao na iOS-u: vježba se spaja sa sljedećom, ako ni ona nije u supersetu.
+                    canJoinNext = exercise.supersetGroupId == null && next != null && next.supersetGroupId == null,
+                    onJoinNext = { next?.let { engine.makeSuperset(listOf(exercise, it), template) } },
+                    onLeaveSuperset = { engine.removeFromSuperset(exercise) },
                     canMoveUp = index > 0,
                     canMoveDown = index < exercises.lastIndex,
                     onMove = { delta -> engine.moveExercises(template, listOf(index), if (delta < 0) index - 1 else index + 2) },
@@ -156,6 +192,22 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () ->
                 Text(stringResource(R.string.add_exercise), modifier = Modifier.padding(start = 8.dp))
             }
         }
+    }
+
+    if (asksToSave) {
+        SaveChangesDialog(
+            item = EditedItem.WORKOUT,
+            isNew = isNew,
+            onSave = {
+                asksToSave = false
+                save()
+            },
+            onDiscard = {
+                asksToSave = false
+                discard()
+            },
+            onDismiss = { asksToSave = false },
+        )
     }
 
     if (confirmDelete) {
@@ -179,6 +231,9 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () ->
 private fun ExerciseCard(
     exercise: TemplateExercise,
     unit: WeightUnit,
+    canJoinNext: Boolean,
+    onJoinNext: () -> Unit,
+    onLeaveSuperset: () -> Unit,
     canMoveUp: Boolean,
     canMoveDown: Boolean,
     onMove: (Int) -> Unit,
@@ -193,7 +248,16 @@ private fun ExerciseCard(
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(exercise.exerciseName, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Column(Modifier.weight(1f)) {
+                    if (exercise.supersetGroupId != null) {
+                        Text(
+                            stringResource(R.string.superset).uppercase(locale),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                    Text(exercise.exerciseName, style = MaterialTheme.typography.titleMedium)
+                }
                 IconButton(enabled = canMoveUp, onClick = { onMove(-1) }) {
                     Icon(Icons.Filled.KeyboardArrowUp, contentDescription = stringResource(R.string.move_up))
                 }
@@ -226,12 +290,20 @@ private fun ExerciseCard(
                         }
                     }
                     if (hasReps) {
+                        // Raspon (npr. iz gotovog programa) se prikazuje ispod polja; upisani cilj iznad njega ga poništava.
+                        val repsMax = set.targetRepsMax
+                        val reps = set.targetReps
                         TargetField(
                             key = "${set.id}-reps",
                             initial = set.targetReps?.toString() ?: "",
                             label = stringResource(R.string.reps_label),
                             decimal = false,
                             modifier = Modifier.weight(1f),
+                            supporting = if (repsMax != null && reps != null && repsMax > reps) {
+                                stringResource(R.string.rep_range, reps, repsMax)
+                            } else {
+                                null
+                            },
                         ) { text ->
                             onTargets(set, set.targetWeightKg, text.trim().toIntOrNull()?.takeIf { it > 0 })
                         }
@@ -242,6 +314,12 @@ private fun ExerciseCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 TextButton(enabled = exercise.sets.size > 1, onClick = onRemoveSet) { Text("− " + stringResource(R.string.set_short)) }
                 TextButton(onClick = onAddSet) { Text("+ " + stringResource(R.string.set_short)) }
+                Spacer(Modifier.weight(1f))
+                if (exercise.supersetGroupId != null) {
+                    TextButton(onClick = onLeaveSuperset) { Text(stringResource(R.string.separate_superset)) }
+                } else if (canJoinNext) {
+                    TextButton(onClick = onJoinNext) { Text(stringResource(R.string.superset)) }
+                }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.rest), Modifier.weight(1f))
@@ -258,7 +336,15 @@ private fun ExerciseCard(
 
 /** Tekst polja živi u ekranu, a cilj se pretvara i sprema pri svakoj izmjeni. */
 @Composable
-private fun TargetField(key: String, initial: String, label: String, decimal: Boolean, modifier: Modifier, onValue: (String) -> Unit) {
+private fun TargetField(
+    key: String,
+    initial: String,
+    label: String,
+    decimal: Boolean,
+    modifier: Modifier,
+    supporting: String? = null,
+    onValue: (String) -> Unit,
+) {
     var text by rememberSaveable(key) { mutableStateOf(initial) }
     OutlinedTextField(
         value = text,
@@ -268,6 +354,7 @@ private fun TargetField(key: String, initial: String, label: String, decimal: Bo
         },
         modifier = modifier,
         label = { Text(label) },
+        supportingText = supporting?.let { { Text(it) } },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = if (decimal) KeyboardType.Decimal else KeyboardType.Number),
     )

@@ -241,8 +241,18 @@ class GymStore(internal val persistence: RecordPersistence = InMemoryPersistence
     /** Trening koji je trenutno u tijeku. Ako ih je više, vraća najnoviji. */
     fun activeSession(): Session? = sessions.filter { it.state == SessionState.ACTIVE }.maxByOrNull { it.startedAt }
 
-    /** Završeni treninzi čiji je početak u rasponu [from, to), od najnovijeg prema starijem. */
-    fun finishedSessions(from: Instant = Instant.MIN, to: Instant = Instant.MAX): List<Session> =
+    /**
+     * Završeni treninzi čiji je početak u rasponu [from, to), od najnovijeg prema starijem. Kao na iOS-u
+     * uključuje treninge uvezene iz Health Connecta (iz [health], kao `Session` za prikaz), pa ih broje
+     * statistika, tjedni napredak i podsjetnici.
+     */
+    fun finishedSessions(from: Instant = Instant.MIN, to: Instant = Instant.MAX): List<Session> = mergedSessions(
+        ownFinishedSessions(from, to),
+        health.workouts.filter { it.startedAt >= from && it.startedAt < to },
+    )
+
+    /** Samo vlastiti završeni treninzi (sigurnosna kopija, rekordi u widgetu), od najnovijeg prema starijem. */
+    fun ownFinishedSessions(from: Instant = Instant.MIN, to: Instant = Instant.MAX): List<Session> =
         sessions.filter { it.state == SessionState.FINISHED && it.startedAt >= from && it.startedAt < to }
             .sortedByDescending { it.startedAt }
 

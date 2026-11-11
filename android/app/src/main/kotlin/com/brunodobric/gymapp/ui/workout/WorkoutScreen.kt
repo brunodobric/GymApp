@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,6 +30,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -47,6 +52,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -102,6 +108,8 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     var picking by rememberSaveable { mutableStateOf(false) }
     var confirmDiscard by remember { mutableStateOf(false) }
     var plateTarget by rememberSaveable { mutableStateOf<String?>(null) }
+    // Vježba za koju se bira partner u supersetu.
+    var supersetSource by rememberSaveable { mutableStateOf<String?>(null) }
     val now = rememberTicker()
     RestEndEffects(
         endsAt = session.restTimerEndsAt,
@@ -213,6 +221,8 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                         offerUndo(exerciseRemoved) { engine.restoreExercise(exercise) }
                     },
                     onPlates = { plateTarget = it },
+                    onSuperset = { supersetSource = exercise.id.toString() },
+                    onLeaveSuperset = { engine.removeFromSuperset(exercise) },
                 )
             }
             item(key = "add") {
@@ -221,6 +231,25 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                     Text(stringResource(R.string.add_exercise), Modifier.padding(start = 8.dp))
                 }
             }
+        }
+    }
+
+    supersetSource?.let { id ->
+        val visible = engine.visibleExercises(session)
+        val source = visible.firstOrNull { it.id.toString() == id }
+        if (source == null) {
+            supersetSource = null
+        } else {
+            // Za partnera se nude samo vježbe koje još nisu u supersetu (kao na iOS-u).
+            val candidates = visible.filter { it.id != source.id && it.supersetGroupId == null }
+            SupersetPartnerDialog(
+                candidates = candidates,
+                onPick = { partner ->
+                    supersetSource = null
+                    engine.makeSuperset(engine.group(source) + partner, session)
+                },
+                onDismiss = { supersetSource = null },
+            )
         }
     }
 
@@ -273,12 +302,23 @@ private fun ExerciseCard(
     onDeleteSet: (SetLog) -> Unit,
     onRemove: () -> Unit,
     onPlates: (String) -> Unit,
+    onSuperset: () -> Unit,
+    onLeaveSuperset: () -> Unit,
 ) {
     var menu by remember { mutableStateOf(false) }
     Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(exercise.exerciseName, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Column(Modifier.weight(1f)) {
+                    if (exercise.supersetGroupId != null) {
+                        Text(
+                            stringResource(R.string.superset).uppercase(LocalConfiguration.current.locales[0]),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                    Text(exercise.exerciseName, style = MaterialTheme.typography.titleMedium)
+                }
                 Box {
                     IconButton(onClick = { menu = true }) {
                         Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.more_options))
@@ -291,6 +331,22 @@ private fun ExerciseCard(
                                 onAddWarmUp()
                             },
                         )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.superset)) },
+                            onClick = {
+                                menu = false
+                                onSuperset()
+                            },
+                        )
+                        if (exercise.supersetGroupId != null) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.leave_superset)) },
+                                onClick = {
+                                    menu = false
+                                    onLeaveSuperset()
+                                },
+                            )
+                        }
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.remove_exercise), color = MaterialTheme.colorScheme.error) },
                             onClick = {
@@ -309,6 +365,31 @@ private fun ExerciseCard(
             TextButton(onClick = onAddSet) { Text(stringResource(R.string.add_set)) }
         }
     }
+}
+
+/** "Superset s": vježbe koje se mogu spojiti s odabranom, ili uputa kad ih nema. */
+@Composable
+private fun SupersetPartnerDialog(candidates: List<SessionExercise>, onPick: (SessionExercise) -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.superset_with)) },
+        text = {
+            Column(Modifier.heightIn(max = 400.dp).verticalScroll(rememberScrollState())) {
+                if (candidates.isEmpty()) {
+                    Text(stringResource(R.string.superset_no_partner), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                candidates.forEach { candidate ->
+                    ListItem(
+                        modifier = Modifier.clickable { onPick(candidate) },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        headlineContent = { Text(candidate.exerciseName) },
+                    )
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /** Polja serije prema vrsti unosa vježbe. Težina se upisuje u jedinici iz Postavki, a sprema u kg. */
