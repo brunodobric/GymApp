@@ -135,6 +135,23 @@ class ForeignImportTest {
         }
 
         @Test
+        fun `izvoz s Androida - prazan prvi redak, oznaka h i biljeska uz vjezbu`() {
+            val text = "\n\"Day 1 · Week 11 · New plan\";\"2026-11-09 19:51 h\";\"43 min\"\n" +
+                "\"1. Incline Bench Press · Dumbbells · 10 reps\"\n#;KG;REPS\n1;36;9\n" +
+                "\"2. Leg Extensions · Machine · 10 reps\";\"Nisam napravio\"\n#;KG;REPS\n1;40;10\n"
+            assertTrue(ForeignWorkoutsCsv.matches(text))
+            val workout = ForeignWorkoutsCsv.parse(text, utc).single()
+            assertEquals(utcDate(2026, 11, 9, 19, 51), workout.startedAt)
+            assertEquals(2580, workout.durationSeconds)
+            assertEquals(listOf("", "Nisam napravio"), workout.exercises.map { it.note })
+            assertEquals("Leg Extensions", workout.exercises[1].name)
+            assertEquals("Week 11 · New plan\nLeg Extensions: Nisam napravio",
+                ForeignWorkoutImport.notes(workout))
+            assertEquals(utcDate(2026, 11, 9, 7, 51), ForeignWorkoutsCsv.parseDate("2026-11-09 7:51 h", utc))
+            assertNull(ForeignWorkoutsCsv.parseDate("2026-11-09 24:10 h", utc))
+        }
+
+        @Test
         fun `tekst datoteke - UTF-8 i UTF-16 s BOM-om daju isti tekst`() {
             val text = "\"Push · Day 1\";\"2026-11-02 4:27 pm\";\"53 min\"\n"
             val bom = "\uFEFF"

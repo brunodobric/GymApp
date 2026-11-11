@@ -16,7 +16,9 @@ import Units
 ///     1;1
 ///
 /// Izvoz iste aplikacije s drugog uređaja smije se razlikovati u sitnicama: razdjelnik može biti i zarez ili
-/// tabulator, razmak ispred "pm" može biti neprekinuti (U+00A0, U+202F), a "pm" može biti i "PM" ili "p.m.".
+/// tabulator, razmak ispred "pm" može biti neprekinuti (U+00A0, U+202F), "pm" može biti i "PM" ili "p.m.", a
+/// 24-satno vrijeme može imati oznaku "h" ("19:51 h", izvoz s Androida). Redak vježbe može imati i bilješku
+/// u drugom polju (`"8. Leg Extensions · Machine · 10 reps";"Nisam napravio"`), a prvi redak može biti prazan.
 /// Datum je lokalno vrijeme bez vremenske zone. Ciljani broj ponavljanja iz retka vježbe ("10 reps") se ne uvozi.
 public enum ForeignWorkoutsCSV {
 
@@ -59,6 +61,8 @@ public enum ForeignWorkoutsCSV {
         /// Vrsta unosa prema stupcima i vrijednostima tablice.
         public var kind: Kind
         public var line: Int
+        /// Bilješka uz vježbu (drugo polje retka vježbe). Prazno ako je nema.
+        public var note: String = ""
     }
 
     /// Vrsta unosa vježbe u datoteci.
@@ -145,7 +149,8 @@ public enum ForeignWorkoutsCSV {
 
             guard !workouts.isEmpty else { throw BackupError.invalidCSV(line: number) }
 
-            if row.count == 1, let exercise = exerciseLine(row[0], line: number) {
+            if row.count == 1 || row.count == 2, var exercise = exerciseLine(row[0], line: number) {
+                if row.count == 2 { exercise.note = row[1] }
                 workouts[workouts.count - 1].exercises.append(exercise)
                 columns = nil
                 continue
@@ -280,8 +285,8 @@ public enum ForeignWorkoutsCSV {
         text.split(whereSeparator: \.isWhitespace).map(String.init)
     }
 
-    /// "2026-11-02 4:27 pm" ili "2026-11-02 16:27" u zadanoj vremenskoj zoni. Prihvaća i sekunde ("16:27:05")
-    /// te oznaku napisanu kao "PM", "p.m." ili "p. m.".
+    /// "2026-11-02 4:27 pm", "2026-11-02 16:27" ili "2026-11-02 16:27 h" u zadanoj vremenskoj zoni. Prihvaća i
+    /// sekunde ("16:27:05") te oznaku napisanu kao "PM", "p.m." ili "p. m.".
     static func parseDate(_ text: String, timeZone: TimeZone) -> Date? {
         let parts = words(text.lowercased())
         guard parts.count >= 2 else { return nil }
@@ -294,8 +299,11 @@ public enum ForeignWorkoutsCSV {
         var hour = time[0]
         if parts.count > 2 {
             let marker = parts.dropFirst(2).joined().replacingOccurrences(of: ".", with: "")
-            guard (1...12).contains(hour), marker == "am" || marker == "pm" else { return nil }
-            hour = hour % 12 + (marker == "pm" ? 12 : 0)
+            // "h" je samo oznaka 24-satnog vremena; "am" i "pm" mijenjaju sat.
+            if marker != "h" {
+                guard (1...12).contains(hour), marker == "am" || marker == "pm" else { return nil }
+                hour = hour % 12 + (marker == "pm" ? 12 : 0)
+            }
         }
         guard (0...23).contains(hour) else { return nil }
         var calendar = Calendar(identifier: .gregorian)

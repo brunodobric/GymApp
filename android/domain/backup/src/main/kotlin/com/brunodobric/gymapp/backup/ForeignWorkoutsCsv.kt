@@ -25,7 +25,9 @@ import java.util.UUID
  * 1;1
  * ```
  * Izvoz iste aplikacije s drugog uređaja smije se razlikovati u sitnicama: razdjelnik može biti i zarez ili
- * tabulator, razmak ispred "pm" može biti neprekinuti (U+00A0, U+202F), a "pm" može biti i "PM" ili "p.m.".
+ * tabulator, razmak ispred "pm" može biti neprekinuti (U+00A0, U+202F), "pm" može biti i "PM" ili "p.m.", a
+ * 24-satno vrijeme može imati oznaku "h" ("19:51 h", izvoz s Androida). Redak vježbe može imati i bilješku
+ * u drugom polju (`"8. Leg Extensions · Machine · 10 reps";"Nisam napravio"`), a prvi redak može biti prazan.
  * Datum je lokalno vrijeme bez vremenske zone. Ciljani broj ponavljanja iz retka vježbe ("10 reps") se ne uvozi.
  */
 object ForeignWorkoutsCsv {
@@ -63,6 +65,8 @@ object ForeignWorkoutsCsv {
         /** Vrsta unosa prema stupcima i vrijednostima tablice. */
         var kind: Kind,
         val line: Int,
+        /** Bilješka uz vježbu (drugo polje retka vježbe). Prazno ako je nema. */
+        val note: String = "",
     )
 
     /** Vrsta unosa vježbe u datoteci. */
@@ -134,10 +138,10 @@ object ForeignWorkoutsCsv {
 
             val workout = workouts.lastOrNull() ?: throw BackupException.InvalidCsv(number)
 
-            if (row.size == 1) {
+            if (row.size == 1 || row.size == 2) {
                 val exercise = exerciseLine(row[0], number)
                 if (exercise != null) {
-                    workout.exercises += exercise
+                    workout.exercises += if (row.size == 2) exercise.copy(note = row[1]) else exercise
                     columns = null
                     continue
                 }
@@ -275,8 +279,8 @@ object ForeignWorkoutsCsv {
     private val spaces = Regex("""[\s\p{Z}]+""")
 
     /**
-     * "2026-11-02 4:27 pm" ili "2026-11-02 16:27" u zadanoj vremenskoj zoni. Prihvaća i sekunde ("16:27:05")
-     * te oznaku napisanu kao "PM", "p.m." ili "p. m.".
+     * "2026-11-02 4:27 pm", "2026-11-02 16:27" ili "2026-11-02 16:27 h" u zadanoj vremenskoj zoni. Prihvaća i
+     * sekunde ("16:27:05") te oznaku napisanu kao "PM", "p.m." ili "p. m.".
      */
     fun parseDate(text: String, zone: ZoneId): Instant? {
         val parts = text.lowercase().words()
@@ -289,8 +293,11 @@ object ForeignWorkoutsCsv {
         var hour = time[0]
         if (parts.size > 2) {
             val marker = parts.drop(2).joinToString("").replace(".", "")
-            if (hour !in 1..12 || (marker != "am" && marker != "pm")) return null
-            hour = hour % 12 + if (marker == "pm") 12 else 0
+            if (marker != "h") {
+                // "h" je samo oznaka 24-satnog vremena; "am" i "pm" mijenjaju sat.
+                if (hour !in 1..12 || (marker != "am" && marker != "pm")) return null
+                hour = hour % 12 + if (marker == "pm") 12 else 0
+            }
         }
         if (hour !in 0..23) return null
         return try {

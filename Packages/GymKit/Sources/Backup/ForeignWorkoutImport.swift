@@ -141,6 +141,13 @@ public enum ForeignWorkoutImport {
 
     // MARK: Pomoćno
 
+    /// Bilješka treninga: ostatak zaglavlja, pa bilješke vježbi ("Leg Extensions: Nisam napravio"), svaka u svom retku.
+    static func notes(for workout: ForeignWorkoutsCSV.Workout) -> String {
+        ([workout.details] + workout.exercises.filter { !$0.note.isEmpty }.map { "\($0.name): \($0.note)" })
+            .filter { !$0.isEmpty }
+            .joined(separator: "\n")
+    }
+
     private static func insert(
         _ workout: ForeignWorkoutsCSV.Workout,
         mappings: [String: ExerciseMapping],
@@ -149,7 +156,7 @@ public enum ForeignWorkoutImport {
     ) throws {
         let session = Session(name: workout.name, kind: .strength, startedAt: workout.startedAt)
         session.id = workout.stableID
-        session.notes = workout.details
+        session.notes = notes(for: workout)
         session.state = .finished
         let doneSets = workout.exercises.reduce(0) { $0 + $1.sets.filter(\.isDone).count }
         // Bez trajanja u datoteci: oko tri minute po seriji, da trening ima smislen kraj.

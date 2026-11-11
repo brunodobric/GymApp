@@ -141,6 +141,12 @@ object ForeignWorkoutImport {
 
     // MARK: Pomoćno
 
+    /** Bilješka treninga: ostatak zaglavlja, pa bilješke vježbi ("Leg Extensions: Nisam napravio"), svaka u svom retku. */
+    internal fun notes(workout: ForeignWorkoutsCsv.Workout): String =
+        (listOf(workout.details) + workout.exercises.filter { it.note.isNotEmpty() }.map { "${it.name}: ${it.note}" })
+            .filter { it.isNotEmpty() }
+            .joinToString("\n")
+
     private fun insert(
         workout: ForeignWorkoutsCsv.Workout,
         mappings: Map<String, ExerciseMapping>,
@@ -151,7 +157,7 @@ object ForeignWorkoutImport {
         session.name = workout.name
         session.kind = WorkoutKind.STRENGTH
         session.startedAt = workout.startedAt
-        session.notes = workout.details
+        session.notes = notes(workout)
         session.state = SessionState.FINISHED
         val doneSets = workout.exercises.sumOf { exercise -> exercise.sets.count { it.isDone } }
         // Bez trajanja u datoteci: oko tri minute po seriji, da trening ima smislen kraj.
