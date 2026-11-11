@@ -20,6 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -67,6 +69,7 @@ import com.brunodobric.gymapp.model.SetLog
 import com.brunodobric.gymapp.model.ref
 import com.brunodobric.gymapp.training.WorkoutEngine
 import com.brunodobric.gymapp.training.WorkoutError
+import com.brunodobric.gymapp.training.WorkoutFlow
 import com.brunodobric.gymapp.training.restDefaults
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.rememberTicker
@@ -76,6 +79,7 @@ import com.brunodobric.gymapp.units.WeightConversion
 import com.brunodobric.gymapp.units.WeightFormatter
 import com.brunodobric.gymapp.units.WeightUnit
 import java.time.Duration
+import java.time.Instant
 import java.util.UUID
 import kotlinx.coroutines.launch
 
@@ -110,6 +114,10 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     var plateTarget by rememberSaveable { mutableStateOf<String?>(null) }
     // Vježba za koju se bira partner u supersetu.
     var supersetSource by rememberSaveable { mutableStateOf<String?>(null) }
+    // Otvorena vježba (kao `openExerciseID` na iOS-u): ostale su sklopljene, a superset se otvara u cjelini.
+    var openId by rememberSaveable { mutableStateOf<String?>(null) }
+    // Broj završenih serija pri zadnjem pogledu, da se nova serija (i iz obavijesti) prepozna.
+    var seenCompleted by rememberSaveable { mutableStateOf<Int?>(null) }
     val now = rememberTicker()
     RestEndEffects(
         endsAt = session.restTimerEndsAt,
@@ -140,12 +148,38 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
             services = services,
             onPick = { summary ->
                 val input = inputTypeOf(services, summary)
-                engine.addExercise(summary.ref, input, session)
+                openId = engine.addExercise(summary.ref, input, session).id.toString()
                 picking = false
             },
             onClose = { picking = false },
         )
         return
+    }
+
+    val visible = engine.visibleExercises(session)
+    fun firstIncomplete(): SessionExercise? = visible.firstOrNull { exercise -> exercise.orderedSets.any { !it.isCompleted } }
+    if (openId == null && seenCompleted == null) openId = (firstIncomplete() ?: visible.firstOrNull())?.id?.toString()
+    fun isOpen(exercise: SessionExercise): Boolean {
+        if (exercise.id.toString() == openId) return true
+        val group = exercise.supersetGroupId ?: return false
+        return visible.firstOrNull { it.id.toString() == openId }?.supersetGroupId == group
+    }
+
+    // Nova završena serija: kad je otvorena vježba (ili superset) gotova, otvara se prva nezavršena vježba.
+    val completedCount = visible.sumOf { exercise -> exercise.orderedSets.count { it.isCompleted } }
+    LaunchedEffect(completedCount) {
+        val seen = seenCompleted
+        seenCompleted = completedCount
+        if (seen == null || !WorkoutFlow.hasNewCompletion(completedCount, seen)) return@LaunchedEffect
+        val open = visible.firstOrNull { it.id.toString() == openId }
+            ?: visible.maxByOrNull { exercise -> exercise.orderedSets.mapNotNull { it.completedAt }.maxOrNull() ?: Instant.MIN }
+            ?: return@LaunchedEffect
+        val groupDone = engine.group(open).all { exercise -> exercise.orderedSets.all { it.isCompleted } }
+        val flags = visible.map { exercise -> exercise.orderedSets.all { it.isCompleted } }
+        when (val advance = WorkoutFlow.advance(groupDone, flags)) {
+            is WorkoutFlow.Advance.Open -> openId = visible[advance.index].id.toString()
+            WorkoutFlow.Advance.Stay, WorkoutFlow.Advance.Finished -> Unit
+        }
     }
 
     val isCompound: (String) -> Boolean? = { key ->
@@ -194,10 +228,13 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                     )
                 }
             }
-            items(engine.visibleExercises(session), key = { it.id.toString() }) { exercise ->
+            items(visible, key = { it.id.toString() }) { exercise ->
+                val open = isOpen(exercise)
                 ExerciseCard(
                     exercise = exercise,
                     unit = unit,
+                    isOpen = open,
+                    onToggleOpen = { openId = if (open) null else exercise.id.toString() },
                     onChange = { engine.touch(session) },
                     onToggle = { set ->
                         if (set.isCompleted) {
@@ -218,6 +255,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                     },
                     onRemove = {
                         engine.removeExercise(exercise)
+                        if (openId == exercise.id.toString()) openId = firstIncomplete()?.id?.toString()
                         offerUndo(exerciseRemoved) { engine.restoreExercise(exercise) }
                     },
                     onPlates = { plateTarget = it },
@@ -295,6 +333,8 @@ private fun RestCard(remaining: Int, onAdjust: (Int) -> Unit, onSkip: () -> Unit
 private fun ExerciseCard(
     exercise: SessionExercise,
     unit: WeightUnit,
+    isOpen: Boolean,
+    onToggleOpen: () -> Unit,
     onChange: () -> Unit,
     onToggle: (SetLog) -> Unit,
     onAddSet: () -> Unit,
@@ -309,7 +349,8 @@ private fun ExerciseCard(
     Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
+                // Dodir na naslov otvara ili sklapa vježbu.
+                Column(Modifier.weight(1f).clickable(onClick = onToggleOpen)) {
                     if (exercise.supersetGroupId != null) {
                         Text(
                             stringResource(R.string.superset).uppercase(LocalConfiguration.current.locales[0]),
@@ -318,6 +359,18 @@ private fun ExerciseCard(
                         )
                     }
                     Text(exercise.exerciseName, style = MaterialTheme.typography.titleMedium)
+                    val done = exercise.orderedSets.count { it.isCompleted }
+                    Text(
+                        stringResource(R.string.workout_notification_progress, done, exercise.orderedSets.size),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                IconButton(onClick = onToggleOpen) {
+                    Icon(
+                        if (isOpen) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = stringResource(if (isOpen) R.string.collapse_exercise else R.string.expand_exercise),
+                    )
                 }
                 Box {
                     IconButton(onClick = { menu = true }) {
@@ -357,12 +410,14 @@ private fun ExerciseCard(
                     }
                 }
             }
-            var working = 0
-            for (set in exercise.orderedSets) {
-                val label = if (set.kind == SetKind.WARM_UP) stringResource(R.string.warm_up_short) else (++working).toString()
-                SetRow(label, set, exercise.inputType, unit, onChange, onToggle, onDelete = { onDeleteSet(set) }, onPlates = onPlates)
+            if (isOpen) {
+                var working = 0
+                for (set in exercise.orderedSets) {
+                    val label = if (set.kind == SetKind.WARM_UP) stringResource(R.string.warm_up_short) else (++working).toString()
+                    SetRow(label, set, exercise.inputType, unit, onChange, onToggle, onDelete = { onDeleteSet(set) }, onPlates = onPlates)
+                }
+                TextButton(onClick = onAddSet) { Text(stringResource(R.string.add_set)) }
             }
-            TextButton(onClick = onAddSet) { Text(stringResource(R.string.add_set)) }
         }
     }
 }
