@@ -628,4 +628,10 @@
     <string name="save_workout_title">Save workout?</string>
     <string name="save_workout_message">The new workout hasn\'t been saved yet.</string>
     <string name="leave_without_saving">Leave without saving</string>
+    <string name="superset">Superset</string>
+    <string name="leave_superset">Remove from superset</string>
+    <string name="superset_with">Superset with</string>
+    <string name="separate_superset">Separate</string>
+    <string name="superset_no_partner">First add an exercise to pair it with in a superset.</string>
+    <string name="rep_range">Range %1$d–%2$d</string>
 </resources>
