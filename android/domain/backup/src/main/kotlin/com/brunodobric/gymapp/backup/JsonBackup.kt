@@ -49,7 +49,7 @@ object JsonBackup {
             templates = store.templates.sortedBy { it.id.sortKey }.map(::TemplateDTO),
             schedules = store.schedules.sortedBy { it.id.sortKey }.map(::ScheduleDTO),
             cycleOverrides = store.cycleOverrides.sortedBy { it.id.sortKey }.map(::CycleOverrideDTO),
-            sessions = store.finishedSessions().sortedWith(compareBy({ it.startedAt }, { it.id.sortKey })).map(::SessionDTO),
+            sessions = store.ownFinishedSessions().sortedWith(compareBy({ it.startedAt }, { it.id.sortKey })).map(::SessionDTO),
             measurements = store.bodyMeasurements.sortedWith(compareBy({ it.date }, { it.id.sortKey })).map(::MeasurementDTO),
             dashboardCards = store.dashboardCards.sortedWith(compareBy({ it.orderIndex }, { it.id.sortKey })).map(::DashboardCardDTO),
         )

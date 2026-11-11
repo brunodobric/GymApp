@@ -80,7 +80,7 @@ class WidgetSnapshotBuilder(
 
     /** Zadnji trening i najnoviji rekord iz zadnjih treninga. */
     private fun addRecentSessions(snapshot: WidgetSnapshot): WidgetSnapshot {
-        val recent = store.finishedSessions().take(RECORD_LOOKBACK)
+        val recent = store.ownFinishedSessions().take(RECORD_LOOKBACK)
         if (recent.isEmpty()) return snapshot
         val settings = store.settings()
         val engine = WorkoutEngine(store)

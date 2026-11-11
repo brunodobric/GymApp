@@ -37,7 +37,7 @@ object CsvBackup {
 
     fun exportHistory(store: GymStore): String {
         val lines = mutableListOf(Csv.line(historyColumns))
-        for (session in store.finishedSessions().sortedWith(compareBy({ it.startedAt }, { it.id.sortKey }))) {
+        for (session in store.ownFinishedSessions().sortedWith(compareBy({ it.startedAt }, { it.id.sortKey }))) {
             val head = listOf(
                 session.id.uppercaseString, session.name, session.kindRaw, CsvDate.string(session.startedAt),
                 CsvDate.string(session.endedAt), session.notes,

@@ -51,6 +51,20 @@ class HealthLocalTest {
     }
 
     @Test
+    fun `uvezeni trening broji se u statistici kao na iOS-u, ali nije vlastiti`() {
+        val store = newStore()
+        val own = store.addSession(base, lifts = emptyList())
+        val imported = run(1.0)
+        store.health = MemoryHealth(workouts = listOf(imported))
+
+        assertEquals(listOf(imported.id, own.id), store.finishedSessions().map { it.id })
+        assertEquals(listOf(imported.id), store.finishedSessions(base.plusDays(0.5), base.plusDays(2.0)).map { it.id })
+        assertEquals(listOf(own.id), store.ownFinishedSessions().map { it.id })
+        val week = StatisticsEngine(store).sessionsInWeek(StatsCalendar.system().weekInterval(base.plusDays(1.0)).start)
+        assertTrue(week.any { it.id == imported.id })
+    }
+
+    @Test
     fun `brisanje uvezenog treninga brise samo lokalni zapis i javlja promjenu`() {
         val store = newStore()
         val own = store.addSession(base, lifts = emptyList())
