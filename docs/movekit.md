@@ -34,7 +34,10 @@ Jednom: `brew install ffmpeg`.
 ```sh
 scripts/movekit.sh      # pretvori klipove i postere, napravi texts.json i kopira sve u Resources/MoveKit/
 xcodegen generate
+scripts/movekit-android.sh --apk   # Android: posteri u assets/movekit/ i debug APK (treba Android SDK)
 ```
+
+APK s posterima smije se dati samo poimence odabranim testerima, nikad preko javne poveznice ni GitHub Actionsa.
 
 Prvo pokretanje pretvara 582 klipa (HEVC, 1280 px, CRF 28, bez zvuka, oko 150 KB po klipu) i traje desetak minuta. Kasnije se preskaču klipovi koji su već pretvoreni. `scripts/testflight.sh` sam pokreće `scripts/movekit.sh`, pa izdanje uvijek ima medije.
 
