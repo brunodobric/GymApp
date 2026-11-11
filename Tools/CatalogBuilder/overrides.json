@@ -305,7 +305,8 @@
    "abdominals"
   ],
   "secondaryMuscles": [],
-  "equipment": "bodyweight"
+  "equipment": "bodyweight",
+  "mechanic": "isolation"
  },
  "bodyweight-box-squat": {
   "inputType": "weightReps"
@@ -328,7 +329,8 @@
   "secondaryMuscles": [
    "lower back"
   ],
-  "equipment": "bodyweight"
+  "equipment": "bodyweight",
+  "mechanic": "isolation"
  },
  "bodyweight-spinal-jefferson-curl": {
   "inputType": "bodyweight"
@@ -476,7 +478,8 @@
    "abdominals"
   ],
   "secondaryMuscles": [],
-  "equipment": "other"
+  "equipment": "other",
+  "mechanic": "isolation"
  },
  "chest-supported-t-bar-row": {
   "inputType": "weightReps",
@@ -514,7 +517,8 @@
    "abdominals"
   ],
   "secondaryMuscles": [],
-  "equipment": "bodyweight"
+  "equipment": "bodyweight",
+  "mechanic": "isolation"
  },
  "dead-bug": {
   "inputType": "bodyweight",
@@ -547,7 +551,8 @@
    "abdominals"
   ],
   "secondaryMuscles": [],
-  "equipment": "bodyweight"
+  "equipment": "bodyweight",
+  "mechanic": "isolation"
  },
  "decline-push-up": {
   "inputType": "weightReps",
@@ -719,7 +724,8 @@
    "shoulders",
    "triceps"
   ],
-  "equipment": "dumbbell"
+  "equipment": "dumbbell",
+  "mechanic": "isolation"
  },
  "dumbbell-rear-delt-fly": {
   "inputType": "weightReps",
@@ -810,7 +816,8 @@
   "inputType": "weightReps"
  },
  "dumbbell-situp": {
-  "inputType": "bodyweight"
+  "inputType": "bodyweight",
+  "mechanic": "isolation"
  },
  "dumbbell-skullcrusher": {
   "inputType": "weightReps",
@@ -885,7 +892,8 @@
   "secondaryMuscles": [
    "shoulders"
   ],
-  "equipment": "bodyweight"
+  "equipment": "bodyweight",
+  "mechanic": "isolation"
  },
  "elliptical": {
   "inputType": "durationDistance",
@@ -927,7 +935,8 @@
    "abdominals"
   ],
   "secondaryMuscles": [],
-  "equipment": "bodyweight"
+  "equipment": "bodyweight",
+  "mechanic": "isolation"
  },
  "front-squat": {
   "inputType": "weightReps",
@@ -1137,7 +1146,8 @@
    "glutes",
    "hamstrings"
   ],
-  "equipment": "other"
+  "equipment": "other",
+  "mechanic": "isolation"
  },
  "machine-cable-v-bar-push-downs": {
   "inputType": "weightReps",
@@ -1167,7 +1177,8 @@
    "abdominals"
   ],
   "secondaryMuscles": [],
-  "equipment": "machine"
+  "equipment": "machine",
+  "mechanic": "isolation"
  },
  "machine-dips": {
   "inputType": "weightReps",
@@ -1190,7 +1201,8 @@
   "secondaryMuscles": [
    "middle back"
   ],
-  "equipment": "cable"
+  "equipment": "cable",
+  "mechanic": "isolation"
  },
  "machine-hack-squat": {
   "inputType": "weightReps",
@@ -1213,7 +1225,8 @@
   "secondaryMuscles": [
    "glutes"
   ],
-  "equipment": "machine"
+  "equipment": "machine",
+  "mechanic": "isolation"
  },
  "machine-hip-adduction": {
   "inputType": "weightReps",
@@ -1407,7 +1420,8 @@
    "abdominals"
   ],
   "secondaryMuscles": [],
-  "equipment": "bodyweight"
+  "equipment": "bodyweight",
+  "mechanic": "isolation"
  },
  "reverse-grip-barbell-curl": {
   "inputType": "weightReps",
@@ -1430,7 +1444,8 @@
   "secondaryMuscles": [
    "lower back"
   ],
-  "equipment": "machine"
+  "equipment": "machine",
+  "mechanic": "isolation"
  },
  "reverse-pec-deck": {
   "inputType": "weightReps",
@@ -1534,7 +1549,8 @@
   "secondaryMuscles": [
    "hamstrings"
   ],
-  "equipment": "bodyweight"
+  "equipment": "bodyweight",
+  "mechanic": "isolation"
  },
  "single-legged-romanian-deadlifts": {
   "inputType": "weightReps"
@@ -1731,7 +1747,8 @@
   "equipment": "barbell"
  },
  "v-up": {
-  "inputType": "bodyweight"
+  "inputType": "bodyweight",
+  "mechanic": "isolation"
  },
  "weighted-pull-ups": {
   "inputType": "weightedBodyweight",
@@ -1779,5 +1796,98 @@
    "forearms"
   ],
   "equipment": "dumbbell"
+ },
+ "single-leg-back-extension": {
+  "mechanic": "isolation"
+ },
+ "back-extension": {
+  "mechanic": "isolation"
+ },
+ "band-curl": {
+  "mechanic": "isolation"
+ },
+ "band-high-face-pull": {
+  "mechanic": "isolation"
+ },
+ "band-hip-abduction": {
+  "mechanic": "isolation"
+ },
+ "band-lateral-raise": {
+  "mechanic": "isolation"
+ },
+ "band-pullover": {
+  "mechanic": "isolation"
+ },
+ "band-shrug": {
+  "mechanic": "isolation"
+ },
+ "band-single-arm-lateral-raise": {
+  "mechanic": "isolation"
+ },
+ "barbell-behind-the-back-30-degree-shrug": {
+  "mechanic": "isolation"
+ },
+ "barbell-pullover": {
+  "mechanic": "isolation"
+ },
+ "cable-bar-face-pull": {
+  "mechanic": "isolation"
+ },
+ "cable-rope-kneeling-face-pull": {
+  "mechanic": "isolation"
+ },
+ "cable-rope-pullover": {
+  "mechanic": "isolation"
+ },
+ "cable-seated-rope-face-pull": {
+  "mechanic": "isolation"
+ },
+ "copenhagen-plank": {
+  "mechanic": "isolation"
+ },
+ "decline-sit-up": {
+  "mechanic": "isolation"
+ },
+ "dumbbell-back-extension": {
+  "mechanic": "isolation"
+ },
+ "dumbbell-decline-crunch-behind-head": {
+  "mechanic": "isolation"
+ },
+ "dumbbell-feet-elevated-glute-bridge": {
+  "mechanic": "isolation"
+ },
+ "dumbbell-russian-twist": {
+  "mechanic": "isolation"
+ },
+ "dumbbell-side-plank": {
+  "mechanic": "isolation"
+ },
+ "glute-bridge": {
+  "mechanic": "isolation"
+ },
+ "hand-plank": {
+  "mechanic": "isolation"
+ },
+ "hanging-knee-raises": {
+  "mechanic": "isolation"
+ },
+ "machine-lat-pullover": {
+  "mechanic": "isolation"
+ },
+ "press-sit-up": {
+  "mechanic": "isolation"
+ },
+ "rkc-plank": {
+  "mechanic": "isolation"
+ },
+ "sit-up": {
+  "mechanic": "isolation"
+ },
+ "standing-cable-hip-abduction": {
+  "mechanic": "isolation"
+ },
+ "weighted-parallel-bar-straight-leg-raise": {
+  "mechanic": "isolation"
  }
 }

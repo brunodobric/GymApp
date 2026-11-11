@@ -377,7 +377,7 @@
    ],
    "equipment": "bodyweight",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -437,7 +437,7 @@
    ],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -588,7 +588,7 @@
    "secondaryMuscles": [],
    "equipment": "bands",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -706,7 +706,7 @@
    ],
    "equipment": "bands",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -732,7 +732,7 @@
    "secondaryMuscles": [],
    "equipment": "bands",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -784,7 +784,7 @@
    "secondaryMuscles": [],
    "equipment": "bands",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "push",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -900,7 +900,7 @@
    "secondaryMuscles": [],
    "equipment": "bands",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -1038,7 +1038,7 @@
    "secondaryMuscles": [],
    "equipment": "bands",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -1062,7 +1062,7 @@
    "secondaryMuscles": [],
    "equipment": "bands",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "push",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -1300,7 +1300,7 @@
    "secondaryMuscles": [],
    "equipment": "barbell",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -1982,7 +1982,7 @@
    "secondaryMuscles": [],
    "equipment": "barbell",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -2752,7 +2752,7 @@
    "secondaryMuscles": [],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -3078,7 +3078,7 @@
    ],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -3520,7 +3520,7 @@
    "secondaryMuscles": [],
    "equipment": "cable",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -4098,7 +4098,7 @@
    ],
    "equipment": "cable",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -4150,7 +4150,7 @@
    ],
    "equipment": "cable",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -4204,7 +4204,7 @@
    ],
    "equipment": "cable",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -4284,7 +4284,7 @@
    "secondaryMuscles": [],
    "equipment": "cable",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -4652,7 +4652,7 @@
    "secondaryMuscles": [],
    "equipment": "other",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -4880,7 +4880,7 @@
    ],
    "equipment": "other",
    "level": "advanced",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "duration",
    "primaryRegions": [
@@ -4992,7 +4992,7 @@
    "secondaryMuscles": [],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -5286,7 +5286,7 @@
    "secondaryMuscles": [],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -5372,7 +5372,7 @@
    ],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -5529,7 +5529,7 @@
    ],
    "equipment": "dumbbell",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -5850,7 +5850,7 @@
    "secondaryMuscles": [],
    "equipment": "dumbbell",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "weightReps",
    "primaryRegions": [
@@ -5930,7 +5930,7 @@
    "secondaryMuscles": [],
    "equipment": "dumbbell",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -6732,7 +6732,7 @@
    ],
    "equipment": "dumbbell",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -6908,7 +6908,7 @@
    "secondaryMuscles": [],
    "equipment": "dumbbell",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "weightReps",
    "primaryRegions": [
@@ -7135,7 +7135,7 @@
    ],
    "equipment": "dumbbell",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "duration",
    "primaryRegions": [
@@ -7366,7 +7366,7 @@
    "secondaryMuscles": [],
    "equipment": "dumbbell",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -7886,7 +7886,7 @@
    ],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "duration",
    "primaryRegions": [
@@ -8192,7 +8192,7 @@
    "secondaryMuscles": [],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "duration",
    "primaryRegions": [
@@ -8317,7 +8317,7 @@
    ],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -8552,7 +8552,7 @@
    "secondaryMuscles": [],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "duration",
    "primaryRegions": [
@@ -8696,7 +8696,7 @@
    "secondaryMuscles": [],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -10703,7 +10703,7 @@
    ],
    "equipment": "other",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -10844,7 +10844,7 @@
    "secondaryMuscles": [],
    "equipment": "machine",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "weightReps",
    "primaryRegions": [
@@ -10960,7 +10960,7 @@
    ],
    "equipment": "machine",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -11085,7 +11085,7 @@
    ],
    "equipment": "machine",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "pull",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -12451,7 +12451,7 @@
    ],
    "equipment": "barbell",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "push",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -12726,7 +12726,7 @@
    "secondaryMuscles": [],
    "equipment": "bodyweight",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -12815,7 +12815,7 @@
    ],
    "equipment": "machine",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -12925,7 +12925,7 @@
    ],
    "equipment": "bodyweight",
    "level": "advanced",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "duration",
    "primaryRegions": [
@@ -13654,7 +13654,7 @@
    ],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -14264,7 +14264,7 @@
    ],
    "equipment": "bodyweight",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -15210,7 +15210,7 @@
    ],
    "equipment": "cable",
    "level": "beginner",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": "legs",
    "inputType": "weightReps",
    "primaryRegions": [
@@ -16348,7 +16348,7 @@
    ],
    "equipment": "bodyweight",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "bodyweight",
    "primaryRegions": [
@@ -16566,7 +16566,7 @@
    "secondaryMuscles": [],
    "equipment": "dumbbell",
    "level": "intermediate",
-   "mechanic": "compound",
+   "mechanic": "isolation",
    "movement": null,
    "inputType": "weightReps",
    "primaryRegions": [
