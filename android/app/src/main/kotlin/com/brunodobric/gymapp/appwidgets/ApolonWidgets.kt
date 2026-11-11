@@ -10,6 +10,7 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.Button
@@ -19,10 +20,12 @@ import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.LocalSize
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
@@ -78,6 +81,9 @@ object ApolonWidgets {
 
 /** Zajedničko učitavanje snimke i crtanje okvira; svaki widget daje samo sadržaj. */
 abstract class SnapshotWidget : GlanceAppWidget() {
+    /** Dva izgleda kao mali i srednji widget na iOS-u: širok od četiri stupca ima više podataka. */
+    override val sizeMode: SizeMode = SizeMode.Responsive(setOf(SMALL, WIDE))
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val snapshot = widgetSnapshots(context).load() ?: WidgetSnapshot.EMPTY
         val now = Instant.now()
@@ -92,6 +98,13 @@ abstract class SnapshotWidget : GlanceAppWidget() {
     @Composable
     protected abstract fun ColumnScope.Content(snapshot: WidgetSnapshot, now: Instant)
 }
+
+private val SMALL = DpSize(110.dp, 110.dp)
+private val WIDE = DpSize(250.dp, 110.dp)
+
+/** Widget je u širokom izgledu (srednji widget na iOS-u). */
+@Composable
+private fun isWide(): Boolean = LocalSize.current.width >= WIDE.width
 
 class NextWorkoutWidget : SnapshotWidget() {
     override fun link(snapshot: WidgetSnapshot) = if (snapshot.activeWorkout != null) WidgetLink.ActiveWorkout else WidgetLink.Home
@@ -113,9 +126,13 @@ class NextWorkoutWidget : SnapshotWidget() {
                 Heading(context.getString(R.string.widget_next), accent)
                 Title(next.name)
                 Secondary(context.resources.getQuantityString(R.plurals.exercise_count, next.exerciseCount, next.exerciseCount))
-                next.exercises.forEach { exercise ->
-                    val plan = exercise.summary(snapshot.unit)
-                    Secondary(if (plan.isEmpty()) exercise.name else "${exercise.name} · $plan")
+                // Popis vježbi samo u širokom izgledu; u malom ne stane, kao na iOS-u.
+                if (isWide()) {
+                    next.exercises.forEachIndexed { index, exercise ->
+                        val plan = exercise.summary(snapshot.unit)
+                        val more = if (index == next.exercises.lastIndex && next.remainingExercises > 0) " +${next.remainingExercises}" else ""
+                        Secondary((if (plan.isEmpty()) exercise.name else "${exercise.name} · $plan") + more)
+                    }
                 }
                 Spacer(GlanceModifier.defaultWeight())
                 Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.Vertical.CenterVertically) {
@@ -156,8 +173,10 @@ class WeekWidget : SnapshotWidget() {
                 Secondary(" " + context.resources.getQuantityString(R.plurals.widget_of_goal, goal, goal))
             }
         }
+        val wide = isWide()
         Spacer(GlanceModifier.height(6.dp))
-        Row(GlanceModifier.fillMaxWidth()) {
+        // Dani u tjednu i brojke samo u širokom izgledu (srednji widget na iOS-u), mali ima broj i niz tjedana.
+        if (wide) Row(GlanceModifier.fillMaxWidth()) {
             week.days.forEach { day ->
                 val isToday = calendar.date(day.date) == calendar.date(now)
                 Column(GlanceModifier.defaultWeight(), horizontalAlignment = Alignment.Horizontal.CenterHorizontally) {
@@ -173,9 +192,18 @@ class WeekWidget : SnapshotWidget() {
             }
         }
         Spacer(GlanceModifier.defaultWeight())
+        if (wide && week.sessions > 0) {
+            // Tvrde serije, kardio i ukupno vrijeme u jednom retku; nula se ne prikazuje.
+            val figures = listOfNotNull(
+                week.hardSets.takeIf { it > 0 }?.let { "${context.getString(R.string.hard_sets)}: $it" },
+                week.cardioSeconds.takeIf { it >= 60 }?.let { "${context.getString(R.string.kind_cardio)}: ${DurationInput.format(it)}" },
+                "${context.getString(R.string.widget_total)}: ${DurationInput.format(week.totalSeconds)}",
+            )
+            Secondary(figures.joinToString(" · "))
+        }
         if (week.streakWeeks > 0) {
             Secondary(context.resources.getQuantityString(R.plurals.widget_weeks_in_row, week.streakWeeks, week.streakWeeks))
-        } else if (week.sessions > 0) {
+        } else if (!wide && week.sessions > 0) {
             Secondary("${context.getString(R.string.widget_total)}: ${DurationInput.format(week.totalSeconds)}")
         }
     }
