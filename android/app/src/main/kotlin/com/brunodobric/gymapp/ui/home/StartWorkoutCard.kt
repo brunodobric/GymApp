@@ -49,10 +49,12 @@ fun StartWorkoutCard(
     /** Izbor treninga: s aktivnim rasporedima njihovi treninzi i ostali spremljeni, bez njih samo spremljeni. */
     onChooseTemplate: (List<Schedule>) -> Unit,
     onStartEmpty: () -> Unit,
+    /** Prvi sljedeći trening je već na plavoj kartici iznad, pa se ovdje ne ponavlja. */
+    skipsFirst: Boolean = false,
 ) {
     val offersTemplates = templateCount > 0 && planned.isEmpty()
     Card(Modifier.fillMaxWidth()) {
-        planned.forEach { workout ->
+        planned.drop(if (skipsFirst) 1 else 0).forEach { workout ->
             StartRow(
                 icon = Icons.Filled.PlayArrow,
                 prominent = true,
