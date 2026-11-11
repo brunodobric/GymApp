@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.catalog.ExerciseSummary
 import com.brunodobric.gymapp.catalog.Level
 import com.brunodobric.gymapp.catalog.Muscle
+import com.brunodobric.gymapp.catalog.illustration
 import com.brunodobric.gymapp.model.ExerciseRef
 import com.brunodobric.gymapp.stats.ExerciseHistoryHighlight
 import com.brunodobric.gymapp.stats.ExercisePerformance
@@ -63,7 +65,7 @@ import java.util.UUID
 /**
  * Detalj vježbe, kao `ExerciseDetailScreen` na iOS-u: mišići, detalji, upute (samo kad su MoveKit tekstovi u
  * buildu) i "Tvoja povijest" sa svim izvođenjima. Dodir izvođenja otvara trening. Vlastita vježba ima "Uredi".
- * "Napredak i rekordi" otvara graf napretka iz Statistike. Klip dolazi kasnije.
+ * "Napredak i rekordi" otvara graf napretka iz Statistike. Na vrhu je MoveKit klip ([ExerciseIllustrationView]).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,6 +123,13 @@ fun ExerciseDetailScreen(
         },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState())) {
+            catalogExercise?.let { exercise ->
+                val context = LocalContext.current
+                val illustration = remember(exercise.id) {
+                    exercise.illustration { it in MoveKitAssets.available(context) }
+                }
+                ExerciseIllustrationView(illustration, ref.name, Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+            }
             customExercise?.imageFile?.let(services.exerciseImages::file)?.let { file ->
                 ExerciseImage(file, ref.name, Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }

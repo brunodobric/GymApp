@@ -1,6 +1,7 @@
 package com.brunodobric.gymapp
 
 import android.content.Context
+import com.brunodobric.gymapp.catalog.CatalogTexts
 import com.brunodobric.gymapp.catalog.ExerciseCatalog
 import com.brunodobric.gymapp.data.ExerciseImages
 import com.brunodobric.gymapp.data.SqliteRecordPersistence
@@ -19,7 +20,15 @@ class AppServices(context: Context) {
 
     val catalog: ExerciseCatalog by lazy {
         val json = appContext.assets.open("catalog.json").bufferedReader().use { it.readText() }
-        ExerciseCatalog.decode(json)
+        val catalog = ExerciseCatalog.decode(json)
+        // MoveKit upute i česte greške (`assets/movekit/texts.json`, ne commita se). Build bez MoveKit dodatka
+        // ih nema, pa detalj vježbe kaže da upute nisu dostupne.
+        val texts = try {
+            appContext.assets.open("movekit/texts.json").bufferedReader().use { CatalogTexts.decode(it.readText()) }
+        } catch (_: Exception) {
+            null
+        }
+        texts?.let(catalog::merging) ?: catalog
     }
 
     /**

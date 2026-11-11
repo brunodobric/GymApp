@@ -1,32 +1,35 @@
 #!/usr/bin/env bash
-# Kopira MoveKit postere u Android build, odakle ih čitaju kartice vrsta u katalogu.
+# Kopira MoveKit klipove, postere i upute u Android build: kartice vrsta u katalogu čitaju postere, a detalj
+# vježbe klip i upute.
 # Pokretanje na Macu iz korijena repozitorija, nakon scripts/movekit.sh:
 #
-#   scripts/movekit-android.sh          # samo kopira postere
-#   scripts/movekit-android.sh --apk    # kopira postere i gradi debug APK (treba Android SDK, npr. iz Android Studija)
+#   scripts/movekit-android.sh          # samo kopira MoveKit sadržaj
+#   scripts/movekit-android.sh --apk    # kopira sadržaj i gradi debug APK (treba Android SDK, npr. iz Android Studija)
 #
-# Izvor je Resources/MoveKit/Media/ (izlaz scripts/movekit.sh), a cilj android/app/src/main/assets/movekit/Media/.
-# Obje mape su u .gitignore: licencirani sadržaj nikad ne ide u repozitorij. APK s posterima smije se dati samo
+# Izvor je Resources/MoveKit/ (izlaz scripts/movekit.sh), a cilj android/app/src/main/assets/movekit/.
+# Obje mape su u .gitignore: licencirani sadržaj nikad ne ide u repozitorij. APK s MoveKit sadržajem smije se dati samo
 # poimence odabranim testerima, nikad preko javne poveznice (docs/movekit.md, docs/android.md odjeljak 9).
-# Klipovi se zasad ne kopiraju: Android još nema klip na detalju vježbe, a HEVC ne podržava svaki uređaj.
+# Klipovi su HEVC kao na iOS-u; Android ga dekodira od verzije 5 (softverski dekoder je dio sustava).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-SOURCE="Resources/MoveKit/Media"
-TARGET="android/app/src/main/assets/movekit/Media"
+SOURCE="Resources/MoveKit"
+TARGET="android/app/src/main/assets/movekit"
 
-if ! compgen -G "$SOURCE/*.jpg" > /dev/null; then
-    echo "Nema postera u $SOURCE. Prvo pokreni scripts/movekit.sh (vidi docs/movekit.md)." >&2
+if ! compgen -G "$SOURCE/Media/*.jpg" > /dev/null; then
+    echo "Nema postera u $SOURCE/Media. Prvo pokreni scripts/movekit.sh (vidi docs/movekit.md)." >&2
     exit 1
 fi
 
-mkdir -p "$TARGET"
-# --delete: poster vježbe koja je izbačena iz kataloga ne ostaje u buildu.
-rsync -a --delete --include='*.jpg' --exclude='*' "$SOURCE/" "$TARGET/"
+mkdir -p "$TARGET/Media"
+if [[ -f "$SOURCE/texts.json" ]]; then cp "$SOURCE/texts.json" "$TARGET/texts.json"; fi
+# --delete: klip ili poster vježbe koja je izbačena iz kataloga ne ostaje u buildu.
+rsync -a --delete --include='*.mp4' --include='*.jpg' --exclude='*' "$SOURCE/Media/" "$TARGET/Media/"
 
-posters=$(find "$TARGET" -name '*.jpg' | wc -l | tr -d ' ')
+videos=$(find "$TARGET/Media" -name '*.mp4' | wc -l | tr -d ' ')
+posters=$(find "$TARGET/Media" -name '*.jpg' | wc -l | tr -d ' ')
 size=$(du -sh "$TARGET" | cut -f1)
-printf 'MoveKit za Android: %s postera, %s u %s\n' "$posters" "$size" "$TARGET"
+printf 'MoveKit za Android: %s klipova, %s postera, %s u %s\n' "$videos" "$posters" "$size" "$TARGET"
 
 if [[ "${1:-}" == "--apk" ]]; then
     if [[ -z "${ANDROID_HOME:-}" && ! -f android/local.properties ]]; then

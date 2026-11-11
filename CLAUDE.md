@@ -55,7 +55,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 brew install xcodegen swiftlint
 xcodegen generate                              # generira GymApp.xcodeproj
 scripts/movekit.sh                             # MoveKit klipovi i upute u build (na Macu, treba ffmpeg)
-scripts/movekit-android.sh --apk               # MoveKit posteri u Android build i debug APK (na Macu, treba Android SDK)
+scripts/movekit-android.sh --apk               # MoveKit klipovi, posteri i upute u Android build i debug APK (na Macu, treba Android SDK)
 scripts/testflight.sh                          # arhiva i upload za TestFlight (na Macu)
 swift test --package-path Packages/GymKit      # testovi logike
 swiftlint lint

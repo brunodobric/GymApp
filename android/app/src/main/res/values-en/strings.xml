@@ -619,4 +619,6 @@
     <string name="shortcut_start_template">Start: %1$s</string>
     <string name="all_exercises">All exercises</string>
     <string name="my_exercises">My exercises</string>
+    <string name="pause_animation">Pause animation</string>
+    <string name="play_animation">Play animation</string>
 </resources>
