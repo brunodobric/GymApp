@@ -24,6 +24,8 @@ import java.util.UUID
  * #;MINS
  * 1;1
  * ```
+ * Izvoz iste aplikacije s drugog uređaja smije se razlikovati u sitnicama: razdjelnik može biti i zarez ili
+ * tabulator, razmak ispred "pm" može biti neprekinuti (U+00A0, U+202F), a "pm" može biti i "PM" ili "p.m.".
  * Datum je lokalno vrijeme bez vremenske zone. Ciljani broj ponavljanja iz retka vježbe ("10 reps") se ne uvozi.
  */
 object ForeignWorkoutsCsv {
@@ -96,9 +98,16 @@ object ForeignWorkoutsCsv {
 
     /** Je li tekst u ovom formatu: prvi neprazni redak je zaglavlje treninga s datumom. */
     fun matches(text: String): Boolean {
-        val line = lines(text).firstOrNull { it.second.isNotEmpty() } ?: return false
-        return header(fields(line.second)) != null
+        return separator(text) != null
     }
+
+    /** Razdjelnik datoteke: onaj uz koji je prvi neprazni redak zaglavlje treninga. Null kad nijedan ne odgovara. */
+    private fun separator(text: String): Char? {
+        val line = lines(text).firstOrNull { it.second.isNotEmpty() } ?: return null
+        return separators.firstOrNull { header(fields(line.second, it)) != null }
+    }
+
+    private val separators = listOf(';', ',', '\t')
 
     // MARK: Čitanje
 
@@ -106,13 +115,14 @@ object ForeignWorkoutsCsv {
     fun parse(text: String, zone: ZoneId = ZoneId.systemDefault()): List<Workout> {
         val workouts = mutableListOf<Workout>()
         var columns: List<Column>? = null
+        val separator = separator(text) ?: ';'
 
         for ((number, line) in lines(text)) {
             if (line.isEmpty()) {
                 columns = null
                 continue
             }
-            val row = fields(line)
+            val row = fields(line, separator)
 
             val header = header(row)
             if (header != null) {
@@ -164,13 +174,16 @@ object ForeignWorkoutsCsv {
     private fun lines(text: String): List<Pair<Int, String>> =
         text.split(newlines).mapIndexed { index, line -> (index + 1) to line.trim { it.isSwiftWhitespace() || it == '﻿' } }
 
-    private fun fields(line: String): List<String> = (Csv.parse(line, ';').firstOrNull() ?: emptyList()).map { it.trimSwift() }
+    private fun fields(line: String, separator: Char): List<String> =
+        (Csv.parse(line, separator).firstOrNull() ?: emptyList()).map { it.trimSwift() }
 
     private class Header(val title: String, val rawDate: String, val duration: String)
 
     private fun header(row: List<String>): Header? {
         if (row.size != 3 || row[0].isEmpty() || parseDate(row[1], ZoneOffset.UTC) == null) return null
-        return Header(row[0], row[1], row[2])
+        // Datum je ključ treninga, pa se razmaci svode na jedan običan: isti trening dobiva isti ključ i kad ga
+        // je izvezao uređaj koji ispred "pm" stavlja neprekinuti razmak.
+        return Header(row[0], row[1].words().joinToString(" "), row[2])
     }
 
     /** "3. Incline Bench Press · Dumbbells · 10 reps" → naziv i oprema. */
@@ -256,17 +269,28 @@ object ForeignWorkoutsCsv {
     /** Dijelovi kao `split` u Swiftu: prazni dijelovi se izostavljaju. */
     private fun String.pieces(separator: Char): List<String> = split(separator).filter { it.isNotEmpty() }
 
-    /** "2026-11-02 4:27 pm" ili "2026-11-02 16:27" u zadanoj vremenskoj zoni. */
+    /** Riječi odvojene bilo kojim razmakom, i neprekinutim (U+00A0, U+202F), kakav neki uređaji stave ispred "pm". */
+    private fun String.words(): List<String> = split(spaces).filter { it.isNotEmpty() }
+
+    private val spaces = Regex("""[\s\p{Z}]+""")
+
+    /**
+     * "2026-11-02 4:27 pm" ili "2026-11-02 16:27" u zadanoj vremenskoj zoni. Prihvaća i sekunde ("16:27:05")
+     * te oznaku napisanu kao "PM", "p.m." ili "p. m.".
+     */
     fun parseDate(text: String, zone: ZoneId): Instant? {
-        val parts = text.lowercase().pieces(' ')
-        if (parts.size != 2 && parts.size != 3) return null
+        val parts = text.lowercase().words()
+        if (parts.size < 2) return null
         val day = parts[0].pieces('-').mapNotNull { it.toIntOrNull() }
-        val time = parts[1].pieces(':').mapNotNull { it.toIntOrNull() }
-        if (day.size != 3 || time.size != 2 || day[1] !in 1..12 || day[2] !in 1..31 || time[1] !in 0..59) return null
+        val rawTime = parts[1].pieces(':')
+        val time = rawTime.mapNotNull { it.toIntOrNull() }
+        if (day.size != 3 || time.size != rawTime.size || time.size !in 2..3) return null
+        if (day[1] !in 1..12 || day[2] !in 1..31 || time[1] !in 0..59 || (time.size == 3 && time[2] !in 0..59)) return null
         var hour = time[0]
-        if (parts.size == 3) {
-            if (hour !in 1..12 || (parts[2] != "am" && parts[2] != "pm")) return null
-            hour = hour % 12 + if (parts[2] == "pm") 12 else 0
+        if (parts.size > 2) {
+            val marker = parts.drop(2).joinToString("").replace(".", "")
+            if (hour !in 1..12 || (marker != "am" && marker != "pm")) return null
+            hour = hour % 12 + if (marker == "pm") 12 else 0
         }
         if (hour !in 0..23) return null
         return try {
@@ -278,7 +302,7 @@ object ForeignWorkoutsCsv {
 
     /** "53 min", "1 hr", "1:17 hr", "1 hr 5 min", "45 sec" → sekunde. Null za nepoznat zapis. */
     fun parseDuration(text: String): Int? {
-        val tokens = text.lowercase().pieces(' ')
+        val tokens = text.lowercase().words()
         if (tokens.isEmpty() || tokens.size % 2 != 0) return null
         var total = 0
         for (index in tokens.indices step 2) {

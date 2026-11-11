@@ -215,7 +215,7 @@ private struct DataSettingsActions {
                     try JSONBackup.importBackup(data, into: ModelContext(container))
                 }.value
             } else {
-                let text = String(decoding: data, as: UTF8.self)
+                let text = ImportText.decode(data)
                 if ForeignWorkoutsCSV.matches(text) {
                     try previewForeign(text)
                     return

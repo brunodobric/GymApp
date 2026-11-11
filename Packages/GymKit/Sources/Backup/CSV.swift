@@ -64,6 +64,24 @@ enum CSV {
     }
 }
 
+/// Tekst uvezene datoteke iz bajtova.
+public enum ImportText {
+    /// UTF-8, ili UTF-16 kad datoteka počinje njegovim BOM-om (neke aplikacije i Excel tako izvoze CSV).
+    /// BOM se uklanja, da prvi naziv stupca ostane ispravan.
+    public static func decode(_ data: Data) -> String {
+        var text: String
+        if data.starts(with: [0xFF, 0xFE]) {
+            text = String(data: data, encoding: .utf16LittleEndian) ?? ""
+        } else if data.starts(with: [0xFE, 0xFF]) {
+            text = String(data: data, encoding: .utf16BigEndian) ?? ""
+        } else {
+            text = String(decoding: data, as: UTF8.self)
+        }
+        if text.unicodeScalars.first == "\u{FEFF}" { text.unicodeScalars.removeFirst() }
+        return text
+    }
+}
+
 /// Datumi u CSV-u: ISO 8601 s milisekundama (UTC), pa su čitljivi i vraćaju se bez gubitka u milisekundi.
 enum CSVDate {
     private static func formatter() -> ISO8601DateFormatter {

@@ -15,6 +15,8 @@ import Units
 ///     #;MINS
 ///     1;1
 ///
+/// Izvoz iste aplikacije s drugog uređaja smije se razlikovati u sitnicama: razdjelnik može biti i zarez ili
+/// tabulator, razmak ispred "pm" može biti neprekinuti (U+00A0, U+202F), a "pm" može biti i "PM" ili "p.m.".
 /// Datum je lokalno vrijeme bez vremenske zone. Ciljani broj ponavljanja iz retka vježbe ("10 reps") se ne uvozi.
 public enum ForeignWorkoutsCSV {
 
@@ -102,10 +104,15 @@ public enum ForeignWorkoutsCSV {
 
     /// Je li tekst u ovom formatu: prvi neprazni redak je zaglavlje treninga s datumom.
     public static func matches(_ text: String) -> Bool {
-        for (_, line) in lines(of: text) where !line.isEmpty {
-            return header(from: fields(line)) != nil
-        }
-        return false
+        separator(of: text) != nil
+    }
+
+    private static let separators: [Character] = [";", ",", "\t"]
+
+    /// Razdjelnik datoteke: onaj uz koji je prvi neprazni redak zaglavlje treninga. Nil kad nijedan ne odgovara.
+    private static func separator(of text: String) -> Character? {
+        guard let line = lines(of: text).first(where: { !$0.1.isEmpty })?.1 else { return nil }
+        return separators.first { header(from: fields(line, separator: $0)) != nil }
     }
 
     // MARK: Čitanje
@@ -115,13 +122,14 @@ public enum ForeignWorkoutsCSV {
     public static func parse(_ text: String, timeZone: TimeZone = .current) throws -> [Workout] {
         var workouts: [Workout] = []
         var columns: [Column]?
+        let delimiter = separator(of: text) ?? ";"
 
         for (number, line) in lines(of: text) {
             if line.isEmpty {
                 columns = nil
                 continue
             }
-            let row = fields(line)
+            let row = fields(line, separator: delimiter)
 
             if let header = header(from: row) {
                 guard let date = parseDate(header.rawDate, timeZone: timeZone) else {
@@ -184,8 +192,8 @@ public enum ForeignWorkoutsCSV {
             .map { ($0.offset + 1, $0.element.trimmingCharacters(in: trimmed)) }
     }
 
-    private static func fields(_ line: String) -> [String] {
-        (CSV.parse(line, separator: ";").first ?? []).map { $0.trimmingCharacters(in: .whitespaces) }
+    private static func fields(_ line: String, separator: Character) -> [String] {
+        (CSV.parse(line, separator: separator).first ?? []).map { $0.trimmingCharacters(in: .whitespaces) }
     }
 
     private struct Header {
@@ -196,7 +204,9 @@ public enum ForeignWorkoutsCSV {
 
     private static func header(from row: [String]) -> Header? {
         guard row.count == 3, !row[0].isEmpty, parseDate(row[1], timeZone: .gmt) != nil else { return nil }
-        return Header(title: row[0], rawDate: row[1], duration: row[2])
+        // Datum je ključ treninga, pa se razmaci svode na jedan običan: isti trening dobiva isti ključ i kad ga
+        // je izvezao uređaj koji ispred "pm" stavlja neprekinuti razmak.
+        return Header(title: row[0], rawDate: words(row[1]).joined(separator: " "), duration: row[2])
     }
 
     /// "3. Incline Bench Press · Dumbbells · 10 reps" → naziv i oprema.
@@ -265,18 +275,27 @@ public enum ForeignWorkoutsCSV {
 
     // MARK: Datum i trajanje
 
-    /// "2026-11-02 4:27 pm" ili "2026-11-02 16:27" u zadanoj vremenskoj zoni.
+    /// Riječi odvojene bilo kojim razmakom, i neprekinutim (U+00A0, U+202F), kakav neki uređaji stave ispred "pm".
+    private static func words(_ text: String) -> [String] {
+        text.split(whereSeparator: \.isWhitespace).map(String.init)
+    }
+
+    /// "2026-11-02 4:27 pm" ili "2026-11-02 16:27" u zadanoj vremenskoj zoni. Prihvaća i sekunde ("16:27:05")
+    /// te oznaku napisanu kao "PM", "p.m." ili "p. m.".
     static func parseDate(_ text: String, timeZone: TimeZone) -> Date? {
-        let parts = text.lowercased().split(separator: " ").map(String.init)
-        guard parts.count == 2 || parts.count == 3 else { return nil }
+        let parts = words(text.lowercased())
+        guard parts.count >= 2 else { return nil }
         let day = parts[0].split(separator: "-").compactMap { Int($0) }
-        let time = parts[1].split(separator: ":").compactMap { Int($0) }
-        guard day.count == 3, time.count == 2, (1...12).contains(day[1]), (1...31).contains(day[2]),
-              (0...59).contains(time[1]) else { return nil }
+        let rawTime = parts[1].split(separator: ":")
+        let time = rawTime.compactMap { Int($0) }
+        guard day.count == 3, time.count == rawTime.count, (2...3).contains(time.count),
+              (1...12).contains(day[1]), (1...31).contains(day[2]), (0...59).contains(time[1]),
+              time.count == 2 || (0...59).contains(time[2]) else { return nil }
         var hour = time[0]
-        if parts.count == 3 {
-            guard (1...12).contains(hour), parts[2] == "am" || parts[2] == "pm" else { return nil }
-            hour = hour % 12 + (parts[2] == "pm" ? 12 : 0)
+        if parts.count > 2 {
+            let marker = parts.dropFirst(2).joined().replacingOccurrences(of: ".", with: "")
+            guard (1...12).contains(hour), marker == "am" || marker == "pm" else { return nil }
+            hour = hour % 12 + (marker == "pm" ? 12 : 0)
         }
         guard (0...23).contains(hour) else { return nil }
         var calendar = Calendar(identifier: .gregorian)
@@ -289,7 +308,7 @@ public enum ForeignWorkoutsCSV {
 
     /// "53 min", "1 hr", "1:17 hr", "1 hr 5 min", "45 sec" → sekunde. Nil za nepoznat zapis.
     static func parseDuration(_ text: String) -> Int? {
-        let tokens = text.lowercased().split(separator: " ").map(String.init)
+        let tokens = words(text.lowercased())
         guard !tokens.isEmpty, tokens.count % 2 == 0 else { return nil }
         var total = 0
         for index in stride(from: 0, to: tokens.count, by: 2) {
