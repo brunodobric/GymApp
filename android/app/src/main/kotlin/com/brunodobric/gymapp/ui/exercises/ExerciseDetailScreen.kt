@@ -75,6 +75,8 @@ fun ExerciseDetailScreen(
     onClose: () -> Unit,
     onEdit: (UUID) -> Unit,
     onOpenSession: (UUID) -> Unit,
+    /** Usred treninga stranica pokazuje samo klip, mišiće i upute (kao `ExerciseInfoSheet` na iOS-u). */
+    showsHistory: Boolean = true,
 ) {
     BackHandler(onBack = onClose)
     val store = services.store
@@ -115,7 +117,7 @@ fun ExerciseDetailScreen(
                     }
                 },
                 actions = {
-                    customExercise?.let { exercise ->
+                    if (showsHistory) customExercise?.let { exercise ->
                         TextButton(onClick = { onEdit(exercise.id) }) { Text(stringResource(R.string.edit)) }
                     }
                 },
@@ -168,7 +170,7 @@ fun ExerciseDetailScreen(
                 }
             }
 
-            if (!history.isEmpty) {
+            if (showsHistory && !history.isEmpty) {
                 Header(stringResource(R.string.your_history))
                 Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
                     Metric(history.count.toString(), stringResource(R.string.in_workouts), Modifier.weight(1f))

@@ -78,6 +78,12 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
     var confirmDelete by remember { mutableStateOf(false) }
     var showsMenu by remember { mutableStateOf(false) }
     var newTemplateId by rememberSaveable { mutableStateOf<UUID?>(null) }
+    var editing by rememberSaveable { mutableStateOf(false) }
+
+    if (editing) {
+        SessionEditorScreen(services, sessionId, onClose = { editing = false })
+        return
+    }
 
     newTemplateId?.let { id ->
         // Novi trening iz ovog: izlazak bez spremanja ga briše.
@@ -126,6 +132,13 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
                             Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.more_options))
                         }
                         DropdownMenu(expanded = showsMenu, onDismissRequest = { showsMenu = false }) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.edit_workout)) },
+                                onClick = {
+                                    showsMenu = false
+                                    editing = true
+                                },
+                            )
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.template_from_session)) },
                                 enabled = session.orderedExercises.any { !it.isRemoved },

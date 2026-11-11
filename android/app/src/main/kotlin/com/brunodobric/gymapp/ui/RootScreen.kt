@@ -184,6 +184,15 @@ fun RootScreen(
                     services,
                     onOpenWorkout = { showsWorkout = true },
                     onOpenSettings = { showsSettings = true },
+                    onOpenStatistics = { selected = Section.STATISTICS },
+                    onOpenSession = { session ->
+                        selected = Section.HISTORY
+                        historyRequest = OpenRequest(session.id.toString())
+                    },
+                    onOpenBody = {
+                        selected = Section.STATISTICS
+                        bodyRequest = OpenRequest("body")
+                    },
                 )
                 Section.HISTORY -> HistoryScreen(services, historyRequest, onRequestHandled = { historyRequest = null })
                 Section.SCHEDULES -> SchedulesScreen(services)
