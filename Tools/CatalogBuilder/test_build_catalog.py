@@ -93,6 +93,10 @@ class ConvertTests(unittest.TestCase):
         result = bc.convert(raw(movementPattern=["Isolation"]), MAPPING, {}, None)
         self.assertEqual(result["mechanic"], "isolation")
 
+    def test_mechanic_override(self):
+        result = bc.convert(raw(), MAPPING, {"mechanic": "isolation"}, None)
+        self.assertEqual(result["mechanic"], "isolation")
+
     def test_override_wins(self):
         result = bc.convert(raw(), MAPPING, {"inputType": "bodyweight", "category": "shoulders"}, None)
         self.assertEqual(result["inputType"], "bodyweight")

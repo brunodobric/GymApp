@@ -152,6 +152,9 @@ def convert(raw: dict, mapping: dict, override: dict, hr_name: str | None) -> di
         mechanic = None
     else:
         mechanic = "compound"
+    # MoveKit nema oznaku "Isolation" za dio jednozglobnih vježbi (trbuh, face pull, slijeganje ramenima...),
+    # pa bi bez ispravke bile složene i dobile dulju zadanu pauzu (`RestDefaults`).
+    mechanic = override.get("mechanic", mechanic)
 
     equipment = override.get("equipment") or map_equipment(raw["equipment"], mapping, slug)
     input_type = override.get("inputType") or infer_input_type(raw, equipment, mapping)
