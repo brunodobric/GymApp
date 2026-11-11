@@ -717,4 +717,25 @@
     <string name="start_short">Započni</string>
     <string name="cycle_of">ciklus %1$d od %2$d</string>
     <string name="more_exercises">+ još %1$d</string>
+    <string name="settings_sync">Sinkronizacija</string>
+    <string name="sync_create">Stvori datoteku za sinkronizaciju</string>
+    <string name="sync_create_detail">Na prvom uređaju. Spremi je na Google Drive ili drugu pohranu u oblaku.</string>
+    <string name="sync_choose">Odaberi postojeću datoteku</string>
+    <string name="sync_choose_detail">Na ostalim uređajima: ista datoteka koju je stvorio prvi uređaj.</string>
+    <string name="sync_footer">Treninzi, rasporedi, mjerenja i postavke sinkroniziraju se između Android uređaja preko jedne datoteke u pohrani koju odabereš. Aplikacija je ne šalje nikamo drugdje. Slike vlastitih vježbi se ne sinkroniziraju.</string>
+    <string name="sync_file">Datoteka</string>
+    <string name="sync_last">Zadnja sinkronizacija</string>
+    <string name="sync_running">Sinkronizira se…</string>
+    <string name="sync_never">Još nije bilo</string>
+    <string name="sync_deferred">Promjene s drugog uređaja čekaju dok je otvoren trening ili uređivač.</string>
+    <string name="sync_now">Sinkroniziraj sada</string>
+    <string name="sync_choose_other">Odaberi drugu datoteku</string>
+    <string name="sync_turn_off">Isključi sinkronizaciju</string>
+    <string name="sync_on_footer">Sinkronizira se pri otvaranju aplikacije, pola minute nakon promjene i pri izlasku. Trening u tijeku ide na druge uređaje kad završi.</string>
+    <string name="sync_turn_off_title">Isključiti sinkronizaciju?</string>
+    <string name="sync_turn_off_message">Podaci ostaju na ovom uređaju i u datoteci, ali se promjene više neće prenositi.</string>
+    <string name="sync_error_unreadable">Datoteka se ne može pročitati. Provjeri vezu s internetom.</string>
+    <string name="sync_error_not_sync_file">Ova datoteka nije Apolonova datoteka za sinkronizaciju.</string>
+    <string name="sync_error_newer">Datoteku je zapisala novija verzija aplikacije. Ažuriraj aplikaciju.</string>
+    <string name="sync_error_access">Aplikacija više nema pristup datoteci. Odaberi je ponovno.</string>
 </resources>

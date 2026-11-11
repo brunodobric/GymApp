@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.ui.workout
 
+import com.brunodobric.gymapp.ui.HoldSync
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -102,6 +103,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
+    HoldSync()
     val store = services.store
     val revision = rememberStoreRevision(store)
     var finishedId by rememberSaveable { mutableStateOf<String?>(null) }

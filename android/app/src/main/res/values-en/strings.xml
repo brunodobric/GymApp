@@ -707,4 +707,25 @@
     <string name="start_short">Start</string>
     <string name="cycle_of">cycle %1$d of %2$d</string>
     <string name="more_exercises">+ %1$d more</string>
+    <string name="settings_sync">Sync</string>
+    <string name="sync_create">Create a sync file</string>
+    <string name="sync_create_detail">On your first device. Save it to Google Drive or other cloud storage.</string>
+    <string name="sync_choose">Choose an existing file</string>
+    <string name="sync_choose_detail">On your other devices: the same file your first device created.</string>
+    <string name="sync_footer">Workouts, schedules, measurements and settings sync between Android devices through one file in the storage you choose. The app sends it nowhere else. Custom exercise photos are not synced.</string>
+    <string name="sync_file">File</string>
+    <string name="sync_last">Last sync</string>
+    <string name="sync_running">Syncing…</string>
+    <string name="sync_never">Not yet</string>
+    <string name="sync_deferred">Changes from another device are waiting while a workout or editor is open.</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_choose_other">Choose another file</string>
+    <string name="sync_turn_off">Turn off sync</string>
+    <string name="sync_on_footer">Syncs when you open the app, half a minute after a change and when you leave. A workout in progress goes to other devices when it ends.</string>
+    <string name="sync_turn_off_title">Turn off sync?</string>
+    <string name="sync_turn_off_message">Data stays on this device and in the file, but changes will no longer be shared.</string>
+    <string name="sync_error_unreadable">The file can’t be read. Check your internet connection.</string>
+    <string name="sync_error_not_sync_file">This file isn’t an Apolon sync file.</string>
+    <string name="sync_error_newer">A newer version of the app wrote this file. Update the app.</string>
+    <string name="sync_error_access">The app no longer has access to the file. Choose it again.</string>
 </resources>
