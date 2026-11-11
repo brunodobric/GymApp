@@ -64,14 +64,6 @@
     <string name="delete_failed">Deleting failed.</string>
     <string name="delete_failed_message">Try again.</string>
     <string name="ok">OK</string>
-    <plurals name="foreign_import_workouts">
-        <item quantity="one">%d new workout</item>
-        <item quantity="other">%d new workouts</item>
-    </plurals>
-    <plurals name="foreign_import_new_custom">
-        <item quantity="one">%d new custom exercise</item>
-        <item quantity="other">%d new custom exercises</item>
-    </plurals>
     <string name="delete_workout">Delete workout</string>
     <string name="delete_workout_title">Delete workout?</string>
     <string name="delete_workout_message">The workout and its sets will be permanently deleted, and records and statistics will be recalculated without it.</string>
@@ -636,4 +628,13 @@
     <string name="rep_range">Range %1$d–%2$d</string>
     <string name="skipped">Skipped</string>
     <string name="restore_skipped">Restore</string>
+    <string name="import_new_workouts">New workouts</string>
+    <string name="import_already_imported">Already imported</string>
+    <string name="import_period">Period</string>
+    <string name="import_sets">Sets</string>
+    <string name="import_workouts_header">Workouts</string>
+    <string name="import_all_imported">All workouts in this file have already been imported.</string>
+    <string name="import_exercises_header">Exercises</string>
+    <string name="import_exercises_footer">Exercises that aren\'t in the catalog are added as your custom exercises. Empty sets aren\'t imported.</string>
+    <string name="import_new_custom">New custom exercise</string>
 </resources>

@@ -22,7 +22,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
@@ -159,30 +158,17 @@ fun DataSettingsSection(services: AppServices) {
     }
 
     foreignPreview?.let { preview ->
-        AlertDialog(
-            onDismissRequest = { foreignPreview = null },
-            title = { Text(stringResource(R.string.foreign_import_title)) },
-            text = {
-                Text(
-                    pluralStringResource(R.plurals.foreign_import_workouts, preview.newWorkouts.size, preview.newWorkouts.size) +
-                        "\n" + pluralStringResource(R.plurals.completed_sets, preview.setCount, preview.setCount) +
-                        "\n" + pluralStringResource(R.plurals.foreign_import_new_custom, preview.newCustomCount, preview.newCustomCount),
-                )
+        ForeignImportDialog(
+            preview = preview,
+            onImport = {
+                foreignPreview = null
+                message = try {
+                    importMessage(ForeignWorkoutImport.apply(preview, store))
+                } catch (_: Exception) {
+                    Message(R.string.import_failed, R.string.import_foreign_failed)
+                }
             },
-            confirmButton = {
-                TextButton(
-                    enabled = preview.newWorkouts.isNotEmpty(),
-                    onClick = {
-                        foreignPreview = null
-                        message = try {
-                            importMessage(ForeignWorkoutImport.apply(preview, store))
-                        } catch (_: Exception) {
-                            Message(R.string.import_failed, R.string.import_foreign_failed)
-                        }
-                    },
-                ) { Text(stringResource(R.string.import_action)) }
-            },
-            dismissButton = { TextButton(onClick = { foreignPreview = null }) { Text(stringResource(R.string.cancel)) } },
+            onDismiss = { foreignPreview = null },
         )
     }
 
