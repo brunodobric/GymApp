@@ -170,7 +170,7 @@ private fun SummaryRow(title: String, value: String) {
 }
 
 @Composable
-private fun RecordItem(exerciseName: String, record: PersonalRecord, weight: WeightFormatter) {
+internal fun RecordItem(exerciseName: String, record: PersonalRecord, weight: WeightFormatter) {
     val reps = record.reps
     val title = if (record.kind == PRKind.REP_MAX && reps != null) {
         stringResource(R.string.pr_rep_max_reps, reps)

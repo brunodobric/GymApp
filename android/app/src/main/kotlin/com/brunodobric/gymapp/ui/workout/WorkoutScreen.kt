@@ -82,6 +82,7 @@ import com.brunodobric.gymapp.training.previousSetValues
 import com.brunodobric.gymapp.training.restDefaults
 import com.brunodobric.gymapp.ui.exercises.ExerciseDetailScreen
 import com.brunodobric.gymapp.ui.exercises.MoveKitAssets
+import com.brunodobric.gymapp.ui.home.RecoveryCheck
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.rememberTicker
 import com.brunodobric.gymapp.units.DurationInput
@@ -114,6 +115,8 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
         LaunchedEffect(Unit) { onClose() }
         return
     }
+    // Trening je otvoren, pa Početna više ne nudi nastavak prekinutog treninga.
+    LaunchedEffect(Unit) { RecoveryCheck.checked = true }
     val engine = remember(store) { WorkoutEngine(store) }
     val settings = store.settings()
     val unit = settings.weightUnit

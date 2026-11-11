@@ -73,8 +73,8 @@ internal class ExerciseCardActions(
     val onDeleteSet: (SetLog) -> Unit,
     val onRemove: () -> Unit,
     val onPlates: (String) -> Unit,
-    val onSuperset: () -> Unit,
-    val onLeaveSuperset: () -> Unit,
+    val onSuperset: (() -> Unit)?,
+    val onLeaveSuperset: (() -> Unit)?,
     val onShowInfo: (() -> Unit)?,
 )
 
@@ -92,11 +92,13 @@ internal fun WorkoutExerciseCard(
     unit: WeightUnit,
     effortScale: EffortScale,
     actions: ExerciseCardActions,
+    /** U treningu je trenutna serija označena, a završene prigušene; u uređivanju povijesti nisu. */
+    tracksProgress: Boolean = true,
 ) {
     val sets = exercise.orderedSets
     val done = sets.count { it.isCompleted }
     val allDone = sets.isNotEmpty() && done == sets.size
-    val current = sets.firstOrNull { !it.isCompleted }
+    val current = if (tracksProgress) sets.firstOrNull { !it.isCompleted } else null
     Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         Column(Modifier.padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = if (isOpen) 8.dp else 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -144,6 +146,7 @@ internal fun WorkoutExerciseCard(
                             effortScale = effortScale,
                             previousText = previousText(set),
                             isCurrent = set.id == current?.id,
+                            dimsCompleted = tracksProgress,
                             actions = actions,
                         )
                     }
@@ -197,14 +200,17 @@ private fun ExerciseMenu(exercise: SessionExercise, actions: ExerciseCardActions
                     show()
                 })
             }
-            DropdownMenuItem(text = { Text(stringResource(R.string.superset)) }, onClick = {
-                menu = false
-                actions.onSuperset()
-            })
-            if (exercise.supersetGroupId != null) {
+            actions.onSuperset?.let { superset ->
+                DropdownMenuItem(text = { Text(stringResource(R.string.superset)) }, onClick = {
+                    menu = false
+                    superset()
+                })
+            }
+            val leave = actions.onLeaveSuperset
+            if (exercise.supersetGroupId != null && leave != null) {
                 DropdownMenuItem(text = { Text(stringResource(R.string.leave_superset)) }, onClick = {
                     menu = false
-                    actions.onLeaveSuperset()
+                    leave()
                 })
             }
             DropdownMenuItem(
@@ -266,11 +272,12 @@ private fun WorkoutSetRow(
     effortScale: EffortScale,
     previousText: String?,
     isCurrent: Boolean,
+    dimsCompleted: Boolean,
     actions: ExerciseCardActions,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val formatter = remember(unit, locale) { WeightFormatter(unit, locale) }
-    val dim = if (set.isCompleted) 0.55f else 1f
+    val dim = if (set.isCompleted && dimsCompleted) 0.55f else 1f
     Row(
         Modifier.fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
