@@ -11,6 +11,7 @@ import android.view.TextureView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -71,7 +72,7 @@ internal fun ExerciseIllustrationView(illustration: ExerciseIllustration, descri
 }
 
 @Composable
-private fun IllustrationFrame(description: String, modifier: Modifier, content: @Composable () -> Unit) {
+private fun IllustrationFrame(description: String, modifier: Modifier, content: @Composable BoxScope.() -> Unit) {
     Box(
         modifier
             .fillMaxWidth()
