@@ -52,6 +52,8 @@ fun SchedulesScreen(services: AppServices) {
     val revision = rememberStoreRevision(store)
     var openedTemplate by rememberSaveable { mutableStateOf<String?>(null) }
     var openedSchedule by rememberSaveable { mutableStateOf<String?>(null) }
+    // Upravo stvorena stavka: izlazak bez spremanja je briše.
+    var openedIsNew by rememberSaveable { mutableStateOf(false) }
     var creating by remember { mutableStateOf(false) }
     var showsPrograms by rememberSaveable { mutableStateOf(false) }
     if (showsPrograms) {
@@ -59,11 +61,17 @@ fun SchedulesScreen(services: AppServices) {
         return
     }
     openedSchedule?.let { id ->
-        ScheduleEditorScreen(services, UUID.fromString(id), onClose = { openedSchedule = null })
+        ScheduleEditorScreen(services, UUID.fromString(id), isNew = openedIsNew, onClose = {
+            openedSchedule = null
+            openedIsNew = false
+        })
         return
     }
     openedTemplate?.let { id ->
-        TemplateEditorScreen(services, UUID.fromString(id), onClose = { openedTemplate = null })
+        TemplateEditorScreen(services, UUID.fromString(id), isNew = openedIsNew, onClose = {
+            openedTemplate = null
+            openedIsNew = false
+        })
         return
     }
 
@@ -88,6 +96,7 @@ fun SchedulesScreen(services: AppServices) {
                         text = { Text(stringResource(R.string.new_schedule)) },
                         onClick = {
                             creating = false
+                            openedIsNew = true
                             openedSchedule = ScheduleEngine(store).createSchedule(newScheduleName).id.toString()
                         },
                     )
@@ -102,6 +111,7 @@ fun SchedulesScreen(services: AppServices) {
                         text = { Text(stringResource(R.string.new_workout)) },
                         onClick = {
                             creating = false
+                            openedIsNew = true
                             openedTemplate = TemplateEngine(store).createTemplate(newName).id.toString()
                         },
                     )

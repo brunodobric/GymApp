@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -51,6 +52,7 @@ import com.brunodobric.gymapp.model.TemplateExercise
 import com.brunodobric.gymapp.model.TemplateSet
 import com.brunodobric.gymapp.model.ref
 import com.brunodobric.gymapp.planning.TemplateEngine
+import com.brunodobric.gymapp.planning.TemplateSnapshot
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.workout.ExercisePicker
 import com.brunodobric.gymapp.ui.workout.inputTypeOf
@@ -63,12 +65,12 @@ import java.util.UUID
 
 /**
  * Uređivač spremljenog treninga: naziv, vježbe s redoslijedom, serije s ciljanom težinom i ponavljanjima te
- * odmor po vježbi. Promjene se spremaju odmah. Superserije, rasponi ponavljanja i tijek
- * "Spremi / Izađi bez spremanja" s iOS-a dolaze kasnije.
+ * odmor po vježbi. Kao na iOS-u, ✓ sprema, a natrag s promjenama pita Spremi ili Izađi bez spremanja:
+ * nova stavka ([isNew]) se tada briše, a postojeća vraća iz [TemplateSnapshot].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () -> Unit) {
+fun TemplateEditorScreen(services: AppServices, templateId: UUID, isNew: Boolean = false, onClose: () -> Unit) {
     val store = services.store
     val revision = rememberStoreRevision(store)
     val template = remember(revision, templateId) { store.template(templateId) }
@@ -77,23 +79,36 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () ->
     var confirmDelete by remember { mutableStateOf(false) }
     var name by rememberSaveable(templateId) { mutableStateOf(template?.name ?: "") }
     val unit = store.settings().weightUnit
+    // Stanje pri otvaranju: snimka za "Izađi bez spremanja" i brojač spremanja za pitanje ima li promjena.
+    val snapshot = remember(templateId) { store.template(templateId)?.let(::TemplateSnapshot) }
+    val openedRevision = remember(templateId) { store.revision }
+    val openedName = remember(templateId) { store.template(templateId)?.name ?: "" }
+    var asksToSave by remember { mutableStateOf(false) }
 
     if (template == null) {
         LaunchedEffect(Unit) { onClose() }
         return
     }
 
-    fun close() {
+    fun save() {
         val trimmed = name.trim()
-        if (trimmed.isNotEmpty() && trimmed != template.name) {
-            template.name = trimmed
-            store.save()
-        }
+        if (trimmed.isNotEmpty() && trimmed != template.name) template.name = trimmed
+        store.save()
         onClose()
     }
 
+    fun discard() {
+        if (isNew) engine.delete(template) else snapshot?.restore(template, store)
+        onClose()
+    }
+
+    fun leave() {
+        val changed = isNew || revision != openedRevision || name.trim() != openedName
+        if (changed) asksToSave = true else onClose()
+    }
+
     BackHandler(enabled = picking) { picking = false }
-    BackHandler(enabled = !picking) { close() }
+    BackHandler(enabled = !picking) { leave() }
 
     if (picking) {
         ExercisePicker(
@@ -113,13 +128,16 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () ->
             TopAppBar(
                 title = { Text(name.ifBlank { template.name }) },
                 navigationIcon = {
-                    IconButton(onClick = { close() }) {
+                    IconButton(onClick = { leave() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { confirmDelete = true }) {
                         Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_template))
+                    }
+                    IconButton(onClick = { save() }) {
+                        Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.save))
                     }
                 },
             )
@@ -156,6 +174,22 @@ fun TemplateEditorScreen(services: AppServices, templateId: UUID, onClose: () ->
                 Text(stringResource(R.string.add_exercise), modifier = Modifier.padding(start = 8.dp))
             }
         }
+    }
+
+    if (asksToSave) {
+        SaveChangesDialog(
+            item = EditedItem.WORKOUT,
+            isNew = isNew,
+            onSave = {
+                asksToSave = false
+                save()
+            },
+            onDiscard = {
+                asksToSave = false
+                discard()
+            },
+            onDismiss = { asksToSave = false },
+        )
     }
 
     if (confirmDelete) {

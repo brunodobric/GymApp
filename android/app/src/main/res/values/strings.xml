@@ -633,4 +633,11 @@
     <string name="my_exercises">Moje vježbe</string>
     <string name="pause_animation">Pauziraj animaciju</string>
     <string name="play_animation">Pokreni animaciju</string>
+    <string name="save_changes_title">Spremiti promjene?</string>
+    <string name="save_changes_message">Promjene još nisu spremljene.</string>
+    <string name="save_schedule_title">Spremiti raspored?</string>
+    <string name="save_schedule_message">Novi raspored još nije spremljen.</string>
+    <string name="save_workout_title">Spremiti trening?</string>
+    <string name="save_workout_message">Novi trening još nije spremljen.</string>
+    <string name="leave_without_saving">Izađi bez spremanja</string>
 </resources>
