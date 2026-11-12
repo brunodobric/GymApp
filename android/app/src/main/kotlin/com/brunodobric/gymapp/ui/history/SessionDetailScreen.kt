@@ -56,14 +56,13 @@ import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.NumberInput
 import com.brunodobric.gymapp.units.WeightFormatter
-import java.text.NumberFormat
+import com.brunodobric.gymapp.ui.statistics.signedPercent
 import java.time.Duration
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.UUID
 import java.util.Locale
-import kotlin.math.roundToInt
 
 /**
  * Detalj završenog treninga (`SessionDetailScreen` na iOS-u): sažetak, napor treninga, usporedba s prošlim
@@ -295,9 +294,3 @@ private fun setText(set: SetLog, inputType: ExerciseInputType, weight: WeightFor
     }
 }
 
-/** Promjena kao postotak s predznakom, u zapisu jezika ("+5 %" na hrvatskom, "+5%" na engleskom). */
-private fun signedPercent(change: Double, locale: Locale): String {
-    val rounded = (change * 100).roundToInt() / 100.0
-    val text = NumberFormat.getPercentInstance(locale).format(rounded)
-    return if (rounded > 0) "+$text" else text
-}

@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.ui.settings.weightStepText
 import com.brunodobric.gymapp.ui.settings.ChoiceRow
+import com.brunodobric.gymapp.ui.settings.Footer
 import com.brunodobric.gymapp.model.weightSteps
 import com.brunodobric.gymapp.model.WeightStepSettings
 import com.brunodobric.gymapp.R
@@ -170,7 +171,7 @@ fun ExerciseDetailScreen(
                 Header(stringResource(R.string.instructions))
                 val steps = catalogExercise.displayInstructions(language)
                 if (steps.isEmpty()) {
-                    Secondary(stringResource(R.string.instructions_unavailable))
+                    Footer(stringResource(R.string.instructions_unavailable))
                 } else {
                     steps.forEachIndexed { index, step ->
                         Text("${index + 1}. $step", Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
@@ -197,7 +198,7 @@ fun ExerciseDetailScreen(
                 )
                 HorizontalDivider()
                 val usesWeight = history.performances.any { it.inputType in WEIGHTED }
-                Secondary(
+                Footer(
                     listOfNotNull(
                         if (usesWeight) stringResource(R.string.weights_in, unit.symbol) else null,
                         stringResource(R.string.warm_up_hidden),
@@ -229,15 +230,6 @@ private fun InfoRow(title: String, value: String) {
     )
 }
 
-@Composable
-private fun Secondary(text: String) {
-    Text(
-        text,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-    )
-}
 
 @Composable
 private fun Metric(value: String, label: String, modifier: Modifier) {

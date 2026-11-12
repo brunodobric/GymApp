@@ -56,7 +56,7 @@ import com.brunodobric.gymapp.ui.statistics.prKindTitle
 import com.brunodobric.gymapp.ui.statistics.recordValue
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.WeightFormatter
-import java.text.NumberFormat
+import com.brunodobric.gymapp.ui.statistics.signedPercent
 import java.util.UUID
 import kotlin.math.roundToInt
 
@@ -158,7 +158,7 @@ fun WorkoutSummaryScreen(services: AppServices, sessionId: UUID, onClose: () -> 
             comparison?.volumeChange?.let { change ->
                 Card(Modifier.fillMaxWidth()) {
                     Text(
-                        stringResource(R.string.volume_vs_previous, signed(change, locale)),
+                        stringResource(R.string.volume_vs_previous, signedPercent(change, locale)),
                         modifier = Modifier.padding(16.dp),
                     )
                 }
@@ -271,12 +271,6 @@ internal fun RecordItem(exerciseName: String, record: PersonalRecord, weight: We
     )
 }
 
-/** Promjena kao postotak s predznakom, u zapisu jezika. */
-private fun signed(change: Double, locale: java.util.Locale): String {
-    val rounded = (change * 100).roundToInt() / 100.0
-    val text = NumberFormat.getPercentInstance(locale).format(rounded)
-    return if (rounded > 0) "+$text" else text
-}
 
 /** Rezultat vježbe u sažetku i detalju treninga (`ExerciseResultRow` na iOS-u): najbolja serija, 1RM i promjena. */
 @Composable
@@ -297,7 +291,7 @@ internal fun ExerciseResultRow(result: ExerciseResult, weight: WeightFormatter, 
                     Text(stringResource(R.string.one_rep_max_about, weight.string(oneRepMax)), style = MaterialTheme.typography.bodyMedium)
                     result.change?.let { change ->
                         Text(
-                            signed(change, locale),
+                            signedPercent(change, locale),
                             style = MaterialTheme.typography.bodySmall,
                             color = when {
                                 change > 0.005 -> Color(0xFF2E7D32)

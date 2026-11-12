@@ -76,7 +76,7 @@ internal fun WeightStepsPage(services: AppServices, onClose: () -> Unit) {
     val language = catalogLanguage()
     val steps = settings.weightSteps
     val overrides = steps.overrides(unit).map { (key, step) -> Triple(key, exerciseName(services, key, language), step) }
-        .sortedBy { it.second.lowercase() }
+        .sortedBy { it.second?.lowercase() ?: "" }
     val unknown = stringResource(R.string.unknown_exercise)
 
     fun change(edit: WeightStepSettings.() -> Unit) {
