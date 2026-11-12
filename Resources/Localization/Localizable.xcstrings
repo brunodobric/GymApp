@@ -9777,16 +9777,6 @@
         }
       }
     },
-    "cm" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cm"
-          }
-        }
-      }
-    },
     "dodatno %@, %lld ponavljanja" : {
       "localizations" : {
         "en" : {
