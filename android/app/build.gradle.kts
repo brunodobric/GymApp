@@ -50,6 +50,7 @@ dependencies {
     implementation(project(":domain:backup"))
     implementation(project(":domain:widgets"))
     implementation(project(":domain:health"))
+    implementation(project(":domain:sync"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)

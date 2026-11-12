@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.model
 
+import kotlin.test.assertFalse
 import com.brunodobric.gymapp.catalog.Equipment
 import com.brunodobric.gymapp.catalog.ExerciseCatalog
 import com.brunodobric.gymapp.units.WeightUnit
@@ -140,5 +141,18 @@ class WeightStepsTest {
         assertEquals(5.0, pounds(curl))
         assertEquals(10.0, pounds(press))
         assertEquals(2.5, WeightStepSettings.resolver(null, null, emptyList())(curl))
+    }
+
+    @Test
+    fun `vlastiti koraci i koraci opreme po jedinici`() {
+        val steps = WeightStepSettings()
+        assertFalse(steps.hasEquipmentSteps(WeightUnit.KILOGRAMS))
+        steps.setOverride(1.25, "c:bench", WeightUnit.KILOGRAMS)
+        steps.setOverride(2.5, "c:squat", WeightUnit.POUNDS)
+        steps.setStep(1.0, Equipment.DUMBBELL, WeightUnit.KILOGRAMS)
+        assertEquals(mapOf("c:bench" to 1.25), steps.overrides(WeightUnit.KILOGRAMS))
+        assertEquals(mapOf("c:squat" to 2.5), steps.overrides(WeightUnit.POUNDS))
+        assertTrue(steps.hasEquipmentSteps(WeightUnit.KILOGRAMS))
+        assertFalse(steps.hasEquipmentSteps(WeightUnit.POUNDS))
     }
 }

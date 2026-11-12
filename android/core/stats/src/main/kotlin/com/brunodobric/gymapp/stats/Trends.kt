@@ -139,5 +139,3 @@ object TrendAnalysis {
 
 /** Sekunde između dva trenutka, s milisekundama (`timeIntervalSince` na iOS-u). */
 internal fun secondsBetween(from: Instant, to: Instant): Double = (to.toEpochMilli() - from.toEpochMilli()) / 1000.0
-
-internal fun Instant.plusSecondsDouble(seconds: Double): Instant = plusMillis(Math.round(seconds * 1000))

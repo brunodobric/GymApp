@@ -54,3 +54,46 @@ fun UserSettings.changeCount(defaults: UserSettings): Int = listOf(
     liveActivityThemeRaw to defaults.liveActivityThemeRaw,
     liveActivityAccentRaw to defaults.liveActivityAccentRaw,
 ).count { it.first != it.second }
+
+/**
+ * Uklanjanje duplikata nakon sinkronizacije (`Deduplication` na iOS-u). Graf nema dva zapisa s istim UUID-om, ali
+ * svaki uređaj stvara svoje postavke i zadane kartice Početne, pa ih nakon spajanja može biti više.
+ */
+object Deduplication {
+
+    /** Postavke i kartice Početne. Vraća broj obrisanih zapisa (sprema samo kad je nešto obrisano). */
+    fun removeAll(store: GymStore): Int = removeDuplicateSettings(store) + removeDuplicateDashboardCards(store)
+
+    /** Ostaje jedan zapis postavki, po istom pravilu na svim uređajima ([UserSettingsChoice.preferred]). */
+    fun removeDuplicateSettings(store: GymStore): Int {
+        val all = store.settingsRecords.toList()
+        val kept = UserSettingsChoice.preferred(all) ?: return 0
+        if (all.size <= 1) return 0
+        all.filter { it !== kept }.forEach(store::delete)
+        store.save()
+        return all.size - 1
+    }
+
+    /**
+     * Ista vrsta kartice dodana na dva uređaja: ostaje kartica s manjim `orderIndex` (pa manjim id-om), a redoslijed
+     * se ponovno numerira. Kartice nepoznate vrste (iz novije verzije) se ne diraju.
+     */
+    fun removeDuplicateDashboardCards(store: GymStore): Int {
+        val cards = store.dashboardCards.sortedWith(compareBy<DashboardCard> { it.orderIndex }.thenBy { it.id.uppercaseString })
+        val seen = mutableSetOf<String>()
+        val kept = mutableListOf<DashboardCard>()
+        var removed = 0
+        for (card in cards) {
+            if (DashboardCardKind.fromRaw(card.kindRaw) != null && !seen.add(card.kindRaw)) {
+                store.delete(card)
+                removed++
+            } else {
+                kept += card
+            }
+        }
+        if (removed == 0) return 0
+        kept.forEachIndexed { index, card -> if (card.orderIndex != index) card.orderIndex = index }
+        store.save()
+        return removed
+    }
+}

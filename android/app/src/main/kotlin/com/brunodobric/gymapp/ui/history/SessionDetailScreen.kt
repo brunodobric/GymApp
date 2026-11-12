@@ -39,6 +39,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
+import com.brunodobric.gymapp.ui.statistics.SessionMusclesCard
+import com.brunodobric.gymapp.stats.exerciseResults
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.model.SetKind
@@ -54,19 +56,18 @@ import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.NumberInput
 import com.brunodobric.gymapp.units.WeightFormatter
-import java.text.NumberFormat
+import com.brunodobric.gymapp.ui.statistics.signedPercent
 import java.time.Duration
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.UUID
 import java.util.Locale
-import kotlin.math.roundToInt
 
 /**
- * Detalj završenog treninga, prvi korak: sažetak, usporedba s prošlim treningom istog predloška,
- * vježbe sa serijama, bilješke, brisanje i "Novi trening iz ovog" (predložak se otvara u uređivaču).
- * Uređivanje odrađenog treninga i mišići dolaze kasnije.
+ * Detalj završenog treninga (`SessionDetailScreen` na iOS-u): sažetak, napor treninga, usporedba s prošlim
+ * treningom istog predloška, vježbe sa serijama i procjenom 1RM, bilješke, mišići na dnu, uređivanje, brisanje
+ * i "Novi trening iz ovog" (predložak se otvara u uređivaču).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,6 +105,9 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
             .withZone(ZoneId.systemDefault())
     }
     val weight = remember(unit, locale) { WeightFormatter(unit, locale) }
+    val results = remember(revision, sessionId) {
+        StatisticsEngine(store).exerciseResults(session).associateBy { it.key }
+    }
     val exercises = session.orderedExercises.filter { exercise -> !exercise.isRemoved && exercise.sets.any { it.isCompleted } }
     val completedSets = exercises.sumOf { exercise -> exercise.sets.count { it.isCompleted } }
     val volume = exercises.sumOf { exercise ->
@@ -182,6 +186,9 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
                 session.activeEnergyKilocalories?.takeIf { it > 0 }?.let {
                     stringResource(R.string.active_calories) to stringResource(R.string.kcal_value, Math.round(it).toInt())
                 },
+                session.sessionRPE?.let {
+                    stringResource(R.string.workout_effort) to stringResource(R.string.effort_out_of_ten, it.toInt())
+                },
             )
             if (healthLines.isNotEmpty() || session.isImportedFromWorkoutsApp) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -215,6 +222,7 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
                 Card {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(exercise.exerciseName, style = MaterialTheme.typography.titleMedium)
+                        val result = results[exercise.exerciseKey]
                         var number = 0
                         exercise.orderedSets.filter { it.isCompleted }.forEach { set ->
                             val label = if (set.kind == SetKind.WARM_UP) {
@@ -233,6 +241,14 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
                                 set.rpe?.let { Text("RPE " + NumberInput.format(it), style = MaterialTheme.typography.bodySmall) }
                             }
                         }
+                        result?.oneRepMaxKg?.let { oneRepMax ->
+                            val change = result.change?.let { " (" + signedPercent(it, locale) + ")" }.orEmpty()
+                            Text(
+                                stringResource(R.string.one_rep_max_about, weight.string(oneRepMax)) + change,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
             }
@@ -243,6 +259,8 @@ fun SessionDetailScreen(services: AppServices, sessionId: UUID, onClose: () -> U
                     Text(session.notes, style = MaterialTheme.typography.bodyMedium)
                 }
             }
+            // Mapa mišića je na dnu, ispod serija i bilješki (kao na iOS-u).
+            SessionMusclesCard(services, session, revision)
         }
     }
 
@@ -276,9 +294,3 @@ private fun setText(set: SetLog, inputType: ExerciseInputType, weight: WeightFor
     }
 }
 
-/** Promjena kao postotak s predznakom, u zapisu jezika ("+5 %" na hrvatskom, "+5%" na engleskom). */
-private fun signedPercent(change: Double, locale: Locale): String {
-    val rounded = (change * 100).roundToInt() / 100.0
-    val text = NumberFormat.getPercentInstance(locale).format(rounded)
-    return if (rounded > 0) "+$text" else text
-}

@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.ui.history
 
+import com.brunodobric.gymapp.ui.HoldSync
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.text.format.DateFormat
@@ -77,6 +78,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SessionEditorScreen(services: AppServices, sessionId: UUID, onClose: () -> Unit) {
+    HoldSync()
     val store = services.store
     val editor = remember(store) { SessionEditor(store) }
     // Izmjene se ne spremaju, pa ih ekran broji sam da se iscrta i zna pitati pri izlasku.

@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.ui.planning
 
+import com.brunodobric.gymapp.ui.HoldSync
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -66,6 +67,7 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleEditorScreen(services: AppServices, scheduleId: UUID, isNew: Boolean = false, onClose: () -> Unit) {
+    HoldSync()
     val store = services.store
     val revision = rememberStoreRevision(store)
     val schedule = remember(revision, scheduleId) { store.schedules.firstOrNull { it.id == scheduleId } }

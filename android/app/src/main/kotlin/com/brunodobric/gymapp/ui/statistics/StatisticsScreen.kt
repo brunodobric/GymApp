@@ -46,7 +46,7 @@ import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.ui.OpenRequest
 import com.brunodobric.gymapp.model.BodyMeasurementKind
 import com.brunodobric.gymapp.model.ExerciseRef
-import com.brunodobric.gymapp.model.Sex
+import com.brunodobric.gymapp.model.StatsDetail
 import com.brunodobric.gymapp.stats.BodyTracking
 import com.brunodobric.gymapp.stats.ExerciseInfoBuilder
 import com.brunodobric.gymapp.stats.ExercisePoint
@@ -128,24 +128,31 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
     val info = remember(revision) { ExerciseInfoBuilder.provider(services.catalog, store.customExercises) }
     val isCardio = remember(info) { ExerciseInfoBuilder.isCardio(info) }
     var muscleDays by rememberSaveable { mutableStateOf(MUSCLE_PERIODS.first()) }
-    val loads = remember(revision, muscleDays) {
+    // Detaljni prikaz (Postavke > Trening > Prikaz statistike) dodaje kartice; u osnovnom se ne računaju (kao na iOS-u).
+    val isPro = settings.statsDetail == StatsDetail.PRO
+    val loads = remember(revision, muscleDays, isPro) {
+        if (!isPro) return@remember emptyMap<String, com.brunodobric.gymapp.stats.RegionLoad>()
         val now = Instant.now()
         StatisticsEngine(store).heatmap(now.minusSeconds(muscleDays * 24L * 3600), now.plusSeconds(1), info)
     }
-    val strengthTrends = remember(revision) { StatisticsEngine(store).strengthTrends(info = info) }
-    val weekly = remember(revision, settings.goal, settings.trainingDaysPerWeek) {
+    val strengthTrends = remember(revision, isPro) { if (isPro) StatisticsEngine(store).strengthTrends(info = info) else emptyList() }
+    val weekly = remember(revision, settings.goal, settings.trainingDaysPerWeek, isPro) {
+        if (!isPro) return@remember null
         StatisticsEngine(store).weeklyReview(goal = settings.goal, plannedPerWeek = settings.trainingDaysPerWeek, info = info)
     }
-    val effort = remember(revision) {
+    val effort = remember(revision, isPro) {
+        if (!isPro) return@remember null
         val now = Instant.now()
         StatisticsEngine(store).effortDistribution(now.minusSeconds(FOUR_WEEKS), now.plusSeconds(1))
     }
-    val intensity = remember(revision) {
+    val intensity = remember(revision, isPro) {
+        if (!isPro) return@remember null
         val now = Instant.now()
         StatisticsEngine(store).intensityDistribution(now.minusSeconds(FOUR_WEEKS), now.plusSeconds(1))
     }
     // DOTS uz spol i zadnju upisanu tjelesnu težinu, kao na iOS-u.
-    val dots = remember(revision) {
+    val dots = remember(revision, isPro) {
+        if (!isPro) return@remember null
         val sex = settings.sex
         val bodyWeight = BodyTracking(store).latest(BodyMeasurementKind.WEIGHT)?.value
         if (sex != null && bodyWeight != null && bodyWeight > 0) StatisticsEngine(store).dotsScore(bodyWeight, sex) else null
@@ -174,20 +181,21 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
                 }
             }
             SummaryCard(summary, locale, onShift = { step -> dateMillis = period.shift(date, step, calendar).toEpochMilli() })
-            WeeklyReviewCard(weekly.first, weekly.second, locale)
-
-            MusclesCard(
-                muscleDays,
-                onDaysChange = { muscleDays = it },
-                loads = loads,
-                locale = locale,
-                diagrams = services.bodyMap,
-                female = settings.sex == Sex.FEMALE,
-            )
-            if (strengthTrends.isNotEmpty()) StrengthTrendCard(strengthTrends, locale)
+            if (isPro) {
+                weekly?.let { WeeklyReviewCard(it.first, it.second, locale) }
+                MusclesCard(
+                    muscleDays,
+                    onDaysChange = { muscleDays = it },
+                    loads = loads,
+                    locale = locale,
+                    diagrams = services.bodyMap,
+                    female = settings.bodyMapFemale,
+                )
+                if (strengthTrends.isNotEmpty()) StrengthTrendCard(strengthTrends, locale)
+            }
 
             RecordsCard(records, settings.weightUnit, onShowAll = { showsRecords = true })
-            if (effort.rated > 0 || intensity.total > 0) EffortIntensityCard(effort, intensity)
+            if (effort != null && intensity != null && (effort.rated > 0 || intensity.total > 0)) EffortIntensityCard(effort, intensity)
             dots?.let { DotsCard(it, weight, locale) }
 
             Card(Modifier.fillMaxWidth()) {

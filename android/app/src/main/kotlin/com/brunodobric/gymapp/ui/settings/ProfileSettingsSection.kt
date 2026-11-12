@@ -21,6 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.brunodobric.gymapp.model.StatsDetail
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -116,12 +118,17 @@ fun ProfileSettingsSection(services: AppServices, onSuggestSchedule: () -> Unit)
     Footer(stringResource(R.string.suggest_schedule_footer))
 }
 
-/** Postavke > Trening: jedinice, zadana pauza i rekordi. */
+/** Postavke > Trening: jedinice, korak težine, napor, zadana pauza, rekordi i prikaz statistike (kao na iOS-u). */
 @Composable
 fun TrainingSettingsSection(services: AppServices) {
     val store = services.store
     rememberStoreRevision(store)
     val settings = store.settings()
+    var page by rememberSaveable { mutableStateOf<String?>(null) }
+    when (page) {
+        PAGE_WEIGHT_STEPS -> WeightStepsPage(services, onClose = { page = null })
+        PAGE_RECORD_EXERCISES -> RecordExercisesPage(services, onClose = { page = null })
+    }
 
     ChoiceRow(
         title = stringResource(R.string.units),
@@ -132,6 +139,10 @@ fun TrainingSettingsSection(services: AppServices) {
         settings.weightUnit = it
         store.save()
     }
+    ListItem(
+        modifier = Modifier.clickable { page = PAGE_WEIGHT_STEPS },
+        headlineContent = { Text(stringResource(R.string.weight_step)) },
+    )
     // Napor serije kao RPE ili RIR (RIR = 10 − RPE), kao na iOS-u. Sprema se uvijek kao RPE.
     ChoiceRow(
         title = stringResource(R.string.effort),
@@ -160,6 +171,7 @@ fun TrainingSettingsSection(services: AppServices) {
             })
         },
     )
+    SectionHeader(stringResource(R.string.records))
     ListItem(
         headlineContent = { Text(stringResource(R.string.records_pr)) },
         trailingContent = {
@@ -169,6 +181,53 @@ fun TrainingSettingsSection(services: AppServices) {
             })
         },
     )
+    if (settings.prEnabled) {
+        PRSettingOption.entries.forEach { option ->
+            ListItem(
+                modifier = Modifier.padding(start = 16.dp),
+                headlineContent = { Text(stringResource(option.title)) },
+                trailingContent = {
+                    Switch(checked = option.isOn(settings), onCheckedChange = { on ->
+                        option.set(settings, on)
+                        store.save()
+                    })
+                },
+            )
+        }
+        val excluded = settings.prExcludedExerciseKeys.size
+        ListItem(
+            modifier = Modifier.clickable { page = PAGE_RECORD_EXERCISES },
+            headlineContent = { Text(stringResource(R.string.exercises_in_records)) },
+            trailingContent = {
+                Text(
+                    if (excluded == 0) stringResource(R.string.filter_all) else stringResource(R.string.excluded_count, excluded),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            },
+        )
+    }
+    Footer(stringResource(R.string.records_footer))
+
+    SectionHeader(stringResource(R.string.tab_statistics))
+    ChoiceRow(
+        title = stringResource(R.string.stats_detail),
+        value = stringResource(statsDetailTitle(settings.statsDetail)),
+        options = StatsDetail.entries,
+        label = { stringResource(statsDetailTitle(it)) },
+    ) {
+        settings.statsDetail = it
+        store.save()
+    }
+    Footer(stringResource(R.string.stats_detail_footer))
+}
+
+private const val PAGE_WEIGHT_STEPS = "weightSteps"
+private const val PAGE_RECORD_EXERCISES = "recordExercises"
+
+@StringRes
+private fun statsDetailTitle(detail: StatsDetail): Int = when (detail) {
+    StatsDetail.BASIC -> R.string.stats_basic
+    StatsDetail.PRO -> R.string.stats_detailed
 }
 
 /** Šipka (5 do 30 kg, korak 2,5 kg) i ploče koje korisnik ima, za kalkulator ploča. Sve u kg, kao na iOS-u. */
@@ -323,7 +382,13 @@ internal fun NotificationSettingsSection(services: AppServices) {
             })
         },
     )
+    var showsFocusTip by rememberSaveable { mutableStateOf(false) }
+    ListItem(
+        modifier = Modifier.clickable { showsFocusTip = true },
+        headlineContent = { Text(stringResource(R.string.focus_during_workout)) },
+    )
     Footer(stringResource(R.string.rest_notification_footer))
+    if (showsFocusTip) FocusTipPage(onClose = { showsFocusTip = false })
 }
 
 private fun effortTitle(scale: EffortScale): String = if (scale == EffortScale.RPE) "RPE" else "RIR"

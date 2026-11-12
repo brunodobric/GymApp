@@ -44,6 +44,8 @@ import com.brunodobric.gymapp.planning.PlannedWorkout
 import com.brunodobric.gymapp.planning.ScheduleEngine
 import com.brunodobric.gymapp.planning.TemplateStarter
 import com.brunodobric.gymapp.ui.rememberStoreRevision
+import com.brunodobric.gymapp.ui.settings.Footer
+import com.brunodobric.gymapp.ui.settings.SectionHeader
 import com.brunodobric.gymapp.ui.workout.ExercisePicker
 import com.brunodobric.gymapp.ui.workout.inputTypeOf
 import java.util.UUID
@@ -207,22 +209,4 @@ private fun changeLabel(change: CycleOverride, planned: PlannedWorkout): String 
     }
 }
 
-@Composable
-private fun SectionHeader(text: String) {
-    Text(
-        text,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 4.dp),
-    )
-}
 
-@Composable
-private fun Footer(text: String) {
-    Text(
-        text,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-    )
-}

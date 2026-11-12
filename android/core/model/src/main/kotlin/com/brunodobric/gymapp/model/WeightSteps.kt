@@ -46,6 +46,13 @@ class WeightStepSettings(equipmentRaw: String = "", exercisesRaw: String = "") {
         if (step != null && step > 0) exercises[key] = step else exercises.remove(key)
     }
 
+    /** Vježbe s vlastitim korakom u jedinici [unit]: ključ vježbe i korak. */
+    fun overrides(unit: WeightUnit): Map<String, Double> =
+        exercises.filterKeys { it.unit == unit }.mapKeys { it.key.id }
+
+    /** Ima li ijedna oprema korak različit od zadanog u jedinici [unit] ("Vrati zadane korake"). */
+    fun hasEquipmentSteps(unit: WeightUnit): Boolean = equipment.keys.any { it.unit == unit }
+
     val equipmentRaw: String get() = encode(equipment)
     val exercisesRaw: String get() = encode(exercises)
 

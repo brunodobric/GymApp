@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.ui.exercises
 
+import com.brunodobric.gymapp.ui.HoldSync
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,6 +57,7 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomExerciseEditorScreen(services: AppServices, exerciseId: UUID?, onClose: () -> Unit) {
+    HoldSync()
     val store = services.store
     val exercise = remember(exerciseId) { exerciseId?.let(store::customExercise) }
     // Stanje su sirove vrijednosti (raw), da preživi okretanje ekrana.

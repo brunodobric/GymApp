@@ -141,6 +141,42 @@ class GymStore(internal val persistence: RecordPersistence = InMemoryPersistence
         return upserts.size + deletes.size
     }
 
+    /**
+     * Svi zapisi u bazi nakon spremanja izmjena, i oni koji se ne učitavaju (bez roditelja ili iz novije verzije).
+     * Za sinkronizaciju: ono što je na uređaju, a ne samo učitani graf.
+     */
+    fun persistedRecords(): List<StoredRecord> {
+        save()
+        return persistence.loadAll()
+    }
+
+    /**
+     * Zapisi koji su stigli s drugog uređaja (sinkronizacija): spremaju se u bazu i graf se ponovno učitava.
+     * Prije toga se spremaju lokalne izmjene. Objekti koje je ekran držao nakon toga više nisu u grafu, pa se
+     * zove samo kad nijedan uređivač ni trening nisu otvoreni.
+     */
+    fun applyExternal(upserts: List<StoredRecord>, deletes: List<Pair<String, String>>) {
+        save()
+        if (upserts.isEmpty() && deletes.isEmpty()) return
+        persistence.write(upserts, deletes)
+        load(persistence.loadAll())
+        revision++
+        listeners.toList().forEach { it(revision) }
+    }
+
+    /** Ključevi (vrsta, id) treninga u tijeku i njegovih vježbi i serija: sinkroniziraju se tek kad trening završi. */
+    fun activeSessionKeys(): Set<Pair<String, String>> {
+        val result = mutableSetOf<Pair<String, String>>()
+        for (session in sessions.filter { it.state == SessionState.ACTIVE }) {
+            result += encodeType(session) to session.id.uppercaseString
+            for (exercise in session.exercises) {
+                result += encodeType(exercise) to exercise.id.uppercaseString
+                exercise.sets.forEach { result += encodeType(it) to it.id.uppercaseString }
+            }
+        }
+        return result
+    }
+
     /** Odbacuje nespremljene izmjene: graf se vraća na zadnje spremljeno stanje. */
     fun rollback() {
         load(saved.values.toList())

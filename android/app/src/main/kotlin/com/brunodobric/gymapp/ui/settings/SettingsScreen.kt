@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
@@ -50,7 +52,7 @@ import com.brunodobric.gymapp.ui.onboarding.ProgramRecommendationScreen
 
 /** Kategorije postavki kao na iOS-u (`SettingsCategory`): svaka je redak na prvom ekranu i otvara svoju stranicu. */
 internal enum class SettingsCategory {
-    PROFILE, APPEARANCE, TRAINING, PLATES, NOTIFICATIONS, HEALTH, DATA, ABOUT;
+    PROFILE, APPEARANCE, TRAINING, PLATES, NOTIFICATIONS, HEALTH, SYNC, DATA, ABOUT;
 
     @get:StringRes
     val title: Int
@@ -61,6 +63,7 @@ internal enum class SettingsCategory {
             PLATES -> R.string.bar_and_plates
             NOTIFICATIONS -> R.string.settings_notifications
             HEALTH -> R.string.health_connect
+            SYNC -> R.string.settings_sync
             DATA -> R.string.settings_data
             ABOUT -> R.string.settings_about
         }
@@ -73,6 +76,7 @@ internal enum class SettingsCategory {
         PLATES -> painterResource(R.drawable.ic_settings_plates)
         NOTIFICATIONS -> rememberVectorPainter(Icons.Filled.Notifications)
         HEALTH -> rememberVectorPainter(Icons.Filled.Favorite)
+        SYNC -> rememberVectorPainter(Icons.Filled.Refresh)
         DATA -> painterResource(R.drawable.ic_settings_data)
         ABOUT -> rememberVectorPainter(Icons.Filled.Info)
     }
@@ -80,13 +84,13 @@ internal enum class SettingsCategory {
     companion object {
         /**
          * Grupe na prvom ekranu kao na iOS-u: profil, trening i izgled, veze sa sustavom, podaci te o aplikaciji.
-         * iCloud na Androidu nema para (sinkronizacija dolazi kasnije).
+         * Mjesto iCloud retka na iOS-u ima sinkronizacija preko datoteke (`FileSync`).
          */
         val groups = listOf(
             listOf(PROFILE),
             listOf(APPEARANCE, TRAINING, PLATES),
             listOf(NOTIFICATIONS, HEALTH),
-            listOf(DATA),
+            listOf(SYNC, DATA),
             listOf(ABOUT),
         )
     }
@@ -176,6 +180,7 @@ private fun SettingsPage(services: AppServices, category: SettingsCategory, onBa
                 SettingsCategory.PLATES -> PlatesSettingsSection(services)
                 SettingsCategory.NOTIFICATIONS -> NotificationSettingsSection(services)
                 SettingsCategory.HEALTH -> HealthSettingsSection(services)
+                SettingsCategory.SYNC -> SyncSettingsSection()
                 SettingsCategory.DATA -> DataSettingsSection(services)
                 SettingsCategory.ABOUT -> {
                     ListItem(
@@ -190,6 +195,13 @@ private fun SettingsPage(services: AppServices, category: SettingsCategory, onBa
                         headlineContent = { Text(stringResource(R.string.body_drawings)) },
                         trailingContent = { Text("MuscleMap") },
                         modifier = Modifier.clickable { showsMuscleMapLicense = true },
+                    )
+                    // Javna pravila privatnosti (GitHub Pages iz mape site/), na jeziku sučelja, kao na iOS-u.
+                    val uriHandler = LocalUriHandler.current
+                    val privacyUrl = stringResource(R.string.privacy_policy_url)
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.privacy_policy)) },
+                        modifier = Modifier.clickable { runCatching { uriHandler.openUri(privacyUrl) } },
                     )
                 }
             }

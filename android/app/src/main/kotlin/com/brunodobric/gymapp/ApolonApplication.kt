@@ -9,6 +9,7 @@ import com.brunodobric.gymapp.notifications.RestNotificationScheduler
 import com.brunodobric.gymapp.notifications.RestNotifications
 import com.brunodobric.gymapp.notifications.WorkoutNotification
 import com.brunodobric.gymapp.notifications.WorkoutNotificationUpdater
+import com.brunodobric.gymapp.sync.FileSync
 
 class ApolonApplication : Application() {
     /** Zajedničke usluge aplikacije (katalog, kasnije baza), kao `AppServices` na iOS-u. */
@@ -31,6 +32,10 @@ class ApolonApplication : Application() {
     lateinit var health: HealthConnectSync
         private set
 
+    /** Sinkronizacija s drugim Android uređajima preko datoteke u pohrani (npr. Google Drive), kad je uključena. */
+    lateinit var sync: FileSync
+        private set
+
     override fun onCreate() {
         super.onCreate()
         services = AppServices(this)
@@ -42,5 +47,6 @@ class ApolonApplication : Application() {
         reminders = ReminderScheduler(this, services.store).also { it.start() }
         widgets = WidgetRefresher(this, services).also { it.start() }
         health = HealthConnectSync(this, services).also { it.start() }
+        sync = FileSync(this, services).also { it.start() }
     }
 }

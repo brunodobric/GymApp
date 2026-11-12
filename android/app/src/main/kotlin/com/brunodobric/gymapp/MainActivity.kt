@@ -51,6 +51,14 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         (application as ApolonApplication).health.sync()
+        // Promjene s drugih uređaja stižu pri svakom povratku u aplikaciju.
+        (application as ApolonApplication).sync.sync()
+    }
+
+    /** Pri odlasku u pozadinu promjene odmah idu u datoteku za sinkronizaciju. */
+    override fun onStop() {
+        super.onStop()
+        (application as ApolonApplication).sync.sync()
     }
 
     override fun onNewIntent(intent: Intent) {

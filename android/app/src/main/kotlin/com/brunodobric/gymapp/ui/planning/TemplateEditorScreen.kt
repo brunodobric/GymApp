@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.ui.planning
 
+import com.brunodobric.gymapp.ui.HoldSync
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -80,6 +81,7 @@ fun TemplateEditorScreen(
     discardNew: ((WorkoutTemplate) -> Unit)? = null,
     onClose: () -> Unit,
 ) {
+    HoldSync()
     val store = services.store
     val revision = rememberStoreRevision(store)
     val template = remember(revision, templateId) { store.template(templateId) }
