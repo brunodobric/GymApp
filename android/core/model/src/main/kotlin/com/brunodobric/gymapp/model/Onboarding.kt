@@ -29,6 +29,20 @@ data class OnboardingAnswers(
     val validDaysPerWeek: Int? get() = daysPerWeek?.takeIf { it in DAYS_PER_WEEK_RANGE }
 
     companion object {
+        /**
+         * Odgovori iz postavki, kad se profil ispunjava naknadno (kartica na Početnoj). Težina i visina ostaju
+         * prazne jer se upisuju kao nova mjerenja, a ne mijenjaju postojeća.
+         */
+        fun from(settings: UserSettings) = OnboardingAnswers(
+            goal = settings.goal,
+            sex = settings.sex,
+            unit = settings.weightUnit,
+            wantsHealthKit = settings.wantsHealthKit,
+            experience = settings.experience,
+            equipment = settings.equipment,
+            daysPerWeek = settings.trainingDaysPerWeek,
+        )
+
         val HEIGHT_RANGE_CM = 100.0..250.0
         val WEIGHT_RANGE_KG = 20.0..400.0
         val DAYS_PER_WEEK_RANGE = 1..7
@@ -56,7 +70,10 @@ class OnboardingApplier(private val store: GymStore) {
         store.save()
     }
 
-    /** "Preskoči": sprema se samo da je onboarding obavljen i odgovor o zdravstvenim podacima. */
+    /**
+     * "Preskoči" (i zatvaranje lista): sprema se samo da je onboarding obavljen i odgovor o zdravstvenim podacima,
+     * jer je dozvola možda već dana dodirom na "Poveži".
+     */
     fun skip(wantsHealthKit: Boolean = false) {
         val settings = store.settings()
         settings.wantsHealthKit = wantsHealthKit

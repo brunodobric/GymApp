@@ -420,3 +420,24 @@ struct EquipmentPresetTests {
         #expect(TrainingProfile(daysPerWeek: 3).hasAnswers)
     }
 }
+
+@Suite("Kartica za naknadno ispunjavanje profila")
+struct ProfileSetupPromptTests {
+    @Test("Samo nakon onboardinga bez odgovora o treningu, bez rasporeda i dok nije zatvorena")
+    func shown() {
+        let settings = UserSettings()
+        #expect(!ProfileSetupPrompt.isShown(settings: nil, scheduleCount: 0, dismissed: false))
+        // Dok traje onboarding kartica nema smisla.
+        #expect(!ProfileSetupPrompt.isShown(settings: settings, scheduleCount: 0, dismissed: false))
+        settings.onboardingCompleted = true
+        #expect(ProfileSetupPrompt.isShown(settings: settings, scheduleCount: 0, dismissed: false))
+        #expect(!ProfileSetupPrompt.isShown(settings: settings, scheduleCount: 0, dismissed: true))
+        #expect(!ProfileSetupPrompt.isShown(settings: settings, scheduleCount: 1, dismissed: false))
+        // Spol, jedinice i Zdravlje nisu odgovori o treningu.
+        settings.sex = .female
+        settings.wantsHealthKit = true
+        #expect(ProfileSetupPrompt.isShown(settings: settings, scheduleCount: 0, dismissed: false))
+        settings.equipment = EquipmentPreset.gym.equipment
+        #expect(!ProfileSetupPrompt.isShown(settings: settings, scheduleCount: 0, dismissed: false))
+    }
+}

@@ -60,6 +60,31 @@ struct HomeCard<Content: View>: View {
     }
 }
 
+// MARK: - Postavi profil
+
+/// Naknadno ispunjavanje onboardinga (`ProfileSetupPrompt`): otvara isti list u dva koraka.
+struct ProfileSetupCard: View {
+    let onOpen: () -> Void
+    let onDismiss: () -> Void
+
+    var body: some View {
+        HomeCard(title: "Profil", symbol: "person.crop.circle") {
+            Text("Odgovori na nekoliko pitanja i dobij gotov raspored treninga.")
+                .font(.subheadline).foregroundStyle(.secondary)
+            Button("Postavi profil", action: onOpen)
+                .buttonStyle(.borderedProminent)
+        }
+        .overlay(alignment: .topTrailing) {
+            Button("Zatvori", systemImage: "xmark", action: onDismiss)
+                .labelStyle(.iconOnly)
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .frame(minWidth: 44, minHeight: 44)
+                .padding(4)
+        }
+    }
+}
+
 // MARK: - Ovaj tjedan
 
 /// Tekući tjedan: odrađeni treninzi prema cilju iz onboardinga (dani tjedno), dani s vrstom treninga,

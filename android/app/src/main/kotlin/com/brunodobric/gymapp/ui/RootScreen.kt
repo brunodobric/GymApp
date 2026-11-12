@@ -41,7 +41,7 @@ import com.brunodobric.gymapp.planning.WorkoutShortcuts
 import com.brunodobric.gymapp.ui.exercises.ExercisesScreen
 import com.brunodobric.gymapp.ui.history.HistoryScreen
 import com.brunodobric.gymapp.ui.home.HomeScreen
-import com.brunodobric.gymapp.ui.onboarding.OnboardingScreen
+import com.brunodobric.gymapp.ui.onboarding.OnboardingSheet
 import com.brunodobric.gymapp.ui.planning.SchedulesScreen
 import com.brunodobric.gymapp.ui.planning.UpcomingWorkoutScreen
 import com.brunodobric.gymapp.ui.statistics.StatisticsScreen
@@ -146,12 +146,9 @@ fun RootScreen(
             }
         }
     }
-    // Prvo pokretanje: onboarding dok ga korisnik ne spremi ili preskoči.
+    // Prvo pokretanje: onboarding kao list preko Početne dok ga korisnik ne spremi, preskoči ili zatvori.
     rememberStoreRevision(services.store)
-    if (!services.store.settings().onboardingCompleted) {
-        OnboardingScreen(services)
-        return
-    }
+    val needsOnboarding = !services.store.settings().onboardingCompleted
     val mainTabs: @Composable () -> Unit = {
         Scaffold(
             bottomBar = {
@@ -222,6 +219,7 @@ fun RootScreen(
                 })
             }
         }
+        if (needsOnboarding) OnboardingSheet(services)
     }
 }
 

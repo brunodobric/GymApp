@@ -1365,16 +1365,6 @@
         }
       }
     },
-    "Aplikacija radi i bez toga. Odluku možeš promijeniti u Postavkama > Zdravlje." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The app works without it too. You can change this in Settings > Health."
-          }
-        }
-      }
-    },
     "Apolon" : {
       "localizations" : {
         "en" : {
@@ -1775,6 +1765,16 @@
         }
       }
     },
+    "Dalje" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
     "Dan odmora" : {
       "localizations" : {
         "en" : {
@@ -1941,16 +1941,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Good"
-          }
-        }
-      }
-    },
-    "Dobro došli" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Welcome"
           }
         }
       }
@@ -2335,16 +2325,6 @@
         }
       }
     },
-    "Funte (lbs)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pounds (lb)"
-          }
-        }
-      }
-    },
     "Gdje treniraš" : {
       "localizations" : {
         "en" : {
@@ -2665,6 +2645,16 @@
         }
       }
     },
+    "Ili" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Or"
+          }
+        }
+      }
+    },
     "Ima trening" : {
       "localizations" : {
         "en" : {
@@ -2945,6 +2935,16 @@
         }
       }
     },
+    "Još malo o tebi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A bit about you"
+          }
+        }
+      }
+    },
     "Još manjih rekorda: %lld" : {
       "localizations" : {
         "en" : {
@@ -3125,6 +3125,16 @@
         }
       }
     },
+    "Kako treniraš?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How do you train?"
+          }
+        }
+      }
+    },
     "Kalendar" : {
       "localizations" : {
         "en" : {
@@ -3191,16 +3201,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cardio workouts are also scheduled on your watch, in the Workout app, at the reminder time."
-          }
-        }
-      }
-    },
-    "Kardio treninzi iz drugih aplikacija i sa sata dolaze u povijest." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cardio workouts from other apps and your watch appear in your history."
           }
         }
       }
@@ -3295,16 +3295,6 @@
         }
       }
     },
-    "Kilogrami (kg)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kilograms (kg)"
-          }
-        }
-      }
-    },
     "Koliko je bio težak cijeli trening, od 1 do 10. Napor puta trajanje je opterećenje treninga (Foster i sur. 2001)." : {
       "localizations" : {
         "en" : {
@@ -3315,12 +3305,32 @@
         }
       }
     },
+    "Kondicija" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fitness"
+          }
+        }
+      }
+    },
     "Korak" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Step"
+          }
+        }
+      }
+    },
+    "Korak %lld od 2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step %lld of 2"
           }
         }
       }
@@ -3405,12 +3415,42 @@
         }
       }
     },
+    "Najbolje odgovara" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best match"
+          }
+        }
+      }
+    },
+    "Neobavezno, za prijedlog i statistiku." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional, for suggestions and statistics."
+          }
+        }
+      }
+    },
     "Nepoznata vježba" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unknown exercise"
+          }
+        }
+      }
+    },
+    "Odgovori na nekoliko pitanja i dobij gotov raspored treninga." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Answer a few questions and get a ready-made training schedule."
           }
         }
       }
@@ -3425,12 +3465,52 @@
         }
       }
     },
+    "Pokaži prijedlog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show suggestion"
+          }
+        }
+      }
+    },
     "Pokreni" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start"
+          }
+        }
+      }
+    },
+    "Postavi profil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set up profile"
+          }
+        }
+      }
+    },
+    "Povezano" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected"
+          }
+        }
+      }
+    },
+    "Poveži" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect"
           }
         }
       }
@@ -3455,12 +3535,52 @@
         }
       }
     },
+    "Prema tvojim odgovorima." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based on your answers."
+          }
+        }
+      }
+    },
     "Razmak između dviju težina na kotačiću, na gumbima + i − u Live Activityju i za jedan klik Digital Crowna na satu. Koraci vrijede za jedinicu koja je sada odabrana (%@)." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The gap between two weights on the wheel, on the + and − buttons in the Live Activity and for one click of the Digital Crown on the watch. Increments apply to the unit selected now (%@)."
+          }
+        }
+      }
+    },
+    "Redovno treniram 6 mjeseci do 2 godine" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training regularly for 6 months to 2 years"
+          }
+        }
+      }
+    },
+    "Redovno treniram manje od 6 mjeseci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training regularly for under 6 months"
+          }
+        }
+      }
+    },
+    "Redovno treniram više od 2 godine" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training regularly for over 2 years"
           }
         }
       }
@@ -3481,6 +3601,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compound exercises such as squats, deadlifts and presses need longer rest than isolation exercises. Rest set on an exercise takes precedence."
+          }
+        }
+      }
+    },
+    "Svi programi su i u kartici Rasporedi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All programs are also in the Schedules tab."
+          }
+        }
+      }
+    },
+    "Teretana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gym"
+          }
+        }
+      }
+    },
+    "Treninzi u prstenove, kardio i težina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts in rings, cardio and weight"
+          }
+        }
+      }
+    },
+    "Tvoj prijedlog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your suggestion"
           }
         }
       }
@@ -3511,6 +3671,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restore default increments"
+          }
+        }
+      }
+    },
+    "Za DOTS bodove i tijelo na prikazu mišića." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For DOTS points and the body on the muscle map."
+          }
+        }
+      }
+    },
+    "Za prijedlog rasporeda. Sve možeš promijeniti poslije." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For a suggested schedule. You can change everything later."
           }
         }
       }
@@ -3571,26 +3751,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Progress and records"
-          }
-        }
-      }
-    },
-    "Ne sada" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not Now"
-          }
-        }
-      }
-    },
-    "Nekoliko pitanja za prijedlog treninga. Sve je neobavezno i možeš promijeniti u Postavkama." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A few questions for a workout suggestion. Everything is optional and you can change it in Settings."
           }
         }
       }
@@ -4037,16 +4197,6 @@
         }
       }
     },
-    "Težina i visina uvoze se iz Zdravlja." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weight and height are imported from Health."
-          }
-        }
-      }
-    },
     "Težine su u %@." : {
       "localizations" : {
         "en" : {
@@ -4113,16 +4263,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This week's workouts against your goal."
-          }
-        }
-      }
-    },
-    "Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Workouts are saved to Health and count toward your Activity rings."
           }
         }
       }
@@ -6167,16 +6307,6 @@
         }
       }
     },
-    "Poveži s Apple Zdravljem" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connect to Apple Health"
-          }
-        }
-      }
-    },
     "Povijest" : {
       "localizations" : {
         "en" : {
@@ -6343,16 +6473,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compared with last workout"
-          }
-        }
-      }
-    },
-    "Prema tvojim odgovorima. Treninge i raspored možeš poslije mijenjati, a svi programi su i u kartici Rasporedi." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Based on your answers. You can change the workouts and schedule later, and all programs are also in the Schedules tab."
           }
         }
       }
@@ -8893,16 +9013,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Height"
-          }
-        }
-      }
-    },
-    "Visina i težina služe za praćenje mjera tijela, a spol za DOTS bodove i tijelo na prikazu mišića." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Height and weight are for tracking body measurements, and sex is for DOTS points and the body on the muscle map."
           }
         }
       }

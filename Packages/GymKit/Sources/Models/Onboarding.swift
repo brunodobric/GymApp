@@ -3,7 +3,7 @@ import Foundation
 import SwiftData
 import Units
 
-/// Odgovori iz onboardinga. Sve osim jedinica i odgovora o Apple Zdravlju (zaseban zaslon na kraju) je neobavezno.
+/// Odgovori iz onboardinga. Sve osim jedinica je neobavezno.
 public struct OnboardingAnswers: Equatable, Sendable {
     public static let heightRangeCm: ClosedRange<Double> = 100...250
     public static let weightRangeKg: ClosedRange<Double> = 20...400
@@ -23,6 +23,18 @@ public struct OnboardingAnswers: Equatable, Sendable {
     public var daysPerWeek: Int?
 
     public init() {}
+
+    /// Odgovori iz postavki, kad se profil ispunjava naknadno (kartica na Početnoj). Težina i visina ostaju
+    /// prazne jer se upisuju kao nova mjerenja, a ne mijenjaju postojeća.
+    public init(settings: UserSettings) {
+        goal = settings.goal
+        sex = settings.sex
+        unit = settings.weightUnit
+        wantsHealthKit = settings.wantsHealthKit
+        experience = settings.experience
+        equipment = settings.equipment
+        daysPerWeek = settings.trainingDaysPerWeek
+    }
 
     /// Težina u kg ili nil ako nije unesena ili je izvan razumnog raspona.
     public var weightKg: Double? {
@@ -72,8 +84,8 @@ public struct OnboardingApplier {
         try context.save()
     }
 
-    /// "Preskoči": ništa se ne sprema osim da je onboarding obavljen i odgovora o Apple Zdravlju,
-    /// koji se daje na zasebnom zaslonu i nakon preskakanja.
+    /// "Preskoči" (i zatvaranje lista povlačenjem): ništa se ne sprema osim da je onboarding obavljen i odgovora
+    /// o Apple Zdravlju, jer je dozvola možda već dana dodirom na "Poveži".
     public func skip(wantsHealthKit: Bool = false) throws {
         let settings = try GymQueries(context: context).settings()
         settings.wantsHealthKit = wantsHealthKit

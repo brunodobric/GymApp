@@ -86,6 +86,85 @@ struct ProgramRecommendationSections: View {
     }
 }
 
+/// Prijedlog u onboardingu: najbolji program kao istaknuta kartica s tipkom, a dvije druge opcije kao reci
+/// (dodir dodaje program). Isti `ProgramRecommender` kao u Postavkama.
+struct ProgramRecommendationCards: View {
+    let profile: TrainingProfile
+    /// Poziva se s odabranim programom.
+    let onAdd: (Program) -> Void
+
+    private var recommendations: [ProgramRecommendation] { ProgramRecommender.recommend(for: profile) }
+
+    var body: some View {
+        let items = recommendations
+        VStack(alignment: .leading, spacing: 0) {
+            if let best = items.first {
+                bestCard(best)
+            }
+            if items.count > 1 {
+                Text("Ili")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 20)
+                    .padding(.bottom, 4)
+                ForEach(items.dropFirst(), id: \.program.id) { item in
+                    Button {
+                        onAdd(item.program)
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(item.program.title).font(.itemTitle).foregroundStyle(.primary)
+                                Text(item.program.details)
+                                    .font(.footnote).foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            Spacer(minLength: 8)
+                            Image(systemName: "plus.circle").foregroundStyle(.tint).accessibilityHidden(true)
+                        }
+                        .padding(.vertical, 10)
+                        .contentShape(.rect)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint(Text("Dodaj i aktiviraj"))
+                    Divider()
+                }
+            }
+        }
+    }
+
+    private func bestCard(_ item: ProgramRecommendation) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Najbolje odgovara")
+                .font(.eyebrow)
+                .textCase(.uppercase)
+                .opacity(0.8)
+            Text(item.program.title).font(.cardTitle)
+            Text(item.program.details).font(.subheadline).opacity(0.9)
+            if !item.reasons.isEmpty {
+                Text(item.reasons.map(\.text).formatted(.list(type: .and)))
+                    .font(.footnote).opacity(0.8)
+            }
+            // Bijela tipka na kartici u boji akcenta, tekst u akcentu.
+            Button {
+                onAdd(item.program)
+            } label: {
+                Text("Dodaj i aktiviraj")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, minHeight: 50)
+                    .foregroundStyle(.tint)
+                    .background(.white, in: .rect(cornerRadius: CornerRadius.inner))
+                    .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 8)
+        }
+        .foregroundStyle(.white)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(.tint, in: .rect(cornerRadius: CornerRadius.card))
+    }
+}
+
 extension View {
     /// Upozorenje kad odabrani program ima manje dana treninga od cilja dana tjedno, s ponudom da se cilj
     /// smanji. `onAdd` dobiva program i novi cilj (nil kad korisnik zadrži stari).
