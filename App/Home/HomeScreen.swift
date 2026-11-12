@@ -28,10 +28,6 @@ struct HomeScreen: View {
     @Query private var templates: [WorkoutTemplate]
     @State private var showsSettings = false
     @State private var showsCardEditor = false
-    /// Naknadno ispunjavanje profila: isti list kao onboarding, s odgovorima iz postavki.
-    @State private var showsProfileSetup = false
-    /// Kartica "Postavi profil" zatvorena križićem (na ovom uređaju).
-    @AppStorage("home.profileSetupDismissed") private var profileSetupDismissed = false
     @Namespace private var workoutTransition
     @State private var presentedSession: Session?
     /// Izbor treninga: bez rasporeda spremljeni treninzi, s rasporedima njihovi treninzi i ostali spremljeni.
@@ -76,14 +72,7 @@ struct HomeScreen: View {
             ScrollView {
                 VStack(spacing: 16) {
                     startSection(upcoming)
-                    if ProfileSetupPrompt.isShown(
-                        settings: settings, scheduleCount: schedules.count, dismissed: profileSetupDismissed
-                    ) {
-                        ProfileSetupCard(
-                            onOpen: { showsProfileSetup = true },
-                            onDismiss: { withAnimation { profileSetupDismissed = true } }
-                        )
-                    }
+                    ProfileSetupCard()
                     ForEach(cardRows, id: \.self) { row in
                         HStack(alignment: .top, spacing: 12) {
                             ForEach(row, id: \.self) { kind in
@@ -126,10 +115,6 @@ struct HomeScreen: View {
             }
             .sheet(isPresented: $showsCardEditor) {
                 DashboardEditor()
-            }
-            .sheet(isPresented: $showsProfileSetup) {
-                OnboardingScreen(settings: settings)
-                    .appAccent(settings?.accent)
             }
             .sheet(item: $widgetSheet) { sheet in
                 widgetSheetContent(sheet)
@@ -180,7 +165,6 @@ struct HomeScreen: View {
     }
 
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
-    private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
     private var lastSession: Session? {
         Session.merged(finishedSessions, health: healthWorkouts).first
     }
@@ -447,7 +431,7 @@ extension HomeScreen {
 
     /// Je li preko Početne otvoren list ili dijalog. Novi list ili puni ekran treninga mora čekati da se zatvori.
     private var hasPresentedSheet: Bool {
-        showsSettings || showsCardEditor || showsProfileSetup || showsTemplatePicker || widgetSheet != nil || recovery != nil
+        showsSettings || showsCardEditor || showsTemplatePicker || widgetSheet != nil || recovery != nil
     }
 
     /// Zatvara listove i dijalog oporavka preko Početne (dodir na widget vodi na čistu Početnu ili na jedan list).
@@ -455,7 +439,6 @@ extension HomeScreen {
     private func dismissSheets() {
         showsSettings = false
         showsCardEditor = false
-        showsProfileSetup = false
         showsTemplatePicker = false
         chosenWorkout = nil
         widgetSheet = nil
