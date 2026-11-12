@@ -35,7 +35,7 @@ import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.theme.AccentPalette
 import com.brunodobric.gymapp.ui.theme.isDark
 
-/** Tema i naglasna boja aplikacije, kao `AppearanceSettingsSection` na iOS-u (bez Live Activityja i prikaza mišića). */
+/** Tema, naglasna boja i tijelo na prikazu mišića, kao `AppearanceSettingsSection` na iOS-u (bez Live Activityja). */
 @Composable
 internal fun AppearanceSettingsSection(services: AppServices) {
     val store = services.store
@@ -78,6 +78,17 @@ internal fun AppearanceSettingsSection(services: AppServices) {
                 }
             }
         }
+    }
+    val male = stringResource(R.string.sex_male)
+    val female = stringResource(R.string.sex_female)
+    ChoiceRow(
+        title = stringResource(R.string.body_in_muscle_view),
+        value = if (settings.bodyMapFemale) female else male,
+        options = listOf(false, true),
+        label = { if (it) female else male },
+    ) {
+        settings.bodyMapFemale = it
+        store.save()
     }
 }
 

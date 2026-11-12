@@ -8,6 +8,7 @@ import android.os.Looper
 import android.provider.OpenableColumns
 import androidx.compose.runtime.mutableStateOf
 import com.brunodobric.gymapp.AppServices
+import com.brunodobric.gymapp.model.Deduplication
 import java.io.File
 import java.time.Instant
 import java.util.UUID
@@ -145,7 +146,11 @@ class FileSync(context: Context, private val services: AppServices) {
             excluded = store.activeSessionKeys(),
             canApply = canApply,
         )
-        if (result.received > 0) store.applyExternal(result.upserts, result.deletes)
+        if (result.received > 0) {
+            store.applyExternal(result.upserts, result.deletes)
+            // Svaki uređaj ima svoje postavke i zadane kartice Početne: nakon spajanja ostaje po jedna (kao na iOS-u).
+            Deduplication.removeAll(store)
+        }
         lastDeferred = result.deferred
         withContext(Dispatchers.IO) {
             if (result.fileChanged) {

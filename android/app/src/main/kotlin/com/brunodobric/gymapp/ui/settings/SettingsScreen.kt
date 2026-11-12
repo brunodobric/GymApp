@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
@@ -194,6 +195,13 @@ private fun SettingsPage(services: AppServices, category: SettingsCategory, onBa
                         headlineContent = { Text(stringResource(R.string.body_drawings)) },
                         trailingContent = { Text("MuscleMap") },
                         modifier = Modifier.clickable { showsMuscleMapLicense = true },
+                    )
+                    // Javna pravila privatnosti (GitHub Pages iz mape site/), na jeziku sučelja, kao na iOS-u.
+                    val uriHandler = LocalUriHandler.current
+                    val privacyUrl = stringResource(R.string.privacy_policy_url)
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.privacy_policy)) },
+                        modifier = Modifier.clickable { runCatching { uriHandler.openUri(privacyUrl) } },
                     )
                 }
             }

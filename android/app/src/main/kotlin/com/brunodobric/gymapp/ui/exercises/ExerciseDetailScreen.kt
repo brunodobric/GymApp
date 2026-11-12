@@ -38,6 +38,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
+import com.brunodobric.gymapp.ui.settings.weightStepText
+import com.brunodobric.gymapp.ui.settings.ChoiceRow
+import com.brunodobric.gymapp.model.weightSteps
+import com.brunodobric.gymapp.model.WeightStepSettings
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.catalog.ExerciseSummary
@@ -153,6 +157,10 @@ fun ExerciseDetailScreen(
             catalogExercise?.level?.let { InfoRow(stringResource(R.string.level), stringResource(levelTitle(it))) }
             (catalogExercise?.inputType ?: customExercise?.inputType)?.let {
                 InfoRow(stringResource(R.string.exercise_input), stringResource(inputTypeTitle(it)))
+                // Vlastiti korak težine vježbe (`ExerciseWeightStepRow` na iOS-u), samo za vrste unosa s težinom.
+                if (it == ExerciseInputType.WEIGHT_REPS || it == ExerciseInputType.WEIGHTED_BODYWEIGHT || it == ExerciseInputType.ASSISTED) {
+                    ExerciseWeightStepRow(services, ref, catalogExercise?.equipment ?: customExercise?.equipment)
+                }
             }
             customExercise?.details?.takeIf { it.isNotBlank() }?.let { details ->
                 Text(details, Modifier.padding(horizontal = 16.dp, vertical = 8.dp), style = MaterialTheme.typography.bodyMedium)
@@ -257,7 +265,7 @@ private fun PerformanceRow(performance: ExercisePerformance, weight: WeightForma
             }
         },
         overlineContent = { Text(date) },
-        supportingContent = { Text(performance.sets.joinToString(" · ") { setText(it, performance.inputType, weight) }) },
+        supportingContent = { Text(performance.sets.joinToString(" · ") { setValuesText(it, performance.inputType, weight) }) },
     )
 }
 
@@ -276,7 +284,7 @@ private fun highlightText(highlight: ExerciseHistoryHighlight, weight: WeightFor
     }
 
 /** Vrijednosti serije bez jedinice (jedinica je u napomeni ispod), kao `ExerciseHistoryFormat` na iOS-u. */
-private fun setText(set: SetValues, type: ExerciseInputType, weight: WeightFormatter): String = when (type) {
+internal fun setValuesText(set: SetValues, type: ExerciseInputType, weight: WeightFormatter): String = when (type) {
     ExerciseInputType.WEIGHT_REPS -> "${weight.number(set.weightKg ?: 0.0)} × ${set.reps ?: 0}"
     ExerciseInputType.WEIGHTED_BODYWEIGHT -> "+${weight.number(set.extraWeightKg ?: 0.0)} × ${set.reps ?: 0}"
     ExerciseInputType.ASSISTED -> "−${weight.number(set.extraWeightKg ?: 0.0)} × ${set.reps ?: 0}"
@@ -292,4 +300,27 @@ private fun levelTitle(level: Level): Int = when (level) {
     Level.BEGINNER -> R.string.catalog_level_beginner
     Level.INTERMEDIATE -> R.string.catalog_level_intermediate
     Level.ADVANCED -> R.string.catalog_level_advanced
+}
+
+/** Korak težine vježbe: "Prema opremi" (korak iz Postavki > Trening > Korak težine) ili vlastiti korak. */
+@Composable
+private fun ExerciseWeightStepRow(services: AppServices, ref: ExerciseRef, equipment: com.brunodobric.gymapp.catalog.Equipment?) {
+    val store = services.store
+    rememberStoreRevision(store)
+    val settings = store.settings()
+    val unit = settings.weightUnit
+    val steps = settings.weightSteps
+    val byEquipment = stringResource(R.string.by_equipment_step, weightStepText(steps.step(equipment, unit), unit))
+    val current = steps.override(ref.key, unit)
+    ChoiceRow(
+        title = stringResource(R.string.weight_step),
+        value = current?.let { weightStepText(it, unit) } ?: byEquipment,
+        options = listOf<Double?>(null) + WeightStepSettings.choices(unit),
+        label = { option -> option?.let { weightStepText(it, unit) } ?: byEquipment },
+    ) { step ->
+        val updated = settings.weightSteps
+        updated.setOverride(step, ref.key, unit)
+        settings.weightSteps = updated
+        store.save()
+    }
 }

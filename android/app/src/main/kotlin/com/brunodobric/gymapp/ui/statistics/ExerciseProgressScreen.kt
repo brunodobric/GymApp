@@ -69,6 +69,9 @@ import com.brunodobric.gymapp.stats.TrendMeasure
 import com.brunodobric.gymapp.stats.exerciseTrend
 import com.brunodobric.gymapp.stats.repMaxTable
 import com.brunodobric.gymapp.training.SetMetrics
+import com.brunodobric.gymapp.model.StatsDetail
+import com.brunodobric.gymapp.stats.BodyTracking
+import com.brunodobric.gymapp.model.BodyMeasurementKind
 import com.brunodobric.gymapp.ui.ChartSeries
 import com.brunodobric.gymapp.ui.DatedLineChart
 import com.brunodobric.gymapp.ui.rememberStoreRevision
@@ -103,11 +106,14 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
     var customFrom by rememberSaveable { mutableLongStateOf(Instant.now().minus(Duration.ofDays(90)).toEpochMilli()) }
     var customTo by rememberSaveable { mutableLongStateOf(Instant.now().toEpochMilli()) }
     var pickingRange by remember { mutableStateOf(false) }
-    val formula = if (useBrzycki) SetMetrics.OneRepMaxFormula.BRZYCKI else SetMetrics.OneRepMaxFormula.EPLEY
+    // Osnovni prikaz (Postavke > Trening > Prikaz statistike): samo težina za zadnja 3 mjeseca, bez usporedbe, kao na iOS-u.
+    val isPro = store.settings().statsDetail == StatsDetail.PRO
+    val shownMetric = if (isPro) metric else ProgressMetric.WEIGHT
+    val formula = if (useBrzycki && isPro) SetMetrics.OneRepMaxFormula.BRZYCKI else SetMetrics.OneRepMaxFormula.EPLEY
     val points = remember(revision, ref.key, formula) { engine.progress(ref, formula) }
     val locale = LocalConfiguration.current.locales[0]
     val done = remember(revision, locale) { DoneExercises.fetch(store, locale).filter { it.key != ref.key } }
-    val compared = done.firstOrNull { it.key == comparedKey }
+    val compared = done.firstOrNull { it.key == comparedKey }?.takeIf { isPro }
     val comparedRef = compared?.ref
     val comparedPoints = remember(revision, comparedRef?.key, formula) { comparedRef?.let { engine.progress(it, formula) } ?: emptyList() }
     val trend = remember(revision, ref.key) {
@@ -137,9 +143,12 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
             Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            trend?.let { StatusCard(it, locale) }
+            val bodyWeight = remember(revision, isPro) {
+                if (isPro) BodyTracking(store).latest(BodyMeasurementKind.WEIGHT)?.value else null
+            }
+            trend?.let { StatusCard(it, locale, bodyWeight) }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (isPro) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 ProgressMetric.entries.forEach { option ->
                     FilterChip(
                         selected = option == metric,
@@ -148,7 +157,7 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
                     )
                 }
             }
-            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (isPro) Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 RangeChoice.entries.forEach { option ->
                     FilterChip(
                         selected = option == rangeChoice,
@@ -159,7 +168,7 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
                     )
                 }
             }
-            if (rangeChoice == RangeChoice.CUSTOM) {
+            if (isPro && rangeChoice == RangeChoice.CUSTOM) {
                 Text(
                     formatter.format(Instant.ofEpochMilli(customFrom)) + " – " + formatter.format(Instant.ofEpochMilli(customTo)),
                     style = MaterialTheme.typography.bodySmall,
@@ -167,11 +176,11 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
                 )
             }
             val now = Instant.now()
-            val range = rangeChoice.range(customFrom, customTo)
+            val range = if (isPro) rangeChoice.range(customFrom, customTo) else ChartRange.Months(3)
             val mainColor = MaterialTheme.colorScheme.primary
             val comparedColor = MaterialTheme.colorScheme.tertiary
             fun line(list: List<ExercisePoint>, color: Color) = ChartSeries(
-                range.filter(list, now).mapNotNull { point -> metric.value(point, unit)?.let { point.date.toEpochMilli() to it } },
+                range.filter(list, now).mapNotNull { point -> shownMetric.value(point, unit)?.let { point.date.toEpochMilli() to it } },
                 color,
             )
             val lines = listOfNotNull(
@@ -196,7 +205,14 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
                     }
                 }
             }
-            if (metric == ProgressMetric.ONE_REP_MAX) {
+            if (!isPro) {
+                Text(
+                    stringResource(R.string.progress_basic_footer),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            if (shownMetric == ProgressMetric.ONE_REP_MAX) {
                 Text(
                     stringResource(R.string.one_rep_max_footer),
                     style = MaterialTheme.typography.bodySmall,
@@ -207,7 +223,7 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
                     Switch(checked = useBrzycki, onCheckedChange = { useBrzycki = it })
                 }
             }
-            if (done.isNotEmpty()) {
+            if (isPro && done.isNotEmpty()) {
                 OutlinedButton(onClick = { pickingCompared = true }, modifier = Modifier.fillMaxWidth()) {
                     Text(
                         if (compared != null) stringResource(R.string.compare_with, compared.name) else stringResource(R.string.compare_other_exercise),
@@ -215,7 +231,7 @@ internal fun ExerciseProgressScreen(services: AppServices, ref: ExerciseRef, onC
                 }
             }
 
-            if (repMax.isNotEmpty()) {
+            if (isPro && repMax.isNotEmpty()) {
                 Text(stringResource(R.string.rep_max_table), style = MaterialTheme.typography.titleSmall)
                 Card {
                     repMax.forEachIndexed { index, entry ->
@@ -327,7 +343,7 @@ private fun LegendItem(name: String, color: Color) {
 
 /** Status napretka u zadnjih 8 tjedana i mjesečna promjena, s objašnjenjem kako se računa. */
 @Composable
-private fun StatusCard(entry: ExerciseTrendEntry, locale: Locale) {
+private fun StatusCard(entry: ExerciseTrendEntry, locale: Locale, bodyWeightKg: Double?) {
     val trend = entry.trend
     val change = trend.monthlyChange
     val measure = stringResource(if (entry.measure == TrendMeasure.ONE_REP_MAX) R.string.measure_one_rep_max else R.string.measure_reps)
@@ -344,6 +360,19 @@ private fun StatusCard(entry: ExerciseTrendEntry, locale: Locale) {
                 Text(stringResource(statusTitle(trend.status)), color = statusColor(trend.status), style = MaterialTheme.typography.titleSmall)
             },
         )
+        // Relativna snaga (detaljni prikaz): procjena 1RM podijeljena sa zadnjom upisanom tjelesnom težinom.
+        val latest = trend.latest
+        if (bodyWeightKg != null && bodyWeightKg > 0 && entry.measure == TrendMeasure.ONE_REP_MAX && latest != null) {
+            val ratio = NumberFormat.getNumberInstance(locale).apply {
+                minimumFractionDigits = 2
+                maximumFractionDigits = 2
+            }.format(latest / bodyWeightKg)
+            ListItem(
+                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                headlineContent = { Text(stringResource(R.string.relative_strength)) },
+                trailingContent = { Text(stringResource(R.string.times_body_weight, ratio)) },
+            )
+        }
     }
     val footer = if (trend.status == ExerciseStatus.INSUFFICIENT_DATA) {
         stringResource(R.string.status_footer_insufficient, measure)

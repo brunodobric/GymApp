@@ -85,6 +85,13 @@ internal fun HealthSettingsSection(services: AppServices) {
             })
         },
     )
+    if (settings.wantsHealthKit && granted == true) {
+        // Uvoz inače ide sam pri povratku u aplikaciju; gumb je za slučaj kad korisnik ne želi čekati (kao na iOS-u).
+        ListItem(
+            headlineContent = { Text(stringResource(R.string.health_import_now)) },
+            modifier = Modifier.clickable { (context.applicationContext as ApolonApplication).health.sync() },
+        )
+    }
     ListItem(
         headlineContent = { Text(stringResource(R.string.health_permissions)) },
         modifier = Modifier.clickable { runCatching { context.startActivity(HealthConnect.settingsIntent()) } },
