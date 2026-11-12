@@ -197,6 +197,32 @@ class OnboardingTest {
     }
 
     @Test
+    fun `naknadno ispunjavanje kreće od spremljenih odgovora, bez težine i visine`() {
+        val store = GymStore()
+        val settings = store.settings()
+        settings.goal = TrainingGoal.HYPERTROPHY
+        settings.trainingDaysPerWeek = 3
+        settings.weightUnit = WeightUnit.POUNDS
+        settings.sex = Sex.MALE
+        settings.wantsHealthKit = true
+        settings.equipment = EquipmentPreset.DUMBBELLS.equipment
+        val answers = OnboardingAnswers.from(settings)
+        assertEquals(TrainingGoal.HYPERTROPHY, answers.goal)
+        assertEquals(3, answers.daysPerWeek)
+        assertEquals(WeightUnit.POUNDS, answers.unit)
+        assertEquals(Sex.MALE, answers.sex)
+        assertTrue(answers.wantsHealthKit)
+        assertNull(answers.experience)
+        assertEquals(EquipmentPreset.DUMBBELLS, EquipmentPreset.matching(answers.equipment))
+        assertNull(answers.weight)
+        assertNull(answers.heightCm)
+
+        // Ponovno spremanje istih odgovora ne dodaje mjerenja.
+        OnboardingApplier(store).apply(answers)
+        assertTrue(store.bodyMeasurements.isEmpty())
+    }
+
+    @Test
     fun `preset opreme odgovara točno svojoj opremi`() {
         assertEquals(EquipmentPreset.GYM, EquipmentPreset.matching(Equipment.entries.reversed()))
         assertEquals(EquipmentPreset.BODYWEIGHT_ONLY, EquipmentPreset.matching(listOf(Equipment.BODYWEIGHT)))

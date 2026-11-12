@@ -60,6 +60,43 @@ struct HomeCard<Content: View>: View {
     }
 }
 
+// MARK: - Postavi profil
+
+/// Naknadno ispunjavanje onboardinga: kartica se prikazuje prema `ProfileSetupPrompt` i otvara isti list
+/// u dva koraka, s odgovorima iz postavki.
+struct ProfileSetupCard: View {
+    @Query private var settingsList: [UserSettings]
+    @Query private var schedules: [Schedule]
+    /// Kartica zatvorena križićem (na ovom uređaju).
+    @AppStorage("home.profileSetupDismissed") private var dismissed = false
+    @State private var showsSetup = false
+
+    private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
+
+    var body: some View {
+        if ProfileSetupPrompt.isShown(settings: settings, scheduleCount: schedules.count, dismissed: dismissed) {
+            HomeCard(title: "Profil", symbol: "person.crop.circle") {
+                Text("Odgovori na nekoliko pitanja i dobij gotov raspored treninga.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+                Button("Postavi profil") { showsSetup = true }
+                    .buttonStyle(.borderedProminent)
+            }
+            .overlay(alignment: .topTrailing) {
+                Button("Zatvori", systemImage: "xmark") { withAnimation { dismissed = true } }
+                    .labelStyle(.iconOnly)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .padding(4)
+            }
+            .sheet(isPresented: $showsSetup) {
+                OnboardingScreen(settings: settings)
+                    .appAccent(settings?.accent)
+            }
+        }
+    }
+}
+
 // MARK: - Ovaj tjedan
 
 /// Tekući tjedan: odrađeni treninzi prema cilju iz onboardinga (dani tjedno), dani s vrstom treninga,

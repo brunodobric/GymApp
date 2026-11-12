@@ -72,6 +72,7 @@ struct HomeScreen: View {
             ScrollView {
                 VStack(spacing: 16) {
                     startSection(upcoming)
+                    ProfileSetupCard()
                     ForEach(cardRows, id: \.self) { row in
                         HStack(alignment: .top, spacing: 12) {
                             ForEach(row, id: \.self) { kind in

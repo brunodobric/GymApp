@@ -1,6 +1,8 @@
 package com.brunodobric.gymapp.ui.home
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -13,8 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,20 +35,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.model.DashboardLayout
+import com.brunodobric.gymapp.model.OnboardingAnswers
 import com.brunodobric.gymapp.model.Schedule
 import com.brunodobric.gymapp.model.Session
 import com.brunodobric.gymapp.model.kind
+import com.brunodobric.gymapp.planning.ProfileSetupPrompt
 import com.brunodobric.gymapp.planning.ScheduleEngine
 import com.brunodobric.gymapp.planning.TemplateStarter
 import com.brunodobric.gymapp.training.RecoveryAssessment
 import com.brunodobric.gymapp.training.WorkoutEngine
 import com.brunodobric.gymapp.training.WorkoutError
 import com.brunodobric.gymapp.ui.workout.WorkoutLifecycle
+import com.brunodobric.gymapp.ui.onboarding.OnboardingSheet
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.workout.PlateCalculatorDialog
 import java.time.Instant
@@ -75,6 +84,11 @@ fun HomeScreen(
     var showsPicker by remember { mutableStateOf(false) }
     var showsPlates by remember { mutableStateOf(false) }
     var showsCardEditor by remember { mutableStateOf(false) }
+    // Naknadno ispunjavanje profila: isti list kao onboarding, s odgovorima iz postavki.
+    var showsProfileSetup by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences(HOME_PREFS, Context.MODE_PRIVATE) }
+    var profileSetupDismissed by remember { mutableStateOf(prefs.getBoolean(PROFILE_SETUP_DISMISSED, false)) }
     val layout = remember(store) { DashboardLayout(store) }
     LaunchedEffect(Unit) {
         layout.upgradeToWeekCard()
@@ -142,6 +156,15 @@ fun HomeScreen(
                 skipsFirst = upcoming.isNotEmpty(),
             )
         }
+        if (ProfileSetupPrompt.isShown(store.settings(), store.schedules.size, profileSetupDismissed)) {
+            ProfileSetupCard(
+                onOpen = { showsProfileSetup = true },
+                onDismiss = {
+                    profileSetupDismissed = true
+                    prefs.edit().putBoolean(PROFILE_SETUP_DISMISSED, true).apply()
+                },
+            )
+        }
         val kinds = remember(revision) { layout.cards().mapNotNull { it.kind } }
         val actions = DashboardActions(
             onOpenStatistics = onOpenStatistics,
@@ -161,10 +184,45 @@ fun HomeScreen(
         }
     }
 
+    if (showsProfileSetup) {
+        OnboardingSheet(services, OnboardingAnswers.from(store.settings()), onClose = { showsProfileSetup = false })
+    }
+
     if (showsCardEditor) DashboardEditorDialog(services, revision, onDismiss = { showsCardEditor = false })
 
     if (showsPlates) {
         PlateCalculatorDialog("", store.settings().weightUnit, store.settings(), onDismiss = { showsPlates = false })
+    }
+}
+
+private const val HOME_PREFS = "home"
+
+/** Kartica "Postavi profil" zatvorena križićem (na ovom uređaju). */
+private const val PROFILE_SETUP_DISMISSED = "profileSetupDismissed"
+
+/** Naknadno ispunjavanje onboardinga (`ProfileSetupPrompt`): otvara isti list u dva koraka. */
+@Composable
+private fun ProfileSetupCard(onOpen: () -> Unit, onDismiss: () -> Unit) {
+    Card(Modifier.fillMaxWidth()) {
+        Box {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(
+                    stringResource(R.string.settings_profile).uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    stringResource(R.string.profile_setup_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 32.dp),
+                )
+                Button(onClick = onOpen) { Text(stringResource(R.string.profile_setup)) }
+            }
+            IconButton(onClick = onDismiss, modifier = Modifier.align(Alignment.TopEnd)) {
+                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.close))
+            }
+        }
     }
 }
 

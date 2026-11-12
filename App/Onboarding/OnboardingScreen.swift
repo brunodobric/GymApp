@@ -35,226 +35,315 @@ extension ExperienceLevel {
     }
 }
 
-/// Prvo pokretanje: jedna kratka stranica. Sve osim jedinica je neobavezno, a sve se može preskočiti i
-/// kasnije upisati u Postavkama. Nakon spremanja, ako je korisnik odgovorio o treningu, nudi se gotov raspored
-/// prema cilju, danima, iskustvu i opremi. Na kraju (i nakon "Preskoči") zaseban zaslon traži izričit odgovor
-/// o Apple Zdravlju, a sistemska dozvola traži se tek kad korisnik pristane.
+extension TrainingGoal {
+    /// Kratki naziv za kartice u onboardingu.
+    var shortTitle: LocalizedStringKey {
+        switch self {
+        case .hypertrophy: "Mišići"
+        case .strength: "Snaga"
+        case .recomposition: "Rekompozicija"
+        case .generalFitness: "Kondicija"
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .hypertrophy: "figure.strengthtraining.traditional"
+        case .strength: "bolt.fill"
+        case .recomposition: "arrow.triangle.2.circlepath"
+        case .generalFitness: "heart.fill"
+        }
+    }
+}
+
+extension ExperienceLevel {
+    /// Što razina znači, ispod odabira u onboardingu.
+    var detail: LocalizedStringKey {
+        switch self {
+        case .beginner: "Redovno treniram manje od 6 mjeseci"
+        case .intermediate: "Redovno treniram 6 mjeseci do 2 godine"
+        case .advanced: "Redovno treniram više od 2 godine"
+        }
+    }
+}
+
+extension EquipmentPreset {
+    /// Kratki naziv za kartice u onboardingu.
+    var shortTitle: LocalizedStringKey {
+        switch self {
+        case .gym: "Teretana"
+        case .homeGym: "Kućna teretana"
+        case .dumbbells: "Bučice i trake"
+        case .bodyweightOnly: "Bez opreme"
+        }
+    }
+}
+
+/// Onboarding kao list preko Početne, u dva kratka koraka: "Kako treniraš?" (cilj, dani, oprema) i
+/// "Još malo o tebi" (iskustvo, težina, spol, Apple Zdravlje). Sve je neobavezno i bira se dodirom.
+/// Ako je korisnik odgovorio o treningu, isti list naraste i nudi gotov raspored.
+///
+/// Isti list otvara i kartica "Postavi profil" na Početnoj (naknadno ispunjavanje), s odgovorima iz postavki.
+/// "Preskoči" i zatvaranje povlačenjem spremaju samo da je onboarding obavljen i odgovor o Zdravlju.
 struct OnboardingScreen: View {
     private enum Step {
-        case profile, recommendation, health
+        case training, about, recommendation
     }
 
     @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     @Environment(CatalogStore.self) private var catalogStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var answers = OnboardingAnswers()
-    @State private var heightText = ""
+    @State private var answers: OnboardingAnswers
     @State private var weightText = ""
-    @State private var step = Step.profile
-    /// Korak prije zaslona o Zdravlju, za tipku Natrag.
-    @State private var stepBeforeHealth = Step.profile
-    /// "Preskoči": od odgovora se sprema samo onaj o Zdravlju.
-    @State private var skipped = false
-    /// Program odabran u prijedlogu; dodaje se tek na kraju, zajedno s odgovorima.
-    @State private var chosenProgram: Program?
+    @State private var step = Step.training
     /// Program koji ima manje dana od cilja, dok korisnik ne odgovori na upozorenje.
     @State private var pendingProgram: Program?
     @State private var isConnectingHealth = false
+    /// Odgovori su spremljeni (ili preskočeni): zatvaranje lista više ništa ne sprema.
+    @State private var finished = false
     @State private var errorText: String?
+    /// Visina sadržaja koraka, za list koji ne prekriva cijeli zaslon.
+    @State private var contentHeight: CGFloat = 520
+    @State private var detent = PresentationDetent.large
+
+    init(settings: UserSettings? = nil) {
+        _answers = State(initialValue: settings.map(OnboardingAnswers.init(settings:)) ?? OnboardingAnswers())
+    }
 
     private var profile: TrainingProfile { TrainingProfile(answers: answers) }
 
+    /// Visina lista za korak: sadržaj i ručica, a s velikim tekstom list se može povući do vrha.
+    private var fittedDetent: PresentationDetent { .height(contentHeight + 24) }
+
     var body: some View {
-        NavigationStack {
+        ScrollView {
             Group {
                 switch step {
-                case .profile: profilePage
-                case .recommendation: recommendationPage
-                case .health: healthPage
+                case .training: trainingStep
+                case .about: aboutStep
+                case .recommendation: recommendationStep
                 }
             }
-            .errorAlert($errorText)
+            .padding(.horizontal, 20)
+            .padding(.top, 12)
+            .padding(.bottom, 20)
+            .frame(maxWidth: 560)
+            .frame(maxWidth: .infinity)
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
         }
-        .interactiveDismissDisabled()
+        .scrollBounceBehavior(.basedOnSize)
+        .presentationDetents(step == .recommendation ? [.large] : [fittedDetent, .large], selection: $detent)
+        .presentationDragIndicator(.visible)
+        .onChange(of: step, initial: true) { updateDetent() }
+        .onChange(of: contentHeight) { if step != .recommendation, detent != .large { detent = fittedDetent } }
+        .daysGoalWarning(profile: profile, program: $pendingProgram) { program, days in complete(program, newDaysGoal: days) }
+        .errorAlert($errorText)
+        // Zatvaranje povlačenjem je isto što i "Preskoči".
+        .onDisappear { if !finished { skip() } }
     }
 
     private func go(to next: Step) {
         withAnimation(reduceMotion ? nil : .default) { step = next }
     }
 
-    // MARK: Profil
+    private func updateDetent() {
+        detent = step == .recommendation ? .large : fittedDetent
+    }
 
-    private var profilePage: some View {
-        Form {
-            Section {
-                Text("Nekoliko pitanja za prijedlog treninga. Sve je neobavezno i možeš promijeniti u Postavkama.")
-                    .font(.subheadline).foregroundStyle(.secondary)
+    // MARK: Zaglavlje
+
+    private func header(back: Bool, progress: Int?) -> some View {
+        HStack {
+            if back {
+                Button("Natrag", systemImage: "chevron.left") { go(to: step == .recommendation ? .about : .training) }
+                    .labelStyle(.titleAndIcon)
             }
-            TrainingProfileSections(
-                goal: $answers.goal, daysPerWeek: $answers.daysPerWeek,
-                experience: $answers.experience, equipment: $answers.equipment
-            )
-            bodySection
+            Spacer()
+            if step != .recommendation {
+                Button("Preskoči") { skip() }
+            }
         }
-        .navigationTitle("Dobro došli")
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Preskoči") { skipAll() }
+        .overlay {
+            if let progress {
+                HStack(spacing: 5) {
+                    ForEach(1...2, id: \.self) { index in
+                        Capsule()
+                            .fill(index <= progress ? AnyShapeStyle(.tint) : AnyShapeStyle(.quaternary))
+                            .frame(width: 20, height: 4)
+                    }
+                }
+                .accessibilityElement()
+                .accessibilityLabel(Text("Korak \(progress) od 2"))
             }
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Spremi") { save() }
+        }
+        .frame(minHeight: 32)
+    }
+
+    private func title(_ title: LocalizedStringKey, subtitle: LocalizedStringKey) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title).font(.cardTitle).accessibilityAddTraits(.isHeader)
+            Text(subtitle).font(.subheadline).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func label(_ text: LocalizedStringKey) -> some View {
+        Text(text)
+            .font(.footnote.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 14)
+            .padding(.bottom, 6)
+    }
+
+    private func primaryButton(_ title: LocalizedStringKey, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title).frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .padding(.top, 20)
+    }
+
+    // MARK: 1. Kako treniraš
+
+    private var trainingStep: some View {
+        VStack(spacing: 0) {
+            header(back: false, progress: 1)
+            title("Kako treniraš?", subtitle: "Za prijedlog rasporeda. Sve možeš promijeniti poslije.")
+                .padding(.top, 8)
+            label("Cilj")
+            ChoiceGrid(TrainingGoal.allCases, selection: $answers.goal) { goal in
+                Label(goal.shortTitle, systemImage: goal.symbol)
             }
+            label("Dana tjedno")
+            DaysPicker(days: $answers.daysPerWeek)
+            label("Gdje treniraš")
+            ChoiceGrid(EquipmentPreset.allCases, selection: equipmentPreset) { preset in
+                Text(preset.shortTitle)
+            }
+            primaryButton("Dalje") { go(to: .about) }
         }
     }
 
-    private var bodySection: some View {
-        Section {
-            Picker("Jedinice", selection: $answers.unit) {
-                Text("Kilogrami (kg)").tag(WeightUnit.kilograms)
-                Text("Funte (lbs)").tag(WeightUnit.pounds)
+    /// Preset opreme; vlastiti popis iz Postavki ostaje dok korisnik ne odabere preset.
+    private var equipmentPreset: Binding<EquipmentPreset?> {
+        Binding(
+            get: { EquipmentPreset.matching(answers.equipment) },
+            set: { answers.equipment = $0?.equipment ?? [] }
+        )
+    }
+
+    // MARK: 2. O tebi
+
+    private var aboutStep: some View {
+        VStack(spacing: 0) {
+            header(back: true, progress: 2)
+            title("Još malo o tebi", subtitle: "Neobavezno, za prijedlog i statistiku.")
+                .padding(.top, 8)
+            label("Iskustvo")
+            Picker("Iskustvo", selection: $answers.experience) {
+                ForEach(ExperienceLevel.allCases, id: \.self) { Text($0.title).tag(ExperienceLevel?.some($0)) }
             }
-            LabeledContent("Visina") {
-                HStack {
-                    TextField("Neobavezno", text: $heightText).keyboardType(.decimalPad).multilineTextAlignment(.trailing)
-                    Text("cm").foregroundStyle(.secondary)
+            .pickerStyle(.segmented)
+            if let experience = answers.experience {
+                Text(experience.detail)
+                    .font(.caption).foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 6)
+            }
+            label("Težina")
+            HStack(spacing: 10) {
+                TextField("Neobavezno", text: $weightText)
+                    .keyboardType(.decimalPad)
+                    .padding(.horizontal, 12)
+                    .frame(minHeight: 36)
+                    .background(Color(.tertiarySystemFill), in: .rect(cornerRadius: CornerRadius.inner))
+                    .accessibilityLabel(Text("Težina"))
+                Picker("Jedinice", selection: $answers.unit) {
+                    Text(WeightUnit.kilograms.symbol).tag(WeightUnit.kilograms)
+                    Text(WeightUnit.pounds.symbol).tag(WeightUnit.pounds)
                 }
+                .pickerStyle(.segmented)
+                .fixedSize()
             }
-            LabeledContent("Težina") {
-                HStack {
-                    TextField("Neobavezno", text: $weightText).keyboardType(.decimalPad).multilineTextAlignment(.trailing)
-                    Text(answers.unit.symbol).foregroundStyle(.secondary)
-                }
+            label("Spol")
+            ChoiceGrid(Sex.allCases, selection: $answers.sex) { Text($0.title) }
+            Text("Za DOTS bodove i tijelo na prikazu mišića.")
+                .font(.caption).foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 6)
+            if HealthService.shared.isAvailable {
+                healthRow.padding(.top, 16)
             }
-            Picker("Spol", selection: $answers.sex) {
-                Text("Bez odgovora").tag(Sex?.none)
-                ForEach(Sex.allCases, id: \.self) { Text($0.title).tag(Sex?.some($0)) }
-            }
-        } header: {
-            Text("Tijelo")
-        } footer: {
-            Text("Visina i težina služe za praćenje mjera tijela, a spol za DOTS bodove i tijelo na prikazu mišića.")
+            primaryButton(profile.hasAnswers ? "Pokaži prijedlog" : "Gotovo") { saveAnswers() }
         }
+    }
+
+    /// Apple Zdravlje kao jedan redak: sistemska dozvola traži se tek na dodir "Poveži".
+    private var healthRow: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "heart.fill")
+                .foregroundStyle(.red)
+                .frame(width: 32, height: 32)
+                .background(.background, in: .rect(cornerRadius: 8))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Apple Zdravlje").font(.subheadline.weight(.semibold))
+                Text("Treninzi u prstenove, kardio i težina").font(.caption).foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 8)
+            if answers.wantsHealthKit {
+                Label("Povezano", systemImage: "checkmark")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.tint)
+            } else {
+                Button("Poveži") { connectHealth() }
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.capsule)
+                    .disabled(isConnectingHealth)
+            }
+        }
+        .padding(12)
+        .background(Color(.quaternarySystemFill), in: .rect(cornerRadius: CornerRadius.inner))
     }
 
     // MARK: Prijedlog
 
-    private var recommendationPage: some View {
-        Form {
-            Section {
-                Text("Prema tvojim odgovorima. Treninge i raspored možeš poslije mijenjati, a svi programi su i u kartici Rasporedi.")
-                    .font(.subheadline).foregroundStyle(.secondary)
-            }
-            ProgramRecommendationSections(profile: profile) { program in
-                if profile.lowerDaysGoal(for: program) != nil {
-                    pendingProgram = program
-                } else {
-                    choose(program, newDaysGoal: nil)
-                }
-            }
-            Section {
-                Button("Složit ću sam") { choose(nil, newDaysGoal: nil) }
-            }
-        }
-        .daysGoalWarning(profile: profile, program: $pendingProgram) { program, days in choose(program, newDaysGoal: days) }
-        .navigationTitle("Prijedlog rasporeda")
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Natrag") { go(to: .profile) }
-            }
-        }
-    }
-
-    // MARK: Apple Zdravlje
-
-    /// Zaseban zaslon s izričitim pristankom ili odbijanjem. Objašnjenje je ispred sistemskog lista s dozvolama.
-    private var healthPage: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                Image(systemName: "heart.text.square.fill")
-                    .font(.system(size: 64))
-                    .foregroundStyle(.red)
-                    .accessibilityHidden(true)
-                Text("Apple Zdravlje")
-                    .font(.screenTitle)
-                    .multilineTextAlignment(.center)
-                VStack(alignment: .leading, spacing: 14) {
-                    Label("Treninzi se spremaju u Zdravlje i ulaze u Activity prstenove.", systemImage: "figure.strengthtraining.traditional")
-                    Label("Kardio treninzi iz drugih aplikacija i sa sata dolaze u povijest.", systemImage: "figure.run")
-                    Label("Težina i visina uvoze se iz Zdravlja.", systemImage: "scalemass")
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                Text("Aplikacija radi i bez toga. Odluku možeš promijeniti u Postavkama > Zdravlje.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-            .padding()
-            .frame(maxWidth: 560)
-            .frame(maxWidth: .infinity)
-        }
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: 12) {
-                Button {
-                    connectHealth()
-                } label: {
-                    Text("Poveži s Apple Zdravljem").frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                Button("Ne sada") { complete(wantsHealthKit: false) }
-                    .controlSize(.large)
-            }
-            .disabled(isConnectingHealth)
-            .frame(maxWidth: 560)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(.bar)
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Natrag") {
-                    skipped = false
-                    go(to: stepBeforeHealth)
-                }
-                .disabled(isConnectingHealth)
-            }
+    private var recommendationStep: some View {
+        VStack(spacing: 0) {
+            header(back: true, progress: nil)
+            title("Tvoj prijedlog", subtitle: "Prema tvojim odgovorima.")
+                .padding(.top, 8)
+            ProgramRecommendationCards(profile: profile) { choose($0) }
+                .padding(.top, 16)
+            Button("Složit ću sam") { complete(nil, newDaysGoal: nil) }
+                .padding(.top, 24)
+            Text("Svi programi su i u kartici Rasporedi.")
+                .font(.caption).foregroundStyle(.secondary)
+                .padding(.top, 4)
         }
     }
 
     // MARK: Spremanje
 
-    private func save() {
-        answers.heightCm = NumberInput.parse(heightText)
+    private func saveAnswers() {
         answers.weight = NumberInput.parse(weightText)
-        // Prijedlog samo kad ima na temelju čega: inače odmah dalje na Zdravlje.
+        // Prijedlog samo kad ima na temelju čega: inače list odmah završava.
         if profile.hasAnswers {
             go(to: .recommendation)
         } else {
-            askHealth(from: .profile)
+            complete(nil, newDaysGoal: nil)
         }
     }
 
-    private func skipAll() {
-        skipped = true
-        askHealth(from: .profile)
-    }
-
-    /// Odabir u prijedlogu. Novi cilj dana tjedno kad je korisnik u upozorenju pristao smanjiti ga.
-    private func choose(_ program: Program?, newDaysGoal: Int?) {
-        chosenProgram = program
-        if let newDaysGoal { answers.daysPerWeek = newDaysGoal }
-        askHealth(from: .recommendation)
-    }
-
-    /// Zaslon o Zdravlju, ako je Zdravlje dostupno na uređaju; inače onboarding odmah završava.
-    private func askHealth(from previous: Step) {
-        guard HealthService.shared.isAvailable else {
-            complete(wantsHealthKit: false)
-            return
+    private func choose(_ program: Program) {
+        if profile.lowerDaysGoal(for: program) != nil {
+            pendingProgram = program
+        } else {
+            complete(program, newDaysGoal: nil)
         }
-        stepBeforeHealth = previous
-        go(to: .health)
     }
 
     private func connectHealth() {
@@ -262,28 +351,37 @@ struct OnboardingScreen: View {
         Task {
             await HealthService.shared.requestAuthorization()
             isConnectingHealth = false
-            complete(wantsHealthKit: true)
+            answers.wantsHealthKit = true
         }
     }
 
-    /// Sprema odgovore (onboarding je time obavljen i zaslon se zatvara) i po želji dodaje program.
-    private func complete(wantsHealthKit: Bool) {
+    /// Sprema odgovore (onboarding je time obavljen) i po želji dodaje program. Novi cilj dana tjedno kad je
+    /// korisnik u upozorenju pristao smanjiti ga.
+    private func complete(_ program: Program?, newDaysGoal: Int?) {
         do {
-            let applier = OnboardingApplier(context: context)
-            if skipped {
-                try applier.skip(wantsHealthKit: wantsHealthKit)
-            } else {
-                answers.wantsHealthKit = wantsHealthKit
-                try applier.apply(answers)
-                if let chosenProgram {
-                    try ProgramAdder.add(chosenProgram, profile: profile, context: context, catalogStore: catalogStore)
-                }
+            if let newDaysGoal { answers.daysPerWeek = newDaysGoal }
+            try OnboardingApplier(context: context).apply(answers)
+            if let program {
+                try ProgramAdder.add(program, profile: profile, context: context, catalogStore: catalogStore)
             }
-            if wantsHealthKit {
-                Task { await HealthService.shared.importNewData(context: context) }
-            }
+            finish()
         } catch {
             errorText = String(localized: "Odgovori se nisu mogli spremiti.")
         }
+    }
+
+    /// "Preskoči" i zatvaranje povlačenjem: od odgovora se sprema samo onaj o Zdravlju.
+    private func skip() {
+        guard !finished else { return }
+        try? OnboardingApplier(context: context).skip(wantsHealthKit: answers.wantsHealthKit)
+        finish()
+    }
+
+    private func finish() {
+        finished = true
+        if answers.wantsHealthKit {
+            Task { await HealthService.shared.importNewData(context: context) }
+        }
+        dismiss()
     }
 }

@@ -549,6 +549,27 @@ struct OnboardingTests {
         let settings = try GymQueries(context: context).settings()
         #expect(settings.onboardingCompleted && settings.wantsHealthKit && settings.goal == nil)
     }
+
+    @Test("Naknadno ispunjavanje kreće od spremljenih odgovora, bez težine i visine")
+    func answersFromSettings() throws {
+        let context = try makeContext()
+        let settings = try GymQueries(context: context).settings()
+        settings.goal = .hypertrophy
+        settings.trainingDaysPerWeek = 3
+        settings.weightUnit = .pounds
+        settings.sex = .male
+        settings.wantsHealthKit = true
+        settings.equipment = EquipmentPreset.dumbbells.equipment
+        let answers = OnboardingAnswers(settings: settings)
+        #expect(answers.goal == .hypertrophy && answers.daysPerWeek == 3 && answers.unit == .pounds)
+        #expect(answers.sex == .male && answers.wantsHealthKit && answers.experience == nil)
+        #expect(EquipmentPreset.matching(answers.equipment) == .dumbbells)
+        #expect(answers.weight == nil && answers.heightCm == nil)
+
+        // Ponovno spremanje istih odgovora ne dodaje mjerenja.
+        try OnboardingApplier(context: context).apply(answers)
+        #expect(try context.fetch(FetchDescriptor<BodyMeasurement>()).isEmpty)
+    }
 }
 
 @Suite("Premještanje elemenata")

@@ -281,14 +281,14 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Težina i visina se mogu vući iz HealthKit.
    * Korisnik može ručno unijeti dodatna mjerenja.
    * Prikazuje se povijest i graf za svaku mjeru.
-7. **Onboarding (jedna stranica):**
-   * Kratka stranica s tipkama "Preskoči" i "Spremi". Sve osim jedinica je neobavezno, a isti podaci su kasnije u Postavkama (cilj, dani, iskustvo, oprema i spol u Profilu).
-   * Trening: cilj (hipertrofija / snaga / rekompozicija / opća kondicija), dani tjedno, iskustvo (početnik < 6 mj., srednji 6 mj. – 2 god., napredni > 2 god.).
-   * Gdje treniraš: Teretana (sva oprema jednim dodirom), Kućna teretana, Bučice i trake, Bez opreme ili "Prilagodi" s popisom opreme.
-   * Tijelo: jedinice (kg / lbs), visina i težina, spol (za DOTS i tijelo na prikazu mišića).
-   * Nakon "Spremi", ako je korisnik odgovorio o treningu, nudi se gotov raspored (najbolji i dvije alternative) s tipkama "Dodaj i aktiviraj" i "Složit ću sam".
+7. **Onboarding (list u dva koraka):**
+   * List preko Početne (ne preko cijelog zaslona), oko dvije trećine visine, a s velikim tekstom može se povući do vrha. Na iPadu je centrirani prozor, na Androidu donji list. Sve je neobavezno i bira se dodirom (kartice, krugovi s danima, segmenti); ponovni dodir poništava odabir. Isti podaci su kasnije u Postavkama (cilj, dani, iskustvo, oprema i spol u Profilu).
+   * **1. Kako treniraš?** Cilj (Mišići / Snaga / Rekompozicija / Kondicija), dani tjedno (1–7) i gdje treniraš (Teretana, Kućna teretana, Bučice i trake, Bez opreme). Vlastiti popis opreme je samo u Postavkama > Profil.
+   * **2. Još malo o tebi.** Iskustvo (početnik < 6 mj., srednji 6 mj. – 2 god., napredni > 2 god., opis odabrane razine ispod), težina s jedinicama (kg / lbs), spol (za DOTS i tijelo na prikazu mišića) i Apple Zdravlje kao jedan redak s tipkom "Poveži". Sistemska dozvola traži se tek na taj dodir. Na uređaju bez Zdravlja redak se ne prikazuje. Visina se ne pita (dolazi iz Zdravlja ili se upisuje u Tijelo).
+   * Ako je korisnik odgovorio o treningu, tipka "Pokaži prijedlog" povećava isti list: najbolji program kao istaknuta kartica s "Dodaj i aktiviraj", dvije alternative kao reci i "Složit ću sam". Bez odgovora o treningu tipka je "Gotovo" i list se zatvara.
    * Ako odabrani program ima manje dana treninga od cilja dana tjedno, upozorenje nudi "Smanji na N dana" ili "Zadrži N dana" (korisnik može dodatni trening ili kardio odraditi sam). Isto upozorenje je u Postavkama > Profil > Predloži raspored.
-   * Na kraju, i nakon "Preskoči", zaseban zaslon o Apple Healthu s izričitim izborom "Poveži s Apple Zdravljem" ili "Ne sada". Sistemska dozvola traži se tek nakon pristanka. Na uređaju bez Zdravlja zaslon se preskače.
+   * "Preskoči" i zatvaranje lista povlačenjem spremaju samo da je onboarding obavljen i odgovor o Zdravlju.
+   * **Naknadno ispunjavanje:** dok profil nema odgovora o treningu i korisnik nema nijedan raspored, Početna pokazuje karticu "Postavi profil" koja otvara isti list s već spremljenim odgovorima (`ProfileSetupPrompt`). Kartica se zatvara križićem (pamti se na uređaju). Uvijek su dostupni i Postavke > Profil.
 
 ---
 

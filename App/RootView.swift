@@ -85,7 +85,8 @@ struct RootView: View {
         }
         .appAccent(settings?.accent)
         .preferredColorScheme(settings?.theme.colorScheme)
-        .fullScreenCover(isPresented: $showsOnboarding) {
+        // List preko Početne; zatvaranje povlačenjem je isto što i "Preskoči" (sprema OnboardingScreen).
+        .sheet(isPresented: $showsOnboarding) {
             OnboardingScreen()
                 .appAccent(settings?.accent)
         }
