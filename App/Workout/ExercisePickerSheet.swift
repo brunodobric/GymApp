@@ -22,10 +22,15 @@ struct ExercisePickerSheet: View {
                     onPick(summary, catalogStore.inputType(of: summary, custom: customExercises))
                     dismiss()
                 } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(summary.name)
-                        if let category = summary.category {
-                            Text(category.title).font(.subheadline).foregroundStyle(.secondary)
+                    HStack(spacing: 12) {
+                        ExerciseRowThumbnail(
+                            source: catalogStore.thumbnail(for: summary.source, customExercises: customExercises)
+                        )
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(summary.name)
+                            if let category = summary.category {
+                                Text(category.title).font(.subheadline).foregroundStyle(.secondary)
+                            }
                         }
                     }
                 }

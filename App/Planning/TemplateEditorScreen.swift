@@ -94,17 +94,23 @@ struct TemplateEditorScreen: View {
         }
     }
 
+    /// Sličica i naziv vježbe, kao u aktivnom treningu, pa ispod serije i oznaka superseta.
     private func row(for exercise: TemplateExercise) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(exercise.exerciseName)
-            HStack(spacing: 6) {
-                if exercise.supersetGroupId != nil {
-                    Label("Superset", systemImage: "link")
+        HStack(spacing: 12) {
+            ExerciseRowThumbnail(
+                source: catalogStore.thumbnail(for: exercise.exercise.source, customExercises: customExercises)
+            )
+            VStack(alignment: .leading, spacing: 2) {
+                Text(exercise.exerciseName)
+                HStack(spacing: 6) {
+                    if exercise.supersetGroupId != nil {
+                        Label("Superset", systemImage: "link")
+                    }
+                    Text(setSummary(exercise))
                 }
-                Text(setSummary(exercise))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
             }
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
         }
     }
 
