@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,8 @@ import com.brunodobric.gymapp.model.WorkoutTemplate
 import com.brunodobric.gymapp.model.ref
 import com.brunodobric.gymapp.planning.TemplateEngine
 import com.brunodobric.gymapp.planning.TemplateSnapshot
+import com.brunodobric.gymapp.ui.exercises.ExerciseRowThumbnail
+import com.brunodobric.gymapp.ui.exercises.MoveKitAssets
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.workout.ExercisePicker
 import com.brunodobric.gymapp.ui.workout.inputTypeOf
@@ -170,10 +173,12 @@ fun TemplateEditorScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             val exercises = template.orderedExercises
+            val context = LocalContext.current
             exercises.forEachIndexed { index, exercise ->
                 val next = exercises.getOrNull(index + 1)
                 ExerciseCard(
                     exercise = exercise,
+                    posterPath = MoveKitAssets.posterPath(context, exercise.exerciseCatalogId?.let(services.catalog::exercise)),
                     unit = unit,
                     // Kao na iOS-u: vježba se spaja sa sljedećom, ako ni ona nije u supersetu.
                     canJoinNext = exercise.supersetGroupId == null && next != null && next.supersetGroupId == null,
@@ -232,6 +237,7 @@ fun TemplateEditorScreen(
 @Composable
 private fun ExerciseCard(
     exercise: TemplateExercise,
+    posterPath: String?,
     unit: WeightUnit,
     canJoinNext: Boolean,
     onJoinNext: () -> Unit,
@@ -250,6 +256,7 @@ private fun ExerciseCard(
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
+                ExerciseRowThumbnail(exercise.exerciseName, posterPath, Modifier.padding(end = 12.dp))
                 Column(Modifier.weight(1f)) {
                     if (exercise.supersetGroupId != null) {
                         Text(

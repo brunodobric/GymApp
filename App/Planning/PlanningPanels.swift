@@ -201,6 +201,9 @@ struct ExerciseCatalogPanel: View {
     private func rows(_ summaries: [ExerciseSummary]) -> some View {
         ForEach(summaries) { summary in
             SelectableRow(isSelected: selected.contains(summary.id), toggle: { toggle(summary) }) {
+                ExerciseRowThumbnail(
+                    source: catalogStore.thumbnail(for: summary.source, customExercises: customExercises)
+                )
                 VStack(alignment: .leading, spacing: 2) {
                     Text(summary.name)
                     if let category = summary.category {

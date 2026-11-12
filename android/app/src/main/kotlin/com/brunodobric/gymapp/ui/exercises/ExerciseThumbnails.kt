@@ -6,6 +6,16 @@ import android.graphics.BitmapFactory
 import android.util.LruCache
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +51,10 @@ internal object MoveKitAssets {
         exercise.poster?.let { it in available(context) } == true
 
     fun assetPath(path: String): String = "$ROOT/$path"
+
+    /** Poster vježbe iz kataloga ako je u buildu; null za vlastitu vježbu i build bez MoveKit dodatka. */
+    fun posterPath(context: Context, exercise: CatalogExercise?): String? =
+        exercise?.poster?.takeIf { it in available(context) }
 
     private fun list(context: Context, dir: String): List<String> {
         val children = try { context.assets.list(dir).orEmpty() } catch (_: IOException) { emptyArray() }
@@ -102,6 +116,34 @@ internal fun ExercisePosterTile(posterPath: String, modifier: Modifier = Modifie
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize().scale(zoom),
+            )
+        }
+    }
+}
+
+/**
+ * Mala sličica ispred naziva vježbe (trening, uređivač treninga, odabir vježbe): poster iz MoveKita ili
+ * početno slovo kad postera nema (vlastita vježba, build bez MoveKit dodatka). Dodir otvara stranicu vježbe.
+ */
+@Composable
+internal fun ExerciseRowThumbnail(
+    name: String,
+    posterPath: String?,
+    modifier: Modifier = Modifier,
+    size: Dp = 52.dp,
+    onClick: (() -> Unit)? = null,
+) {
+    val shape = RoundedCornerShape(14.dp)
+    val base = modifier.size(size).clip(shape).let { if (onClick != null) it.clickable(onClick = onClick) else it }
+    if (posterPath != null) {
+        ExercisePosterTile(posterPath, base)
+    } else {
+        Box(base.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)), contentAlignment = Alignment.Center) {
+            Text(
+                name.take(1).uppercase(LocalConfiguration.current.locales[0]),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
     }

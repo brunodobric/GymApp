@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,8 @@ import com.brunodobric.gymapp.catalog.ExerciseSearch
 import com.brunodobric.gymapp.catalog.ExerciseSummary
 import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.ui.catalogLanguage
+import com.brunodobric.gymapp.ui.exercises.ExerciseRowThumbnail
+import com.brunodobric.gymapp.ui.exercises.MoveKitAssets
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 
 /** Odabir vježbe za trening: katalog s pretragom. Vlastite vježbe i filteri dolaze s tabom Vježbe. */
@@ -48,6 +51,7 @@ fun ExercisePicker(
     title: String = stringResource(R.string.add_exercise),
 ) {
     val language = catalogLanguage()
+    val context = LocalContext.current
     val revision = rememberStoreRevision(services.store)
     val catalog = remember(language) { services.catalog.summaries(language) }
     val summaries = remember(revision, catalog) { services.store.customExercises.map { it.summary } + catalog }
@@ -77,7 +81,14 @@ fun ExercisePicker(
             )
             LazyColumn {
                 items(results, key = { it.id }) { item ->
+                    val source = item.source
+                    val poster = if (source is ExerciseSummary.Source.Catalog) {
+                        MoveKitAssets.posterPath(context, services.catalog.exercise(source.id))
+                    } else {
+                        null
+                    }
                     ListItem(
+                        leadingContent = { ExerciseRowThumbnail(item.name, poster, size = 48.dp) },
                         headlineContent = { Text(item.name) },
                         modifier = Modifier.clickable { onPick(item) },
                     )

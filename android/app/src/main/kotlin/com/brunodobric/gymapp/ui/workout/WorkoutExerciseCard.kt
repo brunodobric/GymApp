@@ -55,7 +55,7 @@ import com.brunodobric.gymapp.model.EffortScale
 import com.brunodobric.gymapp.model.SessionExercise
 import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.SetLog
-import com.brunodobric.gymapp.ui.exercises.ExercisePosterTile
+import com.brunodobric.gymapp.ui.exercises.ExerciseRowThumbnail
 import com.brunodobric.gymapp.ui.theme.success
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.NumberInput
@@ -102,7 +102,7 @@ internal fun WorkoutExerciseCard(
     Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         Column(Modifier.padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = if (isOpen) 8.dp else 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ExerciseThumbnail(exercise.exerciseName, posterPath, onClick = actions.onShowInfo)
+                ExerciseRowThumbnail(exercise.exerciseName, posterPath, onClick = actions.onShowInfo)
                 Column(Modifier.weight(1f).clickable(onClick = actions.onToggleOpen)) {
                     if (exercise.supersetGroupId != null) {
                         Text(
@@ -163,25 +163,6 @@ internal fun WorkoutExerciseCard(
                     }
                 }
             }
-        }
-    }
-}
-
-/** Sličica vježbe: poster iz MoveKita ili početno slovo. Dodir otvara stranicu vježbe. */
-@Composable
-private fun ExerciseThumbnail(name: String, posterPath: String?, onClick: (() -> Unit)?) {
-    val shape = RoundedCornerShape(14.dp)
-    val modifier = Modifier.size(52.dp).clip(shape).let { if (onClick != null) it.clickable(onClick = onClick) else it }
-    if (posterPath != null) {
-        ExercisePosterTile(posterPath, modifier)
-    } else {
-        Box(modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)), contentAlignment = Alignment.Center) {
-            Text(
-                name.take(1).uppercase(LocalConfiguration.current.locales[0]),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.primary,
-            )
         }
     }
 }
