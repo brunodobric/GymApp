@@ -124,6 +124,23 @@ class SetPlannerTest {
     }
 
     @Test
+    fun `oznaka rekorda dok trening traje - samo serija koja sama obara rekord`() {
+        val history = RecordHistory(List(3) { listOf(working(100.0, 5)) }, WR)
+        val strong = UUID.randomUUID()
+        val same = UUID.randomUUID()
+        val warmUp = UUID.randomUUID()
+        val all = PRKind.entries.toSet()
+        val marked = PersonalRecordDetector.liveRecordSets(
+            listOf(strong to working(110.0, 5), same to working(100.0, 5), warmUp to SetValues(SetKind.WARM_UP, weightKg = 120.0, reps = 5)),
+            history, WR, all,
+        )
+        assertEquals(setOf(strong), marked)
+        val young = RecordHistory(listOf(listOf(working(100.0, 5))), WR)
+        assertTrue(PersonalRecordDetector.liveRecordSets(listOf(strong to working(110.0, 5)), young, WR, all).isEmpty())
+        assertTrue(PersonalRecordDetector.liveRecordSets(listOf(strong to working(110.0, 5)), history, WR, emptySet()).isEmpty())
+    }
+
+    @Test
     fun `broj radnih serija je najčešći iz zadnjih izvođenja`() {
         assertEquals(4, SmartDefaults.workingSetCount(listOf(2, 4, 4)))
         assertEquals(2, SmartDefaults.workingSetCount(listOf(2, 4)))

@@ -121,6 +121,23 @@ struct SetPlannerTests {
         #expect(WarmUpGenerator.sets(workingWeightKg: 0, barKg: 20, step: 2.5, unit: .kilograms).isEmpty)
     }
 
+    @Test("Oznaka rekorda dok trening traje: samo serija koja sama obara rekord")
+    func liveRecords() {
+        let history = RecordHistory(sessions: Array(repeating: [working(100, 5)], count: 3), inputType: .weightReps)
+        let strong = UUID()
+        let same = UUID()
+        let warmUp = UUID()
+        let marked = PersonalRecordDetector.liveRecordSets(
+            [(strong, working(110, 5)), (same, working(100, 5)), (warmUp, SetValues(kind: .warmUp, weightKg: 120, reps: 5))],
+            history: history, inputType: .weightReps, kinds: Set(PRKind.allCases)
+        )
+        #expect(marked == [strong])
+        // Premalo ranijih izvođenja (kalibracija) ili isključeni rekordi: bez oznake.
+        let young = RecordHistory(sessions: [[working(100, 5)]], inputType: .weightReps)
+        #expect(PersonalRecordDetector.liveRecordSets([(strong, working(110, 5))], history: young, inputType: .weightReps, kinds: Set(PRKind.allCases)).isEmpty)
+        #expect(PersonalRecordDetector.liveRecordSets([(strong, working(110, 5))], history: history, inputType: .weightReps, kinds: []).isEmpty)
+    }
+
     @Test("Broj radnih serija je najčešći iz zadnjih izvođenja")
     func workingSetCount() {
         #expect(SmartDefaults.workingSetCount(recent: [2, 4, 4]) == 4)

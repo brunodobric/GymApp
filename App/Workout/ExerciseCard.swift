@@ -19,6 +19,8 @@ struct ExerciseCard: View {
     let persistentNote: String?
     /// Nudi se "Dodaj zagrijavanje" (`WorkoutEngine.canAddWarmUps`).
     let canAddWarmUps: Bool
+    /// Završene serije koje obaraju rekord (`PersonalRecordDetector.liveRecordSets`).
+    let recordSetIDs: Set<UUID>
 
     let onToggleOpen: () -> Void
     let onEdit: () -> Void
@@ -54,6 +56,15 @@ struct ExerciseCard: View {
                     effortScale: effortScale, onEdit: onEdit, onToggleComplete: { onToggleComplete(row.set) },
                     onChangeKind: { onChangeKind(row.set, $0) }, onDelete: { onDeleteSet(row.set) }
                 )
+                .overlay(alignment: .topLeading) {
+                    if recordSetIDs.contains(row.set.id) {
+                        Image(systemName: "trophy.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.yellow)
+                            .padding(.leading, 4)
+                            .accessibilityLabel(Text("Osobni rekord"))
+                    }
+                }
                 .fullWidthSeparatorRow(vertical: Self.rowVerticalInset)
                 // Akcent boja cijele aplikacije (.tint u RootView) inače oboji i ovaj gumb, pa je crvena izričita.
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {

@@ -516,7 +516,8 @@ public struct WorkoutEngine {
     }
 
     /// Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga.
-    private func recordHistory(of ref: ExerciseRef, before session: Session?, inputType: ExerciseInputType) throws -> RecordHistory {
+    /// Javno za oznaku rekorda u retku serije dok trening traje (`PersonalRecordDetector.liveRecordSets`).
+    public func recordHistory(of ref: ExerciseRef, before session: Session?, inputType: ExerciseInputType) throws -> RecordHistory {
         var history = RecordHistory()
         for exercise in try finishedExercises(of: ref, before: session).reversed() {
             let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)

@@ -4,6 +4,7 @@ import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.UserSettings
 import java.time.Instant
+import java.util.UUID
 
 /** Vrste osobnih rekorda. Glavni rekord snage je procjena 1RM. */
 enum class PRKind(val raw: String) {
@@ -158,6 +159,25 @@ object PersonalRecordDetector {
 
     /** Najveća težina ide u sažetak samo ako je procjena 1RM tog treninga barem ovoliki udio najbolje. */
     const val MILESTONE_TOLERANCE = 0.97
+
+    /**
+     * Serije ovog treninga koje već same obaraju rekord: oznaka u retku serije dok trening traje.
+     * Tonaža vježbe se ne gleda (ovisi o cijelom treningu), a ni rekordi koji ne idu u sažetak.
+     */
+    fun liveRecordSets(
+        sets: List<Pair<UUID, SetValues>>,
+        history: RecordHistory,
+        inputType: ExerciseInputType,
+        kinds: Set<PRKind>,
+        date: Instant? = null,
+    ): Set<UUID> {
+        val tracked = kinds - PRKind.EXERCISE_VOLUME
+        if (tracked.isEmpty() || !history.allowsRecords(date)) return emptySet()
+        return sets.filter { (_, values) ->
+            values.kind == SetKind.WORKING &&
+                records(listOf(values), history, inputType, tracked, date).any { it.showsInSummary }
+        }.map { it.first }.toSet()
+    }
 
     /**
      * @param current završene serije vježbe u ovom treningu

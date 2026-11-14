@@ -483,8 +483,11 @@ class WorkoutEngine(val store: GymStore) {
         return all.filter { it.first == templateId }.map { it.second } + all.filter { it.first != templateId }.map { it.second }
     }
 
-    /** Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga. */
-    private fun recordHistory(ref: ExerciseRef, session: Session?, inputType: ExerciseInputType): RecordHistory {
+    /**
+     * Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga.
+     * Javno za oznaku rekorda u retku serije dok trening traje ([PersonalRecordDetector.liveRecordSets]).
+     */
+    fun recordHistory(ref: ExerciseRef, session: Session?, inputType: ExerciseInputType): RecordHistory {
         val history = RecordHistory()
         for (exercise in finishedExercises(ref, session).asReversed()) {
             history.add(exercise.orderedSets.filter { it.isCompleted }.map { it.values }, inputType, exercise.session?.startedAt)

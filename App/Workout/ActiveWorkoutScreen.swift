@@ -57,6 +57,8 @@ struct ActiveWorkoutScreen: View {
     @State private var noteExercise: SessionExercise?
     /// Ključevi nedavnih vježbi za odabir (`GymQueries.recentExerciseKeys`).
     @State private var recentKeys: [String] = []
+    /// Ranija izvođenja svake vježbe za oznaku rekorda u retku serije.
+    @State private var recordHistories: [UUID: RecordHistory] = [:]
 
     private var engine: WorkoutEngine { WorkoutEngine(context: context) }
     private var unit: WeightUnit { settings?.weightUnit ?? .kilograms }
@@ -223,6 +225,7 @@ struct ActiveWorkoutScreen: View {
             effortScale: settings?.effortScale ?? .rpe,
             persistentNote: settings?.exerciseNotes.note(for: exercise.exerciseKey),
             canAddWarmUps: engine.canAddWarmUps(to: exercise),
+            recordSetIDs: recordSetIDs(in: exercise),
             onToggleOpen: { openExerciseID = isOpen(exercise) ? nil : exercise.id },
             onEdit: scheduleSave,
             onToggleComplete: { toggleComplete($0, in: exercise) },
@@ -384,6 +387,7 @@ struct ActiveWorkoutScreen: View {
         let queries = GymQueries(context: context)
         for exercise in session.orderedExercises where previousSets[exercise.id] == nil {
             previousSets[exercise.id] = (try? queries.previousSetValues(of: exercise.exercise, preferringTemplate: session.templateId)) ?? []
+            recordHistories[exercise.id] = try? engine.recordHistory(of: exercise.exercise, before: session, inputType: exercise.inputType)
         }
     }
 }
@@ -620,6 +624,16 @@ extension ActiveWorkoutScreen {
         notes.setNote(text, for: exercise.exerciseKey)
         settings.exerciseNotes = notes
         try? engine.touch(session)
+    }
+
+    /// Završene serije vježbe koje obaraju rekord, kad su rekordi uključeni i vježba nije isključena iz njih.
+    private func recordSetIDs(in exercise: SessionExercise) -> Set<UUID> {
+        guard let history = recordHistories[exercise.id],
+              !(settings?.prExcludedExerciseKeys ?? []).contains(exercise.exerciseKey) else { return [] }
+        let done = exercise.orderedSets.filter(\.isCompleted).map { (id: $0.id, values: $0.values) }
+        return PersonalRecordDetector.liveRecordSets(
+            done, history: history, inputType: exercise.inputType, kinds: PRKind.tracked(by: settings), date: session.startedAt
+        )
     }
 
     private func addWarmUps(to exercise: SessionExercise, step: Double) {

@@ -79,6 +79,8 @@ import com.brunodobric.gymapp.model.SetLog
 import com.brunodobric.gymapp.model.ref
 import com.brunodobric.gymapp.model.weightStep
 import com.brunodobric.gymapp.training.LiveSetEditor
+import com.brunodobric.gymapp.training.PRKind
+import com.brunodobric.gymapp.training.PersonalRecordDetector
 import com.brunodobric.gymapp.training.WorkoutEngine
 import com.brunodobric.gymapp.training.addWarmUps
 import com.brunodobric.gymapp.training.canAddWarmUps
@@ -86,6 +88,7 @@ import com.brunodobric.gymapp.training.WorkoutError
 import com.brunodobric.gymapp.training.WorkoutFlow
 import com.brunodobric.gymapp.training.previousSetValues
 import com.brunodobric.gymapp.training.restDefaults
+import com.brunodobric.gymapp.training.values
 import com.brunodobric.gymapp.ui.catalogLanguage
 import com.brunodobric.gymapp.ui.exercises.ExerciseDetailScreen
 import com.brunodobric.gymapp.ui.exercises.MoveKitAssets
@@ -263,6 +266,15 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     // Prošli put po vježbi (završene serije zadnjeg izvođenja), kao `previousSets` na iOS-u.
     val keys = visible.map { it.exerciseKey }
     val previousByKey = remember(revision, keys) { visible.associate { it.exerciseKey to store.previousSetValues(it.exercise, session.templateId) } }
+    // Ranija izvođenja za oznaku rekorda u retku serije, a rekordi samo kad su uključeni.
+    val recordKinds = PRKind.tracked(settings)
+    val recordHistories = remember(keys) { visible.associate { it.id to engine.recordHistory(it.exercise, session, it.inputType) } }
+    fun recordSetIds(exercise: SessionExercise): Set<UUID> {
+        val history = recordHistories[exercise.id] ?: return emptySet()
+        if (exercise.exerciseKey in settings.prExcludedExerciseKeys) return emptySet()
+        val done = exercise.orderedSets.filter { it.isCompleted }.map { it.id to it.values }
+        return PersonalRecordDetector.liveRecordSets(done, history, exercise.inputType, recordKinds, session.startedAt)
+    }
     val posters = remember(keys) {
         val available = MoveKitAssets.available(context)
         visible.associate { exercise ->
@@ -398,6 +410,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                         unit = unit,
                         effortScale = settings.effortScale,
                         persistentNote = settings.exerciseNotes.note(key),
+                        recordSetIds = recordSetIds(exercise),
                         actions = ExerciseCardActions(
                             onToggleOpen = { openId = if (open) null else exercise.id.toString() },
                             onChange = { engine.touch(session) },

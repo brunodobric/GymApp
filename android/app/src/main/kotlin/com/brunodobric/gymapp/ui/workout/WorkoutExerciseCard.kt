@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -101,6 +102,8 @@ internal fun WorkoutExerciseCard(
     tracksProgress: Boolean = true,
     /** Trajna bilješka vježbe (postavka sprave, hvat), `ExerciseNotes`. */
     persistentNote: String? = null,
+    /** Završene serije koje obaraju rekord ([com.brunodobric.gymapp.training.PersonalRecordDetector.liveRecordSets]). */
+    recordSetIds: Set<java.util.UUID> = emptySet(),
 ) {
     val sets = exercise.orderedSets
     val done = sets.count { it.isCompleted }
@@ -179,6 +182,7 @@ internal fun WorkoutExerciseCard(
                             isCurrent = set.id == current?.id,
                             dimsCompleted = tracksProgress,
                             actions = actions,
+                            isRecord = set.id in recordSetIds,
                         )
                     }
                     HorizontalDivider(Modifier.padding(top = 4.dp), color = MaterialTheme.colorScheme.outlineVariant)
@@ -328,6 +332,7 @@ private fun WorkoutSetRow(
     isCurrent: Boolean,
     dimsCompleted: Boolean,
     actions: ExerciseCardActions,
+    isRecord: Boolean = false,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val formatter = remember(unit, locale) { WeightFormatter(unit, locale) }
@@ -340,7 +345,17 @@ private fun WorkoutSetRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        SetBadge(label, set, inputType, formatter, actions, Modifier.width(BADGE_WIDTH).alpha(dim))
+        Box(Modifier.width(BADGE_WIDTH)) {
+            SetBadge(label, set, inputType, formatter, actions, Modifier.width(BADGE_WIDTH).alpha(dim))
+            if (isRecord) {
+                Icon(
+                    Icons.Filled.Star,
+                    contentDescription = stringResource(R.string.personal_record),
+                    modifier = Modifier.size(14.dp).align(Alignment.TopEnd),
+                    tint = Color(0xFFF5B400),
+                )
+            }
+        }
         Column(Modifier.weight(1.2f).alpha(dim), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 previousText ?: "–",
