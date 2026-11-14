@@ -233,7 +233,8 @@ struct SetPlannerEngineTests {
         let visible = engine.visibleExercises(in: session)
         #expect(visible.map(\.exerciseKey) == [bench.key, press.key, fly.key])
         #expect(first.orderedSets.count == 1)
-        #expect(first.orderedSets.allSatisfy(\.isCompleted))
+        let allCompleted = first.orderedSets.allSatisfy(\.isCompleted)
+        #expect(allCompleted)
         #expect(created.orderedSets.count == 2)
     }
 
