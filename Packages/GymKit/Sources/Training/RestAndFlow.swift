@@ -76,6 +76,16 @@ public enum RestPolicy {
         if groupSize > 1, positionInGroup < groupSize - 1 { return 0 }
         return max(0, configured ?? defaultSeconds)
     }
+
+    /// Pauza između dvije serije zagrijavanja.
+    public static let warmUpSeconds = 60
+
+    /// Pauza nakon serije zagrijavanja: 60 s do sljedećeg zagrijavanja, a pred prvu radnu seriju pola pune
+    /// pauze, barem 60 s. Nikad dulja od pune pauze (`fullSeconds`, iz `seconds(...)`), a 0 ostaje 0.
+    public static func afterWarmUp(fullSeconds: Int, nextIsWarmUp: Bool) -> Int {
+        guard fullSeconds > 0 else { return 0 }
+        return min(fullSeconds, nextIsWarmUp ? warmUpSeconds : max(warmUpSeconds, fullSeconds / 2))
+    }
 }
 
 public struct SetPosition: Equatable, Sendable {

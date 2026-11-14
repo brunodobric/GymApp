@@ -188,6 +188,49 @@ public enum ExerciseSearch {
         return (pinned, results.filter { !pinnedIDs.contains($0.id) })
     }
 
+    /// Zamjene za vježbu u treningu (zauzeta sprava): iste vrste i s istim glavnim mišićem, ili iste kategorije
+    /// sa zajedničkim mišićem. Prvo vježbe s istim glavnim mišićem, zatim s opremom iz profila, pa iste kategorije,
+    /// a unutar toga abecedno. Bez same vježbe i bez arhiviranih.
+    public static func alternatives(
+        to item: ExerciseSummary, in items: [ExerciseSummary], preferredEquipment: Set<Equipment> = [], limit: Int = 8
+    ) -> [ExerciseSummary] {
+        let primary = item.muscles.first
+        var scored: [(item: ExerciseSummary, score: Int)] = []
+        for candidate in items where candidate.id != item.id && !candidate.isArchived && candidate.kind == item.kind {
+            let samePrimary = primary != nil && candidate.muscles.first == primary
+            let sameCategory = item.category != nil && candidate.category == item.category
+            let sharesMuscle = !Set(candidate.muscles).isDisjoint(with: item.muscles)
+            guard samePrimary || (sameCategory && sharesMuscle) else { continue }
+            let hasEquipment = candidate.equipment.map { preferredEquipment.contains($0) } ?? false
+            let score = (samePrimary ? 0 : 4) + (preferredEquipment.isEmpty || hasEquipment ? 0 : 2) + (sameCategory ? 0 : 1)
+            scored.append((candidate, score))
+        }
+        return scored
+            .sorted { lhs, rhs in
+                if lhs.score != rhs.score { return lhs.score < rhs.score }
+                return lhs.item.name.localizedStandardCompare(rhs.item.name) == .orderedAscending
+            }
+            .prefix(limit)
+            .map(\.item)
+    }
+
+    /// Nedavne vježbe za odabir u treningu, redom ključeva (`ExerciseRef.key`, od najnovije).
+    /// Nepoznati ključevi, arhivirane vježbe i `excluding` (već u treningu) se preskaču.
+    public static func recent(
+        _ keys: [String], in items: [ExerciseSummary], excluding: Set<String> = [], limit: Int = 8
+    ) -> [ExerciseSummary] {
+        let byID = Dictionary(items.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        var seen = excluding
+        var result: [ExerciseSummary] = []
+        for key in keys where !seen.contains(key) {
+            seen.insert(key)
+            guard let item = byID[key], !item.isArchived else { continue }
+            result.append(item)
+            if result.count == limit { break }
+        }
+        return result
+    }
+
     /// nil ako neka riječ ne postoji ni u nazivu ni u `labels`. Manje je bolje.
     private static func relevance(of tokens: [String], in text: String, labels: String) -> Int? {
         guard !tokens.isEmpty else { return 0 }

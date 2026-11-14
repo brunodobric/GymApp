@@ -113,6 +113,17 @@ class SetPlannerTest {
     }
 
     @Test
+    fun `zagrijavanje - prazna šipka, 40, 60 i 80 posto zaokruženo na korak, bez ponavljanja težine`() {
+        val sets = WarmUpGenerator.sets(100.0, 20.0, 2.5, WeightUnit.KILOGRAMS)
+        assertEquals(listOf(20.0, 40.0, 60.0, 80.0), sets.map { it.weightKg })
+        assertEquals(listOf(10, 5, 3, 1), sets.map { it.reps })
+        assertTrue(sets.all { it.kind == SetKind.WARM_UP })
+        assertEquals(listOf(20.0, 25.0), WarmUpGenerator.sets(30.0, 20.0, 5.0, WeightUnit.KILOGRAMS).map { it.weightKg })
+        assertEquals(listOf(12.0, 18.0, 24.0), WarmUpGenerator.sets(30.0, null, 2.0, WeightUnit.KILOGRAMS).map { it.weightKg })
+        assertTrue(WarmUpGenerator.sets(0.0, 20.0, 2.5, WeightUnit.KILOGRAMS).isEmpty())
+    }
+
+    @Test
     fun `broj radnih serija je najčešći iz zadnjih izvođenja`() {
         assertEquals(4, SmartDefaults.workingSetCount(listOf(2, 4, 4)))
         assertEquals(2, SmartDefaults.workingSetCount(listOf(2, 4)))
@@ -202,5 +213,41 @@ class SetPlannerEngineTest {
         assertEquals(1, first.orderedSets.size)
         assertTrue(first.orderedSets.all { it.isCompleted })
         assertEquals(2, created.orderedSets.size)
+    }
+
+    @Test
+    fun `dodaj zagrijavanje stavlja serije ispred radnih, samo jednom`() {
+        val session = engine.startSession("Push", now = base)
+        val exercise = engine.addExercise(bench, WR, session)
+        assertFalse(engine.canAddWarmUps(exercise))
+        exercise.orderedSets.forEach {
+            it.weightKg = 100.0
+            it.reps = 5
+        }
+        assertEquals(4, engine.addWarmUps(exercise, 20.0, 2.5, WeightUnit.KILOGRAMS))
+        assertEquals(List(4) { SetKind.WARM_UP } + List(3) { W }, exercise.orderedSets.map { it.kind })
+        assertEquals((0 until 7).toList(), exercise.orderedSets.map { it.orderIndex })
+        assertFalse(engine.canAddWarmUps(exercise))
+        assertEquals(0, engine.addWarmUps(exercise, 20.0, 2.5, WeightUnit.KILOGRAMS))
+    }
+
+    @Test
+    fun `nakon zagrijavanja odmor je kraći - 60 s, a pred radnu seriju pola pune pauze`() {
+        assertEquals(60, RestPolicy.afterWarmUp(150, nextIsWarmUp = true))
+        assertEquals(75, RestPolicy.afterWarmUp(150, nextIsWarmUp = false))
+        assertEquals(60, RestPolicy.afterWarmUp(90, nextIsWarmUp = false))
+        assertEquals(45, RestPolicy.afterWarmUp(45, nextIsWarmUp = true))
+        assertEquals(0, RestPolicy.afterWarmUp(0, nextIsWarmUp = false))
+
+        val session = engine.startSession("Push", now = base)
+        val exercise = engine.addExercise(bench, WR, session)
+        repeat(2) { engine.addSet(exercise, SetKind.WARM_UP) }
+        val (first, second) = exercise.orderedSets.filter { it.kind == SetKind.WARM_UP }
+        for (set in listOf(first, second)) {
+            set.weightKg = 40.0
+            set.reps = 5
+        }
+        assertEquals(60.0, engine.completeSet(first, 180, base)?.totalSeconds)
+        assertEquals(90.0, engine.completeSet(second, 180, base)?.totalSeconds)
     }
 }

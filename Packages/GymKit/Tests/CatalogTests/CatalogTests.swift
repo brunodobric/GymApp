@@ -157,6 +157,28 @@ struct SearchTests {
         #expect(pinned.selected.isEmpty)
         #expect(pinned.others.map(\.id) == sample.map(\.id))
     }
+
+    @Test("Zamjene imaju isti glavni mišić, a oprema iz profila ide prva")
+    func alternatives() {
+        let items = sample + [
+            exercise("db-bench", hr: "Potisak bučicama", en: "Dumbbell Bench Press", equipment: .dumbbell),
+            exercise("machine-press", hr: "Potisak na spravi", en: "Machine Chest Press", equipment: .machine),
+            exercise("dips", hr: "Propadanja", en: "Dips", muscles: [.triceps, .chest], equipment: .bodyweight),
+        ]
+        let bench = items[1]
+        let all = ExerciseSearch.alternatives(to: bench, in: items)
+        #expect(all.map(\.id) == ["c:db-bench", "c:machine-press", "c:dips"])
+        let machines = ExerciseSearch.alternatives(to: bench, in: items, preferredEquipment: [.machine])
+        #expect(machines.map(\.id) == ["c:machine-press", "c:db-bench", "c:dips"])
+        #expect(ExerciseSearch.alternatives(to: bench, in: items, limit: 1).count == 1)
+    }
+
+    @Test("Nedavne vježbe idu redom, bez ponavljanja, nepoznatih i onih već u treningu")
+    func recent() {
+        let recent = ExerciseSearch.recent(["c:row", "c:bench", "c:row", "c:nepostoji", "c:curl"], in: sample, excluding: ["c:bench"])
+        #expect(recent.map(\.id) == ["c:row", "c:curl"])
+        #expect(ExerciseSearch.recent(["c:row", "c:curl"], in: sample, limit: 1).map(\.id) == ["c:row"])
+    }
 }
 
 @Suite("Katalog")

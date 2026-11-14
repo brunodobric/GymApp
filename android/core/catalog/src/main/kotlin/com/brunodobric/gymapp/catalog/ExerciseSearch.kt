@@ -161,6 +161,61 @@ object ExerciseSearch {
         return pinned to results.filter { it.id !in pinnedIds }
     }
 
+    /**
+     * Zamjene za vježbu u treningu (zauzeta sprava): iste vrste i s istim glavnim mišićem, ili iste kategorije
+     * sa zajedničkim mišićem. Prvo vježbe s istim glavnim mišićem, zatim s opremom iz profila, pa iste kategorije,
+     * a unutar toga abecedno. Bez same vježbe i bez arhiviranih. Isto kao `ExerciseSearch.alternatives` na iOS-u.
+     */
+    fun alternatives(
+        item: ExerciseSummary,
+        items: List<ExerciseSummary>,
+        preferredEquipment: Set<Equipment> = emptySet(),
+        limit: Int = 8,
+        locale: Locale = Locale.getDefault(),
+    ): List<ExerciseSummary> {
+        val primary = item.muscles.firstOrNull()
+        val scored = items.mapNotNull { candidate ->
+            if (candidate.id == item.id || candidate.isArchived || candidate.kind != item.kind) return@mapNotNull null
+            val samePrimary = primary != null && candidate.muscles.firstOrNull() == primary
+            val sameCategory = item.category != null && candidate.category == item.category
+            val sharesMuscle = candidate.muscles.any { it in item.muscles }
+            if (!samePrimary && !(sameCategory && sharesMuscle)) return@mapNotNull null
+            val hasEquipment = candidate.equipment?.let { it in preferredEquipment } ?: false
+            val score = (if (samePrimary) 0 else 4) + (if (preferredEquipment.isEmpty() || hasEquipment) 0 else 2) +
+                (if (sameCategory) 0 else 1)
+            candidate to score
+        }
+        val names = NaturalOrder(locale)
+        return scored
+            .sortedWith(compareBy<Pair<ExerciseSummary, Int>> { it.second }.thenComparator { a, b -> names.compare(a.first.name, b.first.name) })
+            .take(limit)
+            .map { it.first }
+    }
+
+    /**
+     * Nedavne vježbe za odabir u treningu, redom ključeva (`ExerciseRef.key`, od najnovije).
+     * Nepoznati ključevi, arhivirane vježbe i [excluding] (već u treningu) se preskaču.
+     */
+    fun recent(
+        keys: List<String>,
+        items: List<ExerciseSummary>,
+        excluding: Set<String> = emptySet(),
+        limit: Int = 8,
+    ): List<ExerciseSummary> {
+        val byId = LinkedHashMap<String, ExerciseSummary>()
+        items.forEach { byId.putIfAbsent(it.id, it) }
+        val seen = excluding.toMutableSet()
+        val result = mutableListOf<ExerciseSummary>()
+        for (key in keys) {
+            if (!seen.add(key)) continue
+            val item = byId[key] ?: continue
+            if (item.isArchived) continue
+            result += item
+            if (result.size == limit) break
+        }
+        return result
+    }
+
     /** null ako neka riječ ne postoji ni u nazivu ni u [labels]. Manje je bolje. */
     private fun relevance(tokens: List<String>, text: String, labels: String): Int? {
         if (tokens.isEmpty()) return 0

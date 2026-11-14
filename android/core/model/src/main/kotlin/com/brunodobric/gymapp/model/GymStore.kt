@@ -308,6 +308,12 @@ class GymStore(internal val persistence: RecordPersistence = InMemoryPersistence
             ?: lastPerformance(exercise)
     }
 
+    /** Ključevi vježbi iz zadnjih završenih treninga, od najnovije i bez ponavljanja (odjeljak "Nedavno" u odabiru). */
+    fun recentExerciseKeys(sessionLimit: Int = 10): List<String> =
+        ownFinishedSessions().take(sessionLimit)
+            .flatMap { session -> session.orderedExercises.filter { !it.isRemoved }.map { it.exerciseKey } }
+            .distinct()
+
     /** Sva izvođenja vježbe u završenim treninzima, od najnovijeg. */
     fun finishedPerformances(key: String): List<SessionExercise> =
         sessions.asSequence()

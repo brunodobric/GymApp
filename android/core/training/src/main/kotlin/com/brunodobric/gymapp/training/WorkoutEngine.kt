@@ -336,7 +336,12 @@ class WorkoutEngine(val store: GymStore) {
         val position = members.indexOfFirst { it.id == exercise.id }.coerceAtLeast(0)
         val configured = exercise.restSeconds ?: members.lastOrNull()?.restSeconds
         val defaultSeconds = restDefaults.seconds(members.map { isCompound(it.exercise.key) })
-        val seconds = RestPolicy.seconds(position, members.size, configured, defaultSeconds)
+        var seconds = RestPolicy.seconds(position, members.size, configured, defaultSeconds)
+        if (set.kind == SetKind.WARM_UP) {
+            val sets = exercise.orderedSets
+            val next = sets.getOrNull(sets.indexOfFirst { it.id == set.id } + 1)
+            seconds = RestPolicy.afterWarmUp(seconds, next?.kind == SetKind.WARM_UP)
+        }
         val timer = if (seconds > 0) RestTimer(now, seconds) else null
         session.restTimerStartedAt = timer?.startedAt
         session.restTimerEndsAt = timer?.endsAt

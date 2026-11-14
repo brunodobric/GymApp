@@ -107,6 +107,20 @@ struct SetPlannerTests {
         #expect(SetPlanner.plan(previous: [working(80, 12)], targets: range(1, 8, 12), inputType: .weightReps).loadChangeKg == nil)
     }
 
+    @Test("Zagrijavanje: prazna šipka, 40, 60 i 80 % zaokruženo na korak, bez ponavljanja težine")
+    func warmUpRamp() {
+        let sets = WarmUpGenerator.sets(workingWeightKg: 100, barKg: 20, step: 2.5, unit: .kilograms)
+        #expect(sets.map(\.weightKg) == [20, 40, 60, 80])
+        #expect(sets.map(\.reps) == [10, 5, 3, 1])
+        #expect(sets.allSatisfy { $0.kind == .warmUp })
+        // Lagana radna težina: 40 % je ispod šipke, a 60 % i 80 % padaju na istu težinu.
+        let light = WarmUpGenerator.sets(workingWeightKg: 30, barKg: 20, step: 5, unit: .kilograms)
+        #expect(light.map(\.weightKg) == [20, 25])
+        // Bez šipke (bučice) nema prve serije.
+        #expect(WarmUpGenerator.sets(workingWeightKg: 30, barKg: nil, step: 2, unit: .kilograms).map(\.weightKg) == [12, 18, 24])
+        #expect(WarmUpGenerator.sets(workingWeightKg: 0, barKg: 20, step: 2.5, unit: .kilograms).isEmpty)
+    }
+
     @Test("Broj radnih serija je najčešći iz zadnjih izvođenja")
     func workingSetCount() {
         #expect(SmartDefaults.workingSetCount(recent: [2, 4, 4]) == 4)
@@ -204,5 +218,46 @@ struct SetPlannerEngineTests {
         #expect(first.orderedSets.count == 1)
         #expect(first.orderedSets.allSatisfy(\.isCompleted))
         #expect(created.orderedSets.count == 2)
+    }
+
+    @Test("Dodaj zagrijavanje stavlja serije ispred radnih, samo jednom")
+    func addWarmUps() throws {
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "Push", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session)
+        #expect(!engine.canAddWarmUps(to: exercise))
+        for set in exercise.orderedSets {
+            set.weightKg = 100
+            set.reps = 5
+        }
+        #expect(try engine.addWarmUps(to: exercise, barKg: 20, step: 2.5, unit: .kilograms) == 4)
+        #expect(exercise.orderedSets.map(\.kind) == [.warmUp, .warmUp, .warmUp, .warmUp, .working, .working, .working])
+        #expect(exercise.orderedSets.map(\.orderIndex) == Array(0..<7))
+        #expect(!engine.canAddWarmUps(to: exercise))
+        #expect(try engine.addWarmUps(to: exercise, barKg: 20, step: 2.5, unit: .kilograms) == 0)
+    }
+
+    @Test("Nakon zagrijavanja odmor je kraći: 60 s, a pred radnu seriju pola pune pauze")
+    func warmUpRest() throws {
+        #expect(RestPolicy.afterWarmUp(fullSeconds: 150, nextIsWarmUp: true) == 60)
+        #expect(RestPolicy.afterWarmUp(fullSeconds: 150, nextIsWarmUp: false) == 75)
+        #expect(RestPolicy.afterWarmUp(fullSeconds: 90, nextIsWarmUp: false) == 60)
+        #expect(RestPolicy.afterWarmUp(fullSeconds: 45, nextIsWarmUp: true) == 45)
+        #expect(RestPolicy.afterWarmUp(fullSeconds: 0, nextIsWarmUp: false) == 0)
+
+        let (engine, _) = try makeEngine()
+        let session = try engine.startSession(name: "Push", now: base)
+        let exercise = try engine.addExercise(bench, inputType: .weightReps, to: session)
+        for _ in 0..<2 { try engine.addSet(to: exercise, kind: .warmUp) }
+        let warmUps = exercise.orderedSets.filter { $0.kind == .warmUp }
+        try #require(warmUps.count == 2)
+        let first = warmUps[0]
+        let second = warmUps[1]
+        for set in [first, second] {
+            set.weightKg = 40
+            set.reps = 5
+        }
+        #expect(try engine.completeSet(first, defaultRestSeconds: 180, now: base)?.totalSeconds == 60)
+        #expect(try engine.completeSet(second, defaultRestSeconds: 180, now: base)?.totalSeconds == 90)
     }
 }

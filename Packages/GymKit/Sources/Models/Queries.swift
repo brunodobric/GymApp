@@ -69,6 +69,23 @@ public struct GymQueries {
         return try context.fetch(descriptor).first
     }
 
+    /// Ključevi vježbi iz zadnjih završenih treninga, od najnovije i bez ponavljanja (odjeljak "Nedavno" u odabiru).
+    public func recentExerciseKeys(sessions limit: Int = 10) throws -> [String] {
+        let finished = SessionState.finished.rawValue
+        var descriptor = FetchDescriptor<Session>(
+            predicate: #Predicate { $0.stateRaw == finished },
+            sortBy: [SortDescriptor(\.startedAt, order: .reverse)]
+        )
+        descriptor.fetchLimit = limit
+        var keys: [String] = []
+        for session in try context.fetch(descriptor) {
+            for exercise in session.orderedExercises where !exercise.isRemoved && !keys.contains(exercise.exerciseKey) {
+                keys.append(exercise.exerciseKey)
+            }
+        }
+        return keys
+    }
+
     /// Jedini zapis postavki. Ako ga nema, stvara se sa zadanim vrijednostima.
     /// Ako ih zbog sinkronizacije ima više, vraća onaj koji ostaje nakon uklanjanja duplikata
     /// (`UserSettings.preferred(in:)`).
