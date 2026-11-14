@@ -819,4 +819,12 @@
     <string name="heavier_weight">Veća težina: +%1$s</string>
     <string name="add_note">Dodaj bilješku</string>
     <string name="edit_note">Uredi bilješku</string>
+    <string name="template_changes">Promjene u treningu</string>
+    <string name="template_updated">Trening je ažuriran.</string>
+    <string name="template_added">Dodano: %1$s</string>
+    <string name="template_removed">Nije rađeno: %1$s</string>
+    <string name="template_set_count">%1$s: serije %2$d → %3$d</string>
+    <string name="template_reordered">Drugačiji redoslijed vježbi</string>
+    <string name="update_template">Ažuriraj trening</string>
+    <string name="template_update_footer">Sprema se samo raspored vježbi i serija. Težine aplikacija predlaže sama.</string>
 </resources>

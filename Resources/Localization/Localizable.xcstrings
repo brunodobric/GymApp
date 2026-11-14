@@ -252,6 +252,16 @@
         }
       }
     },
+    "%@: serije %lld → %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: sets %2$lld → %3$lld"
+          }
+        }
+      }
+    },
     "%lld" : {
       "shouldTranslate" : false
     },
@@ -1435,6 +1445,16 @@
         }
       }
     },
+    "Ažuriraj trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update workout"
+          }
+        }
+      }
+    },
     "Bez ciljeva" : {
       "localizations" : {
         "en" : {
@@ -2135,6 +2155,16 @@
         }
       }
     },
+    "Dodano: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added: %@"
+          }
+        }
+      }
+    },
     "Dodano: %lld. Preskočeno (već postoje): %lld." : {
       "localizations" : {
         "en" : {
@@ -2241,6 +2271,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Another option"
+          }
+        }
+      }
+    },
+    "Drugačiji redoslijed vježbi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Different exercise order"
           }
         }
       }
@@ -3515,6 +3555,16 @@
         }
       }
     },
+    "Nije rađeno: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skipped: %@"
+          }
+        }
+      }
+    },
     "Npr. sjedalo na 4, hvat malo širi" : {
       "localizations" : {
         "en" : {
@@ -3635,6 +3685,16 @@
         }
       }
     },
+    "Promjene u treningu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changes to the workout"
+          }
+        }
+      }
+    },
     "Razmak između dviju težina na kotačiću, na gumbima + i − u Live Activityju i za jedan klik Digital Crowna na satu. Koraci vrijede za jedinicu koja je sada odabrana (%@)." : {
       "localizations" : {
         "en" : {
@@ -3695,6 +3755,16 @@
         }
       }
     },
+    "Sprema se samo raspored vježbi i serija. Težine aplikacija predlaže sama." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the exercises and sets are saved. The app suggests weights on its own."
+          }
+        }
+      }
+    },
     "Svi programi su i u kartici Rasporedi." : {
       "localizations" : {
         "en" : {
@@ -3711,6 +3781,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gym"
+          }
+        }
+      }
+    },
+    "Trening je ažuriran." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout was updated."
           }
         }
       }

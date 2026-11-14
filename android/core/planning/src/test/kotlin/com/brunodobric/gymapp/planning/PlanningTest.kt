@@ -164,6 +164,52 @@ class PlanningTest {
         }
 
         @Test
+        fun `ažuriranje treninga preuzima strukturu odrađenog treninga, a ciljevi ostaju`() {
+            val store = newStore()
+            val engine = TemplateEngine(store)
+            val template = store.template("Push", listOf(bench, row, curl))
+            engine.setTargets(template.orderedExercises[0].orderedSets[0], 60.0, 8)
+            template.orderedExercises[0].notes = "Sjedalo 4"
+            val session = TemplateStarter(store).start(template, base)
+            val workout = WorkoutEngine(store)
+            val (benchDone, rowDone, curlDone) = session.orderedExercises
+            // Potisak: 4 serije umjesto 3, veslanje preskočeno, pregib 2 serije, dodan čučanj.
+            workout.addSet(benchDone)
+            for (exercise in listOf(benchDone, curlDone)) {
+                val sets = exercise.orderedSets.take(if (exercise === curlDone) 2 else 4)
+                sets.forEach {
+                    it.weightKg = it.weightKg ?: 20.0
+                    it.reps = it.reps ?: 10
+                    workout.completeSet(it, 90, base)
+                }
+            }
+            val squatDone = workout.addExercise(squat, WR, session)
+            squatDone.orderedSets.first().apply { weightKg = 100.0; reps = 5 }
+            workout.completeSet(squatDone.orderedSets.first(), 90, base)
+            rowDone.orderedSets.forEach { it.completedAt = null }
+
+            val updater = TemplateUpdater(store)
+            val changes = updater.changes(session, template)
+            assertEquals(listOf("Čučanj"), changes.added)
+            assertEquals(listOf("Veslanje"), changes.removed)
+            assertEquals(
+                listOf(TemplateChanges.SetCount("Potisak s klupe", 3, 4), TemplateChanges.SetCount("Pregib", 3, 2)),
+                changes.setCounts,
+            )
+            assertFalse(changes.isEmpty)
+
+            updater.updateTemplate(template, session)
+            val updated = template.orderedExercises
+            assertEquals(listOf("Potisak s klupe", "Pregib", "Čučanj"), updated.map { it.exerciseName })
+            assertEquals(listOf(4, 2, 1), updated.map { it.orderedSets.size })
+            assertEquals(60.0, updated[0].orderedSets[0].targetWeightKg)
+            assertEquals("Sjedalo 4", updated[0].notes)
+            assertEquals(5, updated[2].orderedSets[0].targetReps)
+            assertNull(updated[2].orderedSets[0].targetWeightKg)
+            assertTrue(updater.changes(session, template).isEmpty)
+        }
+
+        @Test
         fun `raspon iz predloška, prijedlog veće težine i bilješka idu u trening`() {
             val store = newStore()
             val engine = TemplateEngine(store)

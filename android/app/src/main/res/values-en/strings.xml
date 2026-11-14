@@ -809,4 +809,12 @@
     <string name="heavier_weight">Heavier: +%1$s</string>
     <string name="add_note">Add note</string>
     <string name="edit_note">Edit note</string>
+    <string name="template_changes">Changes to the workout</string>
+    <string name="template_updated">The workout was updated.</string>
+    <string name="template_added">Added: %1$s</string>
+    <string name="template_removed">Skipped: %1$s</string>
+    <string name="template_set_count">%1$s: sets %2$d → %3$d</string>
+    <string name="template_reordered">Different exercise order</string>
+    <string name="update_template">Update workout</string>
+    <string name="template_update_footer">Only the exercises and sets are saved. The app suggests weights on its own.</string>
 </resources>
