@@ -15,6 +15,10 @@ struct ExerciseCard: View {
     let previous: [SetValues]
     let unit: WeightUnit
     let effortScale: EffortScale
+    /// Trajna bilješka vježbe (postavka sprave, hvat), `ExerciseNotes`.
+    let persistentNote: String?
+    /// Nudi se "Dodaj zagrijavanje" (`WorkoutEngine.canAddWarmUps`).
+    let canAddWarmUps: Bool
 
     let onToggleOpen: () -> Void
     let onEdit: () -> Void
@@ -25,6 +29,9 @@ struct ExerciseCard: View {
     let onRemove: () -> Void
     let onSuperset: () -> Void
     let onLeaveSuperset: () -> Void
+    let onReplace: () -> Void
+    let onEditNote: () -> Void
+    let onAddWarmUps: () -> Void
     /// Otvara stranicu vježbe (animacija i upute). Nil kad vježba nije u katalogu ni među vlastitima.
     let onShowInfo: (() -> Void)?
 
@@ -89,6 +96,12 @@ struct ExerciseCard: View {
                         Button("Prikaži vježbu", systemImage: "info.circle", action: onShowInfo)
                         Divider()
                     }
+                    Button("Zamijeni vježbu", systemImage: "arrow.triangle.2.circlepath", action: onReplace)
+                    Button("Bilješka vježbe", systemImage: "note.text", action: onEditNote)
+                    if canAddWarmUps {
+                        Button("Dodaj zagrijavanje", systemImage: "flame", action: onAddWarmUps)
+                    }
+                    Divider()
                     Button("Superset", systemImage: "rectangle.stack", action: onSuperset)
                     if exercise.supersetGroupId != nil {
                         Button("Izbaci iz superseta", systemImage: "rectangle.stack.badge.minus", action: onLeaveSuperset)
@@ -114,10 +127,52 @@ struct ExerciseCard: View {
                     .foregroundStyle(.tint)
             }
             Text(exercise.exerciseName).font(.itemTitle)
-            Text("\(completedCount) od \(exercise.orderedSets.count) serija")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            HStack(spacing: 4) {
+                Text("\(completedCount) od \(exercise.orderedSets.count) serija")
+                if let target = targetText {
+                    Text(verbatim: "·")
+                    target
+                }
+            }
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            if let change = loadChangeText {
+                Label { change } icon: { Image(systemName: "arrow.up.right") }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.tint)
+            }
+            ForEach(notes, id: \.self) { note in
+                Label(note, systemImage: "note.text")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(isOpen ? nil : 1)
+            }
         }
+    }
+
+    /// Cilj ponavljanja iz predloška: "cilj 8–12" ili "cilj 5".
+    private var targetText: Text? {
+        guard let lower = exercise.targetRepsMin else { return nil }
+        let upper = exercise.targetRepsMax ?? lower
+        return upper > lower ? Text("cilj \(lower)–\(upper)") : Text("cilj \(lower)")
+    }
+
+    /// Prijedlog dvostruke progresije: veća težina ili manja pomoć nego prošli put.
+    private var loadChangeText: Text? {
+        guard let change = exercise.loadChangeKg, abs(change) > 0.0001 else { return nil }
+        let amount = WeightFormatter(unit: unit).string(fromKilograms: abs(change))
+        if exercise.inputType == .assisted { return Text("Manje pomoći: −\(amount)") }
+        return Text("Veća težina: +\(amount)")
+    }
+
+    /// Bilješka iz predloška i trajna bilješka vježbe, bez praznih i bez ponavljanja.
+    private var notes: [String] {
+        var result: [String] = []
+        for note in [exercise.notes, persistentNote ?? ""] {
+            let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty && !result.contains(trimmed) { result.append(trimmed) }
+        }
+        return result
     }
 
     private var completedCount: Int {

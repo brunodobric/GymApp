@@ -1,5 +1,7 @@
 package com.brunodobric.gymapp.ui.exercises
 
+import com.brunodobric.gymapp.model.exerciseNotes
+import com.brunodobric.gymapp.ui.workout.ExerciseNoteDialog
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -177,6 +179,27 @@ fun ExerciseDetailScreen(
                         Text("${index + 1}. $step", Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
                     }
                 }
+            }
+
+            // Trajna bilješka vježbe (`ExerciseNoteSection` na iOS-u).
+            var editingNote by rememberSaveable { mutableStateOf(false) }
+            val note = settings.exerciseNotes.note(ref.key)
+            Header(stringResource(R.string.note))
+            note?.let { Text(it, Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) }
+            TextButton(onClick = { editingNote = true }, modifier = Modifier.padding(horizontal = 8.dp)) {
+                Text(stringResource(if (note == null) R.string.add_note else R.string.edit_note))
+            }
+            if (editingNote) {
+                ExerciseNoteDialog(
+                    exerciseName = ref.name,
+                    initialText = note.orEmpty(),
+                    onSave = { text ->
+                        settings.exerciseNotes = settings.exerciseNotes.apply { setNote(text, ref.key) }
+                        store.save()
+                        editingNote = false
+                    },
+                    onDismiss = { editingNote = false },
+                )
             }
 
             if (showsHistory && !history.isEmpty) {

@@ -1515,7 +1515,27 @@
         }
       }
     },
+    "Bilješka se prikazuje uz vježbu u svakom treningu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The note is shown with the exercise in every workout."
+          }
+        }
+      }
+    },
     "Bilješka uz vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise note"
+          }
+        }
+      }
+    },
+    "Bilješka vježbe" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1641,6 +1661,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dumbbells, bands and bodyweight"
+          }
+        }
+      }
+    },
+    "cilj %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "target %lld"
+          }
+        }
+      }
+    },
+    "cilj %lld–%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "target %1$lld–%2$lld"
           }
         }
       }
@@ -1981,6 +2021,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add 2 sets per week: %@"
+          }
+        }
+      }
+    },
+    "Dodaj bilješku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add note"
           }
         }
       }
@@ -3385,6 +3435,16 @@
         }
       }
     },
+    "Manje pomoći: −%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less assistance: −%@"
+          }
+        }
+      }
+    },
     "Mjesec" : {
       "localizations" : {
         "en" : {
@@ -3425,6 +3485,16 @@
         }
       }
     },
+    "Nedavno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recent"
+          }
+        }
+      }
+    },
     "Neobavezno, za prijedlog i statistiku." : {
       "localizations" : {
         "en" : {
@@ -3441,6 +3511,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unknown exercise"
+          }
+        }
+      }
+    },
+    "Npr. sjedalo na 4, hvat malo širi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E.g. seat at 4, slightly wider grip"
           }
         }
       }
@@ -3545,6 +3625,16 @@
         }
       }
     },
+    "Prijedlozi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions"
+          }
+        }
+      }
+    },
     "Razmak između dviju težina na kotačiću, na gumbima + i − u Live Activityju i za jedan klik Digital Crowna na satu. Koraci vrijede za jedinicu koja je sada odabrana (%@)." : {
       "localizations" : {
         "en" : {
@@ -3641,6 +3731,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your suggestion"
+          }
+        }
+      }
+    },
+    "Uredi bilješku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit note"
+          }
+        }
+      }
+    },
+    "Veća težina: +%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heavier: +%@"
+          }
+        }
+      }
+    },
+    "Vježba se nije mogla zamijeniti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The exercise couldn't be replaced."
           }
         }
       }

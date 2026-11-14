@@ -797,4 +797,16 @@
     <string name="experience_detail_advanced">Training regularly for over 2 years</string>
     <string name="profile_setup">Set up profile</string>
     <string name="profile_setup_message">Answer a few questions and get a ready-made training schedule.</string>
+    <string name="add_count">Add (%1$d)</string>
+    <string name="suggestions">Suggestions</string>
+    <string name="recent">Recent</string>
+    <string name="exercise_note">Exercise note</string>
+    <string name="exercise_note_hint">E.g. seat at 4, slightly wider grip</string>
+    <string name="exercise_note_footer">The note is shown with the exercise in every workout.</string>
+    <string name="target_range">target %1$d–%2$d</string>
+    <string name="target_reps">target %1$d</string>
+    <string name="less_assistance">Less assistance: −%1$s</string>
+    <string name="heavier_weight">Heavier: +%1$s</string>
+    <string name="add_note">Add note</string>
+    <string name="edit_note">Edit note</string>
 </resources>

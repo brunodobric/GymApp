@@ -68,19 +68,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.catalog.Equipment
+import com.brunodobric.gymapp.catalog.ExerciseSearch
 import com.brunodobric.gymapp.catalog.ExerciseSummary
 import com.brunodobric.gymapp.catalog.Mechanic
 import com.brunodobric.gymapp.model.SessionExercise
+import com.brunodobric.gymapp.model.exerciseNotes
 import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.SetLog
 import com.brunodobric.gymapp.model.ref
 import com.brunodobric.gymapp.model.weightStep
 import com.brunodobric.gymapp.training.LiveSetEditor
 import com.brunodobric.gymapp.training.WorkoutEngine
+import com.brunodobric.gymapp.training.addWarmUps
+import com.brunodobric.gymapp.training.canAddWarmUps
 import com.brunodobric.gymapp.training.WorkoutError
 import com.brunodobric.gymapp.training.WorkoutFlow
 import com.brunodobric.gymapp.training.previousSetValues
 import com.brunodobric.gymapp.training.restDefaults
+import com.brunodobric.gymapp.ui.catalogLanguage
 import com.brunodobric.gymapp.ui.exercises.ExerciseDetailScreen
 import com.brunodobric.gymapp.ui.exercises.MoveKitAssets
 import com.brunodobric.gymapp.ui.home.RecoveryCheck
@@ -140,6 +146,9 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     var supersetSource by rememberSaveable { mutableStateOf<String?>(null) }
     // Otvorena vježba (kao `openExerciseID` na iOS-u): ostale su sklopljene, a superset se otvara u cjelini.
     var openId by rememberSaveable { mutableStateOf<String?>(null) }
+    // Vježba koja se mijenja drugom (zauzeta sprava) i vježba čija se trajna bilješka uređuje, po id-u.
+    var replaceId by rememberSaveable { mutableStateOf<String?>(null) }
+    var noteId by rememberSaveable { mutableStateOf<String?>(null) }
     // Broj završenih serija pri zadnjem pogledu, da se nova serija (i iz obavijesti) prepozna.
     var seenCompleted by rememberSaveable { mutableStateOf<Int?>(null) }
     val now = rememberTicker()
@@ -191,6 +200,37 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
         return
     }
 
+    val recentKeys = remember(revision) { store.recentExerciseKeys() }
+    val inWorkout = engine.visibleExercises(session).map { it.exerciseKey }.toSet()
+    replaceId?.let { id ->
+        val source = engine.visibleExercises(session).firstOrNull { it.id.toString() == id }
+        if (source == null) {
+            replaceId = null
+            return
+        }
+        BackHandler { replaceId = null }
+        val language = catalogLanguage()
+        val all = remember(revision, language) { store.customExercises.map { it.summary } + services.catalog.summaries(language) }
+        val suggested = remember(source.exerciseKey, all) {
+            all.firstOrNull { it.id == source.exerciseKey }?.let { summary ->
+                ExerciseSearch.alternatives(summary, all.filter { it.id !in inWorkout }, settings.equipment.toSet())
+            }.orEmpty()
+        }
+        ExercisePicker(
+            services = services,
+            title = stringResource(R.string.replace_exercise),
+            suggested = suggested,
+            recentKeys = recentKeys,
+            excludedKeys = inWorkout,
+            onPick = { summary ->
+                openId = engine.replaceExercise(source, summary.ref, inputTypeOf(services, summary)).id.toString()
+                replaceId = null
+            },
+            onClose = { replaceId = null },
+        )
+        return
+    }
+
     BackHandler(enabled = picking) { picking = false }
     BackHandler(enabled = !picking && reordering) { reordering = false }
     BackHandler(enabled = !picking && !reordering, onBack = onClose)
@@ -198,10 +238,12 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
     if (picking) {
         ExercisePicker(
             services = services,
+            allowsMultiple = true,
+            recentKeys = recentKeys,
+            excludedKeys = inWorkout,
             onPick = { summary ->
                 val input = inputTypeOf(services, summary)
                 openId = engine.addExercise(summary.ref, input, session).id.toString()
-                picking = false
             },
             onClose = { picking = false },
         )
@@ -355,6 +397,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                         previousText = { set -> LiveSetEditor.previousText(set, exercise.inputType, previous, unit, locale) },
                         unit = unit,
                         effortScale = settings.effortScale,
+                        persistentNote = settings.exerciseNotes.note(key),
                         actions = ExerciseCardActions(
                             onToggleOpen = { openId = if (open) null else exercise.id.toString() },
                             onChange = { engine.touch(session) },
@@ -378,6 +421,21 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                             onSuperset = { supersetSource = exercise.id.toString() },
                             onLeaveSuperset = { engine.removeFromSuperset(exercise) },
                             onShowInfo = if (key.startsWith("c:") || key.startsWith("u:")) ({ infoKey = key }) else null,
+                            onReplace = { replaceId = exercise.id.toString() },
+                            onEditNote = { noteId = exercise.id.toString() },
+                            onAddWarmUps = if (engine.canAddWarmUps(exercise)) {
+                                {
+                                    val barbell = exercise.exerciseCatalogId?.let(services.catalog::exercise)?.equipment == Equipment.BARBELL
+                                    engine.addWarmUps(
+                                        exercise,
+                                        barKg = if (barbell) settings.barbellWeightKg else null,
+                                        step = settings.weightStep(exercise.exercise, services.catalog, store.customExercises),
+                                        unit = unit,
+                                    )
+                                }
+                            } else {
+                                null
+                            },
                         ),
                     )
                 }
@@ -391,6 +449,24 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
                     }
                 }
             }
+        }
+    }
+
+    noteId?.let { id ->
+        val exercise = visible.firstOrNull { it.id.toString() == id }
+        if (exercise == null) {
+            noteId = null
+        } else {
+            ExerciseNoteDialog(
+                exerciseName = exercise.exerciseName,
+                initialText = settings.exerciseNotes.note(exercise.exerciseKey).orEmpty(),
+                onSave = { text ->
+                    settings.exerciseNotes = settings.exerciseNotes.apply { setNote(text, exercise.exerciseKey) }
+                    engine.touch(session)
+                    noteId = null
+                },
+                onDismiss = { noteId = null },
+            )
         }
     }
 

@@ -807,4 +807,16 @@
     <string name="experience_detail_advanced">Redovno treniram više od 2 godine</string>
     <string name="profile_setup">Postavi profil</string>
     <string name="profile_setup_message">Odgovori na nekoliko pitanja i dobij gotov raspored treninga.</string>
+    <string name="add_count">Dodaj (%1$d)</string>
+    <string name="suggestions">Prijedlozi</string>
+    <string name="recent">Nedavno</string>
+    <string name="exercise_note">Bilješka vježbe</string>
+    <string name="exercise_note_hint">Npr. sjedalo na 4, hvat malo širi</string>
+    <string name="exercise_note_footer">Bilješka se prikazuje uz vježbu u svakom treningu.</string>
+    <string name="target_range">cilj %1$d–%2$d</string>
+    <string name="target_reps">cilj %1$d</string>
+    <string name="less_assistance">Manje pomoći: −%1$s</string>
+    <string name="heavier_weight">Veća težina: +%1$s</string>
+    <string name="add_note">Dodaj bilješku</string>
+    <string name="edit_note">Uredi bilješku</string>
 </resources>

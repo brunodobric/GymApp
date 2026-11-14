@@ -51,6 +51,12 @@ struct ActiveWorkoutScreen: View {
     @State private var isClosingHere = false
     /// Odgođeno spremanje izmjene polja serije (`scheduleSave`).
     @State private var pendingSave: Task<Void, Never>?
+    /// Vježba koja se mijenja drugom (zauzeta sprava).
+    @State private var replaceSource: SessionExercise?
+    /// Vježba čija se trajna bilješka uređuje.
+    @State private var noteExercise: SessionExercise?
+    /// Ključevi nedavnih vježbi za odabir (`GymQueries.recentExerciseKeys`).
+    @State private var recentKeys: [String] = []
 
     private var engine: WorkoutEngine { WorkoutEngine(context: context) }
     private var unit: WeightUnit { settings?.weightUnit ?? .kilograms }
@@ -122,10 +128,14 @@ struct ActiveWorkoutScreen: View {
                 }
             }
             .sheet(isPresented: $showsPicker) {
-                ExercisePickerSheet(title: "Dodaj vježbu") { summary, inputType in
+                ExercisePickerSheet(
+                    title: "Dodaj vježbu", allowsMultiple: true, recentKeys: recentKeys,
+                    excludedKeys: Set(visible.map(\.exerciseKey))
+                ) { summary, inputType in
                     add(summary, inputType: inputType)
                 }
             }
+            .background { exerciseSheets }
             .sheet(item: $supersetSource) { source in
                 SupersetPartnerSheet(
                     source: source,
@@ -185,6 +195,7 @@ struct ActiveWorkoutScreen: View {
             _ = try? GymQueries(context: context).settings()
             if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
             PerformanceSignpost.measure("WorkoutOpen") { reloadPrevious() }
+            recentKeys = (try? GymQueries(context: context).recentExerciseKeys()) ?? []
             if openExerciseID == nil {
                 openExerciseID = visible.first { $0.orderedSets.contains { !$0.isCompleted } }?.id ?? visible.first?.id
             }
@@ -210,6 +221,8 @@ struct ActiveWorkoutScreen: View {
             previous: previousSets[exercise.id] ?? [],
             unit: unit,
             effortScale: settings?.effortScale ?? .rpe,
+            persistentNote: settings?.exerciseNotes.note(for: exercise.exerciseKey),
+            canAddWarmUps: engine.canAddWarmUps(to: exercise),
             onToggleOpen: { openExerciseID = isOpen(exercise) ? nil : exercise.id },
             onEdit: scheduleSave,
             onToggleComplete: { toggleComplete($0, in: exercise) },
@@ -222,6 +235,9 @@ struct ActiveWorkoutScreen: View {
             onRemove: { remove(exercise) },
             onSuperset: { supersetSource = exercise },
             onLeaveSuperset: { try? engine.removeFromSuperset(exercise) },
+            onReplace: { replaceSource = exercise },
+            onEditNote: { noteExercise = exercise },
+            onAddWarmUps: { addWarmUps(to: exercise, step: weightStep(exercise.exercise)) },
             onShowInfo: exercise.exercise.source == nil ? nil : { infoExercise = exercise }
         )
         .environment(\.weightStep, weightStep(exercise.exercise))
@@ -323,38 +339,6 @@ struct ActiveWorkoutScreen: View {
             (lhs.orderedSets.compactMap(\.completedAt).max() ?? .distantPast)
                 < (rhs.orderedSets.compactMap(\.completedAt).max() ?? .distantPast)
         }
-    }
-
-    private func add(_ summary: ExerciseSummary, inputType: ExerciseInputType) {
-        if let exercise = try? engine.addExercise(summary.ref, inputType: inputType, to: session) {
-            openExerciseID = exercise.id
-            reloadPrevious()
-        }
-    }
-
-    private func remove(_ exercise: SessionExercise) {
-        try? engine.removeExercise(exercise)
-        lastUndo = .exercise(exercise)
-        if openExerciseID == exercise.id {
-            openExerciseID = visible.first { $0.orderedSets.contains { !$0.isCompleted } }?.id
-        }
-    }
-
-    private func deleteSet(_ set: SetLog, in exercise: SessionExercise) {
-        guard let removed = try? engine.removeSet(set) else { return }
-        lastUndo = .set(removed, exercise: exercise)
-    }
-
-    private func undo(_ action: UndoAction) {
-        switch action {
-        case .exercise(let exercise):
-            try? engine.restoreExercise(exercise)
-            openExerciseID = exercise.id
-        case .set(let removed, let exercise):
-            try? engine.restoreSet(removed, to: exercise)
-            openExerciseID = exercise.id
-        }
-        lastUndo = nil
     }
 
     private func restExpired() {
@@ -553,6 +537,97 @@ private enum UndoAction {
 private struct SummaryBox: Identifiable, Equatable {
     let id = UUID()
     let summary: WorkoutSummary
+}
+
+// MARK: Vježbe: dodavanje, zamjena, bilješke i zagrijavanje
+
+extension ActiveWorkoutScreen {
+    private func add(_ summary: ExerciseSummary, inputType: ExerciseInputType) {
+        if let exercise = try? engine.addExercise(summary.ref, inputType: inputType, to: session) {
+            openExerciseID = exercise.id
+            reloadPrevious()
+        }
+    }
+
+    private func remove(_ exercise: SessionExercise) {
+        try? engine.removeExercise(exercise)
+        lastUndo = .exercise(exercise)
+        if openExerciseID == exercise.id {
+            openExerciseID = visible.first { $0.orderedSets.contains { !$0.isCompleted } }?.id
+        }
+    }
+
+    private func deleteSet(_ set: SetLog, in exercise: SessionExercise) {
+        guard let removed = try? engine.removeSet(set) else { return }
+        lastUndo = .set(removed, exercise: exercise)
+    }
+
+    private func undo(_ action: UndoAction) {
+        switch action {
+        case .exercise(let exercise):
+            try? engine.restoreExercise(exercise)
+            openExerciseID = exercise.id
+        case .set(let removed, let exercise):
+            try? engine.restoreSet(removed, to: exercise)
+            openExerciseID = exercise.id
+        }
+        lastUndo = nil
+    }
+
+    /// Listovi za zamjenu vježbe i trajnu bilješku. Na pozadini ekrana, da tijelo strukture ostane u granicama SwiftLinta.
+    private var exerciseSheets: some View {
+        Color.clear
+            .sheet(item: $replaceSource) { source in
+                ExercisePickerSheet(
+                    title: "Zamijeni vježbu", suggested: alternatives(to: source), recentKeys: recentKeys,
+                    excludedKeys: Set(visible.map(\.exerciseKey))
+                ) { summary, inputType in
+                    replace(source, with: summary, inputType: inputType)
+                }
+            }
+            .sheet(item: $noteExercise) { exercise in
+                ExerciseNoteSheet(
+                    exerciseName: exercise.exerciseName,
+                    initialText: settings?.exerciseNotes.note(for: exercise.exerciseKey) ?? ""
+                ) { text in
+                    saveNote(text, for: exercise)
+                }
+            }
+    }
+
+    /// Zamjene iz kataloga i vlastitih vježbi: isti glavni mišić, a prvo oprema iz profila.
+    private func alternatives(to exercise: SessionExercise) -> [ExerciseSummary] {
+        let all = catalogStore.summaries + customExercises.map(\.summary)
+        guard let summary = all.first(where: { $0.id == exercise.exerciseKey }) else { return [] }
+        let inWorkout = Set(visible.map(\.exerciseKey))
+        return ExerciseSearch.alternatives(
+            to: summary, in: all.filter { !inWorkout.contains($0.id) }, preferredEquipment: Set(settings?.equipment ?? [])
+        )
+    }
+
+    private func replace(_ exercise: SessionExercise, with summary: ExerciseSummary, inputType: ExerciseInputType) {
+        guard let created = try? engine.replaceExercise(exercise, with: summary.ref, inputType: inputType) else {
+            errorText = String(localized: "Vježba se nije mogla zamijeniti.")
+            return
+        }
+        openExerciseID = created.id
+        reloadPrevious()
+    }
+
+    private func saveNote(_ text: String, for exercise: SessionExercise) {
+        guard let settings = try? GymQueries(context: context).settings() else { return }
+        var notes = settings.exerciseNotes
+        notes.setNote(text, for: exercise.exerciseKey)
+        settings.exerciseNotes = notes
+        try? engine.touch(session)
+    }
+
+    private func addWarmUps(to exercise: SessionExercise, step: Double) {
+        let barbell = catalogStore.catalog?.exercise(withID: exercise.exercise.catalogId ?? "")?.equipment == .barbell
+        _ = try? engine.addWarmUps(
+            to: exercise, barKg: barbell ? settings?.barbellWeightKg ?? 20 : nil, step: step, unit: unit
+        )
+    }
 }
 
 // MARK: Odgođeno spremanje
