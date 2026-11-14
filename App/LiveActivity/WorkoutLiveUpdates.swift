@@ -170,7 +170,7 @@ final class WorkoutLiveUpdates {
         }
         let key = exercise.exercise.key
         if let cached = previousByExercise[key] { return cached }
-        let values = (try? GymQueries(context: context).previousSetValues(of: exercise.exercise)) ?? []
+        let values = (try? GymQueries(context: context).previousSetValues(of: exercise.exercise, preferringTemplate: exercise.session?.templateId)) ?? []
         previousByExercise[key] = values
         return values
     }

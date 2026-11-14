@@ -241,7 +241,7 @@ struct ActiveWorkoutCard: View {
             previous = nil
             return
         }
-        let values = (try? GymQueries(context: context).previousSetValues(of: exercise.exercise)) ?? []
+        let values = (try? GymQueries(context: context).previousSetValues(of: exercise.exercise, preferringTemplate: exercise.session?.templateId)) ?? []
         previous = (exercise.id, values)
     }
 

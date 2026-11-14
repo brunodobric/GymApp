@@ -24,7 +24,7 @@ extension SessionSnapshot {
             distanceMeters: session.distanceMeters,
             updatedAt: session.lastActivityAt,
             exercises: session.orderedExercises.map { exercise in
-                ExerciseSnapshot(
+                var snapshot = ExerciseSnapshot(
                     id: exercise.id,
                     orderIndex: exercise.orderIndex,
                     exercise: exercise.exercise,
@@ -41,6 +41,11 @@ extension SessionSnapshot {
                     },
                     weightStep: weightStep(exercise.exercise)
                 )
+                snapshot.targetRepsMin = exercise.targetRepsMin
+                snapshot.targetRepsMax = exercise.targetRepsMax
+                snapshot.loadChangeKg = exercise.loadChangeKg
+                snapshot.notes = exercise.notes.isEmpty ? nil : exercise.notes
+                return snapshot
             }
         )
     }
@@ -185,6 +190,10 @@ public struct SessionSnapshotStore {
             exercise.supersetGroupId = item.supersetGroupId
             exercise.restSeconds = item.restSeconds
             exercise.isRemoved = item.isRemoved
+            exercise.targetRepsMin = item.targetRepsMin
+            exercise.targetRepsMax = item.targetRepsMax
+            exercise.loadChangeKg = item.loadChangeKg
+            exercise.notes = item.notes ?? ""
             write(item.sets, into: exercise)
         }
     }

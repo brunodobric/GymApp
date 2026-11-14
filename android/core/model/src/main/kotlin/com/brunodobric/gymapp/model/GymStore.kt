@@ -301,6 +301,13 @@ class GymStore(internal val persistence: RecordPersistence = InMemoryPersistence
             .maxByOrNull { it.session?.startedAt ?: Instant.MIN }
     }
 
+    /** Zadnje izvođenje vježbe u treningu iz istog predloška, inače bilo gdje. */
+    fun lastPerformance(exercise: ExerciseRef, templateId: UUID?): SessionExercise? {
+        if (templateId == null) return lastPerformance(exercise)
+        return finishedPerformances(exercise.key).firstOrNull { it.session?.templateId == templateId }
+            ?: lastPerformance(exercise)
+    }
+
     /** Sva izvođenja vježbe u završenim treninzima, od najnovijeg. */
     fun finishedPerformances(key: String): List<SessionExercise> =
         sessions.asSequence()

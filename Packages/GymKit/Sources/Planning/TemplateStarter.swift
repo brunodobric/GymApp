@@ -3,13 +3,18 @@ import Foundation
 import Models
 import SwiftData
 import Training
+import Units
 
 /// Pokretanje treninga iz predloška: podaci se kopiraju u `Session`, koji nakon toga ne ovisi o predlošku.
 public struct TemplateStarter {
     public let context: ModelContext
+    /// Korak težine vježbe u jedinici korisnika, za prijedlog veće težine (`SetPlanner`).
+    /// Nil: korak iz postavki bez opreme vježbe (aplikacija predaje korak s opremom iz kataloga).
+    public let weightStep: ((ExerciseRef) -> Double)?
 
-    public init(context: ModelContext) {
+    public init(context: ModelContext, weightStep: ((ExerciseRef) -> Double)? = nil) {
         self.context = context
+        self.weightStep = weightStep
     }
 
     /// Pokreće sljedeći trening rasporeda, s izmjenama tekućeg ciklusa.
@@ -39,6 +44,9 @@ public struct TemplateStarter {
         _ template: WorkoutTemplate, exercises: [PlannedExercise], scheduleId: UUID?, now: Date
     ) throws -> Session {
         let engine = WorkoutEngine(context: context)
+        let settings = try? GymQueries(context: context).settings()
+        let unit = settings?.weightUnit ?? .kilograms
+        let step = weightStep ?? WeightStepSettings.resolver(settings: settings, catalog: nil, custom: [])
         let session = try engine.startSession(
             name: template.name, kind: template.kind, templateId: template.id, scheduleId: scheduleId, now: now
         )
@@ -48,15 +56,17 @@ public struct TemplateStarter {
 
         for planned in exercises {
             let source = sources[planned.source]
-            let created = try engine.addExercise(
-                planned.ref, inputType: planned.inputType, to: session, restSeconds: source?.restSeconds, now: now
-            )
             // Ciljevi pripadaju originalnoj vježbi: zamijenjena vježba zadržava serije iz svoje povijesti.
-            if let source, !planned.isReplacement, !source.orderedSets.isEmpty {
-                try applyTargets(source.orderedSets, to: created, engine: engine, now: now)
+            let targets = planned.isReplacement ? [] : (source?.orderedSets ?? []).map(\.target)
+            let created = try engine.addExercise(
+                planned.ref, inputType: planned.inputType, to: session, restSeconds: source?.restSeconds,
+                targets: targets, weightStep: step(planned.ref), unit: unit, now: now
+            )
+            if let source, !planned.isReplacement {
+                created.notes = source.notes.trimmingCharacters(in: .whitespacesAndNewlines)
             }
             if let group = source?.supersetGroupId {
-                if groups[group] == nil { groupOrder.append(group) }
+                if groupOrder.contains(group) == false { groupOrder.append(group) }
                 groups[group, default: []].append(created)
             }
         }
@@ -67,28 +77,5 @@ public struct TemplateStarter {
         }
         try context.save()
         return session
-    }
-
-    /// Serije vježbe postaju točno one iz predloška; prazni ciljevi ostaju kakve ih daju smart defaulti.
-    private func applyTargets(
-        _ targets: [TemplateSet], to exercise: SessionExercise, engine: WorkoutEngine, now: Date
-    ) throws {
-        for set in exercise.orderedSets { try engine.removeSet(set, now: now) }
-        for target in targets {
-            let set = try engine.addSet(to: exercise, kind: target.kind, now: now)
-            if let weight = target.targetWeightKg {
-                switch exercise.inputType {
-                case .weightReps: set.weightKg = weight
-                case .weightedBodyweight, .assisted: set.extraWeightKg = weight
-                case .bodyweight, .duration, .durationDistance: break
-                }
-            }
-            if let reps = target.targetReps {
-                switch exercise.inputType {
-                case .weightReps, .bodyweight, .weightedBodyweight, .assisted: set.reps = reps
-                case .duration, .durationDistance: break
-                }
-            }
-        }
     }
 }

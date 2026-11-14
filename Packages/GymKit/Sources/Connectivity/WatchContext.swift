@@ -44,6 +44,13 @@ public struct PlannedExercisePayload: Codable, Sendable, Hashable {
     public var isCompound: Bool?
     /// Korak težine vježbe u jedinici prikaza (`WeightStepSettings`). Nil iz starije verzije aplikacije.
     public var weightStep: Double?
+    /// Raspon ponavljanja radnih serija iz predloška (npr. 8–12). Nil bez cilja ili iz starije verzije aplikacije.
+    public var targetRepsMin: Int?
+    public var targetRepsMax: Int?
+    /// Prijedlog veće težine u kg (dvostruka progresija, `SetPlanner`). Nil bez prijedloga.
+    public var loadChangeKg: Double?
+    /// Bilješka uz vježbu iz predloška i trajna bilješka vježbe. Nil bez bilješke.
+    public var notes: String?
 
     public init(
         exercise: ExerciseRef, inputType: ExerciseInputType, restSeconds: Int? = nil, supersetGroup: Int? = nil,

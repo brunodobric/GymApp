@@ -35,10 +35,15 @@ public struct SnapshotEngine: Sendable {
                     distanceMeters: values.distanceMeters
                 )
             }
-            return ExerciseSnapshot(
+            var snapshot = ExerciseSnapshot(
                 orderIndex: index, exercise: planned.exercise, inputType: planned.inputType,
                 supersetGroupId: group, restSeconds: planned.restSeconds, sets: sets, weightStep: planned.weightStep
             )
+            snapshot.targetRepsMin = planned.targetRepsMin
+            snapshot.targetRepsMax = planned.targetRepsMax
+            snapshot.loadChangeKg = planned.loadChangeKg
+            snapshot.notes = planned.notes
+            return snapshot
         }
         return SessionSnapshot(
             id: id, name: plan.name, kind: plan.kind, templateId: plan.templateId, scheduleId: plan.scheduleId,

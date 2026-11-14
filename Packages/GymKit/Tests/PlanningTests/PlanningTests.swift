@@ -136,6 +136,38 @@ struct TemplateStarterTests {
         #expect(session.orderedExercises.count == 3)
     }
 
+    @Test("Raspon iz predloška, prijedlog veće težine i bilješka idu u trening")
+    func progression() throws {
+        let context = try makeContext()
+        let engine = TemplateEngine(context: context)
+        let result = try template("Push", in: context, exercises: [bench])
+        let exercise = try #require(result.orderedExercises.first)
+        exercise.notes = "  Sjedalo 4  "
+        for set in exercise.orderedSets {
+            try engine.setTargets(set, weightKg: nil, reps: 8)
+            set.targetRepsMax = 12
+        }
+
+        let first = try TemplateStarter(context: context, weightStep: { _ in 2.5 }).start(result, now: base)
+        let started = try #require(first.orderedExercises.first)
+        #expect(started.targetRepsMin == 8)
+        #expect(started.targetRepsMax == 12)
+        #expect(started.notes == "Sjedalo 4")
+        #expect(started.loadChangeKg == nil)
+        let workout = WorkoutEngine(context: context)
+        for set in started.orderedSets {
+            set.weightKg = 80
+            set.reps = 12
+            try workout.completeSet(set, defaultRestSeconds: 90, now: base)
+        }
+        try workout.finishSession(first, now: base.addingTimeInterval(3600))
+
+        let second = try TemplateStarter(context: context, weightStep: { _ in 2.5 }).start(result, now: base + 86_400)
+        let next = try #require(second.orderedExercises.first)
+        #expect(next.loadChangeKg == 2.5)
+        #expect(next.orderedSets.allSatisfy { $0.weightKg == 82.5 && $0.reps == 8 })
+    }
+
     @Test("Izbor treninga bez rasporeda: samo treninzi snage s vježbama, po nazivu")
     func startableTemplates() throws {
         let context = try makeContext()

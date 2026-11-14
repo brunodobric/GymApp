@@ -6,6 +6,7 @@ import com.brunodobric.gymapp.model.GymStore
 import com.brunodobric.gymapp.model.Session
 import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.TemplateSet
+import com.brunodobric.gymapp.model.WeightStepSettings
 import com.brunodobric.gymapp.planning.PlannedWorkout
 import com.brunodobric.gymapp.planning.ScheduleEngine
 import com.brunodobric.gymapp.stats.BodyTracking
@@ -18,10 +19,12 @@ import com.brunodobric.gymapp.training.PersonalRecord
 import com.brunodobric.gymapp.training.SessionCardio
 import com.brunodobric.gymapp.training.SessionMix
 import com.brunodobric.gymapp.training.SetValues
-import com.brunodobric.gymapp.training.SmartDefaults
+import com.brunodobric.gymapp.training.SetPlanner
 import com.brunodobric.gymapp.training.WorkoutEngine
 import com.brunodobric.gymapp.training.WorkoutSummary
 import com.brunodobric.gymapp.training.previousSetValues
+import com.brunodobric.gymapp.training.target
+import com.brunodobric.gymapp.units.WeightUnit
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
@@ -56,9 +59,12 @@ class WidgetSnapshotBuilder(
 
     private fun nextWorkout(planned: PlannedWorkout): WidgetSnapshot.NextWorkout {
         val sources = planned.template.orderedExercises.associateBy { it.id }
+        val settings = store.settings()
+        val step = WeightStepSettings.resolver(settings, null, emptyList())
         val exercises = planned.exercises.take(WidgetSnapshot.NextWorkout.MAX_EXERCISES).map { exercise ->
             val targets = if (exercise.isReplacement) emptyList() else sources[exercise.source]?.orderedSets.orEmpty()
-            val working = plannedSets(store.previousSetValues(exercise.ref), targets, exercise.inputType)
+            val previous = store.previousSetValues(exercise.ref, planned.template.id)
+            val working = plannedSets(previous, targets, exercise.inputType, step(exercise.ref), settings.weightUnit)
                 .filter { it.kind == SetKind.WORKING }
             val first = working.firstOrNull()
             WidgetSnapshot.PlannedExercise(
@@ -127,48 +133,18 @@ class WidgetSnapshotBuilder(
         }
 
         /**
-         * Serije nove vježbe po istim pravilima kao `WorkoutEngine.addExercise` i `TemplateStarter`
-         * (`WatchContextBuilder.plannedSets` na iOS-u): bez ciljeva onoliko warm-up i radnih serija koliko je bilo
-         * prošli put (inače tri radne), vrijednosti iz zadnjeg izvođenja, a ciljevi predloška nadjačavaju težinu i ponavljanja.
+         * Serije nove vježbe po istim pravilima kao `WorkoutEngine.addExercise` i `TemplateStarter` ([SetPlanner],
+         * `WatchContextBuilder.plannedSets` na iOS-u).
          */
-        internal fun plannedSets(previous: List<SetValues>, targets: List<TemplateSet>, inputType: ExerciseInputType): List<SetValues> {
-            val kinds = if (targets.isEmpty()) {
-                val warmUps = previous.count { it.kind == SetKind.WARM_UP }
-                val working = previous.count { it.kind == SetKind.WORKING }
-                List(warmUps) { SetKind.WARM_UP } + List(if (working > 0) working else WorkoutEngine.DEFAULT_WORKING_SETS) { SetKind.WORKING }
-            } else {
-                targets.map { it.kind }
-            }
-            val result = mutableListOf<SetValues>()
-            kinds.forEachIndexed { index, kind ->
-                val position = result.count { it.kind == kind }
-                var values = SmartDefaults.defaults(position, kind, previous)
-                    ?: result.lastOrNull { it.kind == kind }?.let { SmartDefaults.defaults(0, kind, listOf(it)) }
-                    ?: SetValues(kind)
-                targets.getOrNull(index)?.let { values = applying(it, values, inputType) }
-                result += values
-            }
-            return result
-        }
-
-        private fun applying(target: TemplateSet, values: SetValues, inputType: ExerciseInputType): SetValues {
-            var result = values
-            target.targetWeightKg?.let { weight ->
-                result = when (inputType) {
-                    ExerciseInputType.WEIGHT_REPS -> result.copy(weightKg = weight)
-                    ExerciseInputType.WEIGHTED_BODYWEIGHT, ExerciseInputType.ASSISTED -> result.copy(extraWeightKg = weight)
-                    ExerciseInputType.BODYWEIGHT, ExerciseInputType.DURATION, ExerciseInputType.DURATION_DISTANCE -> result
-                }
-            }
-            target.targetReps?.let { reps ->
-                result = when (inputType) {
-                    ExerciseInputType.WEIGHT_REPS, ExerciseInputType.BODYWEIGHT,
-                    ExerciseInputType.WEIGHTED_BODYWEIGHT, ExerciseInputType.ASSISTED -> result.copy(reps = reps)
-                    ExerciseInputType.DURATION, ExerciseInputType.DURATION_DISTANCE -> result
-                }
-            }
-            return result
-        }
+        internal fun plannedSets(
+            previous: List<SetValues>,
+            targets: List<TemplateSet>,
+            inputType: ExerciseInputType,
+            weightStep: Double? = null,
+            unit: WeightUnit = WeightUnit.KILOGRAMS,
+        ): List<SetValues> = SetPlanner.plan(
+            previous = previous, targets = targets.map { it.target }, inputType = inputType, weightStep = weightStep, unit = unit,
+        ).sets
     }
 }
 

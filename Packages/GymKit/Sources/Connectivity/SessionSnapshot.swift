@@ -59,6 +59,13 @@ public struct ExerciseSnapshot: Codable, Sendable, Equatable, Identifiable {
     /// Korak težine vježbe u jedinici prikaza (`WeightStepSettings`), za krunu na satu. Ne sprema se u bazu:
     /// iPhone ga računa iz postavki pri svakoj snimci. Nil iz starije verzije aplikacije (tada korak jedinice).
     public var weightStep: Double?
+    /// Raspon ponavljanja radnih serija iz predloška (npr. 8–12). Nil bez cilja ili iz starije verzije aplikacije.
+    public var targetRepsMin: Int?
+    public var targetRepsMax: Int?
+    /// Prijedlog veće težine u kg (dvostruka progresija, `SetPlanner`). Nil bez prijedloga.
+    public var loadChangeKg: Double?
+    /// Bilješka uz vježbu iz predloška i trajna bilješka vježbe. Nil bez bilješke.
+    public var notes: String?
 
     public init(
         id: UUID = UUID(),

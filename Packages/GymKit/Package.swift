@@ -104,7 +104,7 @@ let package = Package(
         .testTarget(name: "CatalogTests", dependencies: ["Catalog"]),
         .testTarget(
             name: "TrainingTests",
-            dependencies: ["Training", "Models", "Catalog"],
+            dependencies: ["Training", "Models", "Catalog", "Units"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(

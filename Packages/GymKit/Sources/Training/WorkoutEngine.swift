@@ -2,6 +2,7 @@ import Catalog
 import Foundation
 import Models
 import SwiftData
+import Units
 
 public enum WorkoutError: Error, Equatable {
     /// Već postoji trening u tijeku.
@@ -127,14 +128,19 @@ public struct WorkoutEngine {
 
     // MARK: Vježbe
 
-    /// Dodaje vježbu i stvara serije prema zadnjem izvođenju (isti broj warm-up i radnih serija
-    /// s pretpunjenim vrijednostima), a bez povijesti tri prazne radne serije.
+    /// Dodaje vježbu i stvara serije prema planu (`SetPlanner`): bez ciljeva onoliko zagrijavanja koliko je bilo
+    /// prošli put i najčešći broj radnih serija iz zadnjih izvođenja, s pretpunjenim vrijednostima, a bez
+    /// povijesti tri prazne radne serije. Ciljevi predloška određuju serije i ponavljanja, a uz korak težine
+    /// plan predlaže veću težinu kad je prošli put dosegnuta gornja granica raspona.
     @discardableResult
     public func addExercise(
         _ ref: ExerciseRef,
         inputType: ExerciseInputType,
         to session: Session,
         restSeconds: Int? = nil,
+        targets: [SetTarget] = [],
+        weightStep: Double? = nil,
+        unit: WeightUnit = .kilograms,
         now: Date = Date()
     ) throws -> SessionExercise {
         let order = ((session.exercises ?? []).map(\.orderIndex).max() ?? -1) + 1
@@ -143,15 +149,81 @@ public struct WorkoutEngine {
         context.insert(exercise)
         exercise.session = session
 
-        let previous = try previousSets(of: ref, before: session)
-        let warmUps = previous.filter { $0.kind == .warmUp }.count
-        let working = previous.filter { $0.kind == .working }.count
-        for _ in 0..<warmUps { try appendSet(to: exercise, kind: .warmUp, previous: previous) }
-        for _ in 0..<(working > 0 ? working : Self.defaultWorkingSets) {
-            try appendSet(to: exercise, kind: .working, previous: previous)
+        let performances = try previousPerformances(of: ref, before: session)
+        let plan = SetPlanner.plan(
+            previous: performances.first ?? [],
+            recentWorkingCounts: performances.prefix(SmartDefaults.recentPerformanceCount).map { sets in
+                sets.filter { $0.kind == .working }.count
+            },
+            targets: targets, inputType: inputType, weightStep: weightStep, unit: unit
+        )
+        for (index, values) in plan.sets.enumerated() {
+            let set = SetLog(orderIndex: index, kind: values.kind)
+            context.insert(set)
+            set.exercise = exercise
+            set.weightKg = values.weightKg
+            set.reps = values.reps
+            set.extraWeightKg = values.extraWeightKg
+            set.durationSeconds = values.durationSeconds
+            set.distanceMeters = values.distanceMeters
         }
+        exercise.targetRepsMin = plan.repRange?.lower
+        exercise.targetRepsMax = plan.repRange?.upper
+        exercise.loadChangeKg = plan.loadChangeKg
         try touch(session, now: now)
         return exercise
+    }
+
+    /// Zamjenjuje vježbu u treningu drugom (zauzeta sprava). Bez završenih serija vježba se mijenja na istom
+    /// mjestu, s istim brojem serija i vrijednostima iz povijesti nove vježbe. Sa završenim serijama stara
+    /// vježba ostaje samo sa završenima, a nova dolazi odmah iza nje s preostalim serijama (barem jednom).
+    /// Superset i pauza ostaju.
+    @discardableResult
+    public func replaceExercise(
+        _ exercise: SessionExercise, with ref: ExerciseRef, inputType: ExerciseInputType, now: Date = Date()
+    ) throws -> SessionExercise {
+        guard let session = exercise.session else { return exercise }
+        let sets = exercise.orderedSets
+        let done = sets.filter(\.isCompleted)
+        let pending = sets.filter { !$0.isCompleted }
+        var visible = visibleExercises(in: session)
+        let removed = removedExercises(in: session)
+
+        let created = SessionExercise(orderIndex: exercise.orderIndex, exercise: ref, inputType: inputType)
+        created.restSeconds = exercise.restSeconds
+        created.supersetGroupId = exercise.supersetGroupId
+        context.insert(created)
+        created.session = session
+
+        let previous = try previousSets(of: ref, before: session)
+        let kinds = pending.isEmpty ? [SetKind.working] : pending.map(\.kind)
+        var made: [SetValues] = []
+        for (index, kind) in kinds.enumerated() {
+            let position = made.filter { $0.kind == kind }.count
+            let values = SmartDefaults.defaults(forPosition: position, kind: kind, previous: previous) ?? SetValues(kind: kind)
+            made.append(values)
+            let set = SetLog(orderIndex: index, kind: kind)
+            context.insert(set)
+            set.exercise = created
+            set.weightKg = values.weightKg
+            set.reps = values.reps
+            set.extraWeightKg = values.extraWeightKg
+            set.durationSeconds = values.durationSeconds
+            set.distanceMeters = values.distanceMeters
+        }
+
+        let index = visible.firstIndex { $0.id == exercise.id } ?? max(visible.count - 1, 0)
+        if done.isEmpty {
+            if visible.indices.contains(index) { visible[index] = created } else { visible.append(created) }
+            context.delete(exercise)
+        } else {
+            for set in pending { context.delete(set) }
+            for (position, set) in done.enumerated() { set.orderIndex = position }
+            visible.insert(created, at: min(index + 1, visible.count))
+        }
+        for (position, item) in (visible + removed).enumerated() { item.orderIndex = position }
+        try touch(session, now: now)
+        return created
     }
 
     @discardableResult
@@ -419,15 +491,23 @@ public struct WorkoutEngine {
         return set
     }
 
-    /// Serije zadnjeg završenog izvođenja vježbe (izvor smart defaultsa).
+    /// Serije zadnjeg završenog izvođenja vježbe (izvor smart defaultsa), prvo u istom treningu (`templateId`).
     private func previousSets(of ref: ExerciseRef, before session: Session?) throws -> [SetValues] {
-        // Serije se čitaju samo dok se ne nađe zadnje izvođenje, ne za cijelu povijest
-        // (pri pokretanju treninga iz predloška ovo se zove za svaku vježbu).
-        for exercise in try finishedExercises(of: ref, before: session) {
+        try previousPerformances(of: ref, before: session).first ?? []
+    }
+
+    /// Završene serije ranijih izvođenja vježbe, od najnovijeg. Kad je trening pokrenut iz predloška,
+    /// izvođenja iz istog predloška dolaze prva: ista vježba u "Noge, teško" (5 × 5) i "Noge, lagano"
+    /// (3 × 12) inače bi pretpopunila težinu drugog dana.
+    public func previousPerformances(of ref: ExerciseRef, before session: Session?) throws -> [[SetValues]] {
+        let all = try finishedExercises(of: ref, before: session).compactMap { exercise -> (UUID?, [SetValues])? in
             let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values)
-            if !sets.isEmpty { return sets }
+            return sets.isEmpty ? nil : (exercise.session?.templateId, sets)
         }
-        return []
+        guard let templateId = session?.templateId else { return all.map(\.1) }
+        let same = all.filter { $0.0 == templateId }.map(\.1)
+        let other = all.filter { $0.0 != templateId }.map(\.1)
+        return same + other
     }
 
     /// Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga.

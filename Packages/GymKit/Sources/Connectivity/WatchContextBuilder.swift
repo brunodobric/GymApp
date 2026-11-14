@@ -4,6 +4,7 @@ import Models
 import Planning
 import SwiftData
 import Training
+import Units
 
 /// Slaže kontekst za sat iz baze na iPhoneu: sljedeće treninge rasporeda i predloške, s istim
 /// serijama i pretpunjenim vrijednostima koje bi dobio trening pokrenut na iPhoneu (`TemplateStarter`).
@@ -70,6 +71,7 @@ public struct WatchContextBuilder {
         template: WorkoutTemplate, exercises: [PlannedExercise], scheduleId: UUID?, scheduleName: String?
     ) throws -> PlannedWorkoutPayload {
         let sources = Dictionary(template.orderedExercises.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let unit = (try? GymQueries(context: context).settings().weightUnit) ?? .kilograms
         // Superset postoji samo ako u planu ostanu barem dvije vježbe iz iste grupe (kao u `TemplateStarter`).
         var groupSizes: [UUID: Int] = [:]
         for planned in exercises {
@@ -83,17 +85,25 @@ public struct WatchContextBuilder {
                 group = groupNumbers[id] ?? groupNumbers.count
                 groupNumbers[id] = group
             }
-            let targets = planned.isReplacement ? [] : (source?.orderedSets ?? []).map {
-                SetTarget(kind: $0.kind, weightKg: $0.targetWeightKg, reps: $0.targetReps)
-            }
-            let previous = try previousSets(of: planned.ref)
-            let sets = Self.plannedSets(previous: previous, targets: targets, inputType: planned.inputType)
-            return PlannedExercisePayload(
+            let targets = planned.isReplacement ? [] : (source?.orderedSets ?? []).map(\.target)
+            let previous = try previousSets(of: planned.ref, templateId: template.id)
+            let plan = SetPlanner.plan(
+                previous: previous, targets: targets, inputType: planned.inputType,
+                weightStep: weightStep(planned.ref), unit: unit
+            )
+            let sets = plan.sets.map(PlannedSetPayload.init(values:))
+            var payload = PlannedExercisePayload(
                 exercise: planned.ref, inputType: planned.inputType, restSeconds: source?.restSeconds,
                 supersetGroup: group, sets: sets, isCardio: isCardio(planned.ref.key),
                 previous: previous.map(PlannedSetPayload.init(values:)), isCompound: isCompound(planned.ref.key),
                 weightStep: weightStep(planned.ref)
             )
+            payload.targetRepsMin = plan.repRange?.lower
+            payload.targetRepsMax = plan.repRange?.upper
+            payload.loadChangeKg = plan.loadChangeKg
+            let note = planned.isReplacement ? "" : (source?.notes ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            payload.notes = note.isEmpty ? nil : note
+            return payload
         }
         return PlannedWorkoutPayload(
             templateId: template.id, scheduleId: scheduleId, name: template.name, scheduleName: scheduleName,
@@ -101,74 +111,29 @@ public struct WatchContextBuilder {
         )
     }
 
-    public struct SetTarget: Equatable, Sendable {
-        public var kind: SetKind
-        public var weightKg: Double?
-        public var reps: Int?
-
-        public init(kind: SetKind, weightKg: Double? = nil, reps: Int? = nil) {
-            self.kind = kind
-            self.weightKg = weightKg
-            self.reps = reps
-        }
+    /// Serije nove vježbe po istim pravilima kao `WorkoutEngine.addExercise` i `TemplateStarter` (`SetPlanner`).
+    public static func plannedSets(
+        previous: [SetValues], targets: [SetTarget], inputType: ExerciseInputType,
+        weightStep: Double? = nil, unit: WeightUnit = .kilograms
+    ) -> [PlannedSetPayload] {
+        SetPlanner.plan(previous: previous, targets: targets, inputType: inputType, weightStep: weightStep, unit: unit)
+            .sets.map(PlannedSetPayload.init(values:))
     }
 
-    /// Serije nove vježbe po istim pravilima kao `WorkoutEngine.addExercise` i `TemplateStarter`:
-    /// bez ciljeva onoliko warm-up i radnih serija koliko je bilo prošli put (inače tri radne),
-    /// vrijednosti iz zadnjeg izvođenja, a ciljevi predloška nadjačavaju težinu i ponavljanja.
-    public static func plannedSets(previous: [SetValues], targets: [SetTarget], inputType: ExerciseInputType) -> [PlannedSetPayload] {
-        let kinds: [SetKind]
-        if targets.isEmpty {
-            let warmUps = previous.filter { $0.kind == .warmUp }.count
-            let working = previous.filter { $0.kind == .working }.count
-            kinds = Array(repeating: .warmUp, count: warmUps)
-                + Array(repeating: .working, count: working > 0 ? working : WorkoutEngine.defaultWorkingSets)
-        } else {
-            kinds = targets.map(\.kind)
-        }
-
-        var result: [SetValues] = []
-        for (index, kind) in kinds.enumerated() {
-            let position = result.filter { $0.kind == kind }.count
-            var values = SmartDefaults.defaults(forPosition: position, kind: kind, previous: previous)
-                ?? result.last(where: { $0.kind == kind }).flatMap { SmartDefaults.defaults(forPosition: 0, kind: kind, previous: [$0]) }
-                ?? SetValues(kind: kind)
-            if index < targets.count {
-                apply(targets[index], to: &values, inputType: inputType)
-            }
-            result.append(values)
-        }
-        return result.map(PlannedSetPayload.init(values:))
-    }
-
-    private static func apply(_ target: SetTarget, to values: inout SetValues, inputType: ExerciseInputType) {
-        if let weight = target.weightKg {
-            switch inputType {
-            case .weightReps: values.weightKg = weight
-            case .weightedBodyweight, .assisted: values.extraWeightKg = weight
-            case .bodyweight, .duration, .durationDistance: break
-            }
-        }
-        if let reps = target.reps {
-            switch inputType {
-            case .weightReps, .bodyweight, .weightedBodyweight, .assisted: values.reps = reps
-            case .duration, .durationDistance: break
-            }
-        }
-    }
-
-    /// Završene serije zadnjeg završenog izvođenja vježbe (isto kao `WorkoutEngine`).
-    private func previousSets(of ref: ExerciseRef) throws -> [SetValues] {
+    /// Završene serije zadnjeg završenog izvođenja vježbe, prvo iz istog predloška (isto kao `WorkoutEngine`).
+    private func previousSets(of ref: ExerciseRef, templateId: UUID?) throws -> [SetValues] {
         let key = ref.key
         let descriptor = FetchDescriptor<SessionExercise>(
             predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false }
         )
-        return try context.fetch(descriptor)
-            .compactMap { exercise -> (Date, [SetValues])? in
+        let performances = try context.fetch(descriptor)
+            .compactMap { exercise -> (Date, UUID?, [SetValues])? in
                 guard let owner = exercise.session, owner.state == .finished else { return nil }
                 let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values)
-                return sets.isEmpty ? nil : (owner.startedAt, sets)
+                return sets.isEmpty ? nil : (owner.startedAt, owner.templateId, sets)
             }
-            .max { $0.0 < $1.0 }?.1 ?? []
+            .sorted { $0.0 > $1.0 }
+        if let templateId, let same = performances.first(where: { $0.1 == templateId }) { return same.2 }
+        return performances.first?.2 ?? []
     }
 }

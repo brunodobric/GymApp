@@ -68,7 +68,7 @@ extension GymSchemaV1 {
         /// Vježbe (`ExerciseRef.key`) koje je korisnik isključio iz rekorda, odvojene zarezom.
         public var prExcludedExercisesRaw: String = ""
         /// Razina statistike (`StatsDetail`): osnovna ili detaljna (Pro).
-        public var statsDetailRaw: String = StatsDetail.basic.rawValue
+        public var statsDetailRaw: String = StatsDetail.pro.rawValue
         /// Spol (`Sex.rawValue`) za DOTS bodove. Prazan tekst znači da korisnik nije odgovorio.
         public var sexRaw: String = ""
         public var restEndSoundEnabled: Bool = true
@@ -79,6 +79,8 @@ extension GymSchemaV1 {
         public var equipmentWeightStepsRaw: String = ""
         /// Vlastiti korak težine pojedinih vježbi (`WeightStepSettings`). Prazno znači da sve prate opremu.
         public var exerciseWeightStepsRaw: String = ""
+        /// Trajne bilješke vježbi (postavka sprave, hvat), JSON `[ključ vježbe: tekst]` (`ExerciseNotes`).
+        public var exerciseNotesRaw: String = ""
         /// Onboarding. Prazan tekst znači da korisnik nije odgovorio.
         public var goalRaw: String = ""
         public var experienceRaw: String = ""
@@ -180,7 +182,7 @@ extension GymSchemaV1 {
         }
 
         public var statsDetail: StatsDetail {
-            get { StatsDetail(rawValue: statsDetailRaw) ?? .basic }
+            get { StatsDetail(rawValue: statsDetailRaw) ?? .pro }
             set { statsDetailRaw = newValue.rawValue }
         }
 

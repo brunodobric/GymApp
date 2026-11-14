@@ -118,6 +118,7 @@ internal data class SettingsDTO(
     val compoundRestSeconds: Int? = null,
     val equipmentWeightStepsRaw: String? = null,
     val exerciseWeightStepsRaw: String? = null,
+    val exerciseNotesRaw: String? = null,
 ) {
     constructor(model: UserSettings) : this(
         id = model.id,
@@ -150,6 +151,7 @@ internal data class SettingsDTO(
         compoundRestSeconds = model.compoundRestSeconds,
         equipmentWeightStepsRaw = model.equipmentWeightStepsRaw,
         exerciseWeightStepsRaw = model.exerciseWeightStepsRaw,
+        exerciseNotesRaw = model.exerciseNotesRaw,
     )
 
     fun apply(model: UserSettings) {
@@ -178,11 +180,12 @@ internal data class SettingsDTO(
         model.liveActivityThemeRaw = liveActivityThemeRaw ?: "system"
         model.liveActivityAccentRaw = liveActivityAccentRaw ?: "blue"
         model.prExcludedExercisesRaw = prExcludedExercisesRaw ?: ""
-        model.statsDetailRaw = statsDetailRaw ?: StatsDetail.BASIC.raw
+        model.statsDetailRaw = statsDetailRaw ?: StatsDetail.PRO.raw
         model.sexRaw = sexRaw ?: ""
         model.compoundRestSeconds = compoundRestSeconds ?: 150
         model.equipmentWeightStepsRaw = equipmentWeightStepsRaw ?: ""
         model.exerciseWeightStepsRaw = exerciseWeightStepsRaw ?: ""
+        model.exerciseNotesRaw = exerciseNotesRaw ?: ""
     }
 }
 

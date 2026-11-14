@@ -164,6 +164,35 @@ class PlanningTest {
         }
 
         @Test
+        fun `raspon iz predloška, prijedlog veće težine i bilješka idu u trening`() {
+            val store = newStore()
+            val engine = TemplateEngine(store)
+            val result = store.template("Push", listOf(bench))
+            val exercise = result.orderedExercises[0]
+            exercise.notes = "  Sjedalo 4  "
+            exercise.orderedSets.forEach { engine.setTargets(it, null, 8); it.targetRepsMax = 12 }
+
+            val first = TemplateStarter(store) { 2.5 }.start(result, base)
+            val started = first.orderedExercises[0]
+            assertEquals(8, started.targetRepsMin)
+            assertEquals(12, started.targetRepsMax)
+            assertEquals("Sjedalo 4", started.notes)
+            assertNull(started.loadChangeKg)
+            val workout = WorkoutEngine(store)
+            started.orderedSets.forEach { set ->
+                set.weightKg = 80.0
+                set.reps = 12
+                workout.completeSet(set, 90, base)
+            }
+            workout.finishSession(first, now = base.plusSeconds(3600))
+
+            val second = TemplateStarter(store) { 2.5 }.start(result, base.plusSeconds(DAY))
+            val next = second.orderedExercises[0]
+            assertEquals(2.5, next.loadChangeKg)
+            assertTrue(next.orderedSets.all { it.weightKg == 82.5 && it.reps == 8 })
+        }
+
+        @Test
         fun `izbor treninga bez rasporeda - samo treninzi snage s vježbama, po nazivu`() {
             val store = newStore()
             val pull = store.template("Pull")

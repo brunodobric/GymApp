@@ -399,7 +399,7 @@ struct ActiveWorkoutScreen: View {
     private func reloadPrevious() {
         let queries = GymQueries(context: context)
         for exercise in session.orderedExercises where previousSets[exercise.id] == nil {
-            previousSets[exercise.id] = (try? queries.previousSetValues(of: exercise.exercise)) ?? []
+            previousSets[exercise.id] = (try? queries.previousSetValues(of: exercise.exercise, preferringTemplate: session.templateId)) ?? []
         }
     }
 }

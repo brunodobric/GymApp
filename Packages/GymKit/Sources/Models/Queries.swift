@@ -20,6 +20,24 @@ public struct GymQueries {
         return try context.fetch(descriptor).first
     }
 
+    /// Zadnje izvođenje vježbe u treningu pokrenutom iz istog predloška, inače bilo gdje: ista vježba u
+    /// dva različita treninga (teški i lagani dan) ne miješa prošle vrijednosti.
+    public func lastPerformance(of exercise: ExerciseRef, preferringTemplate templateId: UUID?) throws -> SessionExercise? {
+        guard let templateId else { return try lastPerformance(of: exercise) }
+        let key = exercise.key
+        let finished = SessionState.finished.rawValue
+        let template: UUID? = templateId
+        var descriptor = FetchDescriptor<SessionExercise>(
+            predicate: #Predicate {
+                $0.exerciseKey == key && $0.isRemoved == false && $0.session?.stateRaw == finished
+                    && $0.session?.templateId == template
+            },
+            sortBy: [SortDescriptor(\.session?.startedAt, order: .reverse)]
+        )
+        descriptor.fetchLimit = 1
+        return try context.fetch(descriptor).first ?? lastPerformance(of: exercise)
+    }
+
     /// Završeni treninzi čiji je početak u rasponu [from, to), od najnovijeg prema starijem.
     /// Uključuje treninge uvezene iz Zdravlja (iz lokalne baze, kao `Session` za prikaz).
     public func finishedSessions(from: Date, to: Date) throws -> [Session] {

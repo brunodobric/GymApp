@@ -404,6 +404,16 @@ class SessionExercise(override var id: UUID = UUID.randomUUID()) : GymRecord {
     /** Izbačena vježba ostaje do kraja treninga kako bi se mogla vratiti. */
     var isRemoved: Boolean = false
 
+    /** Raspon ponavljanja radnih serija iz predloška (npr. 8–12), za prikaz cilja u treningu. */
+    var targetRepsMin: Int? = null
+    var targetRepsMax: Int? = null
+
+    /** Promjena tereta koju je plan predložio pri pokretanju (dvostruka progresija, `SetPlanner`), u kg. */
+    var loadChangeKg: Double? = null
+
+    /** Bilješka uz vježbu iz predloška. */
+    var notes: String = ""
+
     @Transient var session: Session? = null
         set(value) { field = value; sessionId = value?.id }
 
@@ -544,7 +554,7 @@ class UserSettings(override var id: UUID = UUID.randomUUID()) : GymRecord {
     var prExcludedExercisesRaw: String = ""
 
     /** Razina statistike ([StatsDetail]). */
-    var statsDetailRaw: String = StatsDetail.BASIC.raw
+    var statsDetailRaw: String = StatsDetail.PRO.raw
 
     /** Spol za DOTS bodove. Prazan tekst znači da korisnik nije odgovorio. */
     var sexRaw: String = ""
@@ -559,6 +569,9 @@ class UserSettings(override var id: UUID = UUID.randomUUID()) : GymRecord {
 
     /** Vlastiti korak težine pojedinih vježbi (`WeightStepSettings`). */
     var exerciseWeightStepsRaw: String = ""
+
+    /** Trajne bilješke vježbi (postavka sprave, hvat), JSON `{ključ vježbe: tekst}` ([ExerciseNotes]). */
+    var exerciseNotesRaw: String = ""
 
     /** Onboarding. Prazan tekst znači da korisnik nije odgovorio. */
     var goalRaw: String = ""
@@ -650,7 +663,7 @@ class UserSettings(override var id: UUID = UUID.randomUUID()) : GymRecord {
         set(value) { sexRaw = value?.raw ?: "" }
 
     var statsDetail: StatsDetail
-        get() = rawValueOf<StatsDetail>(statsDetailRaw) ?: StatsDetail.BASIC
+        get() = rawValueOf<StatsDetail>(statsDetailRaw) ?: StatsDetail.PRO
         set(value) { statsDetailRaw = value.raw }
 
     /** Ključevi vježbi isključenih iz rekorda. */

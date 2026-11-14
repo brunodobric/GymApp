@@ -220,7 +220,7 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
 
     // Prošli put po vježbi (završene serije zadnjeg izvođenja), kao `previousSets` na iOS-u.
     val keys = visible.map { it.exerciseKey }
-    val previousByKey = remember(revision, keys) { visible.associate { it.exerciseKey to store.previousSetValues(it.exercise) } }
+    val previousByKey = remember(revision, keys) { visible.associate { it.exerciseKey to store.previousSetValues(it.exercise, session.templateId) } }
     val posters = remember(keys) {
         val available = MoveKitAssets.available(context)
         visible.associate { exercise ->

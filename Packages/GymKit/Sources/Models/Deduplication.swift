@@ -132,6 +132,7 @@ public extension UserSettings {
             (barbellWeightKg, defaults.barbellWeightKg),
             (equipmentWeightStepsRaw, defaults.equipmentWeightStepsRaw),
             (exerciseWeightStepsRaw, defaults.exerciseWeightStepsRaw),
+            (exerciseNotesRaw, defaults.exerciseNotesRaw),
             (goalRaw, defaults.goalRaw),
             (experienceRaw, defaults.experienceRaw),
             (equipmentRaw, defaults.equipmentRaw),
