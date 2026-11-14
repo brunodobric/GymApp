@@ -28,6 +28,7 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     settings.bodyMapFemale = true
     settings.restNotificationEnabled = false
     settings.startsWatchWorkout = false
+    settings.suggestsHeavierWeight = false
     settings.liveActivityFollowsApp = false
     settings.liveActivityTheme = .light
     settings.liveActivityAccent = .pink
@@ -153,6 +154,7 @@ struct JSONBackupTests {
         #expect(try GymQueries(context: target).settings().bodyMapFemale)
         #expect(try GymQueries(context: target).settings().restNotificationEnabled == false)
         #expect(try GymQueries(context: target).settings().startsWatchWorkout == false)
+        #expect(try GymQueries(context: target).settings().suggestsHeavierWeight == false)
         let restored = try GymQueries(context: target).settings()
         #expect(restored.liveActivityFollowsApp == false)
         #expect(restored.compoundRestSeconds == 210)

@@ -141,6 +141,7 @@ public extension UserSettings {
             (notificationsEnabled, defaults.notificationsEnabled),
             (restNotificationEnabled, defaults.restNotificationEnabled),
             (startsWatchWorkout, defaults.startsWatchWorkout),
+            (suggestsHeavierWeight, defaults.suggestsHeavierWeight),
             (bodyMapFemale, defaults.bodyMapFemale),
             (liveActivityFollowsApp, defaults.liveActivityFollowsApp),
             (liveActivityThemeRaw, defaults.liveActivityThemeRaw),

@@ -236,6 +236,14 @@ class PlanningTest {
             val next = second.orderedExercises[0]
             assertEquals(2.5, next.loadChangeKg)
             assertTrue(next.orderedSets.all { it.weightKg == 82.5 && it.reps == 8 })
+
+            // Isključen prijedlog veće težine: težina ostaje kao prošli put.
+            workout.discardSession(second)
+            store.settings().suggestsHeavierWeight = false
+            val third = TemplateStarter(store) { 2.5 }.start(result, base.plusSeconds(2 * DAY))
+            val plain = third.orderedExercises[0]
+            assertNull(plain.loadChangeKg)
+            assertTrue(plain.orderedSets.all { it.weightKg == 80.0 && it.reps == 12 })
         }
 
         @Test

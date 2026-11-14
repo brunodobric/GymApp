@@ -1685,6 +1685,36 @@
         }
       }
     },
+    "Prijedlog veće težine" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggest heavier weight"
+          }
+        }
+      }
+    },
+    "Napredak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progression"
+          }
+        }
+      }
+    },
+    "Kad vježba u treningu ima cilj ponavljanja (npr. 8–12), a prošli put si u svim radnim serijama došao do gornje granice, sljedeći trening predloži težinu veću za jedan korak težine i vrati ponavljanja na donju granicu. Kad je isključeno, težina je uvijek ista kao prošli put." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When an exercise in a workout has a rep target (e.g. 8–12) and last time you reached the top of the range in every working set, the next workout suggests a weight one weight step higher and resets reps to the bottom of the range. When off, the weight is always the same as last time."
+          }
+        }
+      }
+    },
     "cilj %lld" : {
       "localizations" : {
         "en" : {

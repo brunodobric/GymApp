@@ -69,7 +69,7 @@ Aplikacija podržava 3 glavna modula:
 * **Smart Defaults + Inline povijest:** Pamti se zadnji put odrađena težina i broj ponavljanja **po seriji** za svaku vježbu.  
   Primjer: ako je korisnik zadnji put na bench pressu radio 80 kg × 8, zatim 85 kg × 8, zatim 90 kg × 8 — sljedeći put će mu prva serija biti pretpopunjena s 80 kg, druga s 85 kg, itd.  
   Težina uvijek dolazi iz prošlog puta. Ciljna težina iz predloška vrijedi samo dok vježba nema povijest (prvi put), a ciljevi ponavljanja iz predloška vrijede uvijek.  
-  **Dvostruka progresija:** kad predložak ima raspon ponavljanja (npr. 8–12), a prošli put su sve radne serije dosegle gornju granicu, teret ide jedan korak gore (potpomognuta vježba: pomoć jedan korak dolje), a ponavljanja se vraćaju na donju granicu. Kartica vježbe tada piše "Veća težina: +2,5 kg" (ili "Manje pomoći"). Uz naziv vježbe stoji cilj iz predloška ("cilj 8–12").  
+  **Dvostruka progresija:** kad predložak ima raspon ponavljanja (npr. 8–12), a prošli put su sve radne serije dosegle gornju granicu, teret ide jedan korak gore (potpomognuta vježba: pomoć jedan korak dolje), a ponavljanja se vraćaju na donju granicu. Kartica vježbe tada piše "Veća težina: +2,5 kg" (ili "Manje pomoći"). Prijedlog se može isključiti u Postavkama > Trening. Uz naziv vježbe stoji cilj iz predloška ("cilj 8–12").  
   Prethodna serija je uvijek vidljiva u retku unosa.
 * **Statusi serija:** Radne serije, Warm-up.  
   **Warm-up serije ne ulaze u PR-ove, volumen ni 1RM estimaciju.** Prikazuju se u povijesti, ali su vizualno odvojene. Smart defaults pamte ih zasebno od radnih serija.  
@@ -190,6 +190,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
   * **Obriši sve podatke:** briše sve lokalne podatke i, ako je sinkronizacija uključena, podatke aplikacije u korisnikovom iCloudu. Prije brisanja nudi se export. Traži dvostruku potvrdu.
 * **Mjerenje napora:** RPE ili RIR.
 * **Zvuk kraja odmora:** uključen / isključen (vidi "Rest timer i notifikacije" u odjeljku 6).
+* **Prijedlog veće težine:** uključen / isključen (Postavke > Trening > Napredak, zadano uključeno). Uključuje i isključuje dvostruku progresiju (vidi "Smart Defaults" u odjeljku 2). Kad je isključen, težina je uvijek kao prošli put.
 * **Podaci:**
   * Export u CSV / JSON.
   * Import iz CSV-a (vlastiti backup — format koji app i exportira).

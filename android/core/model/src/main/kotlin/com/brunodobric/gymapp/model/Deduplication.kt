@@ -50,6 +50,7 @@ fun UserSettings.changeCount(defaults: UserSettings): Int = listOf(
     notificationsEnabled to defaults.notificationsEnabled,
     restNotificationEnabled to defaults.restNotificationEnabled,
     startsWatchWorkout to defaults.startsWatchWorkout,
+    suggestsHeavierWeight to defaults.suggestsHeavierWeight,
     bodyMapFemale to defaults.bodyMapFemale,
     liveActivityFollowsApp to defaults.liveActivityFollowsApp,
     liveActivityThemeRaw to defaults.liveActivityThemeRaw,

@@ -66,6 +66,7 @@ private fun GymStore.fillSample(): Session {
     settings.bodyMapFemale = true
     settings.restNotificationEnabled = false
     settings.startsWatchWorkout = false
+    settings.suggestsHeavierWeight = false
     settings.liveActivityFollowsApp = false
     settings.liveActivityTheme = AppTheme.LIGHT
     settings.liveActivityAccent = AccentChoice.PINK
@@ -170,6 +171,7 @@ class BackupTest {
             assertTrue(restored.bodyMapFemale)
             assertFalse(restored.restNotificationEnabled)
             assertFalse(restored.startsWatchWorkout)
+            assertFalse(restored.suggestsHeavierWeight)
             assertFalse(restored.liveActivityFollowsApp)
             assertEquals(210, restored.compoundRestSeconds)
             assertEquals(AppTheme.LIGHT, restored.liveActivityTheme)

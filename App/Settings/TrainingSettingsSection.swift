@@ -3,7 +3,8 @@ import SwiftUI
 import Training
 import Units
 
-/// Postavke treninga: jedinice, zadana pauza, RPE ili RIR, zvuk kraja odmora, rekordi i prikaz statistike.
+/// Postavke treninga: jedinice, zadana pauza, RPE ili RIR, zvuk kraja odmora, prijedlog veće težine, rekordi
+/// i prikaz statistike.
 struct TrainingSettingsSection: View {
     @Bindable var settings: UserSettings
 
@@ -42,6 +43,17 @@ struct TrainingSettingsSection: View {
             Text("Zadana pauza")
         } footer: {
             Text("Složene vježbe, poput čučnja, mrtvog dizanja i potiska, traže dulji odmor od izolacijskih. Pauza postavljena na vježbi ima prednost.")
+        }
+        Section {
+            Toggle("Prijedlog veće težine", isOn: $settings.suggestsHeavierWeight)
+        } header: {
+            Text("Napredak")
+        } footer: {
+            Text("""
+                Kad vježba u treningu ima cilj ponavljanja (npr. 8–12), a prošli put si u svim radnim serijama \
+                došao do gornje granice, sljedeći trening predloži težinu veću za jedan korak težine i vrati \
+                ponavljanja na donju granicu. Kad je isključeno, težina je uvijek ista kao prošli put.
+                """)
         }
         if UIDevice.current.userInterfaceIdiom == .phone {
             Section {
