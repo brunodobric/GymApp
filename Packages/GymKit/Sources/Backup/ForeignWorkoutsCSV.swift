@@ -33,6 +33,8 @@ public enum ForeignWorkoutsCSV {
         public var exercises: [Exercise]
         /// Redak zaglavlja u datoteci (od 1).
         public var line: Int
+        /// Bilješka treninga iz datoteke (Strong "Workout Notes", Hevy "description"). Prazno ako je nema.
+        public var notes: String = ""
 
         /// Naziv treninga: prvi dio zaglavlja ("Push").
         public var name: String {
@@ -86,6 +88,8 @@ public enum ForeignWorkoutsCSV {
         public var reps: Int?
         public var durationSeconds: Int?
         public var distanceMeters: Double?
+        /// Serija zagrijavanja (Strong i Hevy je označavaju, ovaj format ne).
+        public var isWarmUp = false
 
         public init(
             weightKg: Double? = nil, extraWeightKg: Double? = nil, reps: Int? = nil,
@@ -107,8 +111,9 @@ public enum ForeignWorkoutsCSV {
     // MARK: Prepoznavanje
 
     /// Je li tekst u ovom formatu: prvi neprazni redak je zaglavlje treninga s datumom.
+    /// Prepoznaje i izvoze iz Stronga i Hevyja (`StrongHevyCSV`).
     public static func matches(_ text: String) -> Bool {
-        separator(of: text) != nil
+        StrongHevyCSV.matches(text) || separator(of: text) != nil
     }
 
     private static let separators: [Character] = [";", ",", "\t"]
@@ -123,7 +128,9 @@ public enum ForeignWorkoutsCSV {
 
     /// Čita sve treninge. Neispravan redak baca `BackupError.invalidCSV` s brojem retka,
     /// pa se ništa ne uvozi napola.
-    public static func parse(_ text: String, timeZone: TimeZone = .current) throws -> [Workout] {
+    /// Izvoz iz Stronga ili Hevyja čita `StrongHevyCSV`; `weightUnit` je jedinica težine kad je datoteka ne navodi.
+    public static func parse(_ text: String, timeZone: TimeZone = .current, weightUnit: WeightUnit = .kilograms) throws -> [Workout] {
+        if StrongHevyCSV.matches(text) { return try StrongHevyCSV.parse(text, timeZone: timeZone, weightUnit: weightUnit) }
         var workouts: [Workout] = []
         var columns: [Column]?
         let delimiter = separator(of: text) ?? ";"

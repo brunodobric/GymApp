@@ -10,6 +10,7 @@ import com.brunodobric.gymapp.model.SessionExercise
 import com.brunodobric.gymapp.model.SessionState
 import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.SetLog
+import com.brunodobric.gymapp.units.WeightUnit
 import com.brunodobric.gymapp.model.WorkoutKind
 import java.time.Instant
 import java.time.ZoneId
@@ -72,8 +73,9 @@ object ForeignWorkoutImport {
         language: String,
         store: GymStore,
         zone: ZoneId = ZoneId.systemDefault(),
+        weightUnit: WeightUnit = WeightUnit.KILOGRAMS,
     ): Preview {
-        val workouts = ForeignWorkoutsCsv.parse(text, zone)
+        val workouts = ForeignWorkoutsCsv.parse(text, zone, weightUnit)
         val known = store.sessions.map { it.id }.toSet()
 
         val seen = mutableSetOf<UUID>()
@@ -143,7 +145,7 @@ object ForeignWorkoutImport {
 
     /** Bilješka treninga: ostatak zaglavlja, pa bilješke vježbi ("Leg Extensions: Nisam napravio"), svaka u svom retku. */
     internal fun notes(workout: ForeignWorkoutsCsv.Workout): String =
-        (listOf(workout.details) + workout.exercises.filter { it.note.isNotEmpty() }.map { "${it.name}: ${it.note}" })
+        (listOf(workout.details, workout.notes) + workout.exercises.filter { it.note.isNotEmpty() }.map { "${it.name}: ${it.note}" })
             .filter { it.isNotEmpty() }
             .joinToString("\n")
 
@@ -180,7 +182,7 @@ object ForeignWorkoutImport {
             order += 1
 
             done.forEachIndexed { index, row ->
-                val set = sessionExercise.add(SetLog(index, SetKind.WORKING))
+                val set = sessionExercise.add(SetLog(index, if (row.isWarmUp) SetKind.WARM_UP else SetKind.WORKING))
                 set.weightKg = row.weightKg
                 set.extraWeightKg = row.extraWeightKg
                 set.reps = row.reps

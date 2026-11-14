@@ -124,7 +124,7 @@ fun DataSettingsSection(services: AppServices) {
                 if (text.trimStart().startsWith("{")) {
                     importMessage(JsonBackup.import(text, store, services.exerciseImages::save))
                 } else if (ForeignWorkoutsCsv.matches(text)) {
-                    foreignPreview = ForeignWorkoutImport.preview(text, services.catalog, language, store)
+                    foreignPreview = ForeignWorkoutImport.preview(text, services.catalog, language, store, weightUnit = store.settings().weightUnit)
                     null
                 } else {
                     importMessage(CsvBackup.importAny(text, store))
