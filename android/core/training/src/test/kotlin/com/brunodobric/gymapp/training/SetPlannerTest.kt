@@ -60,11 +60,32 @@ class SetPlannerTest {
     }
 
     @Test
-    fun `propisana težina u predlošku isključuje prijedlog`() {
+    fun `težina iz predloška ne nadjačava prošli put i ne isključuje prijedlog`() {
         val previous = listOf(working(80.0, 12))
         val targets = listOf(SetTarget(W, weightKg = 80.0, reps = 8, repsMax = 12))
         val plan = SetPlanner.plan(previous, targets = targets, inputType = WR, weightStep = 2.5)
-        assertEquals(80.0, plan.sets[0].weightKg)
+        assertEquals(82.5, plan.sets[0].weightKg)
+        assertEquals(2.5, plan.loadChangeKg)
+    }
+
+    @Test
+    fun `svaka serija dobiva težinu prošlog puta, a ne staru težinu iz predloška`() {
+        val previous = listOf(working(60.0, 12), working(70.0, 10), working(70.0, 10))
+        val targets = listOf(
+            SetTarget(W, weightKg = 60.0, reps = 10),
+            SetTarget(W, weightKg = 60.0, reps = 10),
+            SetTarget(W, weightKg = 70.0, reps = 10),
+        )
+        val plan = SetPlanner.plan(previous, targets = targets, inputType = WR)
+        assertEquals(listOf(60.0, 70.0, 70.0), plan.sets.map { it.weightKg })
+        assertEquals(listOf(10, 10, 10), plan.sets.map { it.reps })
+    }
+
+    @Test
+    fun `bez povijesti vrijedi težina iz predloška`() {
+        val targets = listOf(SetTarget(W, weightKg = 60.0, reps = 10), SetTarget(W, weightKg = 70.0, reps = 10))
+        val plan = SetPlanner.plan(emptyList(), targets = targets, inputType = WR, weightStep = 2.5)
+        assertEquals(listOf(60.0, 70.0), plan.sets.map { it.weightKg })
         assertNull(plan.loadChangeKg)
     }
 

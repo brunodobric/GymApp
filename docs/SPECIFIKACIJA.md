@@ -68,7 +68,8 @@ Aplikacija podržava 3 glavna modula:
   Vrsta se za službene vježbe određuje kroz mapiranje kataloga, a za custom vježbe bira je korisnik.
 * **Smart Defaults + Inline povijest:** Pamti se zadnji put odrađena težina i broj ponavljanja **po seriji** za svaku vježbu.  
   Primjer: ako je korisnik zadnji put na bench pressu radio 80 kg × 8, zatim 85 kg × 8, zatim 90 kg × 8 — sljedeći put će mu prva serija biti pretpopunjena s 80 kg, druga s 85 kg, itd.  
-  **Dvostruka progresija:** kad predložak ima raspon ponavljanja (npr. 8–12) i ne propisuje težinu, a prošli put su sve radne serije dosegle gornju granicu, teret ide jedan korak gore (potpomognuta vježba: pomoć jedan korak dolje), a ponavljanja se vraćaju na donju granicu. Kartica vježbe tada piše "Veća težina: +2,5 kg" (ili "Manje pomoći"). Uz naziv vježbe stoji cilj iz predloška ("cilj 8–12").  
+  Težina uvijek dolazi iz prošlog puta. Ciljna težina iz predloška vrijedi samo dok vježba nema povijest (prvi put), a ciljevi ponavljanja iz predloška vrijede uvijek.  
+  **Dvostruka progresija:** kad predložak ima raspon ponavljanja (npr. 8–12), a prošli put su sve radne serije dosegle gornju granicu, teret ide jedan korak gore (potpomognuta vježba: pomoć jedan korak dolje), a ponavljanja se vraćaju na donju granicu. Kartica vježbe tada piše "Veća težina: +2,5 kg" (ili "Manje pomoći"). Uz naziv vježbe stoji cilj iz predloška ("cilj 8–12").  
   Prethodna serija je uvijek vidljiva u retku unosa.
 * **Statusi serija:** Radne serije, Warm-up.  
   **Warm-up serije ne ulaze u PR-ove, volumen ni 1RM estimaciju.** Prikazuju se u povijesti, ali su vizualno odvojene. Smart defaults pamte ih zasebno od radnih serija.  

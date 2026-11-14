@@ -50,11 +50,11 @@ data class SetPlan(
  * - Bez ciljeva: onoliko zagrijavanja koliko je bilo prošli put, a radnih serija koliko ih je bilo najčešće u
  *   zadnja tri izvođenja, inače tri.
  * - Vrijednosti iz zadnjeg izvođenja po poziciji serije ([SmartDefaults]).
- * - Cilj težine iz predloška nadjačava prošli put. Raspon ponavljanja (8–12) zadržava prošla ponavljanja unutar
- *   raspona, a fiksni cilj ih upisuje.
+ * - Težina uvijek dolazi iz prošlog puta. Cilj težine iz predloška je samo početna vrijednost dok vježba nema
+ *   prošlih serija te vrste, inače bi zastarjela težina iz predloška zauvijek nadjačala napredak.
+ * - Raspon ponavljanja (8–12) zadržava prošla ponavljanja unutar raspona, a fiksni cilj ih upisuje.
  * - Dvostruka progresija: kad su prošli put sve radne serije dosegle gornju granicu raspona, teret ide jedan korak
- *   gore (potpomognuta vježba: pomoć korak dolje), a ponavljanja na donju granicu. Samo kad predložak ne propisuje
- *   težinu.
+ *   gore (potpomognuta vježba: pomoć korak dolje), a ponavljanja na donju granicu.
  */
 object SetPlanner {
 
@@ -82,7 +82,10 @@ object SetPlanner {
             var values = SmartDefaults.defaults(position, kind, previous)
                 ?: sets.lastOrNull { it.kind == kind }?.let { SmartDefaults.defaults(0, kind, listOf(it)) }
                 ?: SetValues(kind)
-            if (index < targets.size) values = apply(targets[index], values, inputType)
+            if (index < targets.size) {
+                val hasHistory = previous.any { it.kind == kind }
+                values = apply(targets[index], values, inputType, useWeight = !hasHistory)
+            }
             sets += values
         }
 
@@ -106,7 +109,7 @@ object SetPlanner {
     fun shouldIncreaseLoad(targets: List<SetTarget>, previous: List<SetValues>, inputType: ExerciseInputType): Boolean {
         if (!inputType.progressesByLoad) return false
         val working = targets.filter { it.kind == SetKind.WORKING }
-        if (working.isEmpty() || !working.all { it.reps != null && it.weightKg == null }) return false
+        if (working.isEmpty() || !working.all { it.reps != null }) return false
         val done = previous.filter { it.kind == SetKind.WORKING }
         if (done.size < working.size) return false
         return working.zip(done).all { (target, set) ->
@@ -169,9 +172,10 @@ object SetPlanner {
         return WeightConversion.kilograms(moved, unit)
     }
 
-    private fun apply(target: SetTarget, values: SetValues, inputType: ExerciseInputType): SetValues {
+    /** Upisuje ciljeve serije. Cilj težine samo kad je [useWeight] (vježba bez povijesti). */
+    private fun apply(target: SetTarget, values: SetValues, inputType: ExerciseInputType, useWeight: Boolean): SetValues {
         var result = values
-        target.weightKg?.let { weight ->
+        target.weightKg?.takeIf { useWeight }?.let { weight ->
             result = when (inputType) {
                 ExerciseInputType.WEIGHT_REPS -> result.copy(weightKg = weight)
                 ExerciseInputType.WEIGHTED_BODYWEIGHT, ExerciseInputType.ASSISTED -> result.copy(extraWeightKg = weight)
