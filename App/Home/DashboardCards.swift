@@ -112,9 +112,7 @@ struct ThisWeekCard: View {
 
     var body: some View {
         // Dodir otvara Pregled (tekući tjedan) iz statistike.
-        NavigationLink {
-            OverviewScreen()
-        } label: {
+        DetailLink(value: CardDestination.overview(.week)) {
             card
         }
         .buttonStyle(.plain)
@@ -223,9 +221,7 @@ struct LastWorkoutCard: View {
     }
 
     var body: some View {
-        NavigationLink {
-            SessionDetailScreen(session: session, unit: unit)
-        } label: {
+        DetailLink(value: CardDestination.lastWorkout) {
             let mix = SessionCardio.mix(of: session, isCardio: ExerciseInfoBuilder.isCardio(info))
             HomeCard(title: DashboardCardKind.lastWorkout.title, symbol: session.kind.symbol, mix: mix) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -310,9 +306,7 @@ struct BodyWeightCard: View {
     @State private var change: Double?
 
     var body: some View {
-        NavigationLink {
-            BodyScreen()
-        } label: {
+        DetailLink(value: CardDestination.body) {
             HomeCard(title: "Težina", symbol: DashboardCardKind.bodyWeight.symbol) {
                 if let latest {
                     VStack(alignment: .leading, spacing: 2) {
@@ -349,9 +343,7 @@ struct PlateCalculatorCard: View {
     let unit: WeightUnit
 
     var body: some View {
-        NavigationLink {
-            PlateCalculatorScreen(unit: unit)
-        } label: {
+        DetailLink(value: CardDestination.plateCalculator) {
             HomeCard(title: "Ploče", symbol: DashboardCardKind.plateCalculator.symbol) {
                 Text("Kalkulator ploča")
                     .font(.subheadline).foregroundStyle(.secondary)

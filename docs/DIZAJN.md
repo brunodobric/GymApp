@@ -25,6 +25,12 @@ Pravila iz Apple Human Interface Guidelines (skill *apple-hig-dizajn*) primijenj
 * Tabovi se nikad ne skrivaju ni onemogućuju. Prazna sekcija prikazuje `ContentUnavailableView` s objašnjenjem.
 * Na iPadu se tab bar pretvara u sidebar (`.tabViewStyle(.sidebarAdaptable)`), a na iPhoneu je dolje. Odluka ovisi o size classu, ne o uređaju.
 * Split view (`NavigationSplitView`) koristi se samo u regular širini. Trenutni odabir u listi uvijek je označen.
+* **Svaki tab je u regular širini podijeljen na lijevi i desni stupac** (`TabSplitView` u `App/Design/SplitLayout.swift`): iPad, iPhone u vodoravnom položaju i unutarnji zaslon otvorenog iPhonea Duo. Oba stupca su uvijek vidljiva (stil `.balanced`, bez gumba za skrivanje bočnog stupca), pa se ni uspravni otvoreni zaslon ne pretvara u jedan razvučeni stupac. Na vanjskom zaslonu (compact) tab je jedan stupac, kao na iPhoneu.
+  * Povijest: popis treninga lijevo, detalji treninga desno.
+  * Plan: rasporedi i treninzi lijevo, uređivač desno.
+  * Vježbe: odabir vrste (kapsule), pretraga i popis vježbi lijevo, vježba desno. Dok vježba nije odabrana, desno su kartice vrsta, koje mijenjaju popis lijevo.
+  * Početna i Statistika: kartice lijevo, ekran dodirnute kartice desno (`DetailLink`, odabrana kartica dobiva obrub u boji akcenta). Zadani desni stupac je zadnji trening (Početna) odnosno pregled tjedna (Statistika).
+* Preklapanje i otvaranje iPhonea Duo ne gubi mjesto: otvoreni ekran desnog stupca postaje vrh stoga na vanjskom zaslonu i obrnuto (zajednički `path` odnosno odabir u svakom tabu).
 
 ## Toolbar
 

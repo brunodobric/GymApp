@@ -761,9 +761,7 @@ struct OverviewCard: View {
 
     var body: some View {
         StatisticsCard(title: "Pregled") {
-            NavigationLink {
-                OverviewScreen()
-            } label: {
+            DetailLink(value: CardDestination.overview(.week), cornerRadius: 12, outset: 6) {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(alignment: .firstTextBaseline) {
                         Text("Ovaj tjedan").font(.subheadline.weight(.semibold))
@@ -837,9 +835,7 @@ struct OverviewCard: View {
 
     /// Npr. "Ovaj mjesec · 12 treninga · 2,8 tjedno"; dodir otvara Pregled na tom razdoblju.
     private func periodRow(title: LocalizedStringKey, summary: PeriodSummary) -> some View {
-        NavigationLink {
-            OverviewScreen(period: summary.period)
-        } label: {
+        DetailLink(value: CardDestination.overview(summary.period), cornerRadius: 12, outset: 6) {
             HStack(spacing: 8) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.subheadline.weight(.semibold))

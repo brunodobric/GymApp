@@ -29,19 +29,62 @@ enum ExerciseListRoute: Hashable {
 
 /// Tab Vježbe. Početna su kartice vrsta (zagrijavanje, snaga, istezanje, kardio) i poveznice na sve
 /// i vlastite vježbe. Pretraga ili filter odmah prikazuju rezultate iz cijelog kataloga.
+///
+/// U regular širini (iPad, otvoreni iPhone Duo) lijevo je popis vježbi s odabirom vrste, a desno
+/// odabrana vježba. Dok vježba nije odabrana, desno su kartice vrsta, koje mijenjaju popis lijevo.
 struct ExercisesScreen: View {
     /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: stog navigacije se vraća na korijen.
     var rootReset = 0
 
     @Environment(CatalogStore.self) private var catalogStore
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Query(sort: \CustomExercise.name) private var customExercises: [CustomExercise]
 
     @State private var filter = ExerciseFilter()
     @State private var showsFilters = false
     @State private var showsNewExercise = false
+    @State private var path = NavigationPath()
+    /// Zadnja otvorena vježba i popis. Dijele ih oba rasporeda, pa preklapanje i otvaranje iPhonea Duo
+    /// zadržava otvorenu vježbu (desni stupac odnosno vrh stoga).
+    @State private var selection: ExerciseSummary.Source?
+    @State private var route: ExerciseListRoute = .all
 
     var body: some View {
-        NavigationStack {
+        Group {
+            if sizeClass == .regular {
+                TabSplitView {
+                    ExerciseSplitList(route: $route, selection: $selection)
+                } detail: {
+                    NavigationStack {
+                        if let selection {
+                            ExerciseDetailScreen(source: selection)
+                        } else {
+                            ExerciseKindHome(customExercises: customExercises) { route = $0 }
+                                .navigationTitle("Vrste vježbi")
+                                .navigationBarTitleDisplayMode(.inline)
+                        }
+                    }
+                    // Nova vježba počinje s praznim stogom.
+                    .id(selection)
+                }
+            } else {
+                stack
+            }
+        }
+        // Preklapanje: otvoreni popis i vježba iz desnog stupca postaju stog.
+        .onChange(of: sizeClass) { _, newValue in
+            guard newValue == .compact else { return }
+            path = compactPath
+        }
+        .onChange(of: rootReset) {
+            path = NavigationPath()
+            selection = nil
+            route = .all
+        }
+    }
+
+    private var stack: some View {
+        NavigationStack(path: $path) {
             Group {
                 if filter.query.isEmpty && !filter.isActive && catalogStore.errorText == nil {
                     ExerciseKindHome(customExercises: customExercises)
@@ -57,9 +100,11 @@ struct ExercisesScreen: View {
             .navigationTitle("Vježbe")
             .navigationDestination(for: ExerciseSummary.self) { summary in
                 ExerciseDetailScreen(summary: summary)
+                    .onAppear { selection = summary.source }
             }
             .navigationDestination(for: ExerciseListRoute.self) { route in
                 ExerciseListScreen(route: route)
+                    .onAppear { self.route = route }
             }
             .searchable(text: $filter.query, prompt: "Pretraži vježbe")
             .toolbar {
@@ -74,6 +119,107 @@ struct ExercisesScreen: View {
         }
         // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
         .id(rootReset)
+    }
+
+    /// Stog nakon preklapanja: popis iz lijevog stupca pa odabrana vježba (ako postoji).
+    private var compactPath: NavigationPath {
+        var path = NavigationPath()
+        let summary = selection.flatMap { source in
+            (catalogStore.summaries + customExercises.map(\.summary)).first { $0.source == source }
+        }
+        if route != .all || summary != nil { path.append(route) }
+        if let summary { path.append(summary) }
+        return path
+    }
+}
+
+/// Lijevi stupac podijeljenog prikaza: odabir vrste, pretraga, filteri i popis vježbi.
+/// Odabrana vježba ostaje označena, a otvara se u desnom stupcu.
+private struct ExerciseSplitList: View {
+    @Binding var route: ExerciseListRoute
+    @Binding var selection: ExerciseSummary.Source?
+
+    @Environment(CatalogStore.self) private var catalogStore
+    @Query(sort: \CustomExercise.name) private var customExercises: [CustomExercise]
+
+    @State private var filter = ExerciseFilter()
+    @State private var showsFilters = false
+    @State private var showsNewExercise = false
+
+    private static let routes: [ExerciseListRoute] = [.all] + ExerciseKind.allCases.map { .kind($0) } + [.custom]
+
+    var body: some View {
+        let results = catalogStore.search(filter, custom: customExercises)
+        List(selection: $selection) {
+            Section {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(Self.routes, id: \.self) { item in
+                            FilterChip(title: item.title, isSelected: route == item) { route = item }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
+                }
+            }
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+            Section {
+                ForEach(results) { summary in
+                    NavigationLink(value: summary.source) {
+                        ExerciseRow(
+                            summary: summary,
+                            thumbnail: catalogStore.thumbnail(for: summary.source, customExercises: customExercises)
+                        )
+                    }
+                    .openInWindowMenu(DetailWindow.exercise, value: summary.id)
+                }
+            }
+        }
+        .overlay { emptyState(results) }
+        .navigationTitle("Vježbe")
+        .searchable(text: $filter.query, prompt: "Pretraži vježbe")
+        .toolbar {
+            ExerciseListToolbar(
+                isFiltered: filter.differs(from: route.initialFilter),
+                showsFilters: $showsFilters, showsNewExercise: $showsNewExercise
+            )
+        }
+        .sheet(isPresented: $showsFilters) {
+            ExerciseFilterSheet(filter: $filter, base: route.initialFilter)
+        }
+        .sheet(isPresented: $showsNewExercise) {
+            CustomExerciseEditor(exercise: nil)
+        }
+        // Druga vrsta počinje s njezinim filterom, a upit ostaje.
+        .onChange(of: route, initial: true) { filter.reset(to: route.initialFilter) }
+    }
+
+    @ViewBuilder
+    private func emptyState(_ results: [ExerciseSummary]) -> some View {
+        if let errorText = catalogStore.errorText {
+            ContentUnavailableView(
+                "Katalog nije dostupan",
+                systemImage: "exclamationmark.triangle",
+                description: Text(errorText)
+            )
+        } else if results.isEmpty {
+            if !filter.query.isEmpty {
+                ContentUnavailableView.search(text: filter.query)
+            } else if route == .custom && !filter.differs(from: route.initialFilter) {
+                ContentUnavailableView(
+                    "Nema vlastitih vježbi",
+                    systemImage: "dumbbell",
+                    description: Text("Vlastitu vježbu dodaj gumbom +.")
+                )
+            } else {
+                ContentUnavailableView(
+                    "Nema vježbi",
+                    systemImage: "line.3.horizontal.decrease.circle",
+                    description: Text("Nijedna vježba ne odgovara odabranim filterima.")
+                )
+            }
+        }
     }
 }
 
@@ -170,9 +316,9 @@ private struct CategoryChips: View {
         if categories.count > 1 {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    chip("Sve", isSelected: selection.isEmpty) { selection = [] }
+                    FilterChip(title: "Sve", isSelected: selection.isEmpty) { selection = [] }
                     ForEach(categories, id: \.self) { category in
-                        chip(category.title, isSelected: selection == [category]) { selection = [category] }
+                        FilterChip(title: category.title, isSelected: selection == [category]) { selection = [category] }
                     }
                 }
                 .padding(.horizontal)
@@ -180,9 +326,15 @@ private struct CategoryChips: View {
             }
         }
     }
+}
 
-    @ViewBuilder
-    private func chip(_ title: LocalizedStringResource, isSelected: Bool, action: @escaping () -> Void) -> some View {
+/// Gumb u obliku kapsule za brzi odabir iznad popisa (vrsta ili dio tijela).
+private struct FilterChip: View {
+    let title: LocalizedStringResource
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
         if isSelected {
             Button(action: action) { Text(title) }
                 .buttonStyle(.borderedProminent)

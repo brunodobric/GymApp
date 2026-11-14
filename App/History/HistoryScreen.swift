@@ -8,7 +8,7 @@ import Units
 
 /// Povijest odrađenih treninga: popis s filterom i sortiranjem te kalendar s točkicama.
 ///
-/// U regular širini (iPad) popis i detalji treninga stoje jedan pored drugog (`NavigationSplitView`).
+/// U regular širini (iPad, otvoreni iPhone Duo) popis i detalji treninga stoje jedan pored drugog (`TabSplitView`).
 /// U compact širini split view se sklapa u običan stog, pa se iPhone ponaša kao prije.
 struct HistoryScreen: View {
     /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: vraća se popis treninga.
@@ -55,9 +55,8 @@ struct HistoryScreen: View {
     var body: some View {
         let lists = makeLists()
         let selectedSession = selectedId.flatMap { id in lists.all.first { $0.id == id } }
-        NavigationSplitView {
+        TabSplitView {
             sessionList(lists)
-                .navigationSplitViewColumnWidth(min: 320, ideal: 380, max: 460)
         } detail: {
             NavigationStack {
                 if let session = selectedSession {
