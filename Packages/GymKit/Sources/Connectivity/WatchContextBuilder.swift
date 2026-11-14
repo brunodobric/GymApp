@@ -71,7 +71,9 @@ public struct WatchContextBuilder {
         template: WorkoutTemplate, exercises: [PlannedExercise], scheduleId: UUID?, scheduleName: String?
     ) throws -> PlannedWorkoutPayload {
         let sources = Dictionary(template.orderedExercises.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        let unit = (try? GymQueries(context: context).settings().weightUnit) ?? .kilograms
+        let settings = try? GymQueries(context: context).settings()
+        let unit = settings?.weightUnit ?? .kilograms
+        let suggestsHeavier = settings?.suggestsHeavierWeight ?? true
         // Superset postoji samo ako u planu ostanu barem dvije vježbe iz iste grupe (kao u `TemplateStarter`).
         var groupSizes: [UUID: Int] = [:]
         for planned in exercises {
@@ -89,7 +91,7 @@ public struct WatchContextBuilder {
             let previous = try previousSets(of: planned.ref, templateId: template.id)
             let plan = SetPlanner.plan(
                 previous: previous, targets: targets, inputType: planned.inputType,
-                weightStep: weightStep(planned.ref), unit: unit
+                weightStep: suggestsHeavier ? weightStep(planned.ref) : nil, unit: unit
             )
             let sets = plan.sets.map(PlannedSetPayload.init(values:))
             var payload = PlannedExercisePayload(

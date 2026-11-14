@@ -63,6 +63,7 @@ struct SettingsDTO: Codable {
     var bodyMapFemale: Bool?
     var restNotificationEnabled: Bool?
     var startsWatchWorkout: Bool?
+    var suggestsHeavierWeight: Bool?
     var liveActivityFollowsApp: Bool?
     var liveActivityThemeRaw: String?
     var liveActivityAccentRaw: String?
@@ -96,6 +97,7 @@ struct SettingsDTO: Codable {
         bodyMapFemale = model.bodyMapFemale
         restNotificationEnabled = model.restNotificationEnabled
         startsWatchWorkout = model.startsWatchWorkout
+        suggestsHeavierWeight = model.suggestsHeavierWeight
         liveActivityFollowsApp = model.liveActivityFollowsApp
         liveActivityThemeRaw = model.liveActivityThemeRaw
         liveActivityAccentRaw = model.liveActivityAccentRaw
@@ -130,6 +132,7 @@ struct SettingsDTO: Codable {
         model.bodyMapFemale = bodyMapFemale ?? false
         model.restNotificationEnabled = restNotificationEnabled ?? true
         model.startsWatchWorkout = startsWatchWorkout ?? true
+        model.suggestsHeavierWeight = suggestsHeavierWeight ?? true
         model.liveActivityFollowsApp = liveActivityFollowsApp ?? true
         model.liveActivityThemeRaw = liveActivityThemeRaw ?? "system"
         model.liveActivityAccentRaw = liveActivityAccentRaw ?? "blue"

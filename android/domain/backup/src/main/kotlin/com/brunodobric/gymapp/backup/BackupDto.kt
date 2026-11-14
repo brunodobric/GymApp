@@ -109,6 +109,7 @@ internal data class SettingsDTO(
     val bodyMapFemale: Boolean? = null,
     val restNotificationEnabled: Boolean? = null,
     val startsWatchWorkout: Boolean? = null,
+    val suggestsHeavierWeight: Boolean? = null,
     val liveActivityFollowsApp: Boolean? = null,
     val liveActivityThemeRaw: String? = null,
     val liveActivityAccentRaw: String? = null,
@@ -142,6 +143,7 @@ internal data class SettingsDTO(
         bodyMapFemale = model.bodyMapFemale,
         restNotificationEnabled = model.restNotificationEnabled,
         startsWatchWorkout = model.startsWatchWorkout,
+        suggestsHeavierWeight = model.suggestsHeavierWeight,
         liveActivityFollowsApp = model.liveActivityFollowsApp,
         liveActivityThemeRaw = model.liveActivityThemeRaw,
         liveActivityAccentRaw = model.liveActivityAccentRaw,
@@ -176,6 +178,7 @@ internal data class SettingsDTO(
         model.bodyMapFemale = bodyMapFemale ?: false
         model.restNotificationEnabled = restNotificationEnabled ?: true
         model.startsWatchWorkout = startsWatchWorkout ?: true
+        model.suggestsHeavierWeight = suggestsHeavierWeight ?: true
         model.liveActivityFollowsApp = liveActivityFollowsApp ?: true
         model.liveActivityThemeRaw = liveActivityThemeRaw ?: "system"
         model.liveActivityAccentRaw = liveActivityAccentRaw ?: "blue"

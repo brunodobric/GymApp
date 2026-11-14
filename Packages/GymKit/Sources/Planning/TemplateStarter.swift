@@ -10,6 +10,7 @@ public struct TemplateStarter {
     public let context: ModelContext
     /// Korak težine vježbe u jedinici korisnika, za prijedlog veće težine (`SetPlanner`).
     /// Nil: korak iz postavki bez opreme vježbe (aplikacija predaje korak s opremom iz kataloga).
+    /// Kad je prijedlog veće težine isključen u postavkama (`suggestsHeavierWeight`), korak se ne predaje.
     public let weightStep: ((ExerciseRef) -> Double)?
 
     public init(context: ModelContext, weightStep: ((ExerciseRef) -> Double)? = nil) {
@@ -47,6 +48,7 @@ public struct TemplateStarter {
         let settings = try? GymQueries(context: context).settings()
         let unit = settings?.weightUnit ?? .kilograms
         let step = weightStep ?? WeightStepSettings.resolver(settings: settings, catalog: nil, custom: [])
+        let suggestsHeavier = settings?.suggestsHeavierWeight ?? true
         let session = try engine.startSession(
             name: template.name, kind: template.kind, templateId: template.id, scheduleId: scheduleId, now: now
         )
@@ -60,7 +62,7 @@ public struct TemplateStarter {
             let targets = planned.isReplacement ? [] : (source?.orderedSets ?? []).map(\.target)
             let created = try engine.addExercise(
                 planned.ref, inputType: planned.inputType, to: session, restSeconds: source?.restSeconds,
-                targets: targets, weightStep: step(planned.ref), unit: unit, now: now
+                targets: targets, weightStep: suggestsHeavier ? step(planned.ref) : nil, unit: unit, now: now
             )
             if let source, !planned.isReplacement {
                 created.notes = source.notes.trimmingCharacters(in: .whitespacesAndNewlines)

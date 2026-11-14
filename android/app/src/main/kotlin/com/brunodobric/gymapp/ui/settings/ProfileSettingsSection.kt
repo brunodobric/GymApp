@@ -171,6 +171,17 @@ fun TrainingSettingsSection(services: AppServices) {
             })
         },
     )
+    SectionHeader(stringResource(R.string.progression))
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.suggest_heavier_weight)) },
+        trailingContent = {
+            Switch(checked = settings.suggestsHeavierWeight, onCheckedChange = {
+                settings.suggestsHeavierWeight = it
+                store.save()
+            })
+        },
+    )
+    Footer(stringResource(R.string.suggest_heavier_weight_footer))
     SectionHeader(stringResource(R.string.records))
     ListItem(
         headlineContent = { Text(stringResource(R.string.records_pr)) },

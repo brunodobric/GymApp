@@ -210,6 +210,14 @@ struct TemplateStarterTests {
         let next = try #require(second.orderedExercises.first)
         #expect(next.loadChangeKg == 2.5)
         #expect(next.orderedSets.allSatisfy { $0.weightKg == 82.5 && $0.reps == 8 })
+
+        // Isključen prijedlog veće težine: težina ostaje kao prošli put.
+        try workout.discardSession(second)
+        try GymQueries(context: context).settings().suggestsHeavierWeight = false
+        let third = try TemplateStarter(context: context, weightStep: { _ in 2.5 }).start(result, now: base + 2 * 86_400)
+        let plain = try #require(third.orderedExercises.first)
+        #expect(plain.loadChangeKg == nil)
+        #expect(plain.orderedSets.allSatisfy { $0.weightKg == 80 && $0.reps == 12 })
     }
 
     @Test("Izbor treninga bez rasporeda: samo treninzi snage s vježbama, po nazivu")

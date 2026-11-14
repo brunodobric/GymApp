@@ -594,6 +594,12 @@ class UserSettings(override var id: UUID = UUID.randomUUID()) : GymRecord {
     /** Na iOS-u: trening pokrenut na iPhoneu pokreće i sat. Android zasad nema sat. */
     var startsWatchWorkout: Boolean = true
 
+    /**
+     * Dvostruka progresija: prijedlog veće težine kad je prošli put dosegnuta gornja granica raspona ponavljanja
+     * (`SetPlanner`). Isključeno znači da je težina uvijek kao prošli put.
+     */
+    var suggestsHeavierWeight: Boolean = true
+
     /** Tijelo koje se crta na prikazu mišića. */
     var bodyMapFemale: Boolean = false
 

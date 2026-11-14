@@ -381,6 +381,9 @@
     <string name="settings_notifications">Notifications</string>
     <string name="rest_end">End of rest</string>
     <string name="rest_end_sound">End-of-rest sound</string>
+    <string name="progression">Progression</string>
+    <string name="suggest_heavier_weight">Suggest heavier weight</string>
+    <string name="suggest_heavier_weight_footer">When an exercise in a workout has a rep target (e.g. 8–12) and last time you reached the top of the range in every working set, the next workout suggests a weight one weight step higher and resets reps to the bottom of the range. When off, the weight is always the same as last time.</string>
     <string name="rest_over">Rest is over</string>
     <string name="rest_next_generic">Time for your next set.</string>
     <string name="rest_next_body">Next: %1$s, set %2$d of %3$d.</string>

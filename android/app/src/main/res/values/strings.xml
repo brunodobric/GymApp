@@ -387,6 +387,9 @@
     <string name="settings_notifications">Obavijesti</string>
     <string name="rest_end">Kraj odmora</string>
     <string name="rest_end_sound">Zvuk kraja odmora</string>
+    <string name="progression">Napredak</string>
+    <string name="suggest_heavier_weight">Prijedlog veće težine</string>
+    <string name="suggest_heavier_weight_footer">Kad vježba u treningu ima cilj ponavljanja (npr. 8–12), a prošli put si u svim radnim serijama došao do gornje granice, sljedeći trening predloži težinu veću za jedan korak težine i vrati ponavljanja na donju granicu. Kad je isključeno, težina je uvijek ista kao prošli put.</string>
     <string name="rest_over">Odmor je gotov</string>
     <string name="rest_next_generic">Vrijeme za sljedeću seriju.</string>
     <string name="rest_next_body">Sljedeće: %1$s, serija %2$d od %3$d.</string>

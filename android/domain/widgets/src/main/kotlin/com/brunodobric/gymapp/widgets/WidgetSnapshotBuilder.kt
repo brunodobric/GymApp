@@ -64,7 +64,10 @@ class WidgetSnapshotBuilder(
         val exercises = planned.exercises.take(WidgetSnapshot.NextWorkout.MAX_EXERCISES).map { exercise ->
             val targets = if (exercise.isReplacement) emptyList() else sources[exercise.source]?.orderedSets.orEmpty()
             val previous = store.previousSetValues(exercise.ref, planned.template.id)
-            val working = plannedSets(previous, targets, exercise.inputType, step(exercise.ref), settings.weightUnit)
+            val working = plannedSets(
+                previous, targets, exercise.inputType,
+                if (settings.suggestsHeavierWeight) step(exercise.ref) else null, settings.weightUnit,
+            )
                 .filter { it.kind == SetKind.WORKING }
             val first = working.firstOrNull()
             WidgetSnapshot.PlannedExercise(

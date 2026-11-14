@@ -96,6 +96,9 @@ extension GymSchemaV1 {
         public var restNotificationEnabled: Bool = true
         /// Trening pokrenut na iPhoneu pokreće i trening na satu (puls, kalorije, aplikacija ostaje otvorena).
         public var startsWatchWorkout: Bool = true
+        /// Dvostruka progresija: prijedlog veće težine kad je prošli put dosegnuta gornja granica raspona
+        /// ponavljanja (`SetPlanner`). Isključeno znači da je težina uvijek kao prošli put.
+        public var suggestsHeavierWeight: Bool = true
         /// Tijelo koje se crta na prikazu mišića (statistika, sažetak treninga).
         public var bodyMapFemale: Bool = false
         /// Live Activity prati temu i naglasnu boju aplikacije. Kad ne prati, koristi vlastite ispod.

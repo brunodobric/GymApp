@@ -19,7 +19,8 @@ class TemplateStarter(
     private val store: GymStore,
     /**
      * Korak težine vježbe u jedinici korisnika, za prijedlog veće težine ([SetPlanner]). null: korak iz postavki
-     * bez opreme vježbe (aplikacija predaje korak s opremom iz kataloga).
+     * bez opreme vježbe (aplikacija predaje korak s opremom iz kataloga). Kad je prijedlog veće težine isključen u
+     * postavkama (`suggestsHeavierWeight`), korak se ne predaje.
      */
     private val weightStep: ((ExerciseRef) -> Double)? = null,
 ) {
@@ -38,6 +39,7 @@ class TemplateStarter(
         val engine = WorkoutEngine(store)
         val settings = store.settings()
         val step = weightStep ?: WeightStepSettings.resolver(settings, null, emptyList())
+        val suggestsHeavier = settings.suggestsHeavierWeight
         val session = engine.startSession(template.name, template.kind, templateId = template.id, scheduleId = scheduleId, now = now)
         val sources = template.orderedExercises.associateBy { it.id }
         val groups = linkedMapOf<UUID, MutableList<SessionExercise>>()
@@ -48,7 +50,7 @@ class TemplateStarter(
             val targets = if (planned.isReplacement) emptyList() else source?.orderedSets.orEmpty().map { it.target }
             val created = engine.addExercise(
                 planned.ref, planned.inputType, session, source?.restSeconds, now,
-                targets = targets, weightStep = step(planned.ref), unit = settings.weightUnit,
+                targets = targets, weightStep = if (suggestsHeavier) step(planned.ref) else null, unit = settings.weightUnit,
             )
             if (source != null && !planned.isReplacement) created.notes = source.notes.trim()
             source?.supersetGroupId?.let { groups.getOrPut(it) { mutableListOf() } += created }
