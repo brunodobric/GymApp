@@ -63,7 +63,7 @@ struct AppCommands: Commands {
         CommandMenu("Idi") {
             sectionButton("Početna", .home, key: "1")
             sectionButton("Povijest", .history, key: "2")
-            sectionButton("Rasporedi", .schedules, key: "3")
+            sectionButton("Plan", .schedules, key: "3")
             sectionButton("Vježbe", .exercises, key: "4")
             sectionButton("Statistika", .statistics, key: "5")
         }

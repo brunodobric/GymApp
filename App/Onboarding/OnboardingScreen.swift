@@ -320,7 +320,7 @@ struct OnboardingScreen: View {
                 .padding(.top, 16)
             Button("Složit ću sam") { complete(nil, newDaysGoal: nil) }
                 .padding(.top, 24)
-            Text("Svi programi su i u kartici Rasporedi.")
+            Text("Svi programi su i u kartici Plan.")
                 .font(.caption).foregroundStyle(.secondary)
                 .padding(.top, 4)
         }

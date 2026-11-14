@@ -3595,6 +3595,16 @@
         }
       }
     },
+    "Plan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan"
+          }
+        }
+      }
+    },
     "Pokaži prijedlog" : {
       "localizations" : {
         "en" : {
@@ -3695,6 +3705,16 @@
         }
       }
     },
+    "Raspored %@ nalazi se u kartici Plan, a ciljeve u treningu možeš prilagoditi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The %@ schedule is in the Plan tab, and you can adjust the targets in each workout."
+          }
+        }
+      }
+    },
     "Razmak između dviju težina na kotačiću, na gumbima + i − u Live Activityju i za jedan klik Digital Crowna na satu. Koraci vrijede za jedinicu koja je sada odabrana (%@)." : {
       "localizations" : {
         "en" : {
@@ -3765,12 +3785,12 @@
         }
       }
     },
-    "Svi programi su i u kartici Rasporedi." : {
+    "Svi programi su i u kartici Plan." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All programs are also in the Schedules tab."
+            "value" : "All programs are also in the Plan tab."
           }
         }
       }
@@ -3801,6 +3821,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The workout was updated."
+          }
+        }
+      }
+    },
+    "Treninzi se slažu u kartici Plan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts are built in the Plan tab."
           }
         }
       }
@@ -7327,16 +7357,6 @@
         }
       }
     },
-    "Raspored %@ nalazi se u kartici Rasporedi, a ciljeve u treningu možeš prilagoditi." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The %@ schedule is in the Schedules tab, and you can adjust the targets in each workout."
-          }
-        }
-      }
-    },
     "Raspored i trening ostaju nepromijenjeni za sljedeće cikluse." : {
       "localizations" : {
         "en" : {
@@ -8713,16 +8733,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The workouts couldn't be saved. Nothing was imported."
-          }
-        }
-      }
-    },
-    "Treninzi se slažu u kartici Rasporedi." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Workouts are built in the Schedules tab."
           }
         }
       }
