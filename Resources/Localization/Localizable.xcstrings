@@ -3785,6 +3785,16 @@
         }
       }
     },
+    "Trening ili vježba" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout or exercise"
+          }
+        }
+      }
+    },
     "Trening je ažuriran." : {
       "localizations" : {
         "en" : {

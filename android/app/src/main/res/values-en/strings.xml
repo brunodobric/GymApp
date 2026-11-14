@@ -817,4 +817,6 @@
     <string name="template_reordered">Different exercise order</string>
     <string name="update_template">Update workout</string>
     <string name="template_update_footer">Only the exercises and sets are saved. The app suggests weights on its own.</string>
+    <string name="history_search">Workout or exercise</string>
+    <string name="history_no_match">No workouts match your search.</string>
 </resources>

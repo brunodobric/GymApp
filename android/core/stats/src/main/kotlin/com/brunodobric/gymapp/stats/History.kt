@@ -1,5 +1,6 @@
 package com.brunodobric.gymapp.stats
 
+import com.brunodobric.gymapp.catalog.ExerciseSearch
 import com.brunodobric.gymapp.model.GymStore
 import com.brunodobric.gymapp.model.Session
 import com.brunodobric.gymapp.model.WorkoutKind
@@ -7,15 +8,23 @@ import java.time.Instant
 
 enum class HistorySort { NEWEST_FIRST, OLDEST_FIRST }
 
-/** Filter i sortiranje popisa odrađenih treninga. Prazan skup vrsta znači sve vrste. */
-data class HistoryFilter(val kinds: Set<WorkoutKind> = emptySet(), val sort: HistorySort = HistorySort.NEWEST_FIRST) {
+/**
+ * Filter i sortiranje popisa odrađenih treninga. Prazan skup vrsta znači sve vrste, a prazna pretraga ([query],
+ * po nazivu treninga i nazivima vježbi) sve treninge.
+ */
+data class HistoryFilter(
+    val kinds: Set<WorkoutKind> = emptySet(),
+    val sort: HistorySort = HistorySort.NEWEST_FIRST,
+    val query: String = "",
+) {
 
     /**
      * Primjenjuje filter i sortiranje na već učitane treninge. `kindsOf` daje vrste treninga; u sučelju je to
      * `SessionMix.kinds`, pa je trening snage s kardiom i pod snagom i pod kardiom.
      */
     fun apply(sessions: List<Session>, kindsOf: (Session) -> Set<WorkoutKind> = { setOf(it.kind) }): List<Session> {
-        val selected = if (kinds.isEmpty()) sessions else sessions.filter { kindsOf(it).any(kinds::contains) }
+        val byKind = if (kinds.isEmpty()) sessions else sessions.filter { kindsOf(it).any(kinds::contains) }
+        val selected = if (query.isEmpty()) byKind else byKind.filter { matches(it, query) }
         return if (sort == HistorySort.NEWEST_FIRST) selected.sortedByDescending { it.startedAt } else selected.sortedBy { it.startedAt }
     }
 
@@ -29,6 +38,20 @@ data class HistoryFilter(val kinds: Set<WorkoutKind> = emptySet(), val sort: His
     ): List<Session> {
         val interval = if (day == null) calendar.monthInterval(month) else calendar.dayInterval(day)
         return apply(sessions.filter { it.startedAt >= interval.start && it.startedAt < interval.end }, kindsOf)
+    }
+
+    companion object {
+        /**
+         * Trening odgovara pretrazi kad se svaka riječ upita nađe u nazivu treninga ili nazivu neke vježbe, bez
+         * obzira na velika slova i dijakritike ("cucanj" pronalazi "Čučanj"). Izbačene vježbe se ne gledaju.
+         */
+        fun matches(session: Session, query: String): Boolean {
+            val words = ExerciseSearch.normalize(query).split(Regex("\\s+")).filter { it.isNotEmpty() }
+            if (words.isEmpty()) return true
+            val names = listOf(session.name) + session.orderedExercises.filter { !it.isRemoved }.map { it.exerciseName }
+            val text = ExerciseSearch.normalize(names.joinToString(" "))
+            return words.all { text.contains(it) }
+        }
     }
 }
 

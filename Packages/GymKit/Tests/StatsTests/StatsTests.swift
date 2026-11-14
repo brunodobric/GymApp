@@ -89,6 +89,24 @@ struct HistoryTests {
         #expect(try history.sessions(filter: HistoryFilter(kinds: [.cardio])).map(\.id) == [new.id])
     }
 
+    @Test("Pretraga po nazivu treninga i vježbama, bez dijakritika i izbačenih vježbi")
+    func search() throws {
+        let context = try makeContext()
+        let legs = try addSession(context, at: base, lifts: [Lift(ref: squat, sets: [Work(weight: 100, reps: 5)])])
+        legs.name = "Noge"
+        let push = try addSession(context, at: base.addingTimeInterval(day), lifts: [Lift(ref: bench, sets: [Work(weight: 80, reps: 5)])])
+        push.name = "Push"
+        let all = [legs, push]
+
+        #expect(HistoryFilter(query: "cucanj").apply(to: all).map(\.id) == [legs.id])
+        #expect(HistoryFilter(query: "  PUSH ").apply(to: all).map(\.id) == [push.id])
+        #expect(HistoryFilter(query: "potisak klupe").apply(to: all).map(\.id) == [push.id])
+        #expect(HistoryFilter(query: "noge potisak").apply(to: all).isEmpty)
+        #expect(HistoryFilter(query: " ").apply(to: all).count == 2)
+        push.orderedExercises.first?.isRemoved = true
+        #expect(HistoryFilter(query: "potisak").apply(to: all).isEmpty)
+    }
+
     @Test("Ispod kalendara su treninzi prikazanog mjeseca, a s odabranim danom samo tog dana")
     func calendarList() throws {
         let context = try makeContext()

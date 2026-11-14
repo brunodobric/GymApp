@@ -1,3 +1,4 @@
+import Catalog
 import Foundation
 import Models
 import SwiftData
@@ -7,14 +8,27 @@ public enum HistorySort: Sendable {
     case oldestFirst
 }
 
-/// Filter i sortiranje popisa odrađenih treninga. Prazan skup vrsta znači sve vrste.
+/// Filter i sortiranje popisa odrađenih treninga. Prazan skup vrsta znači sve vrste, a prazna pretraga sve treninge.
 public struct HistoryFilter: Equatable, Sendable {
     public var kinds: Set<WorkoutKind>
     public var sort: HistorySort
+    /// Pretraga po nazivu treninga i nazivima vježbi (`matches`).
+    public var query: String
 
-    public init(kinds: Set<WorkoutKind> = [], sort: HistorySort = .newestFirst) {
+    public init(kinds: Set<WorkoutKind> = [], sort: HistorySort = .newestFirst, query: String = "") {
         self.kinds = kinds
         self.sort = sort
+        self.query = query
+    }
+
+    /// Trening odgovara pretrazi kad se svaka riječ upita nađe u nazivu treninga ili nazivu neke vježbe,
+    /// bez obzira na velika slova i dijakritike ("cucanj" pronalazi "Čučanj"). Izbačene vježbe se ne gledaju.
+    public static func matches(_ session: Session, query: String) -> Bool {
+        let words = ExerciseSearch.normalize(query).split(whereSeparator: \.isWhitespace)
+        guard !words.isEmpty else { return true }
+        let names = [session.name] + session.orderedExercises.filter { !$0.isRemoved }.map(\.exerciseName)
+        let text = ExerciseSearch.normalize(names.joined(separator: " "))
+        return words.allSatisfy { text.contains($0) }
     }
 
     /// Primjenjuje filter i sortiranje na već učitane treninge (za žive upite u sučelju).
@@ -23,7 +37,8 @@ public struct HistoryFilter: Equatable, Sendable {
     public func apply(
         to sessions: [Session], kindsOf: (Session) -> Set<WorkoutKind> = { [$0.kind] }
     ) -> [Session] {
-        let selected = kinds.isEmpty ? sessions : sessions.filter { !kinds.isDisjoint(with: kindsOf($0)) }
+        let byKind = kinds.isEmpty ? sessions : sessions.filter { !kinds.isDisjoint(with: kindsOf($0)) }
+        let selected = query.isEmpty ? byKind : byKind.filter { Self.matches($0, query: query) }
         return selected.sorted { sort == .newestFirst ? $0.startedAt > $1.startedAt : $0.startedAt < $1.startedAt }
     }
 

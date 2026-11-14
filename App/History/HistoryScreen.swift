@@ -120,6 +120,7 @@ struct HistoryScreen: View {
             }
         }
         .navigationTitle("Povijest")
+        .searchable(text: $filter.query, prompt: "Trening ili vježba")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(showsCalendar ? "Popis" : "Kalendar", systemImage: showsCalendar ? "list.bullet" : "calendar") {
