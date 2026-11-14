@@ -1,6 +1,10 @@
 package com.brunodobric.gymapp.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -8,11 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -21,10 +25,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.R
@@ -53,7 +60,8 @@ fun StartWorkoutCard(
     skipsFirst: Boolean = false,
 ) {
     val offersTemplates = templateCount > 0 && planned.isEmpty()
-    Card(Modifier.fillMaxWidth()) {
+    // U boji akcenta kao na iOS-u, ista pozadina kao kartica treninga u tijeku.
+    Column(Modifier.fillMaxWidth().workoutCardBackground()) {
         planned.drop(if (skipsFirst) 1 else 0).forEach { workout ->
             StartRow(
                 icon = Icons.Filled.PlayArrow,
@@ -62,7 +70,7 @@ fun StartWorkoutCard(
                 subtitle = plannedSubtitle(workout),
                 onClick = { onStart(workout) },
             )
-            HorizontalDivider()
+            RowDivider()
         }
         // Jedan red za sve rasporede: s dva aktivna rasporeda red ispod svakog bio bi isti izbor dvaput.
         if (planned.isNotEmpty() && offersOtherWorkout) {
@@ -72,7 +80,7 @@ fun StartWorkoutCard(
                 title = stringResource(R.string.choose_other_workout),
                 onClick = { onChooseTemplate(planned.map { it.schedule }) },
             )
-            HorizontalDivider()
+            RowDivider()
         }
         if (offersTemplates) {
             StartRow(
@@ -82,7 +90,7 @@ fun StartWorkoutCard(
                 subtitle = pluralStringResource(R.plurals.saved_workouts, templateCount, templateCount),
                 onClick = { onChooseTemplate(emptyList()) },
             )
-            HorizontalDivider()
+            RowDivider()
         }
         if (planned.isEmpty() && !offersTemplates) {
             StartRow(Icons.Filled.PlayArrow, prominent = true, title = stringResource(R.string.start_workout), onClick = onStartEmpty)
@@ -100,6 +108,13 @@ private fun plannedSubtitle(workout: PlannedWorkout): String {
     return workout.schedule.name + " · " + pluralStringResource(R.plurals.exercise_count, count, count)
 }
 
+/** Razdjelnik između redova, uvučen do teksta kao na iOS-u (iza ikone u krugu). */
+@Composable
+private fun RowDivider() {
+    HorizontalDivider(Modifier.padding(start = 70.dp), color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
+}
+
+/** Red kartice za početak: ikona u krugu akcenta, naslov i (po potrebi) raspored, strelica desno. */
 @Composable
 private fun StartRow(
     icon: ImageVector,
@@ -108,16 +123,34 @@ private fun StartRow(
     subtitle: String? = null,
     onClick: () -> Unit,
 ) {
+    val accent = MaterialTheme.colorScheme.primary
     ListItem(
         modifier = Modifier.clickable(onClick = onClick),
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         leadingContent = {
-            Icon(icon, contentDescription = null, tint = if (prominent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
+            // Glavni način početka ima bijelu ikonu na punom akcentu, ostali akcent na blagom akcentu.
+            Box(
+                Modifier.size(40.dp).clip(CircleShape).background(if (prominent) accent else accent.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(icon, contentDescription = null, tint = if (prominent) Color.White else accent)
+            }
         },
         headlineContent = {
-            Text(title, style = if (prominent) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyLarge)
+            Text(
+                title,
+                style = if (prominent) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyLarge,
+                fontWeight = if (prominent) FontWeight.SemiBold else null,
+            )
         },
         supportingContent = subtitle?.let { { Text(it) } },
+        trailingContent = {
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            )
+        },
     )
 }
 

@@ -33,6 +33,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.model.Session
+import com.brunodobric.gymapp.ui.TabScaffold
 import com.brunodobric.gymapp.ui.OpenRequest
 import com.brunodobric.gymapp.stats.HistoryFilter
 import com.brunodobric.gymapp.stats.HistoryQueries
@@ -72,16 +74,39 @@ fun HistoryScreen(services: AppServices, openRequest: OpenRequest? = null, onReq
             .withZone(ZoneId.systemDefault())
     }
 
-    if (sessions.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    TabScaffold(stringResource(R.string.tab_history)) { padding ->
+        HistoryList(
+            isEmpty = sessions.isEmpty(),
+            listed = listed,
+            query = query,
+            onQueryChange = { query = it },
+            formatter = formatter,
+            modifier = Modifier.padding(padding),
+            onOpen = { openedId = it.toString() },
+        )
+    }
+}
+
+@Composable
+private fun HistoryList(
+    isEmpty: Boolean,
+    listed: List<Session>,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    formatter: DateTimeFormatter,
+    modifier: Modifier,
+    onOpen: (UUID) -> Unit,
+) {
+    if (isEmpty) {
+        Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(stringResource(R.string.history_empty), style = MaterialTheme.typography.bodyLarge)
         }
         return
     }
-    Column {
+    Column(modifier) {
         OutlinedTextField(
             value = query,
-            onValueChange = { query = it },
+            onValueChange = onQueryChange,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
             placeholder = { Text(stringResource(R.string.history_search)) },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
@@ -99,7 +124,7 @@ fun HistoryScreen(services: AppServices, openRequest: OpenRequest? = null, onReq
                 val sets = session.exercises.sumOf { exercise -> exercise.sets.count { it.isCompleted } }
                 val seconds = session.endedAt?.let { Duration.between(session.startedAt, it).seconds.toInt() } ?: 0
                 ListItem(
-                    modifier = Modifier.clickable { openedId = session.id.toString() },
+                    modifier = Modifier.clickable { onOpen(session.id) },
                     headlineContent = { Text(session.name) },
                     supportingContent = {
                         // Uvezeni kardio trening nema serija: umjesto njih piše odakle je.

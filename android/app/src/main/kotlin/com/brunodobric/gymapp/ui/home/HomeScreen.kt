@@ -53,6 +53,7 @@ import com.brunodobric.gymapp.training.WorkoutEngine
 import com.brunodobric.gymapp.training.WorkoutError
 import com.brunodobric.gymapp.ui.workout.WorkoutLifecycle
 import com.brunodobric.gymapp.ui.onboarding.OnboardingSheet
+import com.brunodobric.gymapp.ui.TabScaffold
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.workout.PlateCalculatorDialog
 import java.time.Instant
@@ -125,62 +126,65 @@ fun HomeScreen(
         )
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        // Postavke su na Početnoj, kao na iOS-u (gumb u alatnoj traci).
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.tab_home), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
+    // Postavke su na Početnoj, kao na iOS-u (gumb u alatnoj traci uz veliki naslov).
+    TabScaffold(
+        title = stringResource(R.string.tab_home),
+        actions = {
             IconButton(onClick = onOpenSettings) {
                 Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.settings))
             }
-        }
-        if (active != null) {
-            // Trening u tijeku: kartica s upravljanjem serijom, kao ActiveWorkoutCard na iOS-u.
-            ActiveWorkoutCard(services, revision, onOpen = onOpenWorkout)
-        } else {
-            upcoming.firstOrNull()?.let { next ->
-                NextWorkoutHero(next, onStart = { start { TemplateStarter(store).start(next) } })
+        },
+    ) { padding ->
+        Column(
+            modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            if (active != null) {
+                // Trening u tijeku: kartica s upravljanjem serijom, kao ActiveWorkoutCard na iOS-u.
+                ActiveWorkoutCard(services, revision, onOpen = onOpenWorkout)
+            } else {
+                upcoming.firstOrNull()?.let { next ->
+                    NextWorkoutHero(next, onStart = { start { TemplateStarter(store).start(next) } })
+                }
+                StartWorkoutCard(
+                    planned = upcoming,
+                    templateCount = startable.size,
+                    offersOtherWorkout = upcoming.map { it.template.id }.toSet().let { next -> startable.any { it.id !in next } },
+                    onStart = { planned -> start { TemplateStarter(store).start(planned) } },
+                    onChooseTemplate = { schedules ->
+                        pickerSchedules = schedules
+                        showsPicker = true
+                    },
+                    onStartEmpty = { start { WorkoutEngine(store).startSession(emptyName) } },
+                    skipsFirst = upcoming.isNotEmpty(),
+                )
             }
-            StartWorkoutCard(
-                planned = upcoming,
-                templateCount = startable.size,
-                offersOtherWorkout = upcoming.map { it.template.id }.toSet().let { next -> startable.any { it.id !in next } },
-                onStart = { planned -> start { TemplateStarter(store).start(planned) } },
-                onChooseTemplate = { schedules ->
-                    pickerSchedules = schedules
-                    showsPicker = true
-                },
-                onStartEmpty = { start { WorkoutEngine(store).startSession(emptyName) } },
-                skipsFirst = upcoming.isNotEmpty(),
-            )
-        }
-        if (ProfileSetupPrompt.isShown(store.settings(), store.schedules.size, profileSetupDismissed)) {
-            ProfileSetupCard(
-                onOpen = { showsProfileSetup = true },
-                onDismiss = {
-                    profileSetupDismissed = true
-                    prefs.edit().putBoolean(PROFILE_SETUP_DISMISSED, true).apply()
-                },
-            )
-        }
-        val kinds = remember(revision) { layout.cards().mapNotNull { it.kind } }
-        val actions = DashboardActions(
-            onOpenStatistics = onOpenStatistics,
-            onOpenSession = onOpenSession,
-            onOpenBody = onOpenBody,
-            onOpenPlates = { showsPlates = true },
-        )
-        DashboardLayout.rows(kinds).forEach { row ->
-            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                row.forEach { kind -> DashboardCardView(services, kind, revision, actions, Modifier.weight(1f).fillMaxHeight()) }
-                // Mala kartica sama u redu zauzima pola širine.
-                if (row.size == 1 && row[0].isCompact) Spacer(Modifier.weight(1f))
+            if (ProfileSetupPrompt.isShown(store.settings(), store.schedules.size, profileSetupDismissed)) {
+                ProfileSetupCard(
+                    onOpen = { showsProfileSetup = true },
+                    onDismiss = {
+                        profileSetupDismissed = true
+                        prefs.edit().putBoolean(PROFILE_SETUP_DISMISSED, true).apply()
+                    },
+                )
             }
-        }
-        OutlinedButton(onClick = { showsCardEditor = true }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Text(stringResource(R.string.edit_cards))
+            val kinds = remember(revision) { layout.cards().mapNotNull { it.kind } }
+            val actions = DashboardActions(
+                onOpenStatistics = onOpenStatistics,
+                onOpenSession = onOpenSession,
+                onOpenBody = onOpenBody,
+                onOpenPlates = { showsPlates = true },
+            )
+            DashboardLayout.rows(kinds).forEach { row ->
+                Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    row.forEach { kind -> DashboardCardView(services, kind, revision, actions, Modifier.weight(1f).fillMaxHeight()) }
+                    // Mala kartica sama u redu zauzima pola širine.
+                    if (row.size == 1 && row[0].isCompact) Spacer(Modifier.weight(1f))
+                }
+            }
+            OutlinedButton(onClick = { showsCardEditor = true }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Text(stringResource(R.string.edit_cards))
+            }
         }
     }
 

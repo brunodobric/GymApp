@@ -4,10 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
@@ -29,7 +29,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -37,6 +36,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.ui.TabScaffold
 import com.brunodobric.gymapp.catalog.ExerciseFilter
 import com.brunodobric.gymapp.catalog.ExerciseKind
 import com.brunodobric.gymapp.catalog.ExerciseSearch
@@ -129,8 +129,28 @@ fun ExercisesScreen(services: AppServices) {
         ExerciseFilterSheet(filter = filter, onChange = { filter = it }, onDismiss = { showsFilters = false })
     }
 
-    Box(Modifier.fillMaxSize()) {
-        Column {
+    TabScaffold(
+        title = stringResource(R.string.tab_exercises),
+        // Popis otvoren s početne kataloga ima gumb natrag, kao ekran gurnut u NavigationStack na iOS-u.
+        navigationIcon = {
+            if (!showsHome) {
+                IconButton(onClick = {
+                    listOpen = false
+                    filter = ExerciseFilter()
+                }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                }
+            }
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = { editing = NEW_EXERCISE },
+                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                text = { Text(stringResource(R.string.custom_exercise_new)) },
+            )
+        },
+    ) { padding ->
+        Column(Modifier.padding(padding)) {
             OutlinedTextField(
                 value = filter.query,
                 onValueChange = { filter = filter.copy(query = it) },
@@ -202,11 +222,5 @@ fun ExercisesScreen(services: AppServices) {
                 }
             }
         }
-        ExtendedFloatingActionButton(
-            onClick = { editing = NEW_EXERCISE },
-            icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-            text = { Text(stringResource(R.string.custom_exercise_new)) },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-        )
     }
 }
