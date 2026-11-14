@@ -777,6 +777,21 @@ struct WeekProgressTests {
         #expect(withGoal.goalFraction == 0)
         #expect(withGoal.streakWeeks == 0)
     }
+
+    @Test("Prazan tjedan između ispunjenih ne prekida niz, ali najviše jedan u četiri tjedna")
+    func streakPause() {
+        // counts[0] je prošli tjedan.
+        #expect(WeekProgress.streakLength([3, 0, 3, 3], target: 3) == 3)
+        #expect(WeekProgress.streakLength([0, 3, 3], target: 3) == 2)
+        // Tjedan s premalo treninga prekida niz, kao i dva prazna tjedna zaredom.
+        #expect(WeekProgress.streakLength([3, 1, 3], target: 3) == 1)
+        #expect(WeekProgress.streakLength([3, 0, 0, 3], target: 3) == 1)
+        // Prazan tjedan na kraju povijesti nije pauza.
+        #expect(WeekProgress.streakLength([3, 0], target: 3) == 1)
+        // Druga pauza manje od četiri tjedna nakon prve prekida niz.
+        #expect(WeekProgress.streakLength([3, 0, 3, 0, 3], target: 3) == 2)
+        #expect(WeekProgress.streakLength([3, 0, 3, 3, 3, 0, 3], target: 3) == 5)
+    }
 }
 
 @Suite("Pregled razdoblja")

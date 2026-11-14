@@ -187,6 +187,17 @@ class OverviewTest {
             assertEquals(0.0, withGoal.goalFraction)
             assertEquals(0, withGoal.streakWeeks)
         }
+
+        @Test
+        fun `prazan tjedan izmedu ispunjenih ne prekida niz, ali najvise jedan u cetiri tjedna`() {
+            assertEquals(3, WeekProgress.streakLength(listOf(3, 0, 3, 3), 3))
+            assertEquals(2, WeekProgress.streakLength(listOf(0, 3, 3), 3))
+            assertEquals(1, WeekProgress.streakLength(listOf(3, 1, 3), 3))
+            assertEquals(1, WeekProgress.streakLength(listOf(3, 0, 0, 3), 3))
+            assertEquals(1, WeekProgress.streakLength(listOf(3, 0), 3))
+            assertEquals(2, WeekProgress.streakLength(listOf(3, 0, 3, 0, 3), 3))
+            assertEquals(5, WeekProgress.streakLength(listOf(3, 0, 3, 3, 3, 0, 3), 3))
+        }
     }
 
     @Nested

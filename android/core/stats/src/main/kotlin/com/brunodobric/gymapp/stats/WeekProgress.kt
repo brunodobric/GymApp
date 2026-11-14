@@ -108,15 +108,39 @@ data class WeekProgress(
                 val start = calendar.weekInterval(session.startedAt).start
                 counts[start] = (counts[start] ?: 0) + 1
             }
-            var streak = 0
+            val weeks = mutableListOf<Int>()
             var cursor = weekStart
-            while (streak < STREAK_LIMIT) {
+            while (weeks.size < STREAK_LIMIT) {
                 val start = calendar.weekInterval(calendar.addWeeks(cursor, -1)).start
-                if ((counts[start] ?: 0) < target) break
-                streak += 1
+                weeks.add(counts[start] ?: 0)
                 cursor = start
             }
+            val streak = streakLength(weeks, target)
             return if (current >= target) streak + 1 else streak
+        }
+
+        /** Najmanje tjedana između dvije pauze koje ne prekidaju niz. */
+        const val PAUSE_SPACING = 4
+
+        /**
+         * Duljina niza ispunjenih tjedana prije tekućeg; `counts[0]` je prošli tjedan, `counts[1]` onaj prije.
+         * Tjedan bez ijednog treninga između dva ispunjena (bolest, put, odmor) ne prekida niz i ne broji se u
+         * njega, ali najviše jedan u [PAUSE_SPACING] tjedana. Tjedan s premalo treninga prekida niz.
+         */
+        fun streakLength(counts: List<Int>, target: Int): Int {
+            var streak = 0
+            var lastPause: Int? = null
+            for ((index, count) in counts.withIndex()) {
+                if (count >= target) {
+                    streak += 1
+                    continue
+                }
+                val nextIsFulfilled = index + 1 < counts.size && counts[index + 1] >= target
+                val spaced = lastPause?.let { index - it >= PAUSE_SPACING } ?: true
+                if (count != 0 || !nextIsFulfilled || !spaced) break
+                lastPause = index
+            }
+            return streak
         }
     }
 }
