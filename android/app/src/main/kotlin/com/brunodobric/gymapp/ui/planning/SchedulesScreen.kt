@@ -17,10 +17,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.ui.TabScaffold
 import com.brunodobric.gymapp.model.Schedule
 import com.brunodobric.gymapp.model.ScheduleItemKind
 import com.brunodobric.gymapp.planning.ScheduleEngine
@@ -85,8 +84,8 @@ fun SchedulesScreen(services: AppServices) {
     val newName = stringResource(R.string.new_workout_name)
     val newScheduleName = stringResource(R.string.new_schedule)
 
-    Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.tab_plans)) }) },
+    TabScaffold(
+        title = stringResource(R.string.tab_plans),
         floatingActionButton = {
             Box {
                 SmallFloatingActionButton(onClick = { creating = true }) {

@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -164,7 +165,9 @@ fun RootScreen(
                 }
             },
         ) { padding ->
-            Box(Modifier.padding(padding).fillMaxSize()) {
+            // Tabovi imaju svoju traku s velikim naslovom (`TabScaffold`): rub ekrana je već uračunat u
+            // `padding`, pa ga njihova traka ne dodaje još jednom.
+            Box(Modifier.padding(padding).consumeWindowInsets(padding).fillMaxSize()) {
                 when (selected) {
                     Section.HOME -> HomeScreen(
                         services,
