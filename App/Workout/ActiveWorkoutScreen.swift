@@ -214,7 +214,8 @@ struct ActiveWorkoutScreen: View {
     // MARK: Dijelovi ekrana
 
     private func card(for exercise: SessionExercise, weightStep: (ExerciseRef) -> Double) -> some View {
-        ExerciseCard(
+        let step = weightStep(exercise.exercise)
+        return ExerciseCard(
             exercise: exercise,
             thumbnail: catalogStore.thumbnail(for: exercise.exercise.source, customExercises: customExercises),
             isOpen: isOpen(exercise),
@@ -240,10 +241,10 @@ struct ActiveWorkoutScreen: View {
             onLeaveSuperset: { try? engine.removeFromSuperset(exercise) },
             onReplace: { replaceSource = exercise },
             onEditNote: { noteExercise = exercise },
-            onAddWarmUps: { addWarmUps(to: exercise, step: weightStep(exercise.exercise)) },
+            onAddWarmUps: { addWarmUps(to: exercise, step: step) },
             onShowInfo: exercise.exercise.source == nil ? nil : { infoExercise = exercise }
         )
-        .environment(\.weightStep, weightStep(exercise.exercise))
+        .environment(\.weightStep, step)
     }
 
     @ViewBuilder
