@@ -126,6 +126,211 @@ public struct WorkoutEngine {
         (session.exercises ?? []).flatMap { $0.sets ?? [] }.compactMap(\.completedAt).max()
     }
 
+    // MARK: Serije i rest timer
+
+    /// Označava seriju završenom i vraća rest timer koji treba pokrenuti (nil kad je pauza 0).
+    /// Ista zadana pauza za sve vježbe (demo podaci, testovi).
+    @discardableResult
+    public func completeSet(_ set: SetLog, defaultRestSeconds: Int, now: Date = Date()) throws -> RestTimer? {
+        try completeSet(set, restDefaults: RestDefaults(uniform: defaultRestSeconds), isCompound: { _ in nil }, now: now)
+    }
+
+    /// Označava seriju završenom i vraća rest timer koji treba pokrenuti (nil kad je pauza 0).
+    /// Vježba bez vlastite pauze dobiva zadanu prema vrsti (`RestDefaults`); `isCompound` prima
+    /// ključ vježbe (`ExerciseRef.key`).
+    @discardableResult
+    public func completeSet(
+        _ set: SetLog, restDefaults: RestDefaults, isCompound: (String) -> Bool?, now: Date = Date()
+    ) throws -> RestTimer? {
+        guard let exercise = set.exercise, let session = exercise.session else { return nil }
+        guard SetMetrics.isComplete(set.values, inputType: exercise.inputType) else { throw WorkoutError.setIncomplete }
+        set.completedAt = now
+
+        let members = group(of: exercise)
+        let position = members.firstIndex { $0.id == exercise.id } ?? 0
+        let configured = exercise.restSeconds ?? members.last?.restSeconds
+        let defaultSeconds = restDefaults.seconds(isCompound: members.map { isCompound($0.exercise.key) })
+        var seconds = RestPolicy.seconds(
+            positionInGroup: position, groupSize: members.count, configured: configured, defaultSeconds: defaultSeconds
+        )
+        if set.kind == .warmUp {
+            let sets = exercise.orderedSets
+            let next = sets.firstIndex { $0.id == set.id }.flatMap { $0 + 1 < sets.count ? sets[$0 + 1] : nil }
+            seconds = RestPolicy.afterWarmUp(fullSeconds: seconds, nextIsWarmUp: next?.kind == .warmUp)
+        }
+        let timer = seconds > 0 ? RestTimer(startedAt: now, seconds: seconds) : nil
+        session.restTimerStartedAt = timer?.startedAt
+        session.restTimerEndsAt = timer?.endsAt
+        try touch(session, now: now)
+        return timer
+    }
+
+    public func uncompleteSet(_ set: SetLog, now: Date = Date()) throws {
+        set.completedAt = nil
+        if let session = set.exercise?.session { try touch(session, now: now) }
+    }
+
+    public func restTimer(of session: Session) -> RestTimer? {
+        guard let start = session.restTimerStartedAt, let end = session.restTimerEndsAt else { return nil }
+        return RestTimer(startedAt: start, endsAt: end)
+    }
+
+    @discardableResult
+    public func adjustRest(of session: Session, bySeconds delta: Int, now: Date = Date()) throws -> RestTimer? {
+        guard let timer = restTimer(of: session) else { return nil }
+        let adjusted = timer.adjusted(bySeconds: delta, at: now)
+        session.restTimerEndsAt = adjusted.endsAt
+        try touch(session, now: now)
+        return adjusted
+    }
+
+    public func cancelRest(of session: Session, now: Date = Date()) throws {
+        session.restTimerStartedAt = nil
+        session.restTimerEndsAt = nil
+        try touch(session, now: now)
+    }
+
+    /// Sprema izmjenu (npr. težine ili ponavljanja) i bilježi aktivnost.
+    public func touch(_ session: Session, now: Date = Date()) throws {
+        session.lastActivityAt = now
+        try context.save()
+    }
+
+    // MARK: Sažetak i rekordi
+
+    /// Sažetak treninga s osobnim rekordima. Rekordi se uspoređuju samo s ranije završenim treninzima.
+    /// - Parameters:
+    ///   - excludedExercises: ključevi vježbi koje je korisnik isključio iz rekorda (`UserSettings.prExcludedExerciseKeys`)
+    ///   - isCompound: je li vježba (po ključu) složena, za rang istaknutih rekorda
+    public func summary(
+        of session: Session,
+        trackedKinds: Set<PRKind> = Set(PRKind.allCases),
+        excludedExercises: Set<String> = [],
+        isCompound: (String) -> Bool? = { _ in nil },
+        isCardio: (String) -> Bool = { _ in false }
+    ) throws -> WorkoutSummary {
+        var volume = 0.0
+        var completed = 0
+        var hard = 0
+        var records: [WorkoutSummary.ExerciseRecords] = []
+        var candidates: [RecordCandidate] = []
+        for exercise in visibleExercises(in: session) {
+            let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)
+            completed += done.count
+            // Kardio nije tvrda serija: 20 minuta trake ne broji se uz serije snage.
+            if !isCardio(exercise.exerciseKey) { hard += done.filter(SetMetrics.isHard).count }
+            volume += done.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
+
+            let key = exercise.exerciseKey
+            guard !trackedKinds.isEmpty, !excludedExercises.contains(key) else { continue }
+            let history = try recordHistory(of: exercise.exercise, before: session, inputType: exercise.inputType)
+            let found = PersonalRecordDetector.records(
+                current: done, history: history, inputType: exercise.inputType, kinds: trackedKinds, date: session.startedAt
+            )
+            if !found.isEmpty {
+                records.append(.init(exerciseKey: key, exerciseName: exercise.exerciseName, records: found))
+                candidates.append(RecordCandidate(
+                    exerciseKey: key, exerciseName: exercise.exerciseName, records: found, isCompound: isCompound(key)
+                ))
+            }
+        }
+        let ranked = PRRanking.highlights(candidates)
+        let end = session.endedAt ?? Date()
+        return WorkoutSummary(
+            durationSeconds: max(0, end.timeIntervalSince(session.startedAt)),
+            totalVolumeKg: volume, completedSets: completed, hardSets: hard, records: records,
+            highlights: ranked.shown, otherRecordsCount: ranked.hiddenCount,
+            cardio: SessionCardio.part(of: session, isCardio: isCardio)
+        )
+    }
+
+    // MARK: Pomoćno
+
+    /// Dodaje seriju na kraj vježbe, ili ispred prve neodrađene serije kad je `beforeIncomplete` (zagrijavanje).
+    @discardableResult
+    private func appendSet(
+        to exercise: SessionExercise, kind: SetKind, previous: [SetValues], beforeIncomplete: Bool = false
+    ) throws -> SetLog {
+        var existing = exercise.orderedSets
+        let insertIndex = beforeIncomplete
+            ? existing.firstIndex { !$0.isCompleted } ?? existing.count
+            : existing.count
+        let before = existing[..<insertIndex]
+        let position = before.filter { $0.kind == kind }.count
+        let set = SetLog(orderIndex: insertIndex, kind: kind)
+        context.insert(set)
+        set.exercise = exercise
+        existing.insert(set, at: insertIndex)
+        for (index, item) in existing.enumerated() { item.orderIndex = index }
+
+        var defaults = SmartDefaults.defaults(forPosition: position, kind: kind, previous: previous)
+        if defaults == nil, let last = before.last(where: { $0.kind == kind })
+            ?? existing.last(where: { $0.kind == kind && $0.id != set.id }) {
+            // Bez povijesti nova serija preuzima vrijednosti prethodne serije iste vrste u ovom treningu.
+            defaults = SmartDefaults.defaults(forPosition: 0, kind: kind, previous: [last.values])
+        }
+        if let defaults {
+            set.weightKg = defaults.weightKg
+            set.reps = defaults.reps
+            set.extraWeightKg = defaults.extraWeightKg
+            set.durationSeconds = defaults.durationSeconds
+            set.distanceMeters = defaults.distanceMeters
+        }
+        return set
+    }
+
+    /// Serije zadnjeg završenog izvođenja vježbe (izvor smart defaultsa), prvo u istom treningu (`templateId`).
+    private func previousSets(of ref: ExerciseRef, before session: Session?) throws -> [SetValues] {
+        try previousPerformances(of: ref, before: session).first ?? []
+    }
+
+    /// Završene serije ranijih izvođenja vježbe, od najnovijeg. Kad je trening pokrenut iz predloška,
+    /// izvođenja iz istog predloška dolaze prva: ista vježba u "Noge, teško" (5 × 5) i "Noge, lagano"
+    /// (3 × 12) inače bi pretpopunila težinu drugog dana.
+    public func previousPerformances(of ref: ExerciseRef, before session: Session?) throws -> [[SetValues]] {
+        let all = try finishedExercises(of: ref, before: session).compactMap { exercise -> (UUID?, [SetValues])? in
+            let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values)
+            return sets.isEmpty ? nil : (exercise.session?.templateId, sets)
+        }
+        guard let templateId = session?.templateId else { return all.map(\.1) }
+        let same = all.filter { $0.0 == templateId }.map(\.1)
+        let other = all.filter { $0.0 != templateId }.map(\.1)
+        return same + other
+    }
+
+    /// Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga.
+    /// Javno za oznaku rekorda u retku serije dok trening traje (`PersonalRecordDetector.liveRecordSets`).
+    public func recordHistory(of ref: ExerciseRef, before session: Session?, inputType: ExerciseInputType) throws -> RecordHistory {
+        var history = RecordHistory()
+        for exercise in try finishedExercises(of: ref, before: session).reversed() {
+            let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)
+            history.add(done, inputType: inputType, date: exercise.session?.startedAt)
+        }
+        return history
+    }
+
+    /// Izvođenja vježbe u ranije završenim treninzima, od najnovijeg prema starijem, bez čitanja serija.
+    private func finishedExercises(of ref: ExerciseRef, before session: Session?) throws -> [SessionExercise] {
+        let key = ref.key
+        let finished = SessionState.finished.rawValue
+        let descriptor = FetchDescriptor<SessionExercise>(
+            predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false && $0.session?.stateRaw == finished }
+        )
+        let currentId = session?.id
+        let cutoff = session?.startedAt ?? .distantFuture
+        return try context.fetch(descriptor)
+            .compactMap { exercise -> (Date, SessionExercise)? in
+                guard let owner = exercise.session, owner.state == .finished,
+                      owner.id != currentId, owner.startedAt < cutoff else { return nil }
+                return (owner.startedAt, exercise)
+            }
+            .sorted { $0.0 > $1.0 }
+            .map(\.1)
+    }
+}
+
+// Vježbe i supersetovi su u ekstenziji da tijelo strukture ostane u granicama SwiftLinta.
+extension WorkoutEngine {
     // MARK: Vježbe
 
     /// Dodaje vježbu i stvara serije prema planu (`SetPlanner`): bez ciljeva onoliko zagrijavanja koliko je bilo
@@ -341,208 +546,6 @@ public struct WorkoutEngine {
     public func group(of exercise: SessionExercise) -> [SessionExercise] {
         guard let id = exercise.supersetGroupId, let session = exercise.session else { return [exercise] }
         return visibleExercises(in: session).filter { $0.supersetGroupId == id }
-    }
-
-    // MARK: Serije i rest timer
-
-    /// Označava seriju završenom i vraća rest timer koji treba pokrenuti (nil kad je pauza 0).
-    /// Ista zadana pauza za sve vježbe (demo podaci, testovi).
-    @discardableResult
-    public func completeSet(_ set: SetLog, defaultRestSeconds: Int, now: Date = Date()) throws -> RestTimer? {
-        try completeSet(set, restDefaults: RestDefaults(uniform: defaultRestSeconds), isCompound: { _ in nil }, now: now)
-    }
-
-    /// Označava seriju završenom i vraća rest timer koji treba pokrenuti (nil kad je pauza 0).
-    /// Vježba bez vlastite pauze dobiva zadanu prema vrsti (`RestDefaults`); `isCompound` prima
-    /// ključ vježbe (`ExerciseRef.key`).
-    @discardableResult
-    public func completeSet(
-        _ set: SetLog, restDefaults: RestDefaults, isCompound: (String) -> Bool?, now: Date = Date()
-    ) throws -> RestTimer? {
-        guard let exercise = set.exercise, let session = exercise.session else { return nil }
-        guard SetMetrics.isComplete(set.values, inputType: exercise.inputType) else { throw WorkoutError.setIncomplete }
-        set.completedAt = now
-
-        let members = group(of: exercise)
-        let position = members.firstIndex { $0.id == exercise.id } ?? 0
-        let configured = exercise.restSeconds ?? members.last?.restSeconds
-        let defaultSeconds = restDefaults.seconds(isCompound: members.map { isCompound($0.exercise.key) })
-        var seconds = RestPolicy.seconds(
-            positionInGroup: position, groupSize: members.count, configured: configured, defaultSeconds: defaultSeconds
-        )
-        if set.kind == .warmUp {
-            let sets = exercise.orderedSets
-            let next = sets.firstIndex { $0.id == set.id }.flatMap { $0 + 1 < sets.count ? sets[$0 + 1] : nil }
-            seconds = RestPolicy.afterWarmUp(fullSeconds: seconds, nextIsWarmUp: next?.kind == .warmUp)
-        }
-        let timer = seconds > 0 ? RestTimer(startedAt: now, seconds: seconds) : nil
-        session.restTimerStartedAt = timer?.startedAt
-        session.restTimerEndsAt = timer?.endsAt
-        try touch(session, now: now)
-        return timer
-    }
-
-    public func uncompleteSet(_ set: SetLog, now: Date = Date()) throws {
-        set.completedAt = nil
-        if let session = set.exercise?.session { try touch(session, now: now) }
-    }
-
-    public func restTimer(of session: Session) -> RestTimer? {
-        guard let start = session.restTimerStartedAt, let end = session.restTimerEndsAt else { return nil }
-        return RestTimer(startedAt: start, endsAt: end)
-    }
-
-    @discardableResult
-    public func adjustRest(of session: Session, bySeconds delta: Int, now: Date = Date()) throws -> RestTimer? {
-        guard let timer = restTimer(of: session) else { return nil }
-        let adjusted = timer.adjusted(bySeconds: delta, at: now)
-        session.restTimerEndsAt = adjusted.endsAt
-        try touch(session, now: now)
-        return adjusted
-    }
-
-    public func cancelRest(of session: Session, now: Date = Date()) throws {
-        session.restTimerStartedAt = nil
-        session.restTimerEndsAt = nil
-        try touch(session, now: now)
-    }
-
-    /// Sprema izmjenu (npr. težine ili ponavljanja) i bilježi aktivnost.
-    public func touch(_ session: Session, now: Date = Date()) throws {
-        session.lastActivityAt = now
-        try context.save()
-    }
-
-    // MARK: Sažetak i rekordi
-
-    /// Sažetak treninga s osobnim rekordima. Rekordi se uspoređuju samo s ranije završenim treninzima.
-    /// - Parameters:
-    ///   - excludedExercises: ključevi vježbi koje je korisnik isključio iz rekorda (`UserSettings.prExcludedExerciseKeys`)
-    ///   - isCompound: je li vježba (po ključu) složena, za rang istaknutih rekorda
-    public func summary(
-        of session: Session,
-        trackedKinds: Set<PRKind> = Set(PRKind.allCases),
-        excludedExercises: Set<String> = [],
-        isCompound: (String) -> Bool? = { _ in nil },
-        isCardio: (String) -> Bool = { _ in false }
-    ) throws -> WorkoutSummary {
-        var volume = 0.0
-        var completed = 0
-        var hard = 0
-        var records: [WorkoutSummary.ExerciseRecords] = []
-        var candidates: [RecordCandidate] = []
-        for exercise in visibleExercises(in: session) {
-            let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)
-            completed += done.count
-            // Kardio nije tvrda serija: 20 minuta trake ne broji se uz serije snage.
-            if !isCardio(exercise.exerciseKey) { hard += done.filter(SetMetrics.isHard).count }
-            volume += done.reduce(0) { $0 + SetMetrics.volume($1, inputType: exercise.inputType) }
-
-            let key = exercise.exerciseKey
-            guard !trackedKinds.isEmpty, !excludedExercises.contains(key) else { continue }
-            let history = try recordHistory(of: exercise.exercise, before: session, inputType: exercise.inputType)
-            let found = PersonalRecordDetector.records(
-                current: done, history: history, inputType: exercise.inputType, kinds: trackedKinds, date: session.startedAt
-            )
-            if !found.isEmpty {
-                records.append(.init(exerciseKey: key, exerciseName: exercise.exerciseName, records: found))
-                candidates.append(RecordCandidate(
-                    exerciseKey: key, exerciseName: exercise.exerciseName, records: found, isCompound: isCompound(key)
-                ))
-            }
-        }
-        let ranked = PRRanking.highlights(candidates)
-        let end = session.endedAt ?? Date()
-        return WorkoutSummary(
-            durationSeconds: max(0, end.timeIntervalSince(session.startedAt)),
-            totalVolumeKg: volume, completedSets: completed, hardSets: hard, records: records,
-            highlights: ranked.shown, otherRecordsCount: ranked.hiddenCount,
-            cardio: SessionCardio.part(of: session, isCardio: isCardio)
-        )
-    }
-
-    // MARK: Pomoćno
-
-    /// Dodaje seriju na kraj vježbe, ili ispred prve neodrađene serije kad je `beforeIncomplete` (zagrijavanje).
-    @discardableResult
-    private func appendSet(
-        to exercise: SessionExercise, kind: SetKind, previous: [SetValues], beforeIncomplete: Bool = false
-    ) throws -> SetLog {
-        var existing = exercise.orderedSets
-        let insertIndex = beforeIncomplete
-            ? existing.firstIndex { !$0.isCompleted } ?? existing.count
-            : existing.count
-        let before = existing[..<insertIndex]
-        let position = before.filter { $0.kind == kind }.count
-        let set = SetLog(orderIndex: insertIndex, kind: kind)
-        context.insert(set)
-        set.exercise = exercise
-        existing.insert(set, at: insertIndex)
-        for (index, item) in existing.enumerated() { item.orderIndex = index }
-
-        var defaults = SmartDefaults.defaults(forPosition: position, kind: kind, previous: previous)
-        if defaults == nil, let last = before.last(where: { $0.kind == kind })
-            ?? existing.last(where: { $0.kind == kind && $0.id != set.id }) {
-            // Bez povijesti nova serija preuzima vrijednosti prethodne serije iste vrste u ovom treningu.
-            defaults = SmartDefaults.defaults(forPosition: 0, kind: kind, previous: [last.values])
-        }
-        if let defaults {
-            set.weightKg = defaults.weightKg
-            set.reps = defaults.reps
-            set.extraWeightKg = defaults.extraWeightKg
-            set.durationSeconds = defaults.durationSeconds
-            set.distanceMeters = defaults.distanceMeters
-        }
-        return set
-    }
-
-    /// Serije zadnjeg završenog izvođenja vježbe (izvor smart defaultsa), prvo u istom treningu (`templateId`).
-    private func previousSets(of ref: ExerciseRef, before session: Session?) throws -> [SetValues] {
-        try previousPerformances(of: ref, before: session).first ?? []
-    }
-
-    /// Završene serije ranijih izvođenja vježbe, od najnovijeg. Kad je trening pokrenut iz predloška,
-    /// izvođenja iz istog predloška dolaze prva: ista vježba u "Noge, teško" (5 × 5) i "Noge, lagano"
-    /// (3 × 12) inače bi pretpopunila težinu drugog dana.
-    public func previousPerformances(of ref: ExerciseRef, before session: Session?) throws -> [[SetValues]] {
-        let all = try finishedExercises(of: ref, before: session).compactMap { exercise -> (UUID?, [SetValues])? in
-            let sets = exercise.orderedSets.filter(\.isCompleted).map(\.values)
-            return sets.isEmpty ? nil : (exercise.session?.templateId, sets)
-        }
-        guard let templateId = session?.templateId else { return all.map(\.1) }
-        let same = all.filter { $0.0 == templateId }.map(\.1)
-        let other = all.filter { $0.0 != templateId }.map(\.1)
-        return same + other
-    }
-
-    /// Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga.
-    /// Javno za oznaku rekorda u retku serije dok trening traje (`PersonalRecordDetector.liveRecordSets`).
-    public func recordHistory(of ref: ExerciseRef, before session: Session?, inputType: ExerciseInputType) throws -> RecordHistory {
-        var history = RecordHistory()
-        for exercise in try finishedExercises(of: ref, before: session).reversed() {
-            let done = exercise.orderedSets.filter(\.isCompleted).map(\.values)
-            history.add(done, inputType: inputType, date: exercise.session?.startedAt)
-        }
-        return history
-    }
-
-    /// Izvođenja vježbe u ranije završenim treninzima, od najnovijeg prema starijem, bez čitanja serija.
-    private func finishedExercises(of ref: ExerciseRef, before session: Session?) throws -> [SessionExercise] {
-        let key = ref.key
-        let finished = SessionState.finished.rawValue
-        let descriptor = FetchDescriptor<SessionExercise>(
-            predicate: #Predicate { $0.exerciseKey == key && $0.isRemoved == false && $0.session?.stateRaw == finished }
-        )
-        let currentId = session?.id
-        let cutoff = session?.startedAt ?? .distantFuture
-        return try context.fetch(descriptor)
-            .compactMap { exercise -> (Date, SessionExercise)? in
-                guard let owner = exercise.session, owner.state == .finished,
-                      owner.id != currentId, owner.startedAt < cutoff else { return nil }
-                return (owner.startedAt, exercise)
-            }
-            .sorted { $0.0 > $1.0 }
-            .map(\.1)
     }
 }
 
