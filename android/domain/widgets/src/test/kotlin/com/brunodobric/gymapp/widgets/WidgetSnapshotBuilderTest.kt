@@ -136,7 +136,7 @@ class WidgetSnapshotBuilderTest {
     }
 
     @Test
-    fun `plan serija - bez ciljeva kao prosli put, s ciljevima prema predlosku`() {
+    fun `plan serija - bez ciljeva kao prosli put, s ciljevima prema predlosku, tezina iz povijesti`() {
         val previous = listOf(
             SetValues(SetKind.WARM_UP, weightKg = 40.0, reps = 10),
             SetValues(SetKind.WORKING, weightKg = 80.0, reps = 8),
@@ -153,6 +153,8 @@ class WidgetSnapshotBuilderTest {
             targetReps = 5
         }
         val withTargets = WidgetSnapshotBuilder.plannedSets(previous, listOf(target), ExerciseInputType.WEIGHT_REPS)
-        assertEquals(listOf(SetValues(SetKind.WORKING, weightKg = 90.0, reps = 5)), withTargets)
+        assertEquals(listOf(SetValues(SetKind.WORKING, weightKg = 80.0, reps = 5)), withTargets)
+        val firstTime = WidgetSnapshotBuilder.plannedSets(emptyList(), listOf(target), ExerciseInputType.WEIGHT_REPS)
+        assertEquals(listOf(SetValues(SetKind.WORKING, weightKg = 90.0, reps = 5)), firstTime)
     }
 }

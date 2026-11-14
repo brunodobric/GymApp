@@ -55,11 +55,32 @@ struct SetPlannerTests {
         #expect(!SetPlanner.shouldIncreaseLoad(targets: range(3, 8, 12), previous: Array(previous.prefix(2)), inputType: .weightReps))
     }
 
-    @Test("Propisana težina u predlošku isključuje prijedlog")
-    func fixedWeightWins() {
+    @Test("Težina iz predloška ne nadjačava prošli put i ne isključuje prijedlog")
+    func templateWeightDoesNotOverrideHistory() {
         let targets = [SetTarget(kind: .working, weightKg: 80, reps: 8, repsMax: 12)]
         let plan = SetPlanner.plan(previous: [working(80, 12)], targets: targets, inputType: .weightReps, weightStep: 2.5)
-        #expect(plan.sets[0].weightKg == 80)
+        #expect(plan.sets[0].weightKg == 82.5)
+        #expect(plan.loadChangeKg == 2.5)
+    }
+
+    @Test("Svaka serija dobiva težinu prošlog puta, a ne staru težinu iz predloška")
+    func previousWeightPerSet() {
+        let previous = [working(60, 12), working(70, 10), working(70, 10)]
+        let targets = [
+            SetTarget(kind: .working, weightKg: 60, reps: 10),
+            SetTarget(kind: .working, weightKg: 60, reps: 10),
+            SetTarget(kind: .working, weightKg: 70, reps: 10)
+        ]
+        let plan = SetPlanner.plan(previous: previous, targets: targets, inputType: .weightReps)
+        #expect(plan.sets.map(\.weightKg) == [60, 70, 70])
+        #expect(plan.sets.map(\.reps) == [10, 10, 10])
+    }
+
+    @Test("Bez povijesti vrijedi težina iz predloška")
+    func templateWeightWithoutHistory() {
+        let targets = [SetTarget(kind: .working, weightKg: 60, reps: 10), SetTarget(kind: .working, weightKg: 70, reps: 10)]
+        let plan = SetPlanner.plan(previous: [], targets: targets, inputType: .weightReps, weightStep: 2.5)
+        #expect(plan.sets.map(\.weightKg) == [60, 70])
         #expect(plan.loadChangeKg == nil)
     }
 

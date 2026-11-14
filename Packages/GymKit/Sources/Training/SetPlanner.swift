@@ -65,11 +65,11 @@ public struct SetPlan: Equatable, Sendable {
 /// * Bez ciljeva: onoliko zagrijavanja koliko je bilo prošli put, a radnih serija koliko ih je bilo
 ///   najčešće u zadnja tri izvođenja (jedan prekinut trening ne smanjuje plan), inače tri.
 /// * Vrijednosti dolaze iz zadnjeg izvođenja po poziciji serije (`SmartDefaults`).
-/// * Cilj težine iz predloška nadjačava prošli put. Raspon ponavljanja (8–12) zadržava prošla ponavljanja
-///   unutar raspona, a fiksni cilj ih upisuje.
+/// * Težina uvijek dolazi iz prošlog puta. Cilj težine iz predloška je samo početna vrijednost dok vježba
+///   nema prošlih serija te vrste, inače bi zastarjela težina iz predloška zauvijek nadjačala napredak.
+/// * Raspon ponavljanja (8–12) zadržava prošla ponavljanja unutar raspona, a fiksni cilj ih upisuje.
 /// * Dvostruka progresija: kad su prošli put sve radne serije dosegle gornju granicu raspona, teret ide
 ///   jedan korak gore (potpomognuta vježba: pomoć jedan korak dolje), a ponavljanja na donju granicu.
-///   Vrijedi samo kad predložak ne propisuje težinu, jer tada težinu bira korisnik.
 public enum SetPlanner {
 
     public static func plan(
@@ -100,7 +100,8 @@ public enum SetPlanner {
                 }
                 ?? SetValues(kind: kind)
             if index < targets.count {
-                apply(targets[index], to: &values, inputType: inputType)
+                let hasHistory = previous.contains { $0.kind == kind }
+                apply(targets[index], to: &values, inputType: inputType, weight: !hasHistory)
             }
             sets.append(values)
         }
@@ -125,7 +126,7 @@ public enum SetPlanner {
     public static func shouldIncreaseLoad(targets: [SetTarget], previous: [SetValues], inputType: ExerciseInputType) -> Bool {
         guard inputType.progressesByLoad else { return false }
         let working = targets.filter { $0.kind == .working }
-        guard !working.isEmpty, working.allSatisfy({ $0.reps != nil && $0.weightKg == nil }) else { return false }
+        guard !working.isEmpty, working.allSatisfy({ $0.reps != nil }) else { return false }
         let done = previous.filter { $0.kind == .working }
         guard done.count >= working.count else { return false }
         return zip(working, done).allSatisfy { target, set in
@@ -180,8 +181,9 @@ public enum SetPlanner {
         return WeightConversion.kilograms(from: moved, in: unit)
     }
 
-    private static func apply(_ target: SetTarget, to values: inout SetValues, inputType: ExerciseInputType) {
-        if let weight = target.weightKg {
+    /// Upisuje ciljeve serije. Cilj težine samo kad je `weight` (vježba bez povijesti).
+    private static func apply(_ target: SetTarget, to values: inout SetValues, inputType: ExerciseInputType, weight useWeight: Bool) {
+        if useWeight, let weight = target.weightKg {
             switch inputType {
             case .weightReps: values.weightKg = weight
             case .weightedBodyweight, .assisted: values.extraWeightKg = weight
