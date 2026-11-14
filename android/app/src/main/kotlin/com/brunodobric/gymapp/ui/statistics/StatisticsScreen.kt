@@ -24,9 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.ui.TabScaffold
 import com.brunodobric.gymapp.ui.OpenRequest
 import com.brunodobric.gymapp.model.BodyMeasurementKind
 import com.brunodobric.gymapp.model.ExerciseRef
@@ -163,7 +162,7 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
         StatisticsEngine(store).periodSummary(period, date, goal = goal, calendar = calendar, isCardio = isCardio)
     }
 
-    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.tab_statistics)) }) }) { padding ->
+    TabScaffold(stringResource(R.string.tab_statistics)) { padding ->
         Column(
             Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),

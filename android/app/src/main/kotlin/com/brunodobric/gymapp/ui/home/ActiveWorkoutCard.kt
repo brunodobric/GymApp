@@ -1,7 +1,6 @@
 package com.brunodobric.gymapp.ui.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -82,13 +81,9 @@ internal fun ActiveWorkoutCard(services: AppServices, revision: Long, onOpen: ()
     val rest = status.rest?.takeIf { it.remaining(now) > 0 }
 
     val accent = MaterialTheme.colorScheme.primary
-    val shape = RoundedCornerShape(24.dp)
     Box(
         Modifier.fillMaxWidth()
-            .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-            .background(accent.copy(alpha = 0.12f))
-            .border(1.dp, accent.copy(alpha = 0.3f), shape)
+            .workoutCardBackground()
             .clickable(onClick = onOpen),
     ) {
         // Traka odmora: obojeni dio se s desna na lijevo smanjuje kako odmor teče.
