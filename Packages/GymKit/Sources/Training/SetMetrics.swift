@@ -142,12 +142,27 @@ public enum SmartDefaults {
             durationSeconds: base.durationSeconds, distanceMeters: base.distanceMeters, rpe: nil
         )
     }
+
+    /// Koliko radnih serija planirati: najčešći broj u zadnjim izvođenjima (od najnovijeg), a kod
+    /// izjednačenja noviji. Tako jedan prekinut trening s dvije serije ne smanji sljedeći plan.
+    /// Nil bez povijesti.
+    public static func workingSetCount(recent: [Int]) -> Int? {
+        let counts = recent.filter { $0 > 0 }
+        guard !counts.isEmpty else { return nil }
+        var tally: [Int: Int] = [:]
+        for count in counts { tally[count, default: 0] += 1 }
+        let best = tally.values.max() ?? 0
+        return counts.first { tally[$0] == best }
+    }
+
+    /// Broj zadnjih izvođenja koja odlučuju o broju radnih serija.
+    public static let recentPerformanceCount = 3
 }
 
 extension GymQueries {
     /// Završene serije zadnjeg izvođenja vježbe: prethodne vrijednosti u retku serije, u kartici treninga
     /// i u Live Activityju te izvor smart defaultsa. Prazno kad vježba još nije rađena.
-    public func previousSetValues(of exercise: ExerciseRef) throws -> [SetValues] {
-        try lastPerformance(of: exercise)?.orderedSets.filter(\.isCompleted).map(\.values) ?? []
+    public func previousSetValues(of exercise: ExerciseRef, preferringTemplate templateId: UUID? = nil) throws -> [SetValues] {
+        try lastPerformance(of: exercise, preferringTemplate: templateId)?.orderedSets.filter(\.isCompleted).map(\.values) ?? []
     }
 }

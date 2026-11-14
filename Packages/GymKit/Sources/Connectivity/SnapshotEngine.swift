@@ -35,10 +35,15 @@ public struct SnapshotEngine: Sendable {
                     distanceMeters: values.distanceMeters
                 )
             }
-            return ExerciseSnapshot(
+            var snapshot = ExerciseSnapshot(
                 orderIndex: index, exercise: planned.exercise, inputType: planned.inputType,
                 supersetGroupId: group, restSeconds: planned.restSeconds, sets: sets, weightStep: planned.weightStep
             )
+            snapshot.targetRepsMin = planned.targetRepsMin
+            snapshot.targetRepsMax = planned.targetRepsMax
+            snapshot.loadChangeKg = planned.loadChangeKg
+            snapshot.notes = planned.notes
+            return snapshot
         }
         return SessionSnapshot(
             id: id, name: plan.name, kind: plan.kind, templateId: plan.templateId, scheduleId: plan.scheduleId,
@@ -70,9 +75,13 @@ public struct SnapshotEngine: Sendable {
         let position = members.firstIndex { $0.id == exercise.id } ?? 0
         let configured = exercise.restSeconds ?? members.last?.restSeconds
         let defaultSeconds = restDefaults.seconds(isCompound: members.map { isCompound($0.exercise) })
-        let seconds = RestPolicy.seconds(
+        var seconds = RestPolicy.seconds(
             positionInGroup: position, groupSize: members.count, configured: configured, defaultSeconds: defaultSeconds
         )
+        if set.kind == .warmUp {
+            let next = exercise.sets.firstIndex { $0.id == setID }.flatMap { $0 + 1 < exercise.sets.count ? exercise.sets[$0 + 1] : nil }
+            seconds = RestPolicy.afterWarmUp(fullSeconds: seconds, nextIsWarmUp: next?.kind == .warmUp)
+        }
         let timer = seconds > 0 ? RestTimer(startedAt: now, seconds: seconds) : nil
         snapshot.restTimerStartedAt = timer?.startedAt
         snapshot.restTimerEndsAt = timer?.endsAt

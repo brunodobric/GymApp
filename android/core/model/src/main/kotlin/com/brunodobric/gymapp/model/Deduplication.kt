@@ -41,6 +41,7 @@ fun UserSettings.changeCount(defaults: UserSettings): Int = listOf(
     barbellWeightKg to defaults.barbellWeightKg,
     equipmentWeightStepsRaw to defaults.equipmentWeightStepsRaw,
     exerciseWeightStepsRaw to defaults.exerciseWeightStepsRaw,
+    exerciseNotesRaw to defaults.exerciseNotesRaw,
     goalRaw to defaults.goalRaw,
     experienceRaw to defaults.experienceRaw,
     equipmentRaw to defaults.equipmentRaw,

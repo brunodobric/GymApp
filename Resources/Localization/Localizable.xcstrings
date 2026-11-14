@@ -252,6 +252,16 @@
         }
       }
     },
+    "%@: serije %lld → %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: sets %2$lld → %3$lld"
+          }
+        }
+      }
+    },
     "%lld" : {
       "shouldTranslate" : false
     },
@@ -1435,6 +1445,16 @@
         }
       }
     },
+    "Ažuriraj trening" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update workout"
+          }
+        }
+      }
+    },
     "Bez ciljeva" : {
       "localizations" : {
         "en" : {
@@ -1515,7 +1535,27 @@
         }
       }
     },
+    "Bilješka se prikazuje uz vježbu u svakom treningu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The note is shown with the exercise in every workout."
+          }
+        }
+      }
+    },
     "Bilješka uz vježbu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise note"
+          }
+        }
+      }
+    },
+    "Bilješka vježbe" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1641,6 +1681,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dumbbells, bands and bodyweight"
+          }
+        }
+      }
+    },
+    "cilj %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "target %lld"
+          }
+        }
+      }
+    },
+    "cilj %lld–%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "target %1$lld–%2$lld"
           }
         }
       }
@@ -1985,6 +2045,16 @@
         }
       }
     },
+    "Dodaj bilješku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add note"
+          }
+        }
+      }
+    },
     "Dodaj dan odmora" : {
       "localizations" : {
         "en" : {
@@ -2081,6 +2151,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add warm-up"
+          }
+        }
+      }
+    },
+    "Dodano: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added: %@"
           }
         }
       }
@@ -2191,6 +2271,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Another option"
+          }
+        }
+      }
+    },
+    "Drugačiji redoslijed vježbi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Different exercise order"
           }
         }
       }
@@ -3385,6 +3475,16 @@
         }
       }
     },
+    "Manje pomoći: −%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less assistance: −%@"
+          }
+        }
+      }
+    },
     "Mjesec" : {
       "localizations" : {
         "en" : {
@@ -3425,6 +3525,16 @@
         }
       }
     },
+    "Nedavno" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recent"
+          }
+        }
+      }
+    },
     "Neobavezno, za prijedlog i statistiku." : {
       "localizations" : {
         "en" : {
@@ -3445,6 +3555,26 @@
         }
       }
     },
+    "Nije rađeno: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skipped: %@"
+          }
+        }
+      }
+    },
+    "Npr. sjedalo na 4, hvat malo širi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E.g. seat at 4, slightly wider grip"
+          }
+        }
+      }
+    },
     "Odgovori na nekoliko pitanja i dobij gotov raspored treninga." : {
       "localizations" : {
         "en" : {
@@ -3461,6 +3591,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Other exercises"
+          }
+        }
+      }
+    },
+    "Plan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan"
           }
         }
       }
@@ -3545,6 +3685,36 @@
         }
       }
     },
+    "Prijedlozi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions"
+          }
+        }
+      }
+    },
+    "Promjene u treningu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changes to the workout"
+          }
+        }
+      }
+    },
+    "Raspored %@ nalazi se u kartici Plan, a ciljeve u treningu možeš prilagoditi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The %@ schedule is in the Plan tab, and you can adjust the targets in each workout."
+          }
+        }
+      }
+    },
     "Razmak između dviju težina na kotačiću, na gumbima + i − u Live Activityju i za jedan klik Digital Crowna na satu. Koraci vrijede za jedinicu koja je sada odabrana (%@)." : {
       "localizations" : {
         "en" : {
@@ -3605,12 +3775,22 @@
         }
       }
     },
-    "Svi programi su i u kartici Rasporedi." : {
+    "Sprema se samo raspored vježbi i serija. Težine aplikacija predlaže sama." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All programs are also in the Schedules tab."
+            "value" : "Only the exercises and sets are saved. The app suggests weights on its own."
+          }
+        }
+      }
+    },
+    "Svi programi su i u kartici Plan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All programs are also in the Plan tab."
           }
         }
       }
@@ -3621,6 +3801,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gym"
+          }
+        }
+      }
+    },
+    "Trening ili vježba" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout or exercise"
+          }
+        }
+      }
+    },
+    "Trening je ažuriran." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workout was updated."
+          }
+        }
+      }
+    },
+    "Treninzi se slažu u kartici Plan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workouts are built in the Plan tab."
           }
         }
       }
@@ -3641,6 +3851,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your suggestion"
+          }
+        }
+      }
+    },
+    "Uredi bilješku" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit note"
+          }
+        }
+      }
+    },
+    "Veća težina: +%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heavier: +%@"
+          }
+        }
+      }
+    },
+    "Vježba se nije mogla zamijeniti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The exercise couldn't be replaced."
           }
         }
       }
@@ -7117,16 +7357,6 @@
         }
       }
     },
-    "Raspored %@ nalazi se u kartici Rasporedi, a ciljeve u treningu možeš prilagoditi." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The %@ schedule is in the Schedules tab, and you can adjust the targets in each workout."
-          }
-        }
-      }
-    },
     "Raspored i trening ostaju nepromijenjeni za sljedeće cikluse." : {
       "localizations" : {
         "en" : {
@@ -8503,16 +8733,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The workouts couldn't be saved. Nothing was imported."
-          }
-        }
-      }
-    },
-    "Treninzi se slažu u kartici Rasporedi." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Workouts are built in the Schedules tab."
           }
         }
       }

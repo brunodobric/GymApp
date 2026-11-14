@@ -32,6 +32,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
+import com.brunodobric.gymapp.model.Session
+import com.brunodobric.gymapp.planning.TemplateUpdater
 import com.brunodobric.gymapp.units.NumberInput
 import com.brunodobric.gymapp.ui.statistics.SessionMusclesCard
 import com.brunodobric.gymapp.ui.settings.ChoiceRow
@@ -193,6 +195,8 @@ fun WorkoutSummaryScreen(services: AppServices, sessionId: UUID, onClose: () -> 
                 }
             }
 
+            TemplateUpdateCard(services, session)
+
             if (results.isNotEmpty()) {
                 Text(stringResource(R.string.exercises_section), style = MaterialTheme.typography.titleMedium)
                 Card(Modifier.fillMaxWidth()) {
@@ -304,4 +308,43 @@ internal fun ExerciseResultRow(result: ExerciseResult, weight: WeightFormatter, 
             }
         },
     )
+}
+
+/**
+ * Na kraju treninga pokrenutog iz predloška: što je drugačije od predloška i gumb koji to sprema u predložak
+ * ([TemplateUpdater]), kao `TemplateUpdateSection` na iOS-u. Ne prikazuje se kad je trening odrađen po predlošku.
+ */
+@Composable
+private fun TemplateUpdateCard(services: AppServices, session: Session) {
+    val store = services.store
+    val template = remember(session.id) { session.templateId?.let(store::template) } ?: return
+    val changes = remember(session.id) { TemplateUpdater(store).changes(session, template) }
+    var updated by rememberSaveable(session.id) { mutableStateOf(false) }
+    if (changes.isEmpty && !updated) return
+    val locale = LocalConfiguration.current.locales[0]
+    fun list(names: List<String>): String = android.icu.text.ListFormatter.getInstance(locale).format(names)
+    Text(stringResource(R.string.template_changes), style = MaterialTheme.typography.titleMedium)
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (updated) {
+                Text(stringResource(R.string.template_updated), color = MaterialTheme.colorScheme.primary)
+            } else {
+                if (changes.added.isNotEmpty()) Text(stringResource(R.string.template_added, list(changes.added)))
+                if (changes.removed.isNotEmpty()) Text(stringResource(R.string.template_removed, list(changes.removed)))
+                changes.setCounts.forEach { Text(stringResource(R.string.template_set_count, it.name, it.from, it.to)) }
+                if (changes.reordered) Text(stringResource(R.string.template_reordered))
+                TextButton(onClick = {
+                    TemplateUpdater(store).updateTemplate(template, session)
+                    updated = true
+                }) { Text(stringResource(R.string.update_template)) }
+            }
+        }
+    }
+    if (!updated) {
+        Text(
+            stringResource(R.string.template_update_footer),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
 }

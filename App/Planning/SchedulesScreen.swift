@@ -224,53 +224,67 @@ struct SchedulesScreen: View {
         }
     }
 
-    private var planningList: some View {
-        List(selection: Binding(get: { selection }, set: { select($0) })) {
-            Section("Rasporedi") {
-                if schedules.isEmpty {
-                    Text("Još nema rasporeda. Dodaj gotov program ili složi vlastiti.")
-                        .foregroundStyle(.secondary)
-                }
-                ForEach(schedules) { schedule in
-                    NavigationLink(value: PlanningSelection.schedule(schedule.id)) { ScheduleRow(schedule: schedule) }
-                }
-                .onDelete { offsets in
-                    let engine = ScheduleEngine(context: context)
-                    for index in offsets { try? engine.delete(schedules[index]) }
-                    ReminderScheduler.refresh(context: context)
-                }
+    private var schedulesSection: some View {
+        Section("Rasporedi") {
+            if schedules.isEmpty {
+                Text("Još nema rasporeda. Dodaj gotov program ili složi vlastiti.")
+                    .foregroundStyle(.secondary)
             }
-            Section("Treninzi") {
-                if templates.isEmpty {
-                    Text("Još nema treninga.")
-                        .foregroundStyle(.secondary)
-                }
-                let isCardio = catalogStore.isCardio(custom: customExercises)
-                ForEach(templates) { template in
-                    NavigationLink(value: PlanningSelection.template(template.id)) {
-                        Label {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(template.name)
-                                    .font(.itemTitle)
-                                Text(subtitle(of: template))
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                        } icon: {
-                            WorkoutKindIcon(
-                                mix: SessionCardio.mix(of: template, isCardio: isCardio)
-                            )
-                        }
-                    }
-                }
-                .onDelete { offsets in
-                    let engine = TemplateEngine(context: context)
-                    for index in offsets { try? engine.delete(templates[index]) }
-                    ReminderScheduler.refresh(context: context)
-                }
+            ForEach(schedules) { schedule in
+                NavigationLink(value: PlanningSelection.schedule(schedule.id)) { ScheduleRow(schedule: schedule) }
+            }
+            .onDelete { offsets in
+                let engine = ScheduleEngine(context: context)
+                for index in offsets { try? engine.delete(schedules[index]) }
+                ReminderScheduler.refresh(context: context)
             }
         }
-        .navigationTitle("Rasporedi")
+    }
+
+    private var templatesSection: some View {
+        Section("Treninzi") {
+            if templates.isEmpty {
+                Text("Još nema treninga.")
+                    .foregroundStyle(.secondary)
+            }
+            let isCardio = catalogStore.isCardio(custom: customExercises)
+            ForEach(templates) { template in
+                NavigationLink(value: PlanningSelection.template(template.id)) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(template.name)
+                                .font(.itemTitle)
+                            Text(subtitle(of: template))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        WorkoutKindIcon(
+                            mix: SessionCardio.mix(of: template, isCardio: isCardio)
+                        )
+                    }
+                }
+            }
+            .onDelete { offsets in
+                let engine = TemplateEngine(context: context)
+                for index in offsets { try? engine.delete(templates[index]) }
+                ReminderScheduler.refresh(context: context)
+            }
+        }
+    }
+
+    private var planningList: some View {
+        List(selection: Binding(get: { selection }, set: { select($0) })) {
+            // Bez rasporeda je glavno ono što korisnik ima: treninzi idu prvi.
+            if schedules.isEmpty {
+                templatesSection
+                schedulesSection
+            } else {
+                schedulesSection
+                templatesSection
+            }
+        }
+        .navigationTitle("Plan")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu("Dodaj", systemImage: "plus") {

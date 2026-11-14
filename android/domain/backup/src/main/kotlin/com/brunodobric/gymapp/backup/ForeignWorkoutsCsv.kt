@@ -2,6 +2,7 @@ package com.brunodobric.gymapp.backup
 
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.NumberInput
+import com.brunodobric.gymapp.units.WeightUnit
 import java.time.DateTimeException
 import java.time.Instant
 import java.time.LocalDateTime
@@ -43,6 +44,8 @@ object ForeignWorkoutsCsv {
         val exercises: MutableList<Exercise>,
         /** Redak zaglavlja u datoteci (od 1). */
         val line: Int,
+        /** Bilješka treninga iz datoteke (Strong "Workout Notes", Hevy "description"). Prazno ako je nema. */
+        val notes: String = "",
     ) {
         /** Naziv treninga: prvi dio zaglavlja ("Push"). */
         val name: String get() = title.split(" · ").first().trimSwift()
@@ -93,6 +96,8 @@ object ForeignWorkoutsCsv {
         var reps: Int? = null,
         var durationSeconds: Int? = null,
         var distanceMeters: Double? = null,
+        /** Serija zagrijavanja (Strong i Hevy je označavaju, ovaj format ne). */
+        var isWarmUp: Boolean = false,
     ) {
         /** Je li serija odrađena. Serija s "-" ili samo s težinom bez ponavljanja se ne uvozi. */
         val isDone: Boolean get() = (reps ?: 0) > 0 || (durationSeconds ?: 0) > 0 || (distanceMeters ?: 0.0) > 0
@@ -102,7 +107,7 @@ object ForeignWorkoutsCsv {
 
     /** Je li tekst u ovom formatu: prvi neprazni redak je zaglavlje treninga s datumom. */
     fun matches(text: String): Boolean {
-        return separator(text) != null
+        return StrongHevyCsv.matches(text) || separator(text) != null
     }
 
     /** Razdjelnik datoteke: onaj uz koji je prvi neprazni redak zaglavlje treninga. Null kad nijedan ne odgovara. */
@@ -116,7 +121,9 @@ object ForeignWorkoutsCsv {
     // MARK: Čitanje
 
     /** Čita sve treninge. Neispravan redak baca [BackupException.InvalidCsv] s brojem retka, pa se ništa ne uvozi napola. */
-    fun parse(text: String, zone: ZoneId = ZoneId.systemDefault()): List<Workout> {
+    fun parse(text: String, zone: ZoneId = ZoneId.systemDefault(), weightUnit: WeightUnit = WeightUnit.KILOGRAMS): List<Workout> {
+        // Izvoz iz Stronga ili Hevyja; [weightUnit] je jedinica težine kad je datoteka ne navodi.
+        if (StrongHevyCsv.matches(text)) return StrongHevyCsv.parse(text, zone, weightUnit)
         val workouts = mutableListOf<Workout>()
         var columns: List<Column>? = null
         val separator = separator(text) ?: ';'

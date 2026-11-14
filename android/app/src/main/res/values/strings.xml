@@ -3,7 +3,7 @@
     <string name="app_name" translatable="false">Apolon</string>
     <string name="tab_home">Početna</string>
     <string name="tab_history">Povijest</string>
-    <string name="tab_plans">Rasporedi</string>
+    <string name="tab_plans">Plan</string>
     <string name="tab_exercises">Vježbe</string>
     <string name="tab_statistics">Statistika</string>
     <string name="search_exercises">Traži vježbe</string>
@@ -198,7 +198,7 @@
     <string name="ready_programs">Gotovi programi</string>
     <string name="add_program">Dodaj program</string>
     <string name="program_added">Program je dodan</string>
-    <string name="program_added_message">Raspored %1$s nalazi se u kartici Rasporedi, a ciljeve u treningu možeš prilagoditi.</string>
+    <string name="program_added_message">Raspored %1$s nalazi se u kartici Plan, a ciljeve u treningu možeš prilagoditi.</string>
     <string name="program_failed">Program se nije mogao dodati.</string>
     <string name="program_basic_full_body_2">Osnovni full body (2 dana)</string>
     <string name="program_beginner_full_body_3">Početnički full body (3 dana)</string>
@@ -796,7 +796,7 @@
     <string name="step_of_two">Korak %1$d od 2</string>
     <string name="your_suggestion">Tvoj prijedlog</string>
     <string name="based_on_your_answers">Prema tvojim odgovorima.</string>
-    <string name="all_programs_in_schedules">Svi programi su i u kartici Rasporedi.</string>
+    <string name="all_programs_in_schedules">Svi programi su i u kartici Plan.</string>
     <string name="best_match">Najbolje odgovara</string>
     <string name="or">Ili</string>
     <string name="goal_short_hypertrophy">Mišići</string>
@@ -807,4 +807,26 @@
     <string name="experience_detail_advanced">Redovno treniram više od 2 godine</string>
     <string name="profile_setup">Postavi profil</string>
     <string name="profile_setup_message">Odgovori na nekoliko pitanja i dobij gotov raspored treninga.</string>
+    <string name="add_count">Dodaj (%1$d)</string>
+    <string name="suggestions">Prijedlozi</string>
+    <string name="recent">Nedavno</string>
+    <string name="exercise_note">Bilješka vježbe</string>
+    <string name="exercise_note_hint">Npr. sjedalo na 4, hvat malo širi</string>
+    <string name="exercise_note_footer">Bilješka se prikazuje uz vježbu u svakom treningu.</string>
+    <string name="target_range">cilj %1$d–%2$d</string>
+    <string name="target_reps">cilj %1$d</string>
+    <string name="less_assistance">Manje pomoći: −%1$s</string>
+    <string name="heavier_weight">Veća težina: +%1$s</string>
+    <string name="add_note">Dodaj bilješku</string>
+    <string name="edit_note">Uredi bilješku</string>
+    <string name="template_changes">Promjene u treningu</string>
+    <string name="template_updated">Trening je ažuriran.</string>
+    <string name="template_added">Dodano: %1$s</string>
+    <string name="template_removed">Nije rađeno: %1$s</string>
+    <string name="template_set_count">%1$s: serije %2$d → %3$d</string>
+    <string name="template_reordered">Drugačiji redoslijed vježbi</string>
+    <string name="update_template">Ažuriraj trening</string>
+    <string name="template_update_footer">Sprema se samo raspored vježbi i serija. Težine aplikacija predlaže sama.</string>
+    <string name="history_search">Trening ili vježba</string>
+    <string name="history_no_match">Nijedan trening ne odgovara pretrazi.</string>
 </resources>

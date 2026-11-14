@@ -39,7 +39,7 @@ struct RootView: View {
             Tab("Povijest", systemImage: "clock.fill", value: Section.history) {
                 HistoryScreen(rootReset: rootResets[.history, default: 0])
             }
-            Tab("Rasporedi", systemImage: "calendar", value: Section.schedules) {
+            Tab("Plan", systemImage: "calendar", value: Section.schedules) {
                 SchedulesScreen(rootReset: rootResets[.schedules, default: 0])
             }
             Tab("Vježbe", systemImage: "dumbbell.fill", value: Section.exercises) {

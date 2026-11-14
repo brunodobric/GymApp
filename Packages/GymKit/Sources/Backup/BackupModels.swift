@@ -72,6 +72,7 @@ struct SettingsDTO: Codable {
     var compoundRestSeconds: Int?
     var equipmentWeightStepsRaw: String?
     var exerciseWeightStepsRaw: String?
+    var exerciseNotesRaw: String?
 
     init(_ model: UserSettings) {
         id = model.id
@@ -104,6 +105,7 @@ struct SettingsDTO: Codable {
         compoundRestSeconds = model.compoundRestSeconds
         equipmentWeightStepsRaw = model.equipmentWeightStepsRaw
         exerciseWeightStepsRaw = model.exerciseWeightStepsRaw
+        exerciseNotesRaw = model.exerciseNotesRaw
     }
 
     func apply(to model: UserSettings) {
@@ -132,11 +134,12 @@ struct SettingsDTO: Codable {
         model.liveActivityThemeRaw = liveActivityThemeRaw ?? "system"
         model.liveActivityAccentRaw = liveActivityAccentRaw ?? "blue"
         model.prExcludedExercisesRaw = prExcludedExercisesRaw ?? ""
-        model.statsDetailRaw = statsDetailRaw ?? StatsDetail.basic.rawValue
+        model.statsDetailRaw = statsDetailRaw ?? StatsDetail.pro.rawValue
         model.sexRaw = sexRaw ?? ""
         model.compoundRestSeconds = compoundRestSeconds ?? 150
         model.equipmentWeightStepsRaw = equipmentWeightStepsRaw ?? ""
         model.exerciseWeightStepsRaw = exerciseWeightStepsRaw ?? ""
+        model.exerciseNotesRaw = exerciseNotesRaw ?? ""
     }
 }
 

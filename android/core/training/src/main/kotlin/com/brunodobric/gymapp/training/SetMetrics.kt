@@ -112,8 +112,26 @@ object SmartDefaults {
         if (sameKind.isEmpty()) return null
         return sameKind[position.coerceIn(0, sameKind.size - 1)].copy(kind = kind, rpe = null)
     }
+
+    /**
+     * Koliko radnih serija planirati: najčešći broj u zadnjim izvođenjima (od najnovijeg), a kod izjednačenja
+     * noviji. Tako jedan prekinut trening s dvije serije ne smanji sljedeći plan. null bez povijesti.
+     */
+    fun workingSetCount(recent: List<Int>): Int? {
+        val counts = recent.filter { it > 0 }
+        if (counts.isEmpty()) return null
+        val tally = counts.groupingBy { it }.eachCount()
+        val best = tally.values.max()
+        return counts.first { tally[it] == best }
+    }
+
+    /** Broj zadnjih izvođenja koja odlučuju o broju radnih serija. */
+    const val RECENT_PERFORMANCE_COUNT = 3
 }
 
-/** Završene serije zadnjeg izvođenja vježbe: prethodne vrijednosti i izvor smart defaultsa. */
-fun GymStore.previousSetValues(exercise: ExerciseRef): List<SetValues> =
-    lastPerformance(exercise)?.orderedSets?.filter { it.isCompleted }?.map { it.values }.orEmpty()
+/**
+ * Završene serije zadnjeg izvođenja vježbe: prethodne vrijednosti i izvor smart defaultsa. S [templateId]
+ * prvo zadnje izvođenje u treningu iz istog predloška (teški i lagani dan s istom vježbom se ne miješaju).
+ */
+fun GymStore.previousSetValues(exercise: ExerciseRef, templateId: java.util.UUID? = null): List<SetValues> =
+    lastPerformance(exercise, templateId)?.orderedSets?.filter { it.isCompleted }?.map { it.values }.orEmpty()

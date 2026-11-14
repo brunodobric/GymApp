@@ -68,10 +68,12 @@ Aplikacija podržava 3 glavna modula:
   Vrsta se za službene vježbe određuje kroz mapiranje kataloga, a za custom vježbe bira je korisnik.
 * **Smart Defaults + Inline povijest:** Pamti se zadnji put odrađena težina i broj ponavljanja **po seriji** za svaku vježbu.  
   Primjer: ako je korisnik zadnji put na bench pressu radio 80 kg × 8, zatim 85 kg × 8, zatim 90 kg × 8 — sljedeći put će mu prva serija biti pretpopunjena s 80 kg, druga s 85 kg, itd.  
-  Nema automatskog progresivnog prijedloga (zasad).  
+  **Dvostruka progresija:** kad predložak ima raspon ponavljanja (npr. 8–12) i ne propisuje težinu, a prošli put su sve radne serije dosegle gornju granicu, teret ide jedan korak gore (potpomognuta vježba: pomoć jedan korak dolje), a ponavljanja se vraćaju na donju granicu. Kartica vježbe tada piše "Veća težina: +2,5 kg" (ili "Manje pomoći"). Uz naziv vježbe stoji cilj iz predloška ("cilj 8–12").  
   Prethodna serija je uvijek vidljiva u retku unosa.
 * **Statusi serija:** Radne serije, Warm-up.  
-  **Warm-up serije ne ulaze u PR-ove, volumen ni 1RM estimaciju.** Prikazuju se u povijesti, ali su vizualno odvojene. Smart defaults pamte ih zasebno od radnih serija.
+  **Warm-up serije ne ulaze u PR-ove, volumen ni 1RM estimaciju.** Prikazuju se u povijesti, ali su vizualno odvojene. Smart defaults pamte ih zasebno od radnih serija.  
+  Odmor nakon zagrijavanja je kraći: 60 s prije sljedećeg zagrijavanja, a prije prve radne serije pola pune pauze, najmanje 60 s (nikad dulje od pune pauze).  
+  **Dodaj zagrijavanje** (izbornik vježbe, samo težina × ponavljanja bez zagrijavanja i s težinom na radnoj seriji): prazna šipka × 10, zatim 40 % × 5, 60 % × 3 i 80 % × 1 radne težine, zaokruženo na korak opreme, bez ponavljanja iste težine i bez težina jednakih ili većih od radne. Serije se umeću ispred prve nezavršene serije.
 * **RPE (Rate of Perceived Exertion):** Opcionalni unos po seriji, na ljestvici **od 1 do 10 u koracima od 0,5** (odabir kotačićem ili brzim gumbima, ne slobodnim unosom). Vrijednosti izvan ljestvice nisu moguće, kako statistika ne bi bila pokvarena.  
   U Postavkama korisnik može umjesto RPE odabrati **RIR** (ponavljanja u rezervi, 0–5+). Interno se sprema jedna vrijednost i preračunava za prikaz (RIR = 10 − RPE).  
   Vidljiv je odmah u retku unosa. Prikazuje se u povijesti i statistici.
@@ -116,6 +118,11 @@ Aplikacija podržava 3 glavna modula:
 * **Plate Calculator je dostupan i ovdje:** dugi pritisak na polje težine (ili stavka u izborniku vježbe) otvara kalkulator s već upisanom težinom te serije.
 * **Izbacivanje vježbe iz treninga može se poništiti:** nakon izbacivanja pojavljuje se traka "Vježba uklonjena · Poništi", a do kraja treninga vježbu je moguće vratiti i iz izbornika "Uklonjene vježbe" s već upisanim serijama.
 * **Serija se briše povlačenjem retka ulijevo** (ili iz izbornika na oznaci serije). Nakon brisanja pojavljuje se traka "Serija obrisana · Poništi" koja vraća seriju na isto mjesto s upisanim vrijednostima.
+* **Kartica vježbe** ispod naziva pokazuje broj završenih serija, cilj ponavljanja, prijedlog veće težine i bilješke (bilješka iz predloška i trajna bilješka vježbe). Izbornik s tri točkice ima: Prikaži vježbu, **Zamijeni vježbu**, **Bilješka vježbe**, Dodaj zagrijavanje, Superset i Izbaci vježbu.
+* **Zamijeni vježbu** otvara odabir s prijedlozima na vrhu: vježbe iste vrste s istim glavnim mišićem ili iz istog dijela tijela sa zajedničkim mišićem, poredane po istom glavnom mišiću, istoj opremi i istom dijelu tijela (najviše 8). Upisane serije prelaze na novu vježbu.
+* **Trajna bilješka vježbe** (postavka sprave, hvat, širina stava) vrijedi za vježbu, ne za trening: vidi se u kartici u svakom treningu i uređuje na stranici vježbe ili iz izbornika. Prazan tekst je briše.
+* **Odabir vježbi:** pretraga, filter po dijelu tijela, odjeljak "Nedavno" (vježbe iz zadnjih 10 treninga koje već nisu u treningu) i odabir više vježbi odjednom ("Dodaj (3)"), redom odabira. Redak pokazuje dio tijela i opremu.
+* **Rekord dok trening traje:** završena serija koja obara rekord (osim volumena vježbe, uz ista pravila kao sažetak) dobiva malu oznaku pehara u retku.
 * Kad se kompletira zadnja serija zadnje nekompletirane vježbe, pojavljuje se prozor: **Završi trening** ili **Dodaj vježbu**.
 * Ako korisnik odabere Završi trening → prikazuje se sažetak treninga koji uključuje:
   * Trajanje
@@ -123,6 +130,7 @@ Aplikacija podržava 3 glavna modula:
   * PR-ove (ako postoje)
   * Kalorije (samo ako ih HealthKit ima za taj trening, inače se polje ne prikazuje)
   * Notes
+  * **Promjene u treningu:** kad je trening pokrenut iz predloška i struktura se razlikuje (dodane vježbe, vježbe koje nisu rađene, drugi broj serija, drugi redoslijed), sažetak ih nabraja s gumbom **Ažuriraj trening**. Predložak tada dobiva redoslijed i skup vježbi iz treninga i broj i vrstu završenih serija. Postojeće vježbe zadržavaju ciljeve, bilješke i pauze, nova serija preuzima cilj zadnje serije iste vrste, a nova vježba dobiva ciljeve ponavljanja bez težine. Težine se ne spremaju, jer ih predlaže dvostruka progresija. Superset s jednom preostalom vježbom se raspušta.
   * Gumb **Zatvori** na dnu.
 
 ### Oporavak prekinutog treninga
@@ -149,14 +157,14 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
    * Kad nema aktivnog rasporeda, a postoje spremljeni treninzi, prvi red kartice je **Odaberi trening**: otvara popis spremljenih treninga snage (s vježbama) i dodir pokreće odabrani. Prazan trening ostaje ispod. Isto radi ⌘N (i kad raspored nudi samo kardio).
    * Dok trening traje, ekran treninga se povlačenjem prema dolje (ili gumbom Smanji) sažima u tu karticu. Kartica prikazuje isto što i Live Activity: vježbu i seriju, odbrojavanje odmora, težinu i ponavljanja s gumbima − i + te kvačicu za potvrdu serije. Dodir na karticu ponovno otvara cijeli ekran treninga.
    * Ispod nje kartice koje korisnik dodaje, uklanja i premješta (Uredi kartice na dnu). Zadano su prikazane **Ovaj tjedan** i **Zadnji trening**:
-     * **Ovaj tjedan:** odrađeni treninzi prema cilju iz onboardinga ("2 od 3 treninga" s trakom; bez cilja samo broj), sedam dana tjedna s ikonom vrste treninga (snaga, kardio ili oboje) i obrubljenim današnjim danom, niz tjedana s ispunjenim ciljem (bez cilja: s barem jednim treningom) od dva tjedna naviše te tvrde serije, vrijeme kardija i ukupno vrijeme. Broje se i kardio treninzi iz Zdravlja. Dodir otvara Pregled na tekućem tjednu (Statistika).
+     * **Ovaj tjedan:** odrađeni treninzi prema cilju iz onboardinga ("2 od 3 treninga" s trakom; bez cilja samo broj), sedam dana tjedna s ikonom vrste treninga (snaga, kardio ili oboje) i obrubljenim današnjim danom, niz tjedana s ispunjenim ciljem (bez cilja: s barem jednim treningom) od dva tjedna naviše (jedan tjedan bez ijednog treninga između dva ispunjena, npr. bolest ili put, ne prekida niz i ne broji se u njega, najviše jedan u četiri tjedna) te tvrde serije, vrijeme kardija i ukupno vrijeme. Broje se i kardio treninzi iz Zdravlja. Dodir otvara Pregled na tekućem tjednu (Statistika).
      * **Ovaj mjesec** i **Ova godina** (dodaju se u Uredi kartice): broj treninga i prosjek tjedno (s ciljem "2,8 od 4 tjedno"), za mjesec dani mjeseca u jednom redu (obojen je dan s treningom), za godinu stupci treninga po mjesecima, te tvrde serije, kardio i ukupno vrijeme. Dodir otvara Pregled na tom razdoblju.
      * **Zadnji trening:** naziv, koliko je prošlo (danas, jučer, prije 3 dana) i datum, vrsta, trajanje i tvrde serije te najviše dva istaknuta rekorda (isti izbor kao u sažetku nakon treninga). Dodir otvara detalje.
      * Male kartice, dvije u redu (uz veliki tekst jedna ispod druge): **Težina** (zadnja vrijednost i promjena u 30 dana, dodir otvara praćenje tijela) i **Ploče** (kalkulator ploča).
    * Ranije kartice Tjedni volumen i Sljedeći trening su ukinute: tonaža nije dobra mjera tjedna (statistika broji tvrde serije, a kardio tjedan bi pokazao 0 kg), a sljedeći trening već piše u kartici Započni. Kod postojećih korisnika tjedni volumen jednom postaje Ovaj tjedan na istom mjestu, a Početna bez njega dobiva Ovaj tjedan na vrhu.
    * Gore desno gumb **Postavke**.
 2. **Odrađeni treninzi**
-3. **Rasporedi**
+3. **Plan** (rasporedi i treninzi)
 4. **Katalog vježbi**
 5. **Statistika**
 
@@ -201,21 +209,22 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
    * Moguće je izbrisati trening.
    * U detaljima gore desno, uz brisanje, izbornik s dvije opcije:
      * **Uredi trening:** naknadno mijenjanje naziva, početka i kraja, vježbi, serija i bilješki. Izmjene se spremaju tek na "Spremi", a "Odustani" ih odbacuje. Kao kod završetka treninga, serije bez kvačice i vježbe bez završene serije se ne spremaju. Izmjene se ne prenose u Zdravlje.
-     * **Novi trening iz ovog:** stvara novi trening (predložak) s istim nazivom, istim vježbama redom, pauzama, supersetovima i serijama (završene serije postaju ciljevi). Otvara se u uređivaču treninga, gdje se može preimenovati i izbaciti što ne treba. "Odustani" ga briše, a "Spremi" ga ostavlja u Rasporedima pod Treninzima.
+     * **Novi trening iz ovog:** stvara novi trening (predložak) s istim nazivom, istim vježbama redom, pauzama, supersetovima i serijama (završene serije postaju ciljevi). Otvara se u uređivaču treninga, gdje se može preimenovati i izbaciti što ne treba. "Odustani" ga briše, a "Spremi" ga ostavlja u kartici Plan pod Treninzima.
    * Trening uvezen iz Zdravlja nema taj izbornik.
    * Gore desno gumb za **kalendar**:
      * Dani s odrađenim treningom imaju točkicu.
      * Klik na dan prikazuje ispod kalendara popis treninga odrađenih taj dan (isti prikaz kao u listi).
      * Klik na trening otvara detalje tog treninga.
+   * **Pretraga** po nazivu treninga i nazivima vježbi, bez obzira na velika slova i dijakritike ("cucanj" pronalazi "Čučanj"); svaka upisana riječ mora se naći. Izbačene vježbe se ne gledaju.
    * Gumb za **sortiranje / filter**:
      * Po tipu treninga (snaga, kardio, crossfit…)
      * Po datumu (uzlazno / silazno)
-3. **Rasporedi** — Lista svih rasporeda.
+3. **Plan** — Lista svih rasporeda i treninga (predložaka). Kad nema nijednog rasporeda, odjeljak Treninzi je prvi.
    * Ako postoji samo jedan raspored, prikazuje se s naslovom (npr. “Moj raspored”).
    * Klik na raspored otvara popis treninga unutar njega.
    * Gore desno gumb **+** za dodavanje novog rasporeda.
    * Otvoreni raspored ili trening se prikazuje, a trajanje, aktivnost, podsjetnici i serije vježbi mijenjaju se i tada. Gore desno gumb **Uredi** uključuje promjenu naziva, redoslijeda (crtice za povlačenje), brisanje (crveni znak) i dodavanje treninga ili vježbi, a kvačica ga završava. Izlazak iz uređivanja bez kvačice pita **Spremi** ili **Izađi bez spremanja** (novi raspored ili trening se tada briše, a postojeći se vraća kakav je bio). Novi raspored i novi trening otvaraju se odmah u uređivanju.
-   * Odlazak na drugi tab čuva stanje: povratak na Rasporede nastavlja gdje je korisnik stao, i usred uređivanja. Ponovni dodir na tab Rasporedi vraća popis (uređivanje u tijeku prvo pita Spremi ili Izađi bez spremanja).
+   * Odlazak na drugi tab čuva stanje: povratak na Plan nastavlja gdje je korisnik stao, i usred uređivanja. Ponovni dodir na tab Plan vraća popis (uređivanje u tijeku prvo pita Spremi ili Izađi bez spremanja).
    * Unutar otvorenog rasporeda:
      * Gore desno gumb **+** za dodavanje novog treninga ili rest dana.
      * Gore desno gumb **Postavke** rasporeda:
@@ -321,6 +330,7 @@ Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju strani
     * Vježbe se povezuju s katalogom prema nazivu i opremi (`ForeignExerciseMatcher` u GymKitu). Vježba bez pravog para u katalogu postaje vlastita vježba; ako vlastita vježba istog naziva već postoji, koristi se ona.
     * Vrijednost s `+` ("+12.5") je vlastita težina + teret, a `-` prazna serija koja se ne uvozi. Datum je lokalno vrijeme uređaja.
     * Svaki trening dobiva stabilan UUID iz zaglavlja i datuma, pa ponovni uvoz iste ili novije datoteke dodaje samo nove treninge.
+  * **Import iz Stronga i Hevyja:** CSV izvoz tih aplikacija (jedan redak po seriji) prepoznaje se po zaglavlju, s zarezom ili točkom-zarezom. Treninzi se slažu po nazivu i datumu, oprema se čita iz zagrade u nazivu vježbe ("Bench Press (Barbell)"), zagrijavanje (Strong "W", Hevy "warmup") uvozi se kao zagrijavanje, a bilješke treninga i vježbi idu u bilješku treninga. Strong ne piše jedinicu težine, pa vrijedi jedinica iz postavki, osim kad je u nazivu stupca; Hevy ima `weight_kg` ili `weight_lbs`. Trajanje je Strongov stupac ("1h 5m") ili razlika kraja i početka kod Hevyja. Pregled, povezivanje vježbi i preskakanje već uvezenih rade kao gore.
 * **Opcionalni CloudKit sync:**  
   Sinkronizira se sve korisničko (treninzi, rasporedi, custom vježbe, mjerenja, postavke). Službeni katalog vježbi **ne** sinkronizira se (vidi odjeljak 1).  
   Automatski ako je uključen, ili ručno.  

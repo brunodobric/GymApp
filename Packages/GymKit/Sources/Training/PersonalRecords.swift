@@ -170,6 +170,25 @@ public enum PersonalRecordDetector {
         return result.filter { kinds.contains($0.kind) }
     }
 
+    /// Serije ovog treninga koje već same obaraju rekord: oznaka u retku serije dok trening traje.
+    /// Tonaža vježbe se ne gleda (ovisi o cijelom treningu), a ni rekordi koji ne idu u sažetak.
+    public static func liveRecordSets(
+        _ sets: [(id: UUID, values: SetValues)],
+        history: RecordHistory,
+        inputType: ExerciseInputType,
+        kinds: Set<PRKind>,
+        date: Date? = nil
+    ) -> Set<UUID> {
+        let kinds = kinds.subtracting([.exerciseVolume])
+        guard !kinds.isEmpty, history.allowsRecords(at: date) else { return [] }
+        let hits = sets.filter { set in
+            set.values.kind == .working
+                && records(current: [set.values], history: history, inputType: inputType, kinds: kinds, date: date)
+                    .contains(where: \.showsInSummary)
+        }
+        return Set(hits.map(\.id))
+    }
+
     /// Je li `new` dovoljno bolji od `old`: barem `minimumRelativeGain` i barem `minimumAbsolute`.
     public static func isSignificant(_ new: Double, over old: Double, minimumAbsolute: Double) -> Bool {
         guard old > 0 else { return false }

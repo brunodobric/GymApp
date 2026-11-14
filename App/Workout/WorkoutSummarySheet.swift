@@ -1,5 +1,6 @@
 import Catalog
 import Models
+import Planning
 import Stats
 import SwiftData
 import SwiftUI
@@ -27,6 +28,8 @@ struct WorkoutSummarySheet: View {
     @State private var comparison: SessionComparison?
     @State private var results: [ExerciseResult] = []
     @State private var weekSets: [String: Double] = [:]
+    /// Predložak iz kojeg je trening pokrenut i što je u treningu drugačije ("Ažuriraj trening").
+    @State private var templateUpdate: (template: WorkoutTemplate, changes: TemplateChanges)?
 
     init(session: Session, summary: WorkoutSummary, unit: WeightUnit, onClose: @escaping () -> Void) {
         self.session = session
@@ -76,6 +79,9 @@ struct WorkoutSummarySheet: View {
                 if !summary.records.isEmpty || summary.hardSets > 0 {
                     recordsSection
                 }
+                if let templateUpdate {
+                    TemplateUpdateSection(session: session, template: templateUpdate.template, changes: templateUpdate.changes)
+                }
                 if !results.isEmpty {
                     Section("Vježbe") {
                         ForEach(results) { ExerciseResultRow(result: $0, unit: unit, showsRest: isPro) }
@@ -122,6 +128,7 @@ struct WorkoutSummarySheet: View {
                 let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
                 let week = try? engine.volumeBuckets(size: .week, count: 1, endingAt: session.startedAt, info: info)
                 weekSets = week?.last?.loads.mapValues(\.sets) ?? [:]
+                templateUpdate = TemplateUpdateSection.load(for: session, context: context).map { (template: $0.0, changes: $0.1) }
             }
         }
         .interactiveDismissDisabled()

@@ -136,6 +136,82 @@ struct TemplateStarterTests {
         #expect(session.orderedExercises.count == 3)
     }
 
+    @Test("Ažuriranje treninga preuzima strukturu odrađenog treninga, a ciljevi ostaju")
+    func updateFromSession() throws {
+        let context = try makeContext()
+        let engine = TemplateEngine(context: context)
+        let result = try template("Push", in: context, exercises: [bench, row, curl])
+        let first = try #require(result.orderedExercises.first)
+        try engine.setTargets(try #require(first.orderedSets.first), weightKg: 60, reps: 8)
+        first.notes = "Sjedalo 4"
+        let session = try TemplateStarter(context: context).start(result, now: base)
+        let workout = WorkoutEngine(context: context)
+        let done = session.orderedExercises
+        try #require(done.count == 3)
+        // Potisak: 4 serije umjesto 3, veslanje preskočeno, pregib 2 serije, dodan čučanj.
+        try workout.addSet(to: done[0])
+        for (exercise, count) in [(done[0], 4), (done[2], 2)] {
+            for set in exercise.orderedSets.prefix(count) {
+                set.weightKg = set.weightKg ?? 20
+                set.reps = set.reps ?? 10
+                try workout.completeSet(set, defaultRestSeconds: 90, now: base)
+            }
+        }
+        let added = try workout.addExercise(squat, inputType: .weightReps, to: session)
+        let squatSet = try #require(added.orderedSets.first)
+        squatSet.weightKg = 100
+        squatSet.reps = 5
+        try workout.completeSet(squatSet, defaultRestSeconds: 90, now: base)
+
+        let changes = engine.changes(from: session, to: result)
+        #expect(changes.added == ["Čučanj"])
+        #expect(changes.removed == ["Veslanje"])
+        #expect(changes.setCounts == [.init(name: "Potisak s klupe", from: 3, to: 4), .init(name: "Pregib", from: 3, to: 2)])
+        #expect(!changes.isEmpty)
+
+        try engine.updateTemplate(result, from: session)
+        let updated = result.orderedExercises
+        #expect(updated.map(\.exerciseName) == ["Potisak s klupe", "Pregib", "Čučanj"])
+        #expect(updated.map(\.orderedSets.count) == [4, 2, 1])
+        #expect(updated[0].orderedSets.first?.targetWeightKg == 60)
+        #expect(updated[0].notes == "Sjedalo 4")
+        #expect(updated[2].orderedSets.first?.targetReps == 5)
+        #expect(updated[2].orderedSets.first?.targetWeightKg == nil)
+        #expect(engine.changes(from: session, to: result).isEmpty)
+    }
+
+    @Test("Raspon iz predloška, prijedlog veće težine i bilješka idu u trening")
+    func progression() throws {
+        let context = try makeContext()
+        let engine = TemplateEngine(context: context)
+        let result = try template("Push", in: context, exercises: [bench])
+        let exercise = try #require(result.orderedExercises.first)
+        exercise.notes = "  Sjedalo 4  "
+        for set in exercise.orderedSets {
+            try engine.setTargets(set, weightKg: nil, reps: 8)
+            set.targetRepsMax = 12
+        }
+
+        let first = try TemplateStarter(context: context, weightStep: { _ in 2.5 }).start(result, now: base)
+        let started = try #require(first.orderedExercises.first)
+        #expect(started.targetRepsMin == 8)
+        #expect(started.targetRepsMax == 12)
+        #expect(started.notes == "Sjedalo 4")
+        #expect(started.loadChangeKg == nil)
+        let workout = WorkoutEngine(context: context)
+        for set in started.orderedSets {
+            set.weightKg = 80
+            set.reps = 12
+            try workout.completeSet(set, defaultRestSeconds: 90, now: base)
+        }
+        try workout.finishSession(first, now: base.addingTimeInterval(3600))
+
+        let second = try TemplateStarter(context: context, weightStep: { _ in 2.5 }).start(result, now: base + 86_400)
+        let next = try #require(second.orderedExercises.first)
+        #expect(next.loadChangeKg == 2.5)
+        #expect(next.orderedSets.allSatisfy { $0.weightKg == 82.5 && $0.reps == 8 })
+    }
+
     @Test("Izbor treninga bez rasporeda: samo treninzi snage s vježbama, po nazivu")
     func startableTemplates() throws {
         let context = try makeContext()

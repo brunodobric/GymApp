@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -48,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.ExerciseInputType
@@ -76,6 +78,10 @@ internal class ExerciseCardActions(
     val onSuperset: (() -> Unit)?,
     val onLeaveSuperset: (() -> Unit)?,
     val onShowInfo: (() -> Unit)?,
+    val onReplace: (() -> Unit)? = null,
+    val onEditNote: (() -> Unit)? = null,
+    /** "Dodaj zagrijavanje", null kad se ne nudi ([canAddWarmUps]). */
+    val onAddWarmUps: (() -> Unit)? = null,
 )
 
 /**
@@ -94,6 +100,10 @@ internal fun WorkoutExerciseCard(
     actions: ExerciseCardActions,
     /** U treningu je trenutna serija označena, a završene prigušene; u uređivanju povijesti nisu. */
     tracksProgress: Boolean = true,
+    /** Trajna bilješka vježbe (postavka sprave, hvat), `ExerciseNotes`. */
+    persistentNote: String? = null,
+    /** Završene serije koje obaraju rekord ([com.brunodobric.gymapp.training.PersonalRecordDetector.liveRecordSets]). */
+    recordSetIds: Set<java.util.UUID> = emptySet(),
 ) {
     val sets = exercise.orderedSets
     val done = sets.count { it.isCompleted }
@@ -122,6 +132,30 @@ internal fun WorkoutExerciseCard(
                             style = MaterialTheme.typography.bodySmall,
                             color = if (allDone) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.onSurfaceVariant,
                         )
+                        targetText(exercise)?.let { target ->
+                            Text(
+                                "· $target",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                    loadChangeText(exercise, unit)?.let { change ->
+                        Text(
+                            change,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                    for (note in exerciseNotes(exercise, persistentNote)) {
+                        Text(
+                            note,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = if (isOpen) Int.MAX_VALUE else 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
                 IconButton(onClick = actions.onToggleOpen) {
@@ -148,6 +182,7 @@ internal fun WorkoutExerciseCard(
                             isCurrent = set.id == current?.id,
                             dimsCompleted = tracksProgress,
                             actions = actions,
+                            isRecord = set.id in recordSetIds,
                         )
                     }
                     HorizontalDivider(Modifier.padding(top = 4.dp), color = MaterialTheme.colorScheme.outlineVariant)
@@ -181,6 +216,24 @@ private fun ExerciseMenu(exercise: SessionExercise, actions: ExerciseCardActions
                     show()
                 })
             }
+            actions.onReplace?.let { replace ->
+                DropdownMenuItem(text = { Text(stringResource(R.string.replace_exercise)) }, onClick = {
+                    menu = false
+                    replace()
+                })
+            }
+            actions.onEditNote?.let { edit ->
+                DropdownMenuItem(text = { Text(stringResource(R.string.exercise_note)) }, onClick = {
+                    menu = false
+                    edit()
+                })
+            }
+            actions.onAddWarmUps?.let { warmUps ->
+                DropdownMenuItem(text = { Text(stringResource(R.string.add_warm_up)) }, onClick = {
+                    menu = false
+                    warmUps()
+                })
+            }
             actions.onSuperset?.let { superset ->
                 DropdownMenuItem(text = { Text(stringResource(R.string.superset)) }, onClick = {
                     menu = false
@@ -204,6 +257,30 @@ private fun ExerciseMenu(exercise: SessionExercise, actions: ExerciseCardActions
         }
     }
 }
+
+/** Cilj ponavljanja iz predloška: "cilj 8–12" ili "cilj 5". */
+@Composable
+private fun targetText(exercise: SessionExercise): String? {
+    val lower = exercise.targetRepsMin ?: return null
+    val upper = exercise.targetRepsMax ?: lower
+    return if (upper > lower) stringResource(R.string.target_range, lower, upper) else stringResource(R.string.target_reps, lower)
+}
+
+/** Prijedlog dvostruke progresije: veća težina ili manja pomoć nego prošli put. */
+@Composable
+private fun loadChangeText(exercise: SessionExercise, unit: WeightUnit): String? {
+    val change = exercise.loadChangeKg?.takeIf { kotlin.math.abs(it) > 0.0001 } ?: return null
+    val amount = WeightFormatter(unit, LocalConfiguration.current.locales[0]).string(kotlin.math.abs(change))
+    return if (exercise.inputType == ExerciseInputType.ASSISTED) {
+        stringResource(R.string.less_assistance, amount)
+    } else {
+        stringResource(R.string.heavier_weight, amount)
+    }
+}
+
+/** Bilješka iz predloška i trajna bilješka vježbe, bez praznih i bez ponavljanja. */
+private fun exerciseNotes(exercise: SessionExercise, persistentNote: String?): List<String> =
+    listOf(exercise.notes, persistentNote.orEmpty()).map { it.trim() }.filter { it.isNotEmpty() }.distinct()
 
 private val BADGE_WIDTH = 36.dp
 private val CHECK_SIZE = 40.dp
@@ -255,6 +332,7 @@ private fun WorkoutSetRow(
     isCurrent: Boolean,
     dimsCompleted: Boolean,
     actions: ExerciseCardActions,
+    isRecord: Boolean = false,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val formatter = remember(unit, locale) { WeightFormatter(unit, locale) }
@@ -267,7 +345,17 @@ private fun WorkoutSetRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        SetBadge(label, set, inputType, formatter, actions, Modifier.width(BADGE_WIDTH).alpha(dim))
+        Box(Modifier.width(BADGE_WIDTH)) {
+            SetBadge(label, set, inputType, formatter, actions, Modifier.width(BADGE_WIDTH).alpha(dim))
+            if (isRecord) {
+                Icon(
+                    Icons.Filled.Star,
+                    contentDescription = stringResource(R.string.personal_record),
+                    modifier = Modifier.size(14.dp).align(Alignment.TopEnd),
+                    tint = Color(0xFFF5B400),
+                )
+            }
+        }
         Column(Modifier.weight(1.2f).alpha(dim), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 previousText ?: "–",

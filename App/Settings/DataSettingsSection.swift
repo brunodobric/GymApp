@@ -3,6 +3,7 @@ import Models
 import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
+import Units
 import UserNotifications
 
 /// Datoteka za izvoz u "Datoteke" (JSON ili CSV).
@@ -242,7 +243,10 @@ private struct DataSettingsActions {
             show("Uvoz nije uspio.", String(localized: "Katalog se nije mogao učitati."))
             return
         }
-        let preview = try ForeignWorkoutImport.preview(text, catalog: catalog, language: catalogStore.language, context: context)
+        let unit = (try? GymQueries(context: context).settings().weightUnit) ?? .kilograms
+        let preview = try ForeignWorkoutImport.preview(
+            text, catalog: catalog, language: catalogStore.language, context: context, weightUnit: unit
+        )
         model.foreignImport = DataSettingsModel.ForeignImportRequest(preview: preview)
     }
 

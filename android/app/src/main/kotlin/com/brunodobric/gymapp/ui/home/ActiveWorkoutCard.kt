@@ -73,7 +73,7 @@ internal fun ActiveWorkoutCard(services: AppServices, revision: Long, onOpen: ()
     val values = remember(revision, unit, locale) {
         if (next != null && exercise != null) LiveSetEditor.values(next, exercise.inputType, unit, locale) else emptyList()
     }
-    val previous = remember(exercise?.id) { exercise?.let { store.previousSetValues(it.exercise) }.orEmpty() }
+    val previous = remember(exercise?.id) { exercise?.let { store.previousSetValues(it.exercise, it.session?.templateId) }.orEmpty() }
     val previousText = if (next != null && exercise != null) {
         LiveSetEditor.previousText(next, exercise.inputType, previous, unit, locale)
     } else {

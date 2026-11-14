@@ -2,6 +2,7 @@ import Catalog
 import Foundation
 import Models
 import SwiftData
+import Units
 
 /// Uvoz treninga iz CSV izvoza druge aplikacije (`ForeignWorkoutsCSV`): prvo pregled, pa uvoz.
 ///
@@ -66,9 +67,10 @@ public enum ForeignWorkoutImport {
         catalog: ExerciseCatalog,
         language: String,
         context: ModelContext,
-        timeZone: TimeZone = .current
+        timeZone: TimeZone = .current,
+        weightUnit: WeightUnit = .kilograms
     ) throws -> Preview {
-        let workouts = try ForeignWorkoutsCSV.parse(text, timeZone: timeZone)
+        let workouts = try ForeignWorkoutsCSV.parse(text, timeZone: timeZone, weightUnit: weightUnit)
         let known = Set(try context.fetch(FetchDescriptor<Session>()).map(\.id))
 
         var seen = Set<UUID>()
@@ -143,7 +145,7 @@ public enum ForeignWorkoutImport {
 
     /// Bilješka treninga: ostatak zaglavlja, pa bilješke vježbi ("Leg Extensions: Nisam napravio"), svaka u svom retku.
     static func notes(for workout: ForeignWorkoutsCSV.Workout) -> String {
-        ([workout.details] + workout.exercises.filter { !$0.note.isEmpty }.map { "\($0.name): \($0.note)" })
+        ([workout.details, workout.notes] + workout.exercises.filter { !$0.note.isEmpty }.map { "\($0.name): \($0.note)" })
             .filter { !$0.isEmpty }
             .joined(separator: "\n")
     }
@@ -180,7 +182,7 @@ public enum ForeignWorkoutImport {
             order += 1
 
             for (index, row) in done.enumerated() {
-                let set = SetLog(orderIndex: index, kind: .working)
+                let set = SetLog(orderIndex: index, kind: row.isWarmUp ? .warmUp : .working)
                 set.weightKg = row.weightKg
                 set.extraWeightKg = row.extraWeightKg
                 set.reps = row.reps

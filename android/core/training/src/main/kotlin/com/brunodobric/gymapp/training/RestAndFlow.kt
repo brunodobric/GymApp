@@ -77,6 +77,18 @@ object RestPolicy {
         if (groupSize > 1 && positionInGroup < groupSize - 1) return 0
         return maxOf(0, configured ?: defaultSeconds)
     }
+
+    /** Pauza između dvije serije zagrijavanja. */
+    const val WARM_UP_SECONDS = 60
+
+    /**
+     * Pauza nakon serije zagrijavanja: 60 s do sljedećeg zagrijavanja, a pred prvu radnu seriju pola pune
+     * pauze, barem 60 s. Nikad dulja od pune pauze ([fullSeconds], iz [seconds]), a 0 ostaje 0.
+     */
+    fun afterWarmUp(fullSeconds: Int, nextIsWarmUp: Boolean): Int {
+        if (fullSeconds <= 0) return 0
+        return minOf(fullSeconds, if (nextIsWarmUp) WARM_UP_SECONDS else maxOf(WARM_UP_SECONDS, fullSeconds / 2))
+    }
 }
 
 data class SetPosition(val exercise: Int, val set: Int)

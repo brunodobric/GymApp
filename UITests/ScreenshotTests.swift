@@ -22,11 +22,11 @@ final class ScreenshotTests: XCTestCase {
     private var texts: Texts {
         language == "en"
             ? Texts(
-                home: "Home", history: "History", schedules: "Schedules", exercises: "Exercises", statistics: "Statistics",
+                home: "Home", history: "History", schedules: "Plan", exercises: "Exercises", statistics: "Statistics",
                 search: "Bench", exercise: "Barbell Bench Press"
             )
             : Texts(
-                home: "Početna", history: "Povijest", schedules: "Rasporedi", exercises: "Vježbe", statistics: "Statistika",
+                home: "Početna", history: "Povijest", schedules: "Plan", exercises: "Vježbe", statistics: "Statistika",
                 search: "Potisak", exercise: "Potisak šipkom s klupe"
             )
     }

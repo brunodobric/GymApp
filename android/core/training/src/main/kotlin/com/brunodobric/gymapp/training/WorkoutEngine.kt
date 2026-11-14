@@ -11,6 +11,7 @@ import com.brunodobric.gymapp.model.SetKind
 import com.brunodobric.gymapp.model.SetLog
 import com.brunodobric.gymapp.model.WorkoutKind
 import com.brunodobric.gymapp.model.moveElements
+import com.brunodobric.gymapp.units.WeightUnit
 import java.time.Instant
 import java.util.UUID
 
@@ -127,8 +128,10 @@ class WorkoutEngine(val store: GymStore) {
     // MARK: Vježbe
 
     /**
-     * Dodaje vježbu i stvara serije prema zadnjem izvođenju (isti broj warm-up i radnih serija s pretpunjenim
-     * vrijednostima), a bez povijesti tri prazne radne serije.
+     * Dodaje vježbu i stvara serije prema planu ([SetPlanner]): bez ciljeva onoliko zagrijavanja koliko je bilo
+     * prošli put i najčešći broj radnih serija iz zadnjih izvođenja, s pretpunjenim vrijednostima, a bez povijesti
+     * tri prazne radne serije. Ciljevi predloška određuju serije i ponavljanja, a uz korak težine plan predlaže
+     * veću težinu kad je prošli put dosegnuta gornja granica raspona.
      */
     fun addExercise(
         ref: ExerciseRef,
@@ -136,18 +139,76 @@ class WorkoutEngine(val store: GymStore) {
         session: Session,
         restSeconds: Int? = null,
         now: Instant = Instant.now(),
+        targets: List<SetTarget> = emptyList(),
+        weightStep: Double? = null,
+        unit: WeightUnit = WeightUnit.KILOGRAMS,
     ): SessionExercise {
         val order = (session.exercises.maxOfOrNull { it.orderIndex } ?: -1) + 1
         val exercise = session.add(SessionExercise(order, ref, inputType))
         exercise.restSeconds = restSeconds
 
-        val previous = previousSets(ref, session)
-        val warmUps = previous.count { it.kind == SetKind.WARM_UP }
-        val working = previous.count { it.kind == SetKind.WORKING }
-        repeat(warmUps) { appendSet(exercise, SetKind.WARM_UP, previous) }
-        repeat(if (working > 0) working else DEFAULT_WORKING_SETS) { appendSet(exercise, SetKind.WORKING, previous) }
+        val performances = previousPerformances(ref, session)
+        val plan = SetPlanner.plan(
+            previous = performances.firstOrNull().orEmpty(),
+            recentWorkingCounts = performances.take(SmartDefaults.RECENT_PERFORMANCE_COUNT)
+                .map { sets -> sets.count { it.kind == SetKind.WORKING } },
+            targets = targets,
+            inputType = inputType,
+            weightStep = weightStep,
+            unit = unit,
+        )
+        plan.sets.forEachIndexed { index, values -> exercise.add(SetLog(index, values.kind)).fill(values) }
+        exercise.targetRepsMin = plan.repRange?.lower
+        exercise.targetRepsMax = plan.repRange?.upper
+        exercise.loadChangeKg = plan.loadChangeKg
         touch(session, now)
         return exercise
+    }
+
+    /**
+     * Zamjenjuje vježbu u treningu drugom (zauzeta sprava). Bez završenih serija vježba se mijenja na istom mjestu,
+     * s istim brojem serija i vrijednostima iz povijesti nove vježbe. Sa završenim serijama stara vježba ostaje samo
+     * sa završenima, a nova dolazi odmah iza nje s preostalim serijama (barem jednom). Superset i pauza ostaju.
+     */
+    fun replaceExercise(
+        exercise: SessionExercise,
+        ref: ExerciseRef,
+        inputType: ExerciseInputType,
+        now: Instant = Instant.now(),
+    ): SessionExercise {
+        val session = exercise.session ?: return exercise
+        val sets = exercise.orderedSets
+        val done = sets.filter { it.isCompleted }
+        val pending = sets.filter { !it.isCompleted }
+        val visible = visibleExercises(session).toMutableList()
+        val removed = removedExercises(session)
+
+        val created = session.add(SessionExercise(exercise.orderIndex, ref, inputType))
+        created.restSeconds = exercise.restSeconds
+        created.supersetGroupId = exercise.supersetGroupId
+
+        val previous = previousPerformances(ref, session).firstOrNull().orEmpty()
+        val kinds = if (pending.isEmpty()) listOf(SetKind.WORKING) else pending.map { it.kind }
+        val made = mutableListOf<SetValues>()
+        kinds.forEachIndexed { index, kind ->
+            val position = made.count { it.kind == kind }
+            val values = SmartDefaults.defaults(position, kind, previous) ?: SetValues(kind)
+            made += values
+            created.add(SetLog(index, kind)).fill(values)
+        }
+
+        val index = visible.indexOfFirst { it.id == exercise.id }.takeIf { it >= 0 } ?: (visible.size - 1).coerceAtLeast(0)
+        if (done.isEmpty()) {
+            if (index < visible.size) visible[index] = created else visible += created
+            store.delete(exercise)
+        } else {
+            pending.forEach(store::delete)
+            done.forEachIndexed { position, set -> set.orderIndex = position }
+            visible.add(minOf(index + 1, visible.size), created)
+        }
+        (visible + removed).forEachIndexed { position, item -> item.orderIndex = position }
+        touch(session, now)
+        return created
     }
 
     fun addSet(exercise: SessionExercise, kind: SetKind = SetKind.WORKING, now: Instant = Instant.now()): SetLog {
@@ -275,7 +336,12 @@ class WorkoutEngine(val store: GymStore) {
         val position = members.indexOfFirst { it.id == exercise.id }.coerceAtLeast(0)
         val configured = exercise.restSeconds ?: members.lastOrNull()?.restSeconds
         val defaultSeconds = restDefaults.seconds(members.map { isCompound(it.exercise.key) })
-        val seconds = RestPolicy.seconds(position, members.size, configured, defaultSeconds)
+        var seconds = RestPolicy.seconds(position, members.size, configured, defaultSeconds)
+        if (set.kind == SetKind.WARM_UP) {
+            val sets = exercise.orderedSets
+            val next = sets.getOrNull(sets.indexOfFirst { it.id == set.id } + 1)
+            seconds = RestPolicy.afterWarmUp(seconds, next?.kind == SetKind.WARM_UP)
+        }
         val timer = if (seconds > 0) RestTimer(now, seconds) else null
         session.restTimerStartedAt = timer?.startedAt
         session.restTimerEndsAt = timer?.endsAt
@@ -400,17 +466,28 @@ class WorkoutEngine(val store: GymStore) {
         return set
     }
 
-    /** Serije zadnjeg završenog izvođenja vježbe (izvor smart defaultsa). */
-    private fun previousSets(ref: ExerciseRef, session: Session?): List<SetValues> {
-        for (exercise in finishedExercises(ref, session)) {
+    /** Serije zadnjeg završenog izvođenja vježbe (izvor smart defaultsa), prvo u istom predlošku. */
+    private fun previousSets(ref: ExerciseRef, session: Session?): List<SetValues> =
+        previousPerformances(ref, session).firstOrNull().orEmpty()
+
+    /**
+     * Završene serije ranijih izvođenja vježbe, od najnovijeg. Kad je trening pokrenut iz predloška, izvođenja iz
+     * istog predloška dolaze prva (teški i lagani dan s istom vježbom se ne miješaju).
+     */
+    fun previousPerformances(ref: ExerciseRef, session: Session?): List<List<SetValues>> {
+        val all = finishedExercises(ref, session).mapNotNull { exercise ->
             val sets = exercise.orderedSets.filter { it.isCompleted }.map { it.values }
-            if (sets.isNotEmpty()) return sets
+            if (sets.isEmpty()) null else exercise.session?.templateId to sets
         }
-        return emptyList()
+        val templateId = session?.templateId ?: return all.map { it.second }
+        return all.filter { it.first == templateId }.map { it.second } + all.filter { it.first != templateId }.map { it.second }
     }
 
-    /** Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga. */
-    private fun recordHistory(ref: ExerciseRef, session: Session?, inputType: ExerciseInputType): RecordHistory {
+    /**
+     * Ranija izvođenja vježbe za rekorde, od najstarijeg prema najnovijem, s datumima treninga.
+     * Javno za oznaku rekorda u retku serije dok trening traje ([PersonalRecordDetector.liveRecordSets]).
+     */
+    fun recordHistory(ref: ExerciseRef, session: Session?, inputType: ExerciseInputType): RecordHistory {
         val history = RecordHistory()
         for (exercise in finishedExercises(ref, session).asReversed()) {
             history.add(exercise.orderedSets.filter { it.isCompleted }.map { it.values }, inputType, exercise.session?.startedAt)
@@ -425,6 +502,14 @@ class WorkoutEngine(val store: GymStore) {
             val owner = exercise.session
             owner != null && owner.id != session?.id && owner.startedAt < cutoff
         }
+    }
+
+    private fun SetLog.fill(values: SetValues) {
+        weightKg = values.weightKg
+        reps = values.reps
+        extraWeightKg = values.extraWeightKg
+        durationSeconds = values.durationSeconds
+        distanceMeters = values.distanceMeters
     }
 
     companion object {

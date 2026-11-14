@@ -41,6 +41,24 @@ class StatsTest {
         }
 
         @Test
+        fun `pretraga po nazivu treninga i vjezbama, bez dijakritika i izbacenih vjezbi`() {
+            val store = newStore()
+            val legs = store.addSession(base, lifts = listOf(Lift(squat, listOf(Work(100.0, 5)))))
+            legs.name = "Noge"
+            val push = store.addSession(base.plusDays(1.0), lifts = listOf(Lift(bench, listOf(Work(80.0, 5)))))
+            push.name = "Push"
+            val all = listOf(legs, push)
+
+            assertEquals(listOf(legs.id), HistoryFilter(query = "cucanj").apply(all).map { it.id })
+            assertEquals(listOf(push.id), HistoryFilter(query = "  PUSH ").apply(all).map { it.id })
+            assertEquals(listOf(push.id), HistoryFilter(query = "potisak klupe").apply(all).map { it.id })
+            assertTrue(HistoryFilter(query = "noge potisak").apply(all).isEmpty())
+            assertEquals(2, HistoryFilter(query = " ").apply(all).size)
+            push.orderedExercises.first().isRemoved = true
+            assertTrue(HistoryFilter(query = "potisak").apply(all).isEmpty())
+        }
+
+        @Test
         fun `ispod kalendara su treninzi prikazanog mjeseca, a s odabranim danom samo tog dana`() {
             val store = newStore()
             // 15. 1., 31. 1. u 23:00 i 1. 2. 2027.

@@ -164,4 +164,30 @@ class SearchTest {
         assertTrue(selected.isEmpty())
         assertEquals(sample.map { it.id }, others.map { it.id })
     }
+
+    @Test
+    @DisplayName("Zamjene imaju isti glavni mišić, a oprema iz profila ide prva")
+    fun alternatives() {
+        val items = sample + listOf(
+            exercise("db-bench", "Potisak bučicama", "Dumbbell Bench Press", equipment = Equipment.DUMBBELL),
+            exercise("machine-press", "Potisak na spravi", "Machine Chest Press", equipment = Equipment.MACHINE),
+            exercise("dips", "Propadanja", "Dips", muscles = listOf(Muscle.TRICEPS, Muscle.CHEST), equipment = Equipment.BODYWEIGHT),
+        )
+        val bench = items[1]
+        val hr = Locale.forLanguageTag("hr")
+        assertEquals(listOf("c:db-bench", "c:machine-press", "c:dips"), ExerciseSearch.alternatives(bench, items, locale = hr).map { it.id })
+        assertEquals(
+            listOf("c:machine-press", "c:db-bench", "c:dips"),
+            ExerciseSearch.alternatives(bench, items, setOf(Equipment.MACHINE), locale = hr).map { it.id },
+        )
+        assertEquals(1, ExerciseSearch.alternatives(bench, items, limit = 1).size)
+    }
+
+    @Test
+    @DisplayName("Nedavne vježbe idu redom, bez ponavljanja, nepoznatih i onih već u treningu")
+    fun recent() {
+        val recent = ExerciseSearch.recent(listOf("c:row", "c:bench", "c:row", "c:nepostoji", "c:curl"), sample, setOf("c:bench"))
+        assertEquals(listOf("c:row", "c:curl"), recent.map { it.id })
+        assertEquals(listOf("c:row"), ExerciseSearch.recent(listOf("c:row", "c:curl"), sample, limit = 1).map { it.id })
+    }
 }

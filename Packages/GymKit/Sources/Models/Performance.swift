@@ -86,6 +86,13 @@ extension GymSchemaV1 {
         public var restSeconds: Int?
         /// Izbačena vježba ostaje do kraja treninga kako bi se mogla vratiti.
         public var isRemoved: Bool = false
+        /// Raspon ponavljanja radnih serija iz predloška (npr. 8–12), za prikaz cilja u treningu.
+        public var targetRepsMin: Int?
+        public var targetRepsMax: Int?
+        /// Promjena tereta koju je plan predložio pri pokretanju (dvostruka progresija, `SetPlanner`), u kg.
+        public var loadChangeKg: Double?
+        /// Bilješka uz vježbu iz predloška.
+        public var notes: String = ""
         public var session: Session?
         @Relationship(deleteRule: .cascade, inverse: \SetLog.exercise)
         public var sets: [SetLog]? = []

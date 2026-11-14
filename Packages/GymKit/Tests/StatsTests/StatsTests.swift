@@ -89,6 +89,24 @@ struct HistoryTests {
         #expect(try history.sessions(filter: HistoryFilter(kinds: [.cardio])).map(\.id) == [new.id])
     }
 
+    @Test("Pretraga po nazivu treninga i vježbama, bez dijakritika i izbačenih vježbi")
+    func search() throws {
+        let context = try makeContext()
+        let legs = try addSession(context, at: base, lifts: [Lift(ref: squat, sets: [Work(weight: 100, reps: 5)])])
+        legs.name = "Noge"
+        let push = try addSession(context, at: base.addingTimeInterval(day), lifts: [Lift(ref: bench, sets: [Work(weight: 80, reps: 5)])])
+        push.name = "Push"
+        let all = [legs, push]
+
+        #expect(HistoryFilter(query: "cucanj").apply(to: all).map(\.id) == [legs.id])
+        #expect(HistoryFilter(query: "  PUSH ").apply(to: all).map(\.id) == [push.id])
+        #expect(HistoryFilter(query: "potisak klupe").apply(to: all).map(\.id) == [push.id])
+        #expect(HistoryFilter(query: "noge potisak").apply(to: all).isEmpty)
+        #expect(HistoryFilter(query: " ").apply(to: all).count == 2)
+        push.orderedExercises.first?.isRemoved = true
+        #expect(HistoryFilter(query: "potisak").apply(to: all).isEmpty)
+    }
+
     @Test("Ispod kalendara su treninzi prikazanog mjeseca, a s odabranim danom samo tog dana")
     func calendarList() throws {
         let context = try makeContext()
@@ -776,6 +794,21 @@ struct WeekProgressTests {
         let withGoal = WeekProgress.make(sessions: sessions, now: base, goal: 2, calendar: calendar, isCardio: isCardio)
         #expect(withGoal.goalFraction == 0)
         #expect(withGoal.streakWeeks == 0)
+    }
+
+    @Test("Prazan tjedan između ispunjenih ne prekida niz, ali najviše jedan u četiri tjedna")
+    func streakPause() {
+        // counts[0] je prošli tjedan.
+        #expect(WeekProgress.streakLength([3, 0, 3, 3], target: 3) == 3)
+        #expect(WeekProgress.streakLength([0, 3, 3], target: 3) == 2)
+        // Tjedan s premalo treninga prekida niz, kao i dva prazna tjedna zaredom.
+        #expect(WeekProgress.streakLength([3, 1, 3], target: 3) == 1)
+        #expect(WeekProgress.streakLength([3, 0, 0, 3], target: 3) == 1)
+        // Prazan tjedan na kraju povijesti nije pauza.
+        #expect(WeekProgress.streakLength([3, 0], target: 3) == 1)
+        // Druga pauza manje od četiri tjedna nakon prve prekida niz.
+        #expect(WeekProgress.streakLength([3, 0, 3, 0, 3], target: 3) == 2)
+        #expect(WeekProgress.streakLength([3, 0, 3, 3, 3, 0, 3], target: 3) == 5)
     }
 }
 

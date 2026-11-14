@@ -135,6 +135,8 @@ private struct CatalogExerciseDetail: View {
                 }
             }
 
+            ExerciseNoteSection(ref: ref)
+
             if let history {
                 ExerciseHistorySection(ref: ref, history: history, linksToSessions: linksToSessions)
             }
@@ -204,6 +206,8 @@ private struct CustomExerciseDetail: View {
                     ExerciseWeightStepRow(exercise: exercise.ref, equipment: exercise.equipment)
                 }
             }
+
+            ExerciseNoteSection(ref: exercise.summary.ref)
 
             if let history {
                 // Iz aktivnog treninga (bez uklanjanja) retci ne vode na stare treninge.

@@ -2,7 +2,7 @@
 <resources>
     <string name="tab_home">Home</string>
     <string name="tab_history">History</string>
-    <string name="tab_plans">Schedules</string>
+    <string name="tab_plans">Plan</string>
     <string name="tab_exercises">Exercises</string>
     <string name="tab_statistics">Statistics</string>
     <string name="search_exercises">Search exercises</string>
@@ -192,7 +192,7 @@
     <string name="ready_programs">Ready-made programs</string>
     <string name="add_program">Add program</string>
     <string name="program_added">Program added</string>
-    <string name="program_added_message">The %1$s schedule is in the Schedules tab, and you can adjust the targets in each workout.</string>
+    <string name="program_added_message">The %1$s schedule is in the Plan tab, and you can adjust the targets in each workout.</string>
     <string name="program_failed">The program couldn’t be added.</string>
     <string name="program_basic_full_body_2">Basic full body (2 days)</string>
     <string name="program_beginner_full_body_3">Beginner full body (3 days)</string>
@@ -786,7 +786,7 @@
     <string name="step_of_two">Step %1$d of 2</string>
     <string name="your_suggestion">Your suggestion</string>
     <string name="based_on_your_answers">Based on your answers.</string>
-    <string name="all_programs_in_schedules">All programs are also in the Schedules tab.</string>
+    <string name="all_programs_in_schedules">All programs are also in the Plan tab.</string>
     <string name="best_match">Best match</string>
     <string name="or">Or</string>
     <string name="goal_short_hypertrophy">Muscle</string>
@@ -797,4 +797,26 @@
     <string name="experience_detail_advanced">Training regularly for over 2 years</string>
     <string name="profile_setup">Set up profile</string>
     <string name="profile_setup_message">Answer a few questions and get a ready-made training schedule.</string>
+    <string name="add_count">Add (%1$d)</string>
+    <string name="suggestions">Suggestions</string>
+    <string name="recent">Recent</string>
+    <string name="exercise_note">Exercise note</string>
+    <string name="exercise_note_hint">E.g. seat at 4, slightly wider grip</string>
+    <string name="exercise_note_footer">The note is shown with the exercise in every workout.</string>
+    <string name="target_range">target %1$d–%2$d</string>
+    <string name="target_reps">target %1$d</string>
+    <string name="less_assistance">Less assistance: −%1$s</string>
+    <string name="heavier_weight">Heavier: +%1$s</string>
+    <string name="add_note">Add note</string>
+    <string name="edit_note">Edit note</string>
+    <string name="template_changes">Changes to the workout</string>
+    <string name="template_updated">The workout was updated.</string>
+    <string name="template_added">Added: %1$s</string>
+    <string name="template_removed">Skipped: %1$s</string>
+    <string name="template_set_count">%1$s: sets %2$d → %3$d</string>
+    <string name="template_reordered">Different exercise order</string>
+    <string name="update_template">Update workout</string>
+    <string name="template_update_footer">Only the exercises and sets are saved. The app suggests weights on its own.</string>
+    <string name="history_search">Workout or exercise</string>
+    <string name="history_no_match">No workouts match your search.</string>
 </resources>

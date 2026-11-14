@@ -102,16 +102,38 @@ public struct WeekProgress: Equatable, Sendable {
                 counts[start, default: 0] += 1
             }
         }
-        var streak = 0
+        var weeks: [Int] = []
         var cursor = weekStart
-        while streak < streakLimit,
+        while weeks.count < streakLimit,
               let previous = calendar.date(byAdding: .weekOfYear, value: -1, to: cursor),
-              let start = calendar.dateInterval(of: .weekOfYear, for: previous)?.start,
-              counts[start, default: 0] >= target {
-            streak += 1
+              let start = calendar.dateInterval(of: .weekOfYear, for: previous)?.start {
+            weeks.append(counts[start, default: 0])
             cursor = start
         }
+        let streak = streakLength(weeks, target: target)
         return current >= target ? streak + 1 : streak
+    }
+
+    /// Najmanje tjedana između dvije pauze koje ne prekidaju niz.
+    public static let pauseSpacing = 4
+
+    /// Duljina niza ispunjenih tjedana prije tekućeg; `counts[0]` je prošli tjedan, `counts[1]` onaj prije.
+    /// Tjedan bez ijednog treninga između dva ispunjena (bolest, put, odmor) ne prekida niz i ne broji se u
+    /// njega, ali najviše jedan u `pauseSpacing` tjedana. Tjedan s premalo treninga prekida niz.
+    public static func streakLength(_ counts: [Int], target: Int) -> Int {
+        var streak = 0
+        var lastPause: Int?
+        for (index, count) in counts.enumerated() {
+            if count >= target {
+                streak += 1
+                continue
+            }
+            let nextIsFulfilled = index + 1 < counts.count && counts[index + 1] >= target
+            let spaced = lastPause.map { index - $0 >= pauseSpacing } ?? true
+            guard count == 0, nextIsFulfilled, spaced else { break }
+            lastPause = index
+        }
+        return streak
     }
 }
 

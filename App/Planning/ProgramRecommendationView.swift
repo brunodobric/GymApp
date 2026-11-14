@@ -230,7 +230,7 @@ struct ProgramRecommendationScreen: View {
         .alert("Program je dodan", isPresented: Binding(get: { added != nil }, set: { if !$0 { added = nil } })) {
             Button("U redu") {}
         } message: {
-            Text("Raspored \(added ?? "") nalazi se u kartici Rasporedi, a ciljeve u treningu možeš prilagoditi.")
+            Text("Raspored \(added ?? "") nalazi se u kartici Plan, a ciljeve u treningu možeš prilagoditi.")
         }
         .errorAlert($errorText)
     }

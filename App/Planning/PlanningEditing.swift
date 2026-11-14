@@ -11,7 +11,7 @@ struct PlanningEditing {
     var onDone: () -> Void
     var onLeave: () -> Void
     /// Vlastiti natrag i u regular širini: za uređivač gurnut na stog, gdje sistemski natrag postoji
-    /// u svakoj širini (u kartici Rasporedi samo u compact širini, kad se split view sklopi).
+    /// u svakoj širini (u kartici Plan samo u compact širini, kad se split view sklopi).
     var replacesBackButtonAlways = false
 
     private var replacesBackButton: Bool { isEditing }

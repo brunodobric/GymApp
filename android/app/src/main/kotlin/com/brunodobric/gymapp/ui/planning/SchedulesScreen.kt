@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
@@ -119,7 +120,7 @@ fun SchedulesScreen(services: AppServices) {
             }
         },
     ) { padding ->
-        LazyColumn(Modifier.padding(padding).fillMaxSize()) {
+        val scheduleItems: LazyListScope.() -> Unit = {
             item { Header(stringResource(R.string.schedules_section)) }
             if (schedules.isEmpty()) item { Empty(stringResource(R.string.schedules_empty)) }
             items(schedules, key = { "s" + it.id }) { schedule ->
@@ -133,6 +134,8 @@ fun SchedulesScreen(services: AppServices) {
                 )
                 HorizontalDivider()
             }
+        }
+        val templateItems: LazyListScope.() -> Unit = {
             item { Header(stringResource(R.string.workouts_section)) }
             if (templates.isEmpty()) item { Empty(stringResource(R.string.workouts_empty)) }
             items(templates, key = { "t" + it.id }) { template ->
@@ -143,6 +146,16 @@ fun SchedulesScreen(services: AppServices) {
                     supportingContent = { Text(pluralStringResource(R.plurals.exercise_count, count, count)) },
                 )
                 HorizontalDivider()
+            }
+        }
+        LazyColumn(Modifier.padding(padding).fillMaxSize()) {
+            // Bez rasporeda je glavno ono što korisnik ima: treninzi idu prvi.
+            if (schedules.isEmpty()) {
+                templateItems()
+                scheduleItems()
+            } else {
+                scheduleItems()
+                templateItems()
             }
         }
     }

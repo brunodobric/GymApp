@@ -14,7 +14,7 @@ final class PlanningPanelTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["-ScreenshotMode", "-AppleLanguages", "(hr)", "-AppleLocale", "hr_HR"]
         app.launch()
-        let tab = app.tabBars.buttons["Rasporedi"].exists ? app.tabBars.buttons["Rasporedi"] : app.buttons["Rasporedi"].firstMatch
+        let tab = app.tabBars.buttons["Plan"].exists ? app.tabBars.buttons["Plan"] : app.buttons["Plan"].firstMatch
         XCTAssertTrue(tab.waitForExistence(timeout: 20), "Nema taba Rasporedi")
         tab.tap()
         return app

@@ -1,0 +1,5 @@
+"title","start_time","end_time","description","exercise_title","superset_id","exercise_notes","set_index","set_type","weight_kg","reps","distance_km","duration_seconds","rpe"
+"Push","15 Jan 2026, 08:30","15 Jan 2026, 09:35","Dobar dan","Bench Press (Barbell)",,"Sjedalo 4",0,"warmup",40,10,,,
+"Push","15 Jan 2026, 08:30","15 Jan 2026, 09:35","Dobar dan","Bench Press (Barbell)",,"Sjedalo 4",1,"normal",80,8,,,8
+"Push","15 Jan 2026, 08:30","15 Jan 2026, 09:35","Dobar dan","Bench Press (Barbell)",,"Sjedalo 4",2,"failure",80,7,,,
+"Push","15 Jan 2026, 08:30","15 Jan 2026, 09:35","Dobar dan","Lateral Raise (Dumbbell)",,,0,"normal",10,12,,,

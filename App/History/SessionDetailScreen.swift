@@ -200,7 +200,7 @@ struct SessionDetailScreen: View {
 }
 
 /// Novi trening (predložak) stvoren iz odrađenog treninga, otvoren u uređivaču. Već je spremljen,
-/// pa "Odustani" briše predložak (nakon zatvaranja lista), a "Spremi" ga zadržava u Rasporedima pod Treninzima.
+/// pa "Odustani" briše predložak (nakon zatvaranja lista), a "Spremi" ga zadržava u kartici Plan pod Treninzima.
 private struct NewTemplateFromSessionSheet: View {
     let template: WorkoutTemplate
     let onCancel: () -> Void

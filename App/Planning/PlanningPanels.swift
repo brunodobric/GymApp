@@ -300,7 +300,7 @@ struct TemplateListPanel: View {
                 if templates.isEmpty {
                     ContentUnavailableView(
                         "Još nema treninga", systemImage: "dumbbell",
-                        description: Text("Treninzi se slažu u kartici Rasporedi.")
+                        description: Text("Treninzi se slažu u kartici Plan.")
                     )
                 }
             }
