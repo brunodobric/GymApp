@@ -12,9 +12,8 @@ private func makeContext() throws -> ModelContext {
     ModelContext(try GymPersistence.makeUserContainer(storage: .inMemory))
 }
 
-/// Po jedan zapis svake vrste, s neobičnim vrijednostima (zarez, navodnici, novi redak, nedostajuća polja).
-@discardableResult
-private func fillSample(_ context: ModelContext) throws -> UUID {
+/// Postavke s vrijednostima različitima od zadanih, da se vidi da kopija prenosi svako polje.
+private func fillSampleSettings(_ context: ModelContext) throws {
     let settings = try GymQueries(context: context).settings()
     settings.weightUnit = .pounds
     settings.defaultRestSeconds = 120
@@ -33,6 +32,12 @@ private func fillSample(_ context: ModelContext) throws -> UUID {
     settings.liveActivityTheme = .light
     settings.liveActivityAccent = .pink
     settings.availablePlatesKg = [1.25, 2.5, 20]
+}
+
+/// Po jedan zapis svake vrste, s neobičnim vrijednostima (zarez, navodnici, novi redak, nedostajuća polja).
+@discardableResult
+private func fillSample(_ context: ModelContext) throws -> UUID {
+    try fillSampleSettings(context)
 
     let custom = CustomExercise(name: "Moja \"vježba\", s zarezom")
     custom.details = "Prvi red\nDrugi red"
