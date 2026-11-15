@@ -72,7 +72,7 @@ struct WatchSetBadge: View {
     }
 }
 
-/// Trajanje treninga i puls u zaglavlju ekrana serije i odmora, da se vide bez listanja na kontrole.
+/// Trajanje treninga i puls u gornjem redu ekrana serije i odmora (uz sat), da se vide bez listanja na kontrole.
 struct WatchHeaderMetrics: View {
     @Environment(WatchWorkoutStore.self) private var store
 

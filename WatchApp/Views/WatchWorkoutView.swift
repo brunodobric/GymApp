@@ -15,19 +15,27 @@ struct WatchWorkoutView: View {
     @State private var page: Page = .set
 
     var body: some View {
-        TabView(selection: $page) {
-            WatchControlsView().tag(Page.controls)
-            Group {
-                if store.isResting, let timer = store.restTimer {
-                    WatchRestView(timer: timer)
-                } else {
-                    WatchSetView()
+        // NavigationStack je tu zbog gornjeg reda: trajanje i puls stoje lijevo, u ravnini sa satom.
+        NavigationStack {
+            TabView(selection: $page) {
+                WatchControlsView().tag(Page.controls)
+                Group {
+                    if store.isResting, let timer = store.restTimer {
+                        WatchRestView(timer: timer)
+                    } else {
+                        WatchSetView()
+                    }
                 }
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        WatchHeaderMetrics()
+                    }
+                }
+                .tag(Page.set)
+                WatchExerciseListView { page = .set }.tag(Page.list)
             }
-            .tag(Page.set)
-            WatchExerciseListView { page = .set }.tag(Page.list)
+            .tabViewStyle(.page)
         }
-        .tabViewStyle(.page)
         .alert("Greška", isPresented: Binding(get: { store.errorText != nil }, set: { if !$0 { store.errorText = nil } })) {
             Button("U redu") {}
         } message: {
@@ -38,8 +46,8 @@ struct WatchWorkoutView: View {
 
 // MARK: - Serija
 
-/// Trenutna vježba i serija, raspoređeni po cijeloj visini: gore trajanje, puls i vježba, u sredini
-/// vrijednosti (Digital Crown, dodir bira polje) i "prošli put", a pri dnu kvačica.
+/// Trenutna vježba i serija, raspoređeni po cijeloj visini: gore vježba (trajanje i puls su u gornjem
+/// redu, uz sat), u sredini vrijednosti (Digital Crown, dodir bira polje) i "prošli put", a pri dnu kvačica.
 /// Serija s trajanjem (kardio, izdržaj) umjesto krune ima štopericu.
 struct WatchSetView: View {
     @Environment(WatchWorkoutStore.self) private var store
@@ -84,7 +92,6 @@ struct WatchSetView: View {
 
     private func header(exercise: ExerciseSnapshot, set: SetSnapshot) -> some View {
         VStack(alignment: .leading, spacing: 3) {
-            WatchHeaderMetrics()
             HStack(spacing: 5) {
                 if store.isCardio(exercise) {
                     Image(systemName: "figure.run")
@@ -132,7 +139,6 @@ struct WatchSetView: View {
     private var exerciseDone: some View {
         ScrollView {
             VStack(spacing: 8) {
-                WatchHeaderMetrics()
                 if let exercise = store.currentExercise {
                     Text(exercise.exercise.name).font(.cardTitle).multilineTextAlignment(.center)
                 }
@@ -312,19 +318,25 @@ struct WatchStopwatchView: View {
 
 // MARK: - Odmor
 
-/// Odmor: krug koji se prazni oko velikog odbrojavanja, sljedeća serija u krugu, a pri dnu −10 / +10
-/// i preskakanje. Lagani dodir 10 s prije kraja, a na kraju sat zavibrira.
+/// Odmor: naslov "Odmor", u krugu koji se prazni samo veliko odbrojavanje, ispod kruga sljedeća serija
+/// (vježba i vrijednosti), a pri dnu −10 / +10 i preskakanje. Trajanje i puls su u gornjem redu, uz sat.
+/// Lagani dodir 10 s prije kraja, a na kraju sat zavibrira.
 struct WatchRestView: View {
     let timer: RestTimer
     @Environment(WatchWorkoutStore.self) private var store
-    @ScaledMetric(relativeTo: .largeTitle) private var countdownSize: CGFloat = 40
+    @ScaledMetric(relativeTo: .largeTitle) private var countdownSize: CGFloat = 36
 
     var body: some View {
-        VStack(spacing: 4) {
-            WatchHeaderMetrics()
+        VStack(spacing: 2) {
+            Text("Odmor")
+                .font(.headline)
+                .foregroundStyle(.tint)
                 .frame(maxWidth: .infinity, alignment: .leading)
             ring
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if let next = store.currentSet {
+                nextSet(exercise: next.exercise, set: next.set)
+            }
             HStack {
                 Button("−10 s") { store.adjustRest(by: -10) }
                     .accessibilityLabel(Text("Skrati odmor za 10 sekundi"))
@@ -334,51 +346,64 @@ struct WatchRestView: View {
                     .accessibilityLabel(Text("Produlji odmor za 10 sekundi"))
             }
             .font(.footnote.weight(.semibold))
+            .buttonBorderShape(.capsule)
+            .controlSize(.small)
+            .padding(.top, 2)
         }
         .scenePadding(.horizontal)
-        .padding(.bottom, 6)
+        .padding(.bottom, 4)
     }
 
+    /// Samo odbrojavanje u krugu, da tekst nikad ne prelazi preko prstena.
     private var ring: some View {
         ZStack {
             Circle()
-                .stroke(Color.white.opacity(0.15), lineWidth: 8)
+                .stroke(Color.white.opacity(0.15), lineWidth: 7)
             // Krug se osvježava jednom u sekundi, a animacija ga glatko prazni između otkucaja.
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 Circle()
                     .trim(from: 0, to: 1 - timer.progress(at: context.date))
-                    .stroke(.tint, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .stroke(.tint, style: StrokeStyle(lineWidth: 7, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.linear(duration: 1), value: context.date)
             }
             .accessibilityHidden(true)
-            VStack(spacing: 0) {
-                Text("Odmor")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                Text(timerInterval: Date.now...max(timer.endsAt, Date.now), countsDown: true)
-                    .font(.system(size: countdownSize, weight: .bold, design: .rounded).monospacedDigit())
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
-                    .multilineTextAlignment(.center)
-                    .accessibilityLabel(Text("Preostali odmor"))
-                if let next = store.currentSet {
-                    Text(nextText(exercise: next.exercise, set: next.set))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                }
-            }
-            .padding(.horizontal, 16)
+            Text(timerInterval: Date.now...max(timer.endsAt, Date.now), countsDown: true)
+                .font(.system(size: countdownSize, weight: .bold, design: .rounded).monospacedDigit())
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 14)
+                .accessibilityLabel(Text("Preostali odmor"))
         }
-        .padding(4)
+        .aspectRatio(1, contentMode: .fit)
+        .padding(.vertical, 2)
     }
 
-    private func nextText(exercise: ExerciseSnapshot, set: SetSnapshot) -> String {
-        let values = WatchSetField.fields(for: exercise.inputType)
-            .map { $0.text(in: set, unit: store.unit) }
+    /// Sljedeća serija ispod kruga: vježba sitno, a vrijednosti s jedinicom jasno.
+    private func nextSet(exercise: ExerciseSnapshot, set: SetSnapshot) -> some View {
+        VStack(spacing: 0) {
+            Text(String(localized: "Sljedeće: \(exercise.exercise.name)"))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Text(nextValues(exercise: exercise, set: set))
+                .font(.system(.footnote, design: .rounded, weight: .semibold).monospacedDigit())
+        }
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+    }
+
+    private func nextValues(exercise: ExerciseSnapshot, set: SetSnapshot) -> String {
+        WatchSetField.fields(for: exercise.inputType)
+            .map { field in
+                let text = field.text(in: set, unit: store.unit)
+                switch field {
+                case .weight, .extraWeight, .distance: return text + " " + field.unitLabel(unit: store.unit)
+                case .reps, .duration: return text
+                }
+            }
             .joined(separator: " × ")
-        return String(localized: "Sljedeće: \(values)")
     }
 }
