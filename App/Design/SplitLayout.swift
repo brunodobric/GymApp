@@ -7,13 +7,15 @@ import SwiftUI
 /// pa se i uspravni otvoreni zaslon dijeli na lijevu i desnu stranu, umjesto da se jedan stupac razvuče.
 /// U compact širini (vanjski zaslon, iPhone uspravno) sustav sklapa prikaz u jedan stupac (Apple HIG, iPhone Duo).
 struct TabSplitView<Sidebar: View, Detail: View>: View {
+    /// Željena širina lijevog stupca. Zadana odgovara popisu; aktivni trening daje više mjesta videu vježbe.
+    var sidebarWidth: CGFloat = 380
     @ViewBuilder var sidebar: Sidebar
     @ViewBuilder var detail: Detail
 
     var body: some View {
         NavigationSplitView(columnVisibility: .constant(.all)) {
             sidebar
-                .navigationSplitViewColumnWidth(min: 320, ideal: 380, max: 460)
+                .navigationSplitViewColumnWidth(min: sidebarWidth - 60, ideal: sidebarWidth, max: sidebarWidth + 80)
                 .toolbar(removing: .sidebarToggle)
         } detail: {
             detail
