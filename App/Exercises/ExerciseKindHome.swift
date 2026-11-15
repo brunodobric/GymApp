@@ -3,8 +3,12 @@ import Models
 import SwiftUI
 
 /// Početna kataloga: kartice vrsta (2 × 2 na iPhoneu) i poveznice na sve i vlastite vježbe.
+///
+/// U podijeljenom prikazu (iPad, otvoreni iPhone Duo) stoji u desnom stupcu dok nije odabrana vježba,
+/// a dodir na karticu ne otvara novi ekran nego mijenja popis u lijevom stupcu (`onSelect`).
 struct ExerciseKindHome: View {
     let customExercises: [CustomExercise]
+    var onSelect: ((ExerciseListRoute) -> Void)?
 
     @Environment(CatalogStore.self) private var catalogStore
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -17,7 +21,7 @@ struct ExerciseKindHome: View {
             VStack(spacing: 20) {
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(ExerciseKind.allCases, id: \.self) { kind in
-                        NavigationLink(value: ExerciseListRoute.kind(kind)) {
+                        RouteLink(route: .kind(kind), onSelect: onSelect) {
                             ExerciseKindCard(
                                 kind: kind,
                                 count: counts[kind, default: 0],
@@ -50,9 +54,9 @@ struct ExerciseKindHome: View {
 
     private func links(allCount: Int, customCount: Int) -> some View {
         VStack(spacing: 0) {
-            LinkRow(title: "Sve vježbe", count: allCount, route: .all)
+            LinkRow(title: "Sve vježbe", count: allCount, route: .all, onSelect: onSelect)
             Divider().padding(.leading)
-            LinkRow(title: "Moje vježbe", count: customCount, route: .custom)
+            LinkRow(title: "Moje vježbe", count: customCount, route: .custom, onSelect: onSelect)
         }
         .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.card))
     }
@@ -63,9 +67,10 @@ private struct LinkRow: View {
     let title: LocalizedStringResource
     let count: Int
     let route: ExerciseListRoute
+    let onSelect: ((ExerciseListRoute) -> Void)?
 
     var body: some View {
-        NavigationLink(value: route) {
+        RouteLink(route: route, onSelect: onSelect) {
             HStack {
                 Text(title)
                 Spacer()
@@ -80,6 +85,21 @@ private struct LinkRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+}
+
+/// Otvara popis vježbi: u stogu (`NavigationLink`) ili, uz `onSelect`, u lijevom stupcu podijeljenog prikaza.
+private struct RouteLink<Label: View>: View {
+    let route: ExerciseListRoute
+    let onSelect: ((ExerciseListRoute) -> Void)?
+    @ViewBuilder var label: Label
+
+    var body: some View {
+        if let onSelect {
+            Button { onSelect(route) } label: { label }
+        } else {
+            NavigationLink(value: route) { label }
+        }
     }
 }
 

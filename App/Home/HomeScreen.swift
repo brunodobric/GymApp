@@ -26,6 +26,10 @@ struct HomeScreen: View {
     @Query private var schedules: [Schedule]
     @Query private var cycleOverrides: [CycleOverride]
     @Query private var templates: [WorkoutTemplate]
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    /// Otvoreni ekran kartice. U jednom stupcu je to stog, u podijeljenom prikazu prvi element je desni stupac,
+    /// pa preklapanje iPhonea Duo zadržava otvoreni ekran.
+    @State private var path: [CardDestination] = []
     @State private var showsSettings = false
     @State private var showsCardEditor = false
     @Namespace private var workoutTransition
@@ -68,99 +72,83 @@ struct HomeScreen: View {
     var body: some View {
         // Sljedeći treninzi se računaju jednom po iscrtavanju (dohvat rasporeda i izmjena ciklusa).
         let upcoming = upcomingWorkouts
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    startSection(upcoming)
-                    ProfileSetupCard()
-                    ForEach(cardRows, id: \.self) { row in
-                        HStack(alignment: .top, spacing: 12) {
-                            ForEach(row, id: \.self) { kind in
-                                cardView(kind)
-                            }
-                        }
-                        .fixedSize(horizontal: false, vertical: true)
+        Group {
+            if sizeClass == .regular {
+                // Podijeljeni prikaz (iPad, otvoreni iPhone Duo): kartice lijevo, odabrani ekran desno.
+                let detail = splitDetail
+                TabSplitView {
+                    dashboard(upcoming)
+                        .environment(\.detailSelection, DetailSelection(selected: detail) { value in
+                            if let destination = value as? CardDestination { path = [destination] }
+                        })
+                } detail: {
+                    NavigationStack {
+                        destination(detail)
                     }
-                    Button("Uredi kartice", systemImage: "square.grid.2x2") { showsCardEditor = true }
-                        .buttonStyle(.bordered)
-                        .padding(.top, 4)
+                    // Novi odabir počinje s praznim stogom.
+                    .id(detail)
                 }
-                .padding()
-                .frame(maxWidth: 700)
-                .frame(maxWidth: .infinity)
-            }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("Početna")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Postavke", systemImage: "gearshape") {
-                        showsSettings = true
-                    }
-                }
-                #if DEBUG
-                if !ScreenshotMode.isActive {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(String("Prototipi"), systemImage: "hammer") {
-                            showsPrototypes = true
-                        }
-                    }
-                }
-                #endif
-            }
-            .sheet(isPresented: $showsSettings) {
-                SettingsScreen()
-            }
-            .sheet(isPresented: $showsTemplatePicker, onDismiss: startChosenWorkout) {
-                templatePicker(upcoming)
-            }
-            .sheet(isPresented: $showsCardEditor) {
-                DashboardEditor()
-            }
-            .sheet(item: $widgetSheet) { sheet in
-                widgetSheetContent(sheet)
-            }
-            .fullScreenCover(item: $presentedSession) { session in
-                ActiveWorkoutScreen(session: session)
-                    // Zoom prijelaz iz kartice: povlačenje ekrana prema dolje sažima trening natrag u karticu.
-                    .navigationTransition(.zoom(sourceID: Self.workoutTransitionID, in: workoutTransition))
-            }
-            .task {
-                checkRecovery()
-            }
-            // Uz sinkronizaciju se čeka prvi uvoz s iClouda: na novom uređaju kartice tek stižu s drugih uređaja.
-            .task(id: SyncMonitor.shared.tracker.lastImport) {
-                prepareCards()
-            }
-            // `initial`: pri hladnom pokretanju iz Live Activityja zahtjev stigne prije nego što se Početna prikaže.
-            .onChange(of: request, initial: true) { _, newValue in
-                guard let newValue else { return }
-                request = nil
-                handle(newValue)
-            }
-            .confirmationDialog(
-                recovery?.isStale == true ? Text("Zaboravljen trening") : Text("Prekinut trening"),
-                isPresented: Binding(get: { recovery != nil }, set: { if !$0 { recovery = nil } }),
-                titleVisibility: .visible,
-                presenting: recovery
-            ) { prompt in
-                Button("Nastavi trening") { presentedSession = prompt.session }
-                Button("Završi i spremi") { closeStale(prompt.session) }
-                Button("Odbaci trening", role: .destructive) { discard(prompt.session) }
-            } message: { prompt in
-                if prompt.isStale {
-                    Text("Trening je otvoren dulje od 6 sati bez aktivnosti. Završi ga na zadnjoj završenoj seriji ili ga odbaci.")
-                } else {
-                    Text("Trening je ostao otvoren. Možeš ga nastaviti, završiti ili odbaciti.")
+            } else {
+                NavigationStack(path: $path) {
+                    dashboard(upcoming)
+                        .navigationDestination(for: CardDestination.self) { destination($0) }
                 }
             }
-            .errorAlert($errorText)
-            #if DEBUG
-            .sheet(isPresented: $showsPrototypes) {
-                PrototypesView()
-            }
-            #endif
         }
+        .sheet(isPresented: $showsSettings) {
+            SettingsScreen()
+        }
+        .sheet(isPresented: $showsTemplatePicker, onDismiss: startChosenWorkout) {
+            templatePicker(upcoming)
+        }
+        .sheet(isPresented: $showsCardEditor) {
+            DashboardEditor()
+        }
+        .sheet(item: $widgetSheet) { sheet in
+            widgetSheetContent(sheet)
+        }
+        .fullScreenCover(item: $presentedSession) { session in
+            ActiveWorkoutScreen(session: session)
+                // Zoom prijelaz iz kartice: povlačenje ekrana prema dolje sažima trening natrag u karticu.
+                .navigationTransition(.zoom(sourceID: Self.workoutTransitionID, in: workoutTransition))
+        }
+        .task {
+            checkRecovery()
+        }
+        // Uz sinkronizaciju se čeka prvi uvoz s iClouda: na novom uređaju kartice tek stižu s drugih uređaja.
+        .task(id: SyncMonitor.shared.tracker.lastImport) {
+            prepareCards()
+        }
+        // `initial`: pri hladnom pokretanju iz Live Activityja zahtjev stigne prije nego što se Početna prikaže.
+        .onChange(of: request, initial: true) { _, newValue in
+            guard let newValue else { return }
+            request = nil
+            handle(newValue)
+        }
+        .confirmationDialog(
+            recovery?.isStale == true ? Text("Zaboravljen trening") : Text("Prekinut trening"),
+            isPresented: Binding(get: { recovery != nil }, set: { if !$0 { recovery = nil } }),
+            titleVisibility: .visible,
+            presenting: recovery
+        ) { prompt in
+            Button("Nastavi trening") { presentedSession = prompt.session }
+            Button("Završi i spremi") { closeStale(prompt.session) }
+            Button("Odbaci trening", role: .destructive) { discard(prompt.session) }
+        } message: { prompt in
+            if prompt.isStale {
+                Text("Trening je otvoren dulje od 6 sati bez aktivnosti. Završi ga na zadnjoj završenoj seriji ili ga odbaci.")
+            } else {
+                Text("Trening je ostao otvoren. Možeš ga nastaviti, završiti ili odbaciti.")
+            }
+        }
+        .errorAlert($errorText)
+        #if DEBUG
+        .sheet(isPresented: $showsPrototypes) {
+            PrototypesView()
+        }
+        #endif
         // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
+        .onChange(of: rootReset) { path = [] }
         .id(rootReset)
     }
 
@@ -407,6 +395,81 @@ struct HomeScreen: View {
             if let presentedSession { PhoneWatchSync.shared.sessionStarted(presentedSession) }
         } catch {
             errorText = String(localized: "Trening se nije mogao pokrenuti.")
+        }
+    }
+}
+
+// MARK: - Kartice i podijeljeni prikaz
+
+extension HomeScreen {
+    /// Kartice Početne. U jednom stupcu su cijeli ekran, u podijeljenom prikazu lijevi stupac.
+    private func dashboard(_ upcoming: [PlannedWorkout]) -> some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                startSection(upcoming)
+                ProfileSetupCard()
+                ForEach(cardRows, id: \.self) { row in
+                    HStack(alignment: .top, spacing: 12) {
+                        ForEach(row, id: \.self) { kind in
+                            cardView(kind)
+                        }
+                    }
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+                Button("Uredi kartice", systemImage: "square.grid.2x2") { showsCardEditor = true }
+                    .buttonStyle(.bordered)
+                    .padding(.top, 4)
+            }
+            .padding()
+            .frame(maxWidth: 700)
+            .frame(maxWidth: .infinity)
+        }
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle("Početna")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Postavke", systemImage: "gearshape") {
+                    showsSettings = true
+                }
+            }
+            #if DEBUG
+            if !ScreenshotMode.isActive {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(String("Prototipi"), systemImage: "hammer") {
+                        showsPrototypes = true
+                    }
+                }
+            }
+            #endif
+        }
+    }
+
+    /// Desni stupac podijeljenog prikaza: odabrana kartica, a dok korisnik ništa ne odabere
+    /// zadnji trening (ili pregled tjedna ako još nema treninga).
+    private var splitDetail: CardDestination {
+        path.first ?? (lastSession == nil ? .overview(.week) : .lastWorkout)
+    }
+
+    /// Ekran koji otvara kartica: u stogu (jedan stupac) ili u desnom stupcu.
+    @ViewBuilder
+    private func destination(_ destination: CardDestination) -> some View {
+        switch destination {
+        case .overview(let period): OverviewScreen(period: period)
+        case .lastWorkout:
+            if let last = lastSession {
+                SessionDetailScreen(session: last, unit: unit)
+            } else {
+                ContentUnavailableView(
+                    "Još nema treninga",
+                    systemImage: "clock",
+                    description: Text("Ovdje će biti zadnji odrađeni trening.")
+                )
+            }
+        case .body: BodyScreen()
+        case .plateCalculator: PlateCalculatorScreen(unit: unit)
+        case .exerciseProgress: ExerciseProgressPicker()
+        // Rekordi se otvaraju samo iz Statistike, a Početna ih ne računa.
+        case .records: OverviewScreen()
         }
     }
 }

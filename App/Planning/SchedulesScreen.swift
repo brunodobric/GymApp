@@ -18,7 +18,7 @@ enum PlanningSelection: Hashable {
 
 /// Kartica Rasporedi: rasporedi i treninzi (predlošci), uz gotove programe.
 ///
-/// U regular širini (iPad) popis i uređivač stoje jedan pored drugog (`NavigationSplitView`).
+/// U regular širini (iPad, otvoreni iPhone Duo) popis i uređivač stoje jedan pored drugog (`TabSplitView`).
 /// U compact širini split view se sklapa u običan stog.
 struct SchedulesScreen: View {
     /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: vraća se popis rasporeda i treninga.
@@ -46,9 +46,8 @@ struct SchedulesScreen: View {
     @State private var asksToSave = false
 
     var body: some View {
-        NavigationSplitView {
+        TabSplitView {
             planningList
-                .navigationSplitViewColumnWidth(min: 300, ideal: 340, max: 420)
         } detail: {
             NavigationStack {
                 detail

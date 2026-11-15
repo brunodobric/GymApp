@@ -116,9 +116,7 @@ struct PeriodCard: View {
     }
 
     var body: some View {
-        NavigationLink {
-            OverviewScreen(period: period)
-        } label: {
+        DetailLink(value: CardDestination.overview(period)) {
             HomeCard(title: kind.title, symbol: kind.symbol) {
                 if let summary {
                     header(summary)

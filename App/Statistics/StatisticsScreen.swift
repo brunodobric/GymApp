@@ -7,7 +7,8 @@ import SwiftUI
 import Training
 import Units
 
-/// Statistika: kartice s grafovima. Na iPadu se kartice slažu u više stupaca, a grafovi su viši.
+/// Statistika: kartice s grafovima. U regular širini (iPad, otvoreni iPhone Duo) kartice su lijevi stupac,
+/// a pregled ili ekran odabrane kartice desni (`TabSplitView`). Grafovi su tad viši.
 struct StatisticsScreen: View {
     /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: stog navigacije se vraća na korijen.
     var rootReset = 0
@@ -33,6 +34,10 @@ struct StatisticsScreen: View {
     @State private var effort = EffortDistribution()
     @State private var intensity = IntensityDistribution()
     @State private var dots: DotsScore?
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    /// Otvoreni ekran kartice. U jednom stupcu je to stog, u podijeljenom prikazu prvi element je desni stupac,
+    /// pa preklapanje iPhonea Duo zadržava otvoreni ekran.
+    @State private var path: [CardDestination] = []
 
     private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
     private var isPro: Bool { settings?.statsDetail == .pro }
@@ -65,56 +70,96 @@ struct StatisticsScreen: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                if sessionCount == 0 {
-                    ContentUnavailableView(
-                        "Još nema statistike", systemImage: "chart.bar",
-                        description: Text("Statistika se pojavi nakon prvog završenog treninga.")
-                    )
-                    .padding(.top, 40)
+        Group {
+            if sizeClass == .regular {
+                // Podijeljeni prikaz (iPad, otvoreni iPhone Duo): kartice lijevo, odabrani ekran desno.
+                let detail = path.first ?? .overview(.week)
+                TabSplitView {
+                    cards
+                        .environment(\.detailSelection, DetailSelection(selected: detail) { value in
+                            if let destination = value as? CardDestination { path = [destination] }
+                        })
+                } detail: {
+                    NavigationStack {
+                        destination(detail)
+                    }
+                    // Novi odabir počinje s praznim stogom.
+                    .id(detail)
                 }
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)], spacing: 16) {
-                    if let sessionCount, sessionCount > 0 {
-                        if let week {
-                            OverviewCard(week: week, month: month, year: year, frequency: frequency)
+            } else {
+                NavigationStack(path: $path) {
+                    cards
+                        .navigationDestination(for: CardDestination.self) { destination($0) }
+                }
+            }
+        }
+        .task(id: LoadKey(
+            version: DataVersion.shared.value, muscleDays: muscleDays, customCount: customExercises.count,
+            goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek, sex: settings?.sex, isPro: isPro
+        )) { load() }
+        // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
+        .task(id: RecordsKey(version: DataVersion.shared.value, kinds: trackedKinds, excluded: excludedExercises)) { loadRecords() }
+        // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
+        .onChange(of: rootReset) { path = [] }
+        .id(rootReset)
+    }
+
+    /// Kartice Statistike. U jednom stupcu su cijeli ekran, u podijeljenom prikazu lijevi stupac
+    /// (kartice se tad slažu u jedan stupac, a desno je pregled tjedna ili odabrani ekran).
+    private var cards: some View {
+        ScrollView {
+            if sessionCount == 0 {
+                ContentUnavailableView(
+                    "Još nema statistike", systemImage: "chart.bar",
+                    description: Text("Statistika se pojavi nakon prvog završenog treninga.")
+                )
+                .padding(.top, 40)
+            }
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)], spacing: 16) {
+                if let sessionCount, sessionCount > 0 {
+                    if let week {
+                        OverviewCard(week: week, month: month, year: year, frequency: frequency)
+                    }
+                    // Detaljni prikaz (kasnije plaćena verzija) dodaje kartice, a zajedničke izgledaju isto u oba prikaza.
+                    // Kartica bez podataka se ne prikazuje; uvjet piše uz ocjenu u kartici Savjeti i u Postavkama.
+                    if isPro {
+                        if let review {
+                            WeeklyReviewCard(review: review, suggestions: suggestions)
                         }
-                        // Detaljni prikaz (kasnije plaćena verzija) dodaje kartice, a zajedničke izgledaju isto u oba prikaza.
-                        // Kartica bez podataka se ne prikazuje; uvjet piše uz ocjenu u kartici Savjeti i u Postavkama.
-                        if isPro {
-                            if let review {
-                                WeeklyReviewCard(review: review, suggestions: suggestions)
-                            }
-                            MusclesCard(days: $muscleDays, loads: heatmap, female: settings?.bodyMapFemale ?? false)
-                            if !trends.isEmpty {
-                                StrengthTrendCard(trends: trends)
-                            }
-                        }
-                        RecordsCard(records: records, unit: unit)
-                        if isPro {
-                            if effort.rated > 0 || intensity.total > 0 {
-                                EffortIntensityCard(effort: effort, intensity: intensity)
-                            }
-                            if let dots {
-                                DotsCard(score: dots, unit: unit)
-                            }
+                        MusclesCard(days: $muscleDays, loads: heatmap, female: settings?.bodyMapFemale ?? false)
+                        if !trends.isEmpty {
+                            StrengthTrendCard(trends: trends)
                         }
                     }
-                    DetailsCard()
+                    RecordsCard(records: records, unit: unit)
+                    if isPro {
+                        if effort.rated > 0 || intensity.total > 0 {
+                            EffortIntensityCard(effort: effort, intensity: intensity)
+                        }
+                        if let dots {
+                            DotsCard(score: dots, unit: unit)
+                        }
+                    }
                 }
-                .padding()
+                DetailsCard()
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("Statistika")
-            .task(id: LoadKey(
-                version: DataVersion.shared.value, muscleDays: muscleDays, customCount: customExercises.count,
-                goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek, sex: settings?.sex, isPro: isPro
-            )) { load() }
-            // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
-            .task(id: RecordsKey(version: DataVersion.shared.value, kinds: trackedKinds, excluded: excludedExercises)) { loadRecords() }
+            .padding()
         }
-        // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
-        .id(rootReset)
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle("Statistika")
+    }
+
+    /// Ekran koji otvara kartica: u stogu (jedan stupac) ili u desnom stupcu.
+    @ViewBuilder
+    private func destination(_ destination: CardDestination) -> some View {
+        switch destination {
+        case .overview(let period): OverviewScreen(period: period)
+        case .records: RecordsScreen(records: records, unit: unit)
+        case .exerciseProgress: ExerciseProgressPicker()
+        case .body: BodyScreen()
+        // Zadnji trening i kalkulator ploča otvaraju se samo s Početne.
+        case .lastWorkout, .plateCalculator: OverviewScreen()
+        }
     }
 
     private func load() {
@@ -476,7 +521,7 @@ private struct RecordsCard: View {
                     RecordRow(entry: entry, unit: unit)
                 }
             }
-            NavigationLink("Svi rekordi") { RecordsScreen(records: records, unit: unit) }
+            DetailLink(value: CardDestination.records, cornerRadius: 8, outset: 4) { Text("Svi rekordi") }
         }
     }
 }
@@ -548,23 +593,19 @@ struct RecordsScreen: View {
 private struct DetailsCard: View {
     var body: some View {
         StatisticsCard(title: "Detalji") {
-            row(title: "Napredak vježbe", detail: "Težina, procjena 1RM i volumen kroz vrijeme za jednu vježbu.", systemImage: "chart.line.uptrend.xyaxis") {
-                ExerciseProgressPicker()
-            }
+            row(
+                title: "Napredak vježbe", detail: "Težina, procjena 1RM i volumen kroz vrijeme za jednu vježbu.",
+                systemImage: "chart.line.uptrend.xyaxis", destination: .exerciseProgress
+            )
             Divider()
-            row(title: "Tijelo", detail: "Težina, opsezi i vlastite mjere s grafovima.", systemImage: "figure.stand") {
-                BodyScreen()
-            }
+            row(title: "Tijelo", detail: "Težina, opsezi i vlastite mjere s grafovima.", systemImage: "figure.stand", destination: .body)
         }
     }
 
-    private func row<Destination: View>(
-        title: LocalizedStringKey, detail: LocalizedStringKey, systemImage: String,
-        @ViewBuilder destination: @escaping () -> Destination
+    private func row(
+        title: LocalizedStringKey, detail: LocalizedStringKey, systemImage: String, destination: CardDestination
     ) -> some View {
-        NavigationLink {
-            destination()
-        } label: {
+        DetailLink(value: destination, cornerRadius: 12, outset: 6) {
             HStack(spacing: 12) {
                 Image(systemName: systemImage)
                     .font(.title3)
