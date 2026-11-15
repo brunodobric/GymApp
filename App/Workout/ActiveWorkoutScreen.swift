@@ -113,61 +113,7 @@ struct ActiveWorkoutScreen: View {
 
     /// Popis vježbi treninga: cijeli ekran u jednom stupcu, desni stupac u podijeljenom prikazu.
     private var workout: some View {
-        Group {
-            // Korak težine vježbe na kotačiću (oprema ili vlastiti korak, `WeightStepSettings`): jedan za sve kartice.
-            let weightStep = WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)
-            List {
-                if isLedByWatch {
-                    Label("Trening vodi Apple Watch", systemImage: "applewatch")
-                        .foregroundStyle(.secondary)
-                }
-                if editMode.isEditing {
-                    // Kod promjene redoslijeda vježbe su zatvorene, jedna vježba je jedan redak.
-                    ForEach(visible) { exercise in
-                        card(for: exercise, weightStep: weightStep)
-                    }
-                    .onMove { source, destination in
-                        try? engine.moveExercises(in: session, from: source, to: destination)
-                    }
-                } else {
-                    // Svaka vježba je svoja sekcija, a serija svoj redak koji se briše povlačenjem.
-                    ForEach(visible) { exercise in
-                        Section { card(for: exercise, weightStep: weightStep) }
-                    }
-                }
-
-                Section {
-                    Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
-                }
-            }
-            // Manji razmak među vježbama, kao među karticama na početnom ekranu.
-            .listSectionSpacing(16)
-            // Retci zaglavlja tablice i gumba niži su od zadane najmanje visine retka.
-            .environment(\.defaultMinListRowHeight, 32)
-            .environment(\.editMode, $editMode)
-            .navigationTitle(session.name)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { toolbar }
-            .safeAreaInset(edge: .bottom) { bottomBars }
-            .sensoryFeedback(.success, trigger: completedCount)
-            .sensoryFeedback(.error, trigger: errorCount)
-            .onChange(of: session.restTimerEndsAt) {
-                // Obavijest o kraju odmora premješta se s timerom (+10 / −10, preskakanje).
-                WorkoutLiveUpdates.shared.refresh()
-            }
-            .onChange(of: session.lastActivityAt) {
-                if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
-                WorkoutLiveUpdates.shared.refresh()
-            }
-            .onChange(of: completedSetCount) { syncCompletedSets() }
-            .onChange(of: scenePhase) { _, phase in
-                // Promjena iz Live Activityja dok je aplikacija u pozadini provjerava se i pri povratku.
-                if phase == .active { syncCompletedSets() } else { flushPendingSave() }
-            }
-            .onChange(of: session.stateRaw) {
-                // Trening je završen ili odbačen na satu: ekran se zatvara.
-                if session.state != .active, !isClosingHere { dismiss() }
-            }
+        workoutBase
             .sheet(item: $finishedSummary) { box in
                 WorkoutSummarySheet(session: session, summary: box.summary, unit: unit) {
                     finishedSummary = nil
@@ -227,7 +173,69 @@ struct ActiveWorkoutScreen: View {
                 Text("Trening bez ijedne završene serije ne može se spremiti.")
             }
             .errorAlert($errorText)
+    }
+
+    /// Popis s naslovom, gumbima, trakama pri dnu i praćenjem promjena treninga (bez listova i upozorenja).
+    private var workoutBase: some View {
+        workoutList
+            .navigationTitle(session.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { toolbar }
+            .safeAreaInset(edge: .bottom) { bottomBars }
+            .sensoryFeedback(.success, trigger: completedCount)
+            .sensoryFeedback(.error, trigger: errorCount)
+            .onChange(of: session.restTimerEndsAt) {
+                // Obavijest o kraju odmora premješta se s timerom (+10 / −10, preskakanje).
+                WorkoutLiveUpdates.shared.refresh()
+            }
+            .onChange(of: session.lastActivityAt) {
+                if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
+                WorkoutLiveUpdates.shared.refresh()
+            }
+            .onChange(of: completedSetCount) { syncCompletedSets() }
+            .onChange(of: scenePhase) { _, phase in
+                // Promjena iz Live Activityja dok je aplikacija u pozadini provjerava se i pri povratku.
+                if phase == .active { syncCompletedSets() } else { flushPendingSave() }
+            }
+            .onChange(of: session.stateRaw) {
+                // Trening je završen ili odbačen na satu: ekran se zatvara.
+                if session.state != .active, !isClosingHere { dismiss() }
+            }
+    }
+
+    /// Vježbe i serije. Odvojeno od modifikatora ekrana da kompajler stigne provjeriti tipove.
+    private var workoutList: some View {
+        // Korak težine vježbe na kotačiću (oprema ili vlastiti korak, `WeightStepSettings`): jedan za sve kartice.
+        let weightStep = WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)
+        return List {
+            if isLedByWatch {
+                Label("Trening vodi Apple Watch", systemImage: "applewatch")
+                    .foregroundStyle(.secondary)
+            }
+            if editMode.isEditing {
+                // Kod promjene redoslijeda vježbe su zatvorene, jedna vježba je jedan redak.
+                ForEach(visible) { exercise in
+                    card(for: exercise, weightStep: weightStep)
+                }
+                .onMove { source, destination in
+                    try? engine.moveExercises(in: session, from: source, to: destination)
+                }
+            } else {
+                // Svaka vježba je svoja sekcija, a serija svoj redak koji se briše povlačenjem.
+                ForEach(visible) { exercise in
+                    Section { card(for: exercise, weightStep: weightStep) }
+                }
+            }
+
+            Section {
+                Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
+            }
         }
+        // Manji razmak među vježbama, kao među karticama na početnom ekranu.
+        .listSectionSpacing(16)
+        // Retci zaglavlja tablice i gumba niži su od zadane najmanje visine retka.
+        .environment(\.defaultMinListRowHeight, 32)
+        .environment(\.editMode, $editMode)
     }
 
     // MARK: Dijelovi ekrana
