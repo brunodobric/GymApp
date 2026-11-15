@@ -10,6 +10,8 @@ import Units
 
 /// Ekran aktivnog treninga (specifikacija, odjeljak 2): popis vježbi s jednom otvorenom, kvačica na seriji,
 /// rest timer pri dnu, superset, uklanjanje vježbe i brisanje serije s poništavanjem te promjena redoslijeda povlačenjem.
+///
+/// U regular širini (iPad, otvoreni iPhone Duo) lijevo je otvorena vježba s videom i uputama, a desno popis treninga.
 struct ActiveWorkoutScreen: View {
     let session: Session
 
@@ -17,6 +19,7 @@ struct ActiveWorkoutScreen: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @Environment(CatalogStore.self) private var catalogStore
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     // Postavke iz upita, a ne zapamćeni objekt: nakon sinkronizacije duplikat postavki može biti obrisan.
     @Query private var settingsList: [UserSettings]
@@ -68,61 +71,49 @@ struct ActiveWorkoutScreen: View {
     private var completedSetCount: Int { visible.reduce(0) { $0 + $1.orderedSets.filter(\.isCompleted).count } }
 
     var body: some View {
-        NavigationStack {
-            // Korak težine vježbe na kotačiću (oprema ili vlastiti korak, `WeightStepSettings`): jedan za sve kartice.
-            let weightStep = WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)
-            List {
-                if isLedByWatch {
-                    Label("Trening vodi Apple Watch", systemImage: "applewatch")
-                        .foregroundStyle(.secondary)
+        Group {
+            if sizeClass == .regular {
+                // Podijeljeni prikaz (iPad, otvoreni iPhone Duo): otvorena vježba s videom i uputama lijevo, trening desno.
+                TabSplitView(sidebarWidth: 440) {
+                    NavigationStack { activeExerciseInfo }
+                } detail: {
+                    NavigationStack { workout }
                 }
-                if editMode.isEditing {
-                    // Kod promjene redoslijeda vježbe su zatvorene, jedna vježba je jedan redak.
-                    ForEach(visible) { exercise in
-                        card(for: exercise, weightStep: weightStep)
-                    }
-                    .onMove { source, destination in
-                        try? engine.moveExercises(in: session, from: source, to: destination)
-                    }
-                } else {
-                    // Svaka vježba je svoja sekcija, a serija svoj redak koji se briše povlačenjem.
-                    ForEach(visible) { exercise in
-                        Section { card(for: exercise, weightStep: weightStep) }
-                    }
-                }
+            } else {
+                NavigationStack { workout }
+            }
+        }
+        .onAppear { WorkoutScreenPresence.appeared() }
+        .onDisappear {
+            flushPendingSave()
+            WorkoutScreenPresence.disappeared()
+        }
+        .task {
+            // Trening je u međuvremenu završen (npr. na satu): nema se što nastaviti.
+            if session.state != .active {
+                dismiss()
+                return
+            }
+            _ = try? GymQueries(context: context).settings()
+            if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
+            PerformanceSignpost.measure("WorkoutOpen") { reloadPrevious() }
+            recentKeys = (try? GymQueries(context: context).recentExerciseKeys()) ?? []
+            if openExerciseID == nil {
+                openExerciseID = visible.first { $0.orderedSets.contains { !$0.isCompleted } }?.id ?? visible.first?.id
+            }
+            if seenCompletedSets == nil { seenCompletedSets = completedSetCount }
+            // Timer koji je istekao dok je aplikacija bila ugašena ne prikazuje se (trening na satu čisti sat).
+            if !isLedByWatch, let timer = engine.restTimer(of: session), timer.isExpired(at: Date()) {
+                try? engine.cancelRest(of: session)
+            }
+            // Live Activity se pokreće (ili osvježava) čim je trening na ekranu.
+            WorkoutLiveUpdates.shared.refresh()
+        }
+    }
 
-                Section {
-                    Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
-                }
-            }
-            // Manji razmak među vježbama, kao među karticama na početnom ekranu.
-            .listSectionSpacing(16)
-            // Retci zaglavlja tablice i gumba niži su od zadane najmanje visine retka.
-            .environment(\.defaultMinListRowHeight, 32)
-            .environment(\.editMode, $editMode)
-            .navigationTitle(session.name)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { toolbar }
-            .safeAreaInset(edge: .bottom) { bottomBars }
-            .sensoryFeedback(.success, trigger: completedCount)
-            .sensoryFeedback(.error, trigger: errorCount)
-            .onChange(of: session.restTimerEndsAt) {
-                // Obavijest o kraju odmora premješta se s timerom (+10 / −10, preskakanje).
-                WorkoutLiveUpdates.shared.refresh()
-            }
-            .onChange(of: session.lastActivityAt) {
-                if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
-                WorkoutLiveUpdates.shared.refresh()
-            }
-            .onChange(of: completedSetCount) { syncCompletedSets() }
-            .onChange(of: scenePhase) { _, phase in
-                // Promjena iz Live Activityja dok je aplikacija u pozadini provjerava se i pri povratku.
-                if phase == .active { syncCompletedSets() } else { flushPendingSave() }
-            }
-            .onChange(of: session.stateRaw) {
-                // Trening je završen ili odbačen na satu: ekran se zatvara.
-                if session.state != .active, !isClosingHere { dismiss() }
-            }
+    /// Popis vježbi treninga: cijeli ekran u jednom stupcu, desni stupac u podijeljenom prikazu.
+    private var workout: some View {
+        workoutBase
             .sheet(item: $finishedSummary) { box in
                 WorkoutSummarySheet(session: session, summary: box.summary, unit: unit) {
                     finishedSummary = nil
@@ -182,70 +173,72 @@ struct ActiveWorkoutScreen: View {
                 Text("Trening bez ijedne završene serije ne može se spremiti.")
             }
             .errorAlert($errorText)
-        }
-        .onAppear { WorkoutScreenPresence.appeared() }
-        .onDisappear {
-            flushPendingSave()
-            WorkoutScreenPresence.disappeared()
-        }
-        .task {
-            // Trening je u međuvremenu završen (npr. na satu): nema se što nastaviti.
-            if session.state != .active {
-                dismiss()
-                return
+    }
+
+    /// Popis s naslovom, gumbima, trakama pri dnu i praćenjem promjena treninga (bez listova i upozorenja).
+    private var workoutBase: some View {
+        workoutList
+            .navigationTitle(session.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { toolbar }
+            .safeAreaInset(edge: .bottom) { bottomBars }
+            .sensoryFeedback(.success, trigger: completedCount)
+            .sensoryFeedback(.error, trigger: errorCount)
+            .onChange(of: session.restTimerEndsAt) {
+                // Obavijest o kraju odmora premješta se s timerom (+10 / −10, preskakanje).
+                WorkoutLiveUpdates.shared.refresh()
             }
-            _ = try? GymQueries(context: context).settings()
-            if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
-            PerformanceSignpost.measure("WorkoutOpen") { reloadPrevious() }
-            recentKeys = (try? GymQueries(context: context).recentExerciseKeys()) ?? []
-            if openExerciseID == nil {
-                openExerciseID = visible.first { $0.orderedSets.contains { !$0.isCompleted } }?.id ?? visible.first?.id
+            .onChange(of: session.lastActivityAt) {
+                if session.state == .active { PhoneWatchSync.shared.sessionChanged(session) }
+                WorkoutLiveUpdates.shared.refresh()
             }
-            if seenCompletedSets == nil { seenCompletedSets = completedSetCount }
-            // Timer koji je istekao dok je aplikacija bila ugašena ne prikazuje se (trening na satu čisti sat).
-            if !isLedByWatch, let timer = engine.restTimer(of: session), timer.isExpired(at: Date()) {
-                try? engine.cancelRest(of: session)
+            .onChange(of: completedSetCount) { syncCompletedSets() }
+            .onChange(of: scenePhase) { _, phase in
+                // Promjena iz Live Activityja dok je aplikacija u pozadini provjerava se i pri povratku.
+                if phase == .active { syncCompletedSets() } else { flushPendingSave() }
             }
-            // Live Activity se pokreće (ili osvježava) čim je trening na ekranu.
-            WorkoutLiveUpdates.shared.refresh()
+            .onChange(of: session.stateRaw) {
+                // Trening je završen ili odbačen na satu: ekran se zatvara.
+                if session.state != .active, !isClosingHere { dismiss() }
+            }
+    }
+
+    /// Vježbe i serije. Odvojeno od modifikatora ekrana da kompajler stigne provjeriti tipove.
+    private var workoutList: some View {
+        // Korak težine vježbe na kotačiću (oprema ili vlastiti korak, `WeightStepSettings`): jedan za sve kartice.
+        let weightStep = WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)
+        return List {
+            if isLedByWatch {
+                Label("Trening vodi Apple Watch", systemImage: "applewatch")
+                    .foregroundStyle(.secondary)
+            }
+            if editMode.isEditing {
+                // Kod promjene redoslijeda vježbe su zatvorene, jedna vježba je jedan redak.
+                ForEach(visible) { exercise in
+                    card(for: exercise, weightStep: weightStep)
+                }
+                .onMove { source, destination in
+                    try? engine.moveExercises(in: session, from: source, to: destination)
+                }
+            } else {
+                // Svaka vježba je svoja sekcija, a serija svoj redak koji se briše povlačenjem.
+                ForEach(visible) { exercise in
+                    Section { card(for: exercise, weightStep: weightStep) }
+                }
+            }
+
+            Section {
+                Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
+            }
         }
+        // Manji razmak među vježbama, kao među karticama na početnom ekranu.
+        .listSectionSpacing(16)
+        // Retci zaglavlja tablice i gumba niži su od zadane najmanje visine retka.
+        .environment(\.defaultMinListRowHeight, 32)
+        .environment(\.editMode, $editMode)
     }
 
     // MARK: Dijelovi ekrana
-
-    private func card(for exercise: SessionExercise, weightStep: (ExerciseRef) -> Double) -> some View {
-        let step = weightStep(exercise.exercise)
-        return ExerciseCard(
-            exercise: exercise,
-            thumbnail: catalogStore.thumbnail(for: exercise.exercise.source, customExercises: customExercises),
-            isOpen: isOpen(exercise),
-            isEditing: editMode.isEditing,
-            highlightedSetID: highlightedSetID(for: exercise),
-            previous: previousSets[exercise.id] ?? [],
-            unit: unit,
-            effortScale: settings?.effortScale ?? .rpe,
-            persistentNote: settings?.exerciseNotes.note(for: exercise.exerciseKey),
-            canAddWarmUps: engine.canAddWarmUps(to: exercise),
-            recordSetIDs: recordSetIDs(in: exercise),
-            onToggleOpen: { openExerciseID = isOpen(exercise) ? nil : exercise.id },
-            onEdit: scheduleSave,
-            onToggleComplete: { toggleComplete($0, in: exercise) },
-            onChangeKind: { set, kind in
-                set.kind = kind
-                try? engine.touch(session)
-            },
-            onDeleteSet: { deleteSet($0, in: exercise) },
-            onAddSet: { kind in _ = try? engine.addSet(to: exercise, kind: kind) },
-            onRemove: { remove(exercise) },
-            onSuperset: { supersetSource = exercise },
-            onLeaveSuperset: { try? engine.removeFromSuperset(exercise) },
-            onReplace: { replaceSource = exercise },
-            onEditNote: { noteExercise = exercise },
-            onAddWarmUps: { addWarmUps(to: exercise, step: step) },
-            onShowInfo: exercise.exercise.source == nil ? nil : { infoExercise = exercise }
-        )
-        .environment(\.weightStep, step)
-    }
 
     @ViewBuilder
     private var bottomBars: some View {
@@ -395,6 +388,65 @@ struct ActiveWorkoutScreen: View {
 
 // Traka je u ekstenziji da tijelo strukture ostane u granicama SwiftLinta.
 extension ActiveWorkoutScreen {
+    /// Lijevi stupac podijeljenog prikaza: stranica otvorene vježbe (video, mišići, upute).
+    /// Bez otvorene vježbe prikazuje prvu vježbu s neodrađenim serijama.
+    @ViewBuilder
+    private var activeExerciseInfo: some View {
+        if let exercise = activeExercise, let source = exercise.exercise.source {
+            ExerciseDetailScreen(source: source, allowsRemoving: false)
+                .id(exercise.id)
+        } else {
+            ContentUnavailableView(
+                "Nema uputa",
+                systemImage: "figure.strengthtraining.traditional",
+                description: Text("Ovdje se prikazuju video i upute otvorene vježbe.")
+            )
+        }
+    }
+
+    private var activeExercise: SessionExercise? {
+        visible.first { $0.id == openExerciseID }
+            ?? visible.first { $0.orderedSets.contains { !$0.isCompleted } }
+            ?? visible.first
+    }
+
+    private func card(for exercise: SessionExercise, weightStep: (ExerciseRef) -> Double) -> some View {
+        let step = weightStep(exercise.exercise)
+        return ExerciseCard(
+            exercise: exercise,
+            thumbnail: catalogStore.thumbnail(for: exercise.exercise.source, customExercises: customExercises),
+            isOpen: isOpen(exercise),
+            isEditing: editMode.isEditing,
+            highlightedSetID: highlightedSetID(for: exercise),
+            previous: previousSets[exercise.id] ?? [],
+            unit: unit,
+            effortScale: settings?.effortScale ?? .rpe,
+            persistentNote: settings?.exerciseNotes.note(for: exercise.exerciseKey),
+            canAddWarmUps: engine.canAddWarmUps(to: exercise),
+            recordSetIDs: recordSetIDs(in: exercise),
+            onToggleOpen: { openExerciseID = isOpen(exercise) ? nil : exercise.id },
+            onEdit: scheduleSave,
+            onToggleComplete: { toggleComplete($0, in: exercise) },
+            onChangeKind: { set, kind in
+                set.kind = kind
+                try? engine.touch(session)
+            },
+            onDeleteSet: { deleteSet($0, in: exercise) },
+            onAddSet: { kind in _ = try? engine.addSet(to: exercise, kind: kind) },
+            onRemove: { remove(exercise) },
+            onSuperset: { supersetSource = exercise },
+            onLeaveSuperset: { try? engine.removeFromSuperset(exercise) },
+            onReplace: { replaceSource = exercise },
+            onEditNote: { noteExercise = exercise },
+            onAddWarmUps: { addWarmUps(to: exercise, step: step) },
+            // U podijeljenom prikazu upute vježbe su lijevo: dodir na upute otvara vježbu, a ne list.
+            onShowInfo: exercise.exercise.source == nil ? nil : {
+                if sizeClass == .regular { openExerciseID = exercise.id } else { infoExercise = exercise }
+            }
+        )
+        .environment(\.weightStep, step)
+    }
+
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {

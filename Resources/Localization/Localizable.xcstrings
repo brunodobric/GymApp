@@ -1685,6 +1685,26 @@
         }
       }
     },
+    "Nema uputa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No instructions"
+          }
+        }
+      }
+    },
+    "Ovdje se prikazuju video i upute otvorene vježbe." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The video and instructions for the open exercise appear here."
+          }
+        }
+      }
+    },
     "Ovdje će biti zadnji odrađeni trening." : {
       "localizations" : {
         "en" : {

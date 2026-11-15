@@ -29,6 +29,7 @@ Pravila iz Apple Human Interface Guidelines (skill *apple-hig-dizajn*) primijenj
   * Povijest: popis treninga lijevo, detalji treninga desno.
   * Plan: rasporedi i treninzi lijevo, uređivač desno.
   * Vježbe: odabir vrste (kapsule), pretraga i popis vježbi lijevo, vježba desno. Dok vježba nije odabrana, desno su kartice vrsta, koje mijenjaju popis lijevo.
+  * Aktivni trening: otvorena vježba (video, mišići i upute) lijevo, popis vježbi i serija desno. Lijevi stupac prati otvorenu vježbu (bez nje prvu s neodrađenim serijama), a gumb za upute na kartici vježbe tad otvara tu vježbu umjesto lista.
   * Početna i Statistika: kartice lijevo, ekran dodirnute kartice desno (`DetailLink`, odabrana kartica dobiva obrub u boji akcenta). Zadani desni stupac je zadnji trening (Početna) odnosno pregled tjedna (Statistika).
 * Preklapanje i otvaranje iPhonea Duo ne gubi mjesto: otvoreni ekran desnog stupca postaje vrh stoga na vanjskom zaslonu i obrnuto (zajednički `path` odnosno odabir u svakom tabu).
 
@@ -73,6 +74,7 @@ Smjer "Apolon, mirniji": zaobljeni bold za naslove i brojeve, obični SF Pro za 
 * Ciljane površine najmanje 44 × 44 pt. Kvačica serije je velika.
 * Retci serija podržavaju swipe akcije (brisanje serije, warm-up).
 * Brojevi koriste `monospacedDigit()`, pa se redak ne pomiče dok timer odbrojava.
+* U regular širini (iPad, otvoreni iPhone Duo) ekran je podijeljen: lijevo otvorena vježba s videom i uputama, desno ovaj popis s kontrolama unosa.
 
 ## Prilagodljivost
 
