@@ -3,6 +3,7 @@
 kotlin = "2.4.21"
 serialization = "1.10.0"
 junit = "6.1.3"
+coroutines = "1.11.0"
 # Android (samo modul aplikacije; gradi se uz Android SDK, npr. na CI-ju)
 androidGradlePlugin = "9.3.2" # mora biti isti kao u build.gradle.kts (buildscript)
 composeBom = "2025.09.01"
@@ -17,6 +18,8 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
 
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
