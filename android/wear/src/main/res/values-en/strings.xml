@@ -70,4 +70,18 @@
     <string name="workout_in_progress">Workout in progress</string>
     <string name="measure_request_title">Workout on phone</string>
     <string name="measure_request_text">Tap to measure heart rate and calories on the watch.</string>
+    <!-- Tile, complications and ongoing activity -->
+    <string name="glance_next">Next workout</string>
+    <string name="glance_none">No workout scheduled</string>
+    <string name="glance_open">Open</string>
+    <string name="glance_week_goal">%1$d of %2$d this week</string>
+    <plurals name="glance_week_sessions">
+        <item quantity="one">%d workout this week</item>
+        <item quantity="other">%d workouts this week</item>
+    </plurals>
+    <string name="glance_week">Week</string>
+    <string name="tile_label">Next workout</string>
+    <string name="complication_workout">Workout and rest</string>
+    <string name="complication_week">Weekly goal</string>
+    <string name="ongoing_rest">Rest #rest#</string>
 </resources>

@@ -80,4 +80,20 @@
     <string name="workout_in_progress">Trening u tijeku</string>
     <string name="measure_request_title">Trening na mobitelu</string>
     <string name="measure_request_text">Dodirni za mjerenje pulsa i kalorija na satu.</string>
+    <!-- Pločica, komplikacije i trajna aktivnost -->
+    <string name="glance_next">Sljedeći trening</string>
+    <string name="glance_none">Nema zakazanog treninga</string>
+    <string name="glance_open">Otvori</string>
+    <string name="glance_week_goal">%1$d od %2$d ovaj tjedan</string>
+    <plurals name="glance_week_sessions">
+        <item quantity="one">%d trening ovaj tjedan</item>
+        <item quantity="few">%d treninga ovaj tjedan</item>
+        <item quantity="other">%d treninga ovaj tjedan</item>
+    </plurals>
+    <string name="glance_week">Tjedan</string>
+    <string name="tile_label">Sljedeći trening</string>
+    <string name="complication_workout">Trening i odmor</string>
+    <string name="complication_week">Tjedni cilj</string>
+    <string name="ongoing_rest">Odmor #rest#</string>
+    <string name="ongoing_workout" translatable="false">#name# · #time#</string>
 </resources>
