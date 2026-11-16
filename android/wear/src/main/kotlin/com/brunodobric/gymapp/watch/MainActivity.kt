@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Deprecated("ComponentActivity ga i dalje poziva; ActivityResult API traži noviji Fragment od onog iz Play usluga.")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         @Suppress("DEPRECATION")
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST) permissionsAnswered()
