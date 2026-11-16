@@ -160,6 +160,6 @@ class HealthTracker(private val context: Context, private val scope: CoroutineSc
         const val HEART_RATE_PERMISSION = "android.permission.health.READ_HEART_RATE"
 
         /** `ExerciseTrackedStatus.OWNED_EXERCISE_IN_PROGRESS`: konstanta je u biblioteci označena kao interna. */
-        const val OWNED_EXERCISE_IN_PROGRESS = 1
+        const val OWNED_EXERCISE_IN_PROGRESS = 2
     }
 }
