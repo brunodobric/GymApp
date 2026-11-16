@@ -12,7 +12,6 @@ import androidx.health.services.client.data.Availability
 import androidx.health.services.client.data.DataType
 import androidx.health.services.client.data.ExerciseConfig
 import androidx.health.services.client.data.ExerciseLapSummary
-import androidx.health.services.client.data.ExerciseTrackedStatus
 import androidx.health.services.client.data.ExerciseType
 import androidx.health.services.client.data.ExerciseUpdate
 import com.brunodobric.gymapp.wear.HealthResult
@@ -135,7 +134,7 @@ class HealthTracker(private val context: Context, private val scope: CoroutineSc
         if (isRunning) return
         scope.launch {
             val info = runCatching { client.getCurrentExerciseInfoAsync().await() }.getOrNull() ?: return@launch
-            if (info.exerciseTrackedStatus != ExerciseTrackedStatus.OWNED_EXERCISE_IN_PROGRESS) return@launch
+            if (info.exerciseTrackedStatus != OWNED_EXERCISE_IN_PROGRESS) return@launch
             client.setUpdateCallback(callback)
             isRunning = true
             WorkoutService.start(context)
@@ -159,5 +158,8 @@ class HealthTracker(private val context: Context, private val scope: CoroutineSc
 
     private companion object {
         const val HEART_RATE_PERMISSION = "android.permission.health.READ_HEART_RATE"
+
+        /** `ExerciseTrackedStatus.OWNED_EXERCISE_IN_PROGRESS`: konstanta je u biblioteci označena kao interna. */
+        const val OWNED_EXERCISE_IN_PROGRESS = 1
     }
 }
