@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.brunodobric.gymapp.wear.PlannedWorkoutPayload
+import com.brunodobric.gymapp.wear.plan
 import com.brunodobric.gymapp.watch.ui.WatchApp
 
 class MainActivity : ComponentActivity() {
@@ -58,8 +59,16 @@ class MainActivity : ComponentActivity() {
         requestPermissions()
     }
 
-    /** Obavijest "Mjeri puls" (zahtjev s mobitela dok aplikacija nije bila na zaslonu). */
+    /**
+     * Gumb Započni na pločici (plan po id-u) i obavijest "Mjeri puls" (zahtjev s mobitela dok aplikacija nije
+     * bila na zaslonu).
+     */
     private fun handle(intent: Intent?) {
+        intent?.getStringExtra(EXTRA_PLAN)?.let { id ->
+            intent.removeExtra(EXTRA_PLAN)
+            val state = app.store.state.value
+            if (state.active == null) state.context.plan(id)?.let(::start)
+        }
         if (intent?.getBooleanExtra(EXTRA_MEASURE, false) != true) return
         intent.removeExtra(EXTRA_MEASURE)
         pendingMeasure = true
@@ -68,6 +77,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_MEASURE = "measure"
+        const val EXTRA_PLAN = "plan"
         private const val PERMISSIONS_REQUEST = 1
     }
 }

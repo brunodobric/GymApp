@@ -45,6 +45,11 @@ dependencies {
     // Puls i kalorije tijekom treninga (Jetpack Health Services, Apache 2.0).
     implementation(libs.androidx.health.services)
     implementation(libs.androidx.concurrent.futures)
+    // Trajna aktivnost na brojčaniku, pločica i komplikacije (Jetpack Wear, Apache 2.0).
+    implementation(libs.androidx.wear.ongoing)
+    implementation(libs.androidx.wear.tiles)
+    implementation(libs.androidx.wear.protolayout)
+    implementation(libs.androidx.wear.complications.data.source)
     // Wearable Data Layer: veza s mobitelom (Google Play usluge).
     implementation(libs.play.services.wearable)
     implementation(libs.kotlinx.coroutines.play.services)

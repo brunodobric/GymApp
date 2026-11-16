@@ -8,6 +8,8 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.brunodobric.gymapp.model.DeviceRole
+import com.brunodobric.gymapp.watch.glance.GlanceRefresher
+import com.brunodobric.gymapp.wear.WatchGlance
 import com.brunodobric.gymapp.wear.WatchWorkoutStore
 import com.brunodobric.gymapp.wear.WearCoding
 import com.brunodobric.gymapp.wear.WearPaths
@@ -15,6 +17,9 @@ import com.brunodobric.gymapp.wear.WorkoutEvent
 import com.brunodobric.gymapp.wear.WorkoutEventDeduplicator
 import java.io.File
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /** Aplikacija na satu: stanje treninga, veza s mobitelom i mjerenje, za sve ekrane i usluge. */
@@ -36,6 +41,10 @@ class WatchApplication : Application() {
         store = WatchWorkoutStore(link, health, FileStateStorage(File(filesDir, "watch")), scope, haptics::play)
         store.start()
         refreshFromPhone()
+        // Pločica i komplikacije dobivaju novi sadržaj samo kad se promijeni ono što prikazuju.
+        scope.launch {
+            store.state.map(WatchGlance::from).distinctUntilChanged().drop(1).collect { GlanceRefresher.refresh(this@WatchApplication) }
+        }
     }
 
     /** Čita zadnji kontekst i snimku s mobitela (Data Layer ih drži i dok mobitel nije u dosegu). */
