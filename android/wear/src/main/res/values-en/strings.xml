@@ -84,4 +84,6 @@
     <string name="complication_workout">Workout and rest</string>
     <string name="complication_week">Weekly goal</string>
     <string name="ongoing_rest">Rest #rest#</string>
+    <string name="complication_quick_start">Start workout</string>
+    <string name="complication_body_weight">Weight</string>
 </resources>

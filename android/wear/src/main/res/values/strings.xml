@@ -96,4 +96,6 @@
     <string name="complication_week">Tjedni cilj</string>
     <string name="ongoing_rest">Odmor #rest#</string>
     <string name="ongoing_workout" translatable="false">#name# · #time#</string>
+    <string name="complication_quick_start">Započni trening</string>
+    <string name="complication_body_weight">Težina</string>
 </resources>
