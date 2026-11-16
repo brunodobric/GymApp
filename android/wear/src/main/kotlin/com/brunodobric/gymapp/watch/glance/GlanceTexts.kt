@@ -27,7 +27,12 @@ internal fun Context.glanceTitle(kind: WatchGlance.Kind): String = when (kind) {
 internal object GlanceRefresher {
     fun refresh(context: Context) {
         runCatching { TileService.getUpdater(context).requestUpdate(NextWorkoutTileService::class.java) }
-        for (service in listOf(WorkoutComplicationService::class.java, WeekComplicationService::class.java)) {
+        for (service in listOf(
+            WorkoutComplicationService::class.java,
+            WeekComplicationService::class.java,
+            QuickStartComplicationService::class.java,
+            BodyWeightComplicationService::class.java,
+        )) {
             runCatching {
                 ComplicationDataSourceUpdateRequester.create(context, ComponentName(context, service)).requestUpdateAll()
             }

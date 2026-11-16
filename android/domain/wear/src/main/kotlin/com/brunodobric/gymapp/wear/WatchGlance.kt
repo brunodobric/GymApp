@@ -2,7 +2,10 @@ package com.brunodobric.gymapp.wear
 
 import com.brunodobric.gymapp.model.SessionState
 import com.brunodobric.gymapp.widgets.WidgetSnapshot
+import com.brunodobric.gymapp.units.WeightFormatter
+import com.brunodobric.gymapp.units.WeightUnit
 import java.time.Instant
+import java.util.Locale
 
 /**
  * Sadržaj pločice, komplikacija i trajne aktivnosti na satu (`ComplicationState` na iOS-u): odmor u tijeku,
@@ -17,6 +20,9 @@ data class WatchGlance(
     val next: Next? = null,
     val week: WidgetSnapshot.Week? = null,
     val accent: String = "blue",
+    /** Zadnja tjelesna težina s mobitela (kg). */
+    val bodyWeightKg: Double? = null,
+    val unit: WeightUnit = WeightUnit.KILOGRAMS,
 ) {
     /** Sljedeći trening: [planId] je `PlannedWorkoutPayload.id`, za pokretanje s pločice. */
     data class Next(val planId: String, val name: String, val scheduleName: String?, val exerciseCount: Int)
@@ -32,6 +38,10 @@ data class WatchGlance(
         next != null -> Kind.NEXT
         else -> Kind.EMPTY
     }
+
+    /** Težina za prikaz u odabranoj jedinici, bez jedinice ("82,4"); null bez mjerenja. */
+    fun bodyWeightNumber(locale: Locale = Locale.getDefault()): String? =
+        bodyWeightKg?.takeIf { it > 0 }?.let { WeightFormatter(unit, locale).number(it) }
 
     /** Tjedan kakav je u trenutku [now] (snimka s mobitela može biti iz prošlog tjedna). */
     fun week(now: Instant): WidgetSnapshot.Week? = week?.current(now)
@@ -49,6 +59,8 @@ data class WatchGlance(
                 next = plan?.let { Next(it.id, it.name, it.scheduleName, it.exercises.size) },
                 week = state.context.week,
                 accent = state.context.accent,
+                bodyWeightKg = state.context.bodyWeightKg,
+                unit = state.context.unit,
             )
         }
     }

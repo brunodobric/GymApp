@@ -9,6 +9,9 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import com.brunodobric.gymapp.units.WeightFormatter
+import com.brunodobric.gymapp.units.WeightUnit
+import java.util.Locale
 import org.junit.jupiter.api.Test
 
 class WatchGlanceTest {
@@ -77,6 +80,18 @@ class WatchGlanceTest {
         assertEquals("Legs", context.plan(context.templates.first().id)?.name)
         assertNull(context.plan("nema"))
         assertTrue(context.templates.first().id.startsWith("-/"))
+    }
+
+    @Test
+    fun `tjelesna tezina u jedinici korisnika`() {
+        val kg = WatchGlance.from(WatchUiState(context = context.copy(bodyWeightKg = 82.4)))
+        assertEquals("82,4", kg.bodyWeightNumber(Locale.forLanguageTag("hr")))
+        assertEquals(WeightUnit.KILOGRAMS, kg.unit)
+        val lbs = WatchGlance.from(WatchUiState(context = context.copy(bodyWeightKg = 82.4, weightUnit = WeightUnit.POUNDS.raw)))
+        assertEquals(WeightUnit.POUNDS, lbs.unit)
+        assertEquals(WeightFormatter(WeightUnit.POUNDS, Locale.ENGLISH).number(82.4), lbs.bodyWeightNumber(Locale.ENGLISH))
+        assertNull(WatchGlance.from(WatchUiState(context = context)).bodyWeightNumber())
+        assertNotEquals(kg, lbs)
     }
 
     private fun <T : Any> assertNotNullValue(value: T?): T = kotlin.test.assertNotNull(value)
