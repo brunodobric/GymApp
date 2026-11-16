@@ -182,6 +182,16 @@ fun TrainingSettingsSection(services: AppServices) {
         },
     )
     Footer(stringResource(R.string.suggest_heavier_weight_footer))
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.start_watch_workout)) },
+        trailingContent = {
+            Switch(checked = settings.startsWatchWorkout, onCheckedChange = {
+                settings.startsWatchWorkout = it
+                store.save()
+            })
+        },
+    )
+    Footer(stringResource(R.string.start_watch_workout_footer))
     SectionHeader(stringResource(R.string.records))
     ListItem(
         headlineContent = { Text(stringResource(R.string.records_pr)) },

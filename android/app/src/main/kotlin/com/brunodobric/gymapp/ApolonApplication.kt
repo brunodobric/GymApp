@@ -10,6 +10,7 @@ import com.brunodobric.gymapp.notifications.RestNotifications
 import com.brunodobric.gymapp.notifications.WorkoutNotification
 import com.brunodobric.gymapp.notifications.WorkoutNotificationUpdater
 import com.brunodobric.gymapp.sync.FileSync
+import com.brunodobric.gymapp.wear.PhoneWatchSync
 
 class ApolonApplication : Application() {
     /** Zajedničke usluge aplikacije (katalog, kasnije baza), kao `AppServices` na iOS-u. */
@@ -36,6 +37,10 @@ class ApolonApplication : Application() {
     lateinit var sync: FileSync
         private set
 
+    /** Veza sa satom (Wear OS) preko Data Layera, kad je sat s aplikacijom uparen. */
+    lateinit var watchSync: PhoneWatchSync
+        private set
+
     override fun onCreate() {
         super.onCreate()
         services = AppServices(this)
@@ -48,5 +53,6 @@ class ApolonApplication : Application() {
         widgets = WidgetRefresher(this, services).also { it.start() }
         health = HealthConnectSync(this, services).also { it.start() }
         sync = FileSync(this, services).also { it.start() }
+        watchSync = PhoneWatchSync(this, services).also { it.start() }
     }
 }

@@ -10,7 +10,7 @@ Plan je napisan prema stanju repozitorija na commitu `dc3b13b` (widgeti, prečac
 
 Ovaj odjeljak vrijedi ispred svega ispod njega.
 
-* **Opseg: samo Android mobitel.** Wear OS sat, tableti i preklopni mobiteli se zasad ne rade (Bruno, 9. 11.). Odjeljci 7.9 i faza 9 (Wear OS) te faza 11 (tableti i preklopni) ostaju u planu samo kao zapis za kasnije. Aplikacija se zaključava na uspravni položaj kao na iPhoneu, a na tabletu i otvorenom preklopnom mobitelu radi kao telefon (bez vlastitog rasporeda). Zbog toga otpada i dio prilagodljivosti iz 7.1 (rail, drawer, više okna).
+* **Opseg: Android mobitel i Wear OS sat.** Wear OS sat (Galaxy Watch, Pixel Watch) ulazi u plan (Bruno, 16. 11.) i testira se samo na emulatoru; tableti i preklopni mobiteli se zasad ne rade (Bruno, 9. 11.), pa faza 11 ostaje samo kao zapis za kasnije. Aplikacija se zaključava na uspravni položaj kao na iPhoneu, a na tabletu i otvorenom preklopnom mobitelu radi kao telefon (bez vlastitog rasporeda). Zbog toga otpada i dio prilagodljivosti iz 7.1 (rail, drawer, više okna).
 * **MoveKit licenca vrijedi i za Android**, pod istim pravilima kao za iOS (odjeljak 9).
 * **Repozitorij:** isti, mapa `android/`, grana `claude/project-thread-9zyhro` za prve korake.
 * **Usklađeno s iOS kodom do PR-a #134** (commit `670eff4`) i pregledom koda od 9. 11.:
@@ -304,9 +304,15 @@ Isti ekrani i ista pravila kao na satu (specifikacija, "Watch ekrani"), u Compos
 | Smart Stack relevantnost | Ongoing Activity i Tile; nema ekvivalenta relevantnosti |
 | Zapis treninga u Zdravlje sa sata | Sat zapisuje trening u Health Connect na telefonu preko podataka koje šalje telefonu (Health Services na satu ne piše izravno u Health Connect telefona). Telefon tada zna da trening ima puls i kalorije sa sata (`healthRecordedByWatch`). |
 
-* Protokol (`SessionSnapshot`, `WorkoutCommand`, `WorkoutEvent`, `WatchContext`, `LiveSetEditor`) prenosi se 1:1 u `shared/wearprotocol`, kao JSON. Jedan uređaj vodi trening, isto pravilo kao na iOS-u.
+* Protokol (`SessionSnapshot`, `WorkoutCommand`, `WorkoutEvent`, `WatchContext`, `LiveSetEditor`) prenosi se 1:1, kao JSON. Jedan uređaj vodi trening, isto pravilo kao na iOS-u.
 * Sat može voditi trening bez telefona i poslati ga kad se veza uspostavi.
 * Sat se objavljuje kao Wear OS aplikacija u istom Play listingu (zaseban modul, isti `applicationId`).
+* **Napravljeno (16. 11.):**
+  * `domain/wear` (čisti Kotlin, testovi na JVM-u) je port `GymKit/Connectivity`: snimka treninga, naredbe i razlika (`SnapshotDiff`), `SnapshotEngine`, događaji s deduplikacijom, kontekst za sat (`WatchContextBuilder`) i upis snimke u bazu (`SessionSnapshotStore`). U njemu je i stanje aplikacije na satu (`WatchWorkoutStore`, port `WatchApp/WatchWorkoutStore.swift`) iza sučelja za vezu, mjerenje, spremanje i haptiku, pa su pravila (pauza i haptika, slanje nakon 300 ms, zrcaljenje treninga s mobitela, mjerenje za mobitel s rokom od 120 s i zatvaranjem nakon 5 min) pokrivena testovima.
+  * Modul `wear` (Compose for Wear OS, Material 3): početni ekran (sljedeći treninzi i ostali predlošci), detalj s gumbom Započni, trening na tri stranice (kontrole s trajanjem, pulsom i kalorijama; serija s krunom ili okretnim okvirom, − i + i zelenom kvačicom, štoperica za seriju s trajanjem; odmor s prstenom, −10, Dalje, +10), popis vježbi s poništavanjem završenih serija, potvrde završetka i odbacivanja te sažetak.
+  * Data Layer: kontekst (`/apolon/context`) i snimka treninga s mobitela (`/apolon/session/phone`) su podaci s mobitela, snimka treninga sa sata (`/apolon/session/watch`) podatak sa sata, a događaji idu porukom (`/apolon/event`) i zajamčeno kao podatak `/apolon/event/<uuid>` koji primatelj obriše. Mobitel (`wear/PhoneWatchSync`) šalje kontekst dvije sekunde nakon spremanja baze kad se promijeni, a snimku ili naredbe nakon 300 ms.
+  * Mjerenje: Health Services `ExerciseClient` (vrsta snaga, puls, prosjek pulsa i kalorije) u usluzi u prvom planu (`WorkoutService`, vrsta `health`). Na kraju sat šalje prosječni puls i kalorije, a mobitel trening upisuje u Health Connect (već postojeći upis). Kad mobitel pokrene trening snage (i uključeno je "Pokreni trening na satu"), šalje poruku `/apolon/health/request`; ako sat ne smije pokrenuti uslugu iz pozadine, pokaže obavijest koja otvara aplikaciju i pokreće mjerenje.
+  * **Još nije:** Ongoing Activity, Tiles i komplikacije, točan alarm za kraj odmora dok je zaslon sata ugašen (sad vibrira iz aplikacije dok radi usluga u prvom planu), prečac "Pokreni trening na satu" u postavkama mobitela ako ga Android postavke još nemaju.
 
 ### 7.10 Widgeti, pločica i prečaci
 
