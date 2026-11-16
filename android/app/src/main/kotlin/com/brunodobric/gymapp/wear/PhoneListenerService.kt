@@ -22,7 +22,7 @@ class PhoneListenerService : WearableListenerService() {
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
         val path = messageEvent.path
-        val bytes = messageEvent.data ?: ByteArray(0)
+        val bytes: ByteArray = messageEvent.data
         main.post { sync.receiveMessage(path, bytes) }
     }
 
