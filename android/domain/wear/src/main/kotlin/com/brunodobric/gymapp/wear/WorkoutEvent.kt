@@ -75,11 +75,17 @@ object WearPaths {
     /** Snimka treninga koji vodi sat, podatak sa sata. */
     const val WATCH_SESSION = "/apolon/session/watch"
 
-    /** Događaji ([WorkoutEvent]) kao poruke, u oba smjera. */
+    /**
+     * Događaji ([WorkoutEvent]) u oba smjera: kao poruka na ovom putu kad je drugi uređaj dostupan, a zajamčeni kao
+     * podatak na `EVENT/<id>` (Data Layer ga dostavi kad se uređaji spoje, a primatelj ga obriše nakon obrade).
+     */
     const val EVENT = "/apolon/event"
 
-    /** Ključ za bajtove u podatku. */
-    const val PAYLOAD_KEY = "payload"
+    /** Poruka s mobitela: trening je pokrenut na mobitelu, sat neka mjeri puls i kalorije. */
+    const val HEALTH_REQUEST = "/apolon/health/request"
+
+    /** Put zajamčenog događaja. */
+    fun eventItem(id: UUID): String = "$EVENT/$id"
 
     /** Mogućnost kojom se aplikacije na satu i mobitelu pronalaze (`wear.xml`). */
     const val PHONE_CAPABILITY = "apolon_phone"

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_empty">Create a workout or schedule in the phone app and open it once with the watch nearby.</string>
+    <string name="home_next">Next</string>
+    <string name="home_workouts">Workouts</string>
+    <string name="home_other_workouts">Other workouts</string>
+    <string name="approx_minutes">~%1$d min</string>
+    <string name="start">Start</string>
+    <string name="cardio">Cardio</string>
+    <string name="plan_measures">The watch measures heart rate and calories, and the phone saves the workout to Health Connect.</string>
+    <plurals name="exercise_count">
+        <item quantity="one">%d exercise</item>
+        <item quantity="other">%d exercises</item>
+    </plurals>
+    <plurals name="set_count">
+        <item quantity="one">%d set</item>
+        <item quantity="other">%d sets</item>
+    </plurals>
+
+    <string name="finish">Finish</string>
+    <string name="discard">Discard</string>
+    <string name="phone_leads">Workout led by phone</string>
+    <plurals name="completed_sets">
+        <item quantity="one">%d set</item>
+        <item quantity="other">%d sets</item>
+    </plurals>
+    <string name="exercises_progress">Exercises: %1$d of %2$d</string>
+    <string name="set_of">Set %1$d of %2$d</string>
+    <string name="warm_up">warm-up</string>
+    <string name="previous_time">Last time %1$s</string>
+    <string name="reps_short">reps</string>
+    <string name="duration_unit">min:s</string>
+    <string name="exercise_done">All sets of this exercise are done.</string>
+    <string name="all_sets_done">All sets are done.</string>
+    <string name="next_exercise">Next exercise</string>
+    <string name="add_set">Add set</string>
+    <string name="rest">Rest</string>
+    <string name="skip_rest">Skip</string>
+    <string name="next_up">Next: %1$s</string>
+    <string name="exercises">Exercises</string>
+    <string name="superset">superset</string>
+    <string name="sets_progress">%1$d of %2$d sets</string>
+    <string name="completed_sets_header">Completed sets</string>
+    <string name="tap_to_undo">Tap to undo</string>
+
+    <string name="finish_title">Finish workout?</string>
+    <string name="finish_message">Sets that are not marked as completed won\'t be saved.</string>
+    <string name="finish_confirm">Finish workout</string>
+    <string name="continue_workout">Continue</string>
+    <string name="discard_title">Discard workout?</string>
+    <string name="discard_message">The workout and all its sets will be deleted.</string>
+    <string name="discard_confirm">Discard workout</string>
+    <string name="nothing_completed_title">No completed sets</string>
+    <string name="nothing_completed_message">A workout without a single completed set can\'t be saved.</string>
+    <string name="error_title">Error</string>
+    <string name="error_set_incomplete">Enter all values for the set.</string>
+    <string name="error_save_failed">The set couldn\'t be saved.</string>
+    <string name="ok">OK</string>
+
+    <string name="summary_title">Workout finished</string>
+    <string name="summary_duration">Duration</string>
+    <string name="summary_sets">Sets</string>
+    <string name="summary_volume">Volume</string>
+    <string name="summary_energy">Calories</string>
+    <string name="summary_heart_rate">Average heart rate</string>
+    <string name="minutes_short">%1$d min</string>
+    <string name="done">Done</string>
+
+    <string name="workout_channel">Workout in progress</string>
+    <string name="workout_in_progress">Workout in progress</string>
+    <string name="measure_request_title">Workout on phone</string>
+    <string name="measure_request_text">Tap to measure heart rate and calories on the watch.</string>
+</resources>

@@ -822,4 +822,6 @@
     <string name="template_update_footer">Only the exercises and sets are saved. The app suggests weights on its own.</string>
     <string name="history_search">Workout or exercise</string>
     <string name="history_no_match">No workouts match your search.</string>
+    <string name="start_watch_workout">Start workout on watch too</string>
+    <string name="start_watch_workout_footer">When you start a workout on your phone, your Wear OS watch measures heart rate and calories, stays open during the workout and vibrates when rest ends.</string>
 </resources>

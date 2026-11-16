@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Apolon</string>
+
+    <!-- Početni ekran i detalj treninga -->
+    <string name="home_empty">Napravi trening ili raspored u aplikaciji na mobitelu i otvori je jednom dok je sat u blizini.</string>
+    <string name="home_next">Sljedeći</string>
+    <string name="home_workouts">Treninzi</string>
+    <string name="home_other_workouts">Ostali treninzi</string>
+    <string name="approx_minutes">~%1$d min</string>
+    <string name="start">Započni</string>
+    <string name="cardio">Kardio</string>
+    <string name="plan_measures">Sat mjeri puls i kalorije, a mobitel trening sprema u Health Connect.</string>
+    <plurals name="exercise_count">
+        <item quantity="one">%d vježba</item>
+        <item quantity="few">%d vježbe</item>
+        <item quantity="other">%d vježbi</item>
+    </plurals>
+    <plurals name="set_count">
+        <item quantity="one">%d serija</item>
+        <item quantity="few">%d serije</item>
+        <item quantity="other">%d serija</item>
+    </plurals>
+
+    <!-- Trening -->
+    <string name="finish">Završi</string>
+    <string name="discard">Odbaci</string>
+    <string name="phone_leads">Trening vodi mobitel</string>
+    <plurals name="completed_sets">
+        <item quantity="one">%d serija</item>
+        <item quantity="few">%d serije</item>
+        <item quantity="other">%d serija</item>
+    </plurals>
+    <string name="exercises_progress">Vježbe: %1$d od %2$d</string>
+    <string name="set_of">Serija %1$d od %2$d</string>
+    <string name="warm_up">zagrijavanje</string>
+    <string name="previous_time">Prošli put %1$s</string>
+    <string name="reps_short">pon.</string>
+    <string name="duration_unit">min:s</string>
+    <string name="exercise_done">Sve serije vježbe su gotove.</string>
+    <string name="all_sets_done">Sve serije su gotove.</string>
+    <string name="next_exercise">Sljedeća vježba</string>
+    <string name="add_set">Dodaj seriju</string>
+    <string name="rest">Odmor</string>
+    <string name="skip_rest">Dalje</string>
+    <string name="next_up">Sljedeće: %1$s</string>
+    <string name="exercises">Vježbe</string>
+    <string name="superset">superset</string>
+    <string name="sets_progress">%1$d od %2$d serija</string>
+    <string name="completed_sets_header">Završene serije</string>
+    <string name="tap_to_undo">Dodirni za poništavanje</string>
+
+    <!-- Potvrde -->
+    <string name="finish_title">Završiti trening?</string>
+    <string name="finish_message">Serije koje nisu označene završenima neće se spremiti.</string>
+    <string name="finish_confirm">Završi trening</string>
+    <string name="continue_workout">Nastavi</string>
+    <string name="discard_title">Odbaciti trening?</string>
+    <string name="discard_message">Trening i sve serije bit će obrisani.</string>
+    <string name="discard_confirm">Odbaci trening</string>
+    <string name="nothing_completed_title">Nema završenih serija</string>
+    <string name="nothing_completed_message">Trening bez ijedne završene serije ne može se spremiti.</string>
+    <string name="error_title">Greška</string>
+    <string name="error_set_incomplete">Upiši sve vrijednosti serije.</string>
+    <string name="error_save_failed">Serija se nije mogla spremiti.</string>
+    <string name="ok">U redu</string>
+
+    <!-- Sažetak -->
+    <string name="summary_title">Trening završen</string>
+    <string name="summary_duration">Trajanje</string>
+    <string name="summary_sets">Serije</string>
+    <string name="summary_volume">Volumen</string>
+    <string name="summary_energy">Kalorije</string>
+    <string name="summary_heart_rate">Prosječni puls</string>
+    <string name="minutes_short">%1$d min</string>
+    <string name="done">Gotovo</string>
+
+    <!-- Obavijesti -->
+    <string name="workout_channel">Trening u tijeku</string>
+    <string name="workout_in_progress">Trening u tijeku</string>
+    <string name="measure_request_title">Trening na mobitelu</string>
+    <string name="measure_request_text">Dodirni za mjerenje pulsa i kalorija na satu.</string>
+</resources>

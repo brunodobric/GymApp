@@ -32,10 +32,10 @@ jobs:
       - name: Testovi i build
         run: ./gradlew check --console=plain
 
-      # APK za testiranje na mobitelu (debug potpis, bez MoveKit klipova).
+      # APK-ovi za testiranje na mobitelu i satu (debug potpis, bez MoveKit klipova).
       - name: Debug APK
         if: hashFiles('android/app/build.gradle.kts') != ''
-        run: ./gradlew :app:assembleDebug --console=plain
+        run: ./gradlew :app:assembleDebug :wear:assembleDebug --console=plain
 
       - name: Spremi APK
         if: hashFiles('android/app/build.gradle.kts') != ''
@@ -43,4 +43,12 @@ jobs:
         with:
           name: apolon-debug-apk
           path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+      - name: Spremi APK za sat
+        if: hashFiles('android/wear/build.gradle.kts') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: apolon-wear-debug-apk
+          path: android/wear/build/outputs/apk/debug/*.apk
           retention-days: 14

@@ -51,6 +51,7 @@ dependencies {
     implementation(project(":domain:widgets"))
     implementation(project(":domain:health"))
     implementation(project(":domain:sync"))
+    implementation(project(":domain:wear"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
@@ -64,5 +65,8 @@ dependencies {
     implementation(libs.androidx.glance.appwidget)
     // Upis treninga i težine u Health Connect (Jetpack, Apache 2.0).
     implementation(libs.androidx.health.connect)
+    // Wearable Data Layer: veza sa satom (Google Play usluge).
+    implementation(libs.play.services.wearable)
+    implementation(libs.kotlinx.coroutines.play.services)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

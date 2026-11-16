@@ -36,4 +36,6 @@ val hasAndroidSdk = System.getenv("ANDROID_HOME") != null || System.getenv("ANDR
     file("local.properties").takeIf { it.exists() }?.readText()?.contains("sdk.dir") == true
 if (hasAndroidSdk) {
     include(":app")
+    // Aplikacija za Wear OS sat (Galaxy Watch, Pixel Watch), isti applicationId kao mobitel.
+    include(":wear")
 }

@@ -832,4 +832,6 @@
     <string name="template_update_footer">Sprema se samo raspored vježbi i serija. Težine aplikacija predlaže sama.</string>
     <string name="history_search">Trening ili vježba</string>
     <string name="history_no_match">Nijedan trening ne odgovara pretrazi.</string>
+    <string name="start_watch_workout">Pokreni trening i na satu</string>
+    <string name="start_watch_workout_footer">Kad trening pokreneš na mobitelu, Wear OS sat mjeri puls i kalorije, ostaje otvoren tijekom treninga i vibrira na kraju odmora.</string>
 </resources>
