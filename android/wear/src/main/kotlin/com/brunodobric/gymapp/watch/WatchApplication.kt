@@ -1,8 +1,11 @@
 package com.brunodobric.gymapp.watch
 
+import android.Manifest
 import android.app.Application
 import android.app.NotificationManager
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.brunodobric.gymapp.model.DeviceRole
 import com.brunodobric.gymapp.wear.WatchWorkoutStore
@@ -84,6 +87,7 @@ class WatchApplication : Application() {
 
     /** Mobitel je zatražio mjerenje dok aplikacija nije na zaslonu: obavijest je otvara i mjerenje počinje. */
     private fun notifyMeasureRequest() {
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         WorkoutService.createChannel(this)
         val notification = NotificationCompat.Builder(this, "workout")
             .setSmallIcon(R.drawable.ic_notification)

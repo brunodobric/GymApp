@@ -32,6 +32,11 @@ jobs:
       - name: Testovi i build
         run: ./gradlew check --console=plain
 
+      # Lint u logu ispisuje samo prvu grešku; ovdje su sve.
+      - name: Izvještaj linta
+        if: failure()
+        run: cat */build/intermediates/lint_intermediate_text_report/debug/lintReportDebug/lint-results-debug.txt || true
+
       # APK-ovi za testiranje na mobitelu i satu (debug potpis, bez MoveKit klipova).
       - name: Debug APK
         if: hashFiles('android/app/build.gradle.kts') != ''
