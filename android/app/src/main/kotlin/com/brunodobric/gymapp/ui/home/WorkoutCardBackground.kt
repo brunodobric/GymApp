@@ -17,7 +17,7 @@ internal val WorkoutCardShape = RoundedCornerShape(24.dp)
 /**
  * Pozadina kartice treninga (`WorkoutCardBackground` na iOS-u): ista podloga kao ostale kartice, preko nje
  * ujednačen poluprozirni sloj u boji akcenta (bez stupnjevanja) i tanki rub, da se kartica istakne među ostalima.
- * Akcent je boja iz postavki (`colorScheme.primary`). U tamnom načinu akcent na tamnoj podlozi treba malo više
+ * Akcent je Čelik (`colorScheme.primary`). U tamnom načinu akcent na tamnoj podlozi treba malo više
  * boje da se jednako vidi.
  */
 @Composable

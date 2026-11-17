@@ -11,37 +11,41 @@ struct ForeignImportSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    LabeledContent("Novi treninzi") { Text(preview.newWorkouts.count, format: .number) }
-                    if preview.alreadyImported > 0 {
-                        LabeledContent("Već uvezeni") { Text(preview.alreadyImported, format: .number) }
-                    }
-                    if let first = preview.firstDate, let last = preview.lastDate {
-                        LabeledContent("Razdoblje") {
-                            Text((first..<max(first, last)).formatted(.interval.day().month().year()))
-                        }
-                    }
-                    LabeledContent("Serije") { Text(preview.setCount, format: .number) }
-                } header: {
-                    Text("Treninzi")
-                } footer: {
-                    if preview.newWorkouts.isEmpty {
-                        Text("Svi treninzi iz ove datoteke već su uvezeni.")
-                    }
-                }
-
-                if !preview.exercises.isEmpty {
+                Group {
                     Section {
-                        ForEach(preview.exercises) { mapping in
-                            ExerciseMappingRow(mapping: mapping)
+                        LabeledContent("Novi treninzi") { Text(preview.newWorkouts.count, format: .number) }
+                        if preview.alreadyImported > 0 {
+                            LabeledContent("Već uvezeni") { Text(preview.alreadyImported, format: .number) }
                         }
+                        if let first = preview.firstDate, let last = preview.lastDate {
+                            LabeledContent("Razdoblje") {
+                                Text((first..<max(first, last)).formatted(.interval.day().month().year()))
+                            }
+                        }
+                        LabeledContent("Serije") { Text(preview.setCount, format: .number) }
                     } header: {
-                        Text("Vježbe")
+                        Text("Treninzi")
                     } footer: {
-                        Text("Vježbe kojih nema u katalogu dodaju se kao tvoje vlastite vježbe. Prazne serije se ne uvoze.")
+                        if preview.newWorkouts.isEmpty {
+                            Text("Svi treninzi iz ove datoteke već su uvezeni.")
+                        }
+                    }
+
+                    if !preview.exercises.isEmpty {
+                        Section {
+                            ForEach(preview.exercises) { mapping in
+                                ExerciseMappingRow(mapping: mapping)
+                            }
+                        } header: {
+                            Text("Vježbe")
+                        } footer: {
+                            Text("Vježbe kojih nema u katalogu dodaju se kao tvoje vlastite vježbe. Prazne serije se ne uvoze.")
+                        }
                     }
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Uvoz treninga")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

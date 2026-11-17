@@ -5,7 +5,6 @@ import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.catalog.ExerciseKind
 import com.brunodobric.gymapp.catalog.Muscle
 import com.brunodobric.gymapp.catalog.uppercaseString
-import com.brunodobric.gymapp.model.AccentChoice
 import com.brunodobric.gymapp.model.AppTheme
 import com.brunodobric.gymapp.model.BodyMeasurement
 import com.brunodobric.gymapp.model.BodyMeasurementKind
@@ -69,7 +68,7 @@ private fun GymStore.fillSample(): Session {
     settings.suggestsHeavierWeight = false
     settings.liveActivityFollowsApp = false
     settings.liveActivityTheme = AppTheme.LIGHT
-    settings.liveActivityAccent = AccentChoice.PINK
+    settings.liveActivityAccentRaw = "pink"
     settings.availablePlatesKg = listOf(1.25, 2.5, 20.0)
 
     val custom = insert(CustomExercise("Moja \"vježba\", s zarezom"))
@@ -175,7 +174,7 @@ class BackupTest {
             assertFalse(restored.liveActivityFollowsApp)
             assertEquals(210, restored.compoundRestSeconds)
             assertEquals(AppTheme.LIGHT, restored.liveActivityTheme)
-            assertEquals(AccentChoice.PINK, restored.liveActivityAccent)
+            assertEquals("pink", restored.liveActivityAccentRaw)
             assertTrue(target.bodyMeasurements.any { it.healthKitSampleId == healthSample })
             assertEquals(1, target.settingsRecords.size)
         }

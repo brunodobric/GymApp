@@ -3,13 +3,8 @@ import Models
 import SwiftUI
 import Training
 
-// Zajednički dijelovi izgleda na satu, usklađeni s aplikacijom na iPhoneu: naglasna boja iz postavki,
+// Zajednički dijelovi izgleda na satu, usklađeni s aplikacijom na iPhoneu: akcent Čelik (`AppPalette`),
 // ikona vrste treninga, oznaka broja serije i zaglavlje s trajanjem i pulsom.
-
-extension AccentChoice {
-    /// Ista boja kao na iPhoneu (`AccentChoice.color` u aplikaciji).
-    var color: Color { AccentPalette.color(for: rawValue) }
-}
 
 extension SessionMix {
     var title: LocalizedStringKey {
@@ -38,7 +33,7 @@ struct WatchWorkoutMixIcon: View {
                         Image(systemName: "figure.run.circle.fill")
                             .font(.system(size: 9))
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, .tint)
+                            .foregroundStyle(AppPalette.onAccent, .tint)
                             .background(Circle().fill(.black).padding(-1))
                             .offset(x: 5, y: 5)
                     }

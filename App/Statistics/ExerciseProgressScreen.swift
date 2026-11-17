@@ -20,15 +20,19 @@ struct ExerciseProgressPicker: View {
 
     var body: some View {
         List {
-            if items.isEmpty {
-                Text("Nema vježbi za prikaz.").foregroundStyle(.secondary)
-            }
-            ForEach(items) { item in
-                if let ref = item.ref {
-                    NavigationLink(item.name) { ExerciseProgressScreen(ref: ref) }
+            Group {
+                if items.isEmpty {
+                    Text("Nema vježbi za prikaz.").foregroundStyle(.secondary)
+                }
+                ForEach(items) { item in
+                    if let ref = item.ref {
+                        NavigationLink(item.name) { ExerciseProgressScreen(ref: ref) }
+                    }
                 }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Napredak vježbe")
         .searchable(text: $search, prompt: "Vježba")
         .task { done = (try? DoneExercises.fetch(in: context)) ?? [] }
@@ -151,83 +155,87 @@ struct ExerciseProgressScreen: View {
 
     var body: some View {
         List {
-            statusSection
-            Section {
-                if isPro {
-                    Picker("Prikaz", selection: $metric) {
-                        ForEach(Metric.allCases) { Text($0.title).tag($0) }
-                    }
-                    .pickerStyle(.segmented)
-                    if metric == .oneRepMax {
-                        Toggle("Brzycki umjesto Epley", isOn: $useBrzycki)
-                    }
-                    Picker("Raspon", selection: $rangeChoice) {
-                        ForEach(RangeChoice.allCases) { Text($0.title).tag($0) }
-                    }
-                    .pickerStyle(.menu)
-                    if rangeChoice == .custom {
-                        DatePicker("Od", selection: $customFrom, in: ...customTo, displayedComponents: .date)
-                        DatePicker("Do", selection: $customTo, in: customFrom...Date.now, displayedComponents: .date)
-                    }
-                }
-                let visible = plotted
-                if points.count < 2 && shownCompared == nil {
-                    Text("Za graf trebaju barem dva treninga s ovom vježbom.").foregroundStyle(.secondary)
-                } else if visible.isEmpty {
-                    Text("U odabranom rasponu nema treninga s ovom vježbom.").foregroundStyle(.secondary)
-                } else {
-                    Chart(visible) { item in
-                        LineMark(x: .value("Datum", item.date), y: .value(unit.symbol, item.value))
-                            .foregroundStyle(by: .value("Vježba", item.series))
-                        PointMark(x: .value("Datum", item.date), y: .value(unit.symbol, item.value))
-                            .foregroundStyle(by: .value("Vježba", item.series))
-                    }
-                    .chartYScale(domain: ChartValueDomain.domain(for: visible.map(\.value)))
-                    .chartXScale(domain: xDomain(visible))
-                    .chartLegend(shownCompared == nil ? .hidden : .visible)
-                    .chartHeight(220, regular: 360)
-                    .accessibilityLabel(Text(chartLabel))
-                }
-                if isPro {
-                    compareMenu
-                }
-            } footer: {
-                if !isPro {
-                    Text("Najveća težina po treningu, zadnja 3 mjeseca.")
-                } else if metric == .oneRepMax {
-                    Text("Procjena 1RM računa se iz serija do 12 ponavljanja, uz ponavljanja u rezervi kad je upisan RPE ili RIR.")
-                }
-            }
-            if isPro && !repMaxes.isEmpty {
-                Section("Najteža serija po ponavljanjima") {
-                    ForEach(repMaxes, id: \.reps) { entry in
-                        LabeledContent {
-                            Text(WeightFormatter(unit: unit).string(fromKilograms: entry.weightKg)).font(.rowValue)
-                        } label: {
-                            Text("\(entry.reps)+ ponavljanja")
-                            Text(entry.date.formatted(date: .abbreviated, time: .omitted))
+            Group {
+                statusSection
+                Section {
+                    if isPro {
+                        Picker("Prikaz", selection: $metric) {
+                            ForEach(Metric.allCases) { Text($0.title).tag($0) }
+                        }
+                        .pickerStyle(.segmented)
+                        if metric == .oneRepMax {
+                            Toggle("Brzycki umjesto Epley", isOn: $useBrzycki)
+                        }
+                        Picker("Raspon", selection: $rangeChoice) {
+                            ForEach(RangeChoice.allCases) { Text($0.title).tag($0) }
+                        }
+                        .pickerStyle(.menu)
+                        if rangeChoice == .custom {
+                            DatePicker("Od", selection: $customFrom, in: ...customTo, displayedComponents: .date)
+                            DatePicker("Do", selection: $customTo, in: customFrom...Date.now, displayedComponents: .date)
                         }
                     }
+                    let visible = plotted
+                    if points.count < 2 && shownCompared == nil {
+                        Text("Za graf trebaju barem dva treninga s ovom vježbom.").foregroundStyle(.secondary)
+                    } else if visible.isEmpty {
+                        Text("U odabranom rasponu nema treninga s ovom vježbom.").foregroundStyle(.secondary)
+                    } else {
+                        Chart(visible) { item in
+                            LineMark(x: .value("Datum", item.date), y: .value(unit.symbol, item.value))
+                                .foregroundStyle(by: .value("Vježba", item.series))
+                            PointMark(x: .value("Datum", item.date), y: .value(unit.symbol, item.value))
+                                .foregroundStyle(by: .value("Vježba", item.series))
+                        }
+                        .chartYScale(domain: ChartValueDomain.domain(for: visible.map(\.value)))
+                        .chartXScale(domain: xDomain(visible))
+                        .chartLegend(shownCompared == nil ? .hidden : .visible)
+                        .chartHeight(220, regular: 360)
+                        .accessibilityLabel(Text(chartLabel))
+                    }
+                    if isPro {
+                        compareMenu
+                    }
+                } footer: {
+                    if !isPro {
+                        Text("Najveća težina po treningu, zadnja 3 mjeseca.")
+                    } else if metric == .oneRepMax {
+                        Text("Procjena 1RM računa se iz serija do 12 ponavljanja, uz ponavljanja u rezervi kad je upisan RPE ili RIR.")
+                    }
                 }
-            }
-            Section("Treninzi") {
-                ForEach(Array(points.reversed().enumerated()), id: \.offset) { _, point in
-                    HStack {
-                        Text(point.date.formatted(date: .abbreviated, time: .omitted))
-                        Spacer()
-                        VStack(alignment: .trailing) {
-                            Text(WeightFormatter(unit: unit).string(fromKilograms: point.bestWeightKg) + " × \(point.bestReps)")
-                                .font(.rowValue)
-                            if let oneRepMax = point.estimatedOneRepMaxKg {
-                                Text("1RM ≈ \(WeightFormatter(unit: unit).string(fromKilograms: oneRepMax))")
-                                    .font(.caption).foregroundStyle(.secondary)
+                if isPro && !repMaxes.isEmpty {
+                    Section("Najteža serija po ponavljanjima") {
+                        ForEach(repMaxes, id: \.reps) { entry in
+                            LabeledContent {
+                                Text(WeightFormatter(unit: unit).string(fromKilograms: entry.weightKg)).font(.rowValue)
+                            } label: {
+                                Text("\(entry.reps)+ ponavljanja")
+                                Text(entry.date.formatted(date: .abbreviated, time: .omitted))
                             }
                         }
                     }
-                    .accessibilityElement(children: .combine)
+                }
+                Section("Treninzi") {
+                    ForEach(Array(points.reversed().enumerated()), id: \.offset) { _, point in
+                        HStack {
+                            Text(point.date.formatted(date: .abbreviated, time: .omitted))
+                            Spacer()
+                            VStack(alignment: .trailing) {
+                                Text(WeightFormatter(unit: unit).string(fromKilograms: point.bestWeightKg) + " × \(point.bestReps)")
+                                    .font(.rowValue)
+                                if let oneRepMax = point.estimatedOneRepMaxKg {
+                                    Text("1RM ≈ \(WeightFormatter(unit: unit).string(fromKilograms: oneRepMax))")
+                                        .font(.caption).foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
                 }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle(ref.name)
         .navigationBarTitleDisplayMode(.inline)
         .task {

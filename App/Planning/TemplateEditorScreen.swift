@@ -29,38 +29,42 @@ struct TemplateEditorScreen: View {
 
     var body: some View {
         List {
-            Section("Naziv") {
-                TextField("Naziv treninga", text: $template.name)
-                    .disabled(!isEditing)
+            Group {
+                Section("Naziv") {
+                    TextField("Naziv treninga", text: $template.name)
+                        .disabled(!isEditing)
+                }
+                Section("Vježbe") {
+                    ForEach(template.orderedExercises) { exercise in
+                        NavigationLink(value: exercise) { row(for: exercise) }
+                            // Superset povlačenjem udesno, izvan uređivanja (u njemu povlačenje ne radi).
+                            .swipeActions(edge: .leading) { supersetAction(for: exercise) }
+                    }
+                    // Premještanje i brisanje samo u uređivanju (crtice i znak za brisanje).
+                    .onMove(perform: isEditing ? moveExercises : nil)
+                    .onDelete(perform: isEditing ? deleteExercises : nil)
+                    // Vježba povučena iz kataloga umeće se na mjesto gdje je puštena.
+                    .dropDestination(for: String.self) { payloads, index in
+                        guard isEditing else { return }
+                        add(catalogStore.choices(from: payloads, custom: customExercises), at: index)
+                    }
+                    if isEditing {
+                        Button("Dodaj vježbe", systemImage: "plus") { showsCatalog = true }
+                            // Puštena na gumb (i u praznom treningu) vježba ide na kraj.
+                            .dropDestination(for: String.self) { payloads, _ in
+                                let choices = catalogStore.choices(from: payloads, custom: customExercises)
+                                add(choices, at: nil)
+                                return !choices.isEmpty
+                            }
+                    } else if template.orderedExercises.isEmpty {
+                        Text("Još nema vježbi u treningu.")
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
-            Section("Vježbe") {
-                ForEach(template.orderedExercises) { exercise in
-                    NavigationLink(value: exercise) { row(for: exercise) }
-                        // Superset povlačenjem udesno, izvan uređivanja (u njemu povlačenje ne radi).
-                        .swipeActions(edge: .leading) { supersetAction(for: exercise) }
-                }
-                // Premještanje i brisanje samo u uređivanju (crtice i znak za brisanje).
-                .onMove(perform: isEditing ? moveExercises : nil)
-                .onDelete(perform: isEditing ? deleteExercises : nil)
-                // Vježba povučena iz kataloga umeće se na mjesto gdje je puštena.
-                .dropDestination(for: String.self) { payloads, index in
-                    guard isEditing else { return }
-                    add(catalogStore.choices(from: payloads, custom: customExercises), at: index)
-                }
-                if isEditing {
-                    Button("Dodaj vježbe", systemImage: "plus") { showsCatalog = true }
-                        // Puštena na gumb (i u praznom treningu) vježba ide na kraj.
-                        .dropDestination(for: String.self) { payloads, _ in
-                            let choices = catalogStore.choices(from: payloads, custom: customExercises)
-                            add(choices, at: nil)
-                            return !choices.isEmpty
-                        }
-                } else if template.orderedExercises.isEmpty {
-                    Text("Još nema vježbi u treningu.")
-                        .foregroundStyle(.secondary)
-                }
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .planningEditMode(editing)
         .navigationTitle(template.name.isEmpty ? String(localized: "Trening") : template.name)
         .navigationBarTitleDisplayMode(.inline)
@@ -178,39 +182,43 @@ struct TemplateExerciseEditor: View {
 
     var body: some View {
         List {
-            Section("Serije") {
-                ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
-                    TemplateSetRow(
-                        set: set, inputType: exercise.inputType, unit: unit, step: weightStep, position: index + 1
-                    )
-                        // Promjena jedinice gradi redak iznova, da tekst težine bude u novoj jedinici.
-                        // Id sadrži i seriju: samo `unit` bi svim retcima dao isti identitet u listi.
-                        .id("\(set.id.uuidString)-\(unit.rawValue)")
-                }
-                .onDelete(perform: deleteSets)
-                Button("Dodaj radnu seriju", systemImage: "plus") { _ = try? engine.addSet(to: exercise) }
-                Button("Dodaj zagrijavanje", systemImage: "flame") { _ = try? engine.addSet(to: exercise, kind: .warmUp) }
-            }
             Group {
-                Section("Pauza") {
-                    Toggle("Vlastita pauza", isOn: Binding(
-                        get: { exercise.restSeconds != nil },
-                        set: { try? engine.setRest($0 ? defaultRest : nil, for: exercise) }
-                    ))
-                    if let rest = exercise.restSeconds {
-                        Stepper(value: Binding(
-                            get: { rest },
-                            set: { try? engine.setRest($0, for: exercise) }
-                        ), in: 0...600, step: 15) {
-                            Text("\(rest) s")
+                Section("Serije") {
+                    ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
+                        TemplateSetRow(
+                            set: set, inputType: exercise.inputType, unit: unit, step: weightStep, position: index + 1
+                        )
+                            // Promjena jedinice gradi redak iznova, da tekst težine bude u novoj jedinici.
+                            // Id sadrži i seriju: samo `unit` bi svim retcima dao isti identitet u listi.
+                            .id("\(set.id.uuidString)-\(unit.rawValue)")
+                    }
+                    .onDelete(perform: deleteSets)
+                    Button("Dodaj radnu seriju", systemImage: "plus") { _ = try? engine.addSet(to: exercise) }
+                    Button("Dodaj zagrijavanje", systemImage: "flame") { _ = try? engine.addSet(to: exercise, kind: .warmUp) }
+                }
+                Group {
+                    Section("Pauza") {
+                        Toggle("Vlastita pauza", isOn: Binding(
+                            get: { exercise.restSeconds != nil },
+                            set: { try? engine.setRest($0 ? defaultRest : nil, for: exercise) }
+                        ))
+                        if let rest = exercise.restSeconds {
+                            Stepper(value: Binding(
+                                get: { rest },
+                                set: { try? engine.setRest($0, for: exercise) }
+                            ), in: 0...600, step: 15) {
+                                Text("\(rest) s")
+                            }
                         }
                     }
-                }
-                Section("Bilješka") {
-                    TextField("Bilješka uz vježbu", text: $exercise.notes, axis: .vertical)
+                    Section("Bilješka") {
+                        TextField("Bilješka uz vježbu", text: $exercise.notes, axis: .vertical)
+                    }
                 }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle(exercise.exerciseName)
         .navigationBarTitleDisplayMode(.inline)
         .onDisappear { try? context.save() }

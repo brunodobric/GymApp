@@ -30,7 +30,7 @@ private func fillSampleSettings(_ context: ModelContext) throws {
     settings.suggestsHeavierWeight = false
     settings.liveActivityFollowsApp = false
     settings.liveActivityTheme = .light
-    settings.liveActivityAccent = .pink
+    settings.liveActivityAccentRaw = "pink"
     settings.availablePlatesKg = [1.25, 2.5, 20]
 }
 
@@ -164,7 +164,7 @@ struct JSONBackupTests {
         #expect(restored.liveActivityFollowsApp == false)
         #expect(restored.compoundRestSeconds == 210)
         #expect(restored.liveActivityTheme == .light)
-        #expect(restored.liveActivityAccent == .pink)
+        #expect(restored.liveActivityAccentRaw == "pink")
         let measurements = try target.fetch(FetchDescriptor<BodyMeasurement>())
         #expect(measurements.contains { $0.healthKitSampleId == UUID(uuidString: "6F1C2B9E-0000-4000-8000-00000000BEEF") })
     }

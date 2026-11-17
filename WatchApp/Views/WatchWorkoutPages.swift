@@ -37,6 +37,7 @@ struct WatchControlsView: View {
             HStack {
                 Button("Završi") { confirmsFinish = true }
                     .buttonStyle(.borderedProminent)
+                    .foregroundStyle(AppPalette.onAccent)
                 Button("Odbaci", role: .destructive) { confirmsDiscard = true }
             }
             .font(.body.weight(.semibold))
@@ -216,6 +217,7 @@ struct WatchSummaryView: View {
 
                 Button("Gotovo", action: onClose)
                     .buttonStyle(.borderedProminent)
+                    .foregroundStyle(AppPalette.onAccent)
                     .padding(.top, 4)
             }
             .frame(maxWidth: .infinity, alignment: .leading)

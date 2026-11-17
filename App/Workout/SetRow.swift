@@ -89,7 +89,7 @@ struct SetRow: View {
             PlateCalculatorSheet(targetText: weightText, unit: unit)
         }
         // Boja aktivne serije je samo pozadina retka; polja, oznaka i kvačica su na neprozirnoj podlozi iznad nje.
-        .listRowBackground(isHighlighted ? highlightBackground : nil)
+        .listRowBackground(rowBackground)
         // Serija se može promijeniti i izvana (sat, Live Activity). Polje tada preuzima novu vrijednost,
         // da ga kvačica (`applyAllFields`) ne bi vratila na staru. Vlastiti unos se ne dira, jer nakon
         // `apply` model već odgovara tekstu u polju.
@@ -100,10 +100,10 @@ struct SetRow: View {
         .onChange(of: set.distanceMeters) { syncDistance() }
     }
 
-    /// Boja aktivne serije preko obične boje retka, da redak ostane neprozirna kartica.
-    private var highlightBackground: some View {
-        accent.opacity(0.12)
-            .background(Color(uiColor: .secondarySystemGroupedBackground))
+    /// Boja retka: kartica, a kod aktivne serije akcent preko nje, da redak ostane neprozirna kartica.
+    private var rowBackground: some View {
+        accent.opacity(isHighlighted ? 0.12 : 0)
+            .background(AppPalette.card)
     }
 
     private var isDimmed: Bool {

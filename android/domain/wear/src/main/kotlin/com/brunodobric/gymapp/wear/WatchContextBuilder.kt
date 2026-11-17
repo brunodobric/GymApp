@@ -51,7 +51,7 @@ class WatchContextBuilder(
             generatedAt = now.truncatedToMillis(),
             week = week,
             bodyWeightKg = bodyWeightKg,
-            accent = settings.accentColorRaw,
+            accent = settings.accent.raw,
         )
     }
 

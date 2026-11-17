@@ -271,13 +271,6 @@
     <string name="theme_system">Sustav</string>
     <string name="theme_light">Svijetla</string>
     <string name="theme_dark">Tamna</string>
-    <string name="accent_color">Boja</string>
-    <string name="accent_blue">Apolon plava</string>
-    <string name="accent_indigo">Indigo</string>
-    <string name="accent_purple">Ljubičasta</string>
-    <string name="accent_pink">Roza</string>
-    <string name="accent_teal">Tirkizna</string>
-    <string name="accent_graphite">Grafit</string>
     <string name="category_chest">Prsa</string>
     <string name="category_back">Leđa</string>
     <string name="category_shoulders">Ramena</string>

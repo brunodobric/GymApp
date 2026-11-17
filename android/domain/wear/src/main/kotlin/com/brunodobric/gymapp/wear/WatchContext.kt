@@ -138,7 +138,7 @@ data class WatchContextPayload(
     /** Zadnja tjelesna težina u kg, za komplikaciju težine. */
     val bodyWeightKg: Double? = null,
     /** Naglasna boja iz postavki (`AccentChoice.raw`). */
-    val accent: String = "blue",
+    val accent: String = "steel",
 ) {
     val unit: WeightUnit get() = WeightUnit.fromRaw(weightUnit) ?: WeightUnit.KILOGRAMS
 

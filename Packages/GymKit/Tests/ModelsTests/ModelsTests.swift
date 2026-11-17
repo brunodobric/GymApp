@@ -158,32 +158,29 @@ struct ModelsTests {
         #expect(try queries.settings().id == settings.id)
     }
 
-    @Test("Live Activity prati temu i boju aplikacije dok se ne isključi")
+    @Test("Live Activity prati temu aplikacije dok se ne isključi, a boja je uvijek Čelik")
     func liveActivityAppearance() throws {
         let context = try makeContext()
         let settings = try GymQueries(context: context).settings()
         #expect(settings.liveActivityFollowsApp)
         settings.theme = .light
-        settings.accent = .purple
         #expect(settings.effectiveLiveActivityTheme == .light)
-        #expect(settings.effectiveLiveActivityAccent == .purple)
+        #expect(settings.effectiveLiveActivityAccent == .steel)
 
         // Isključivanje kreće od aplikacijinih vrijednosti, pa se Live Activity ne mijenja.
         settings.setLiveActivityFollowsApp(false)
         #expect(settings.liveActivityTheme == .light)
-        #expect(settings.liveActivityAccent == .purple)
 
         settings.liveActivityTheme = .dark
-        settings.liveActivityAccent = .teal
+        settings.liveActivityAccentRaw = "teal"
         settings.theme = .system
         #expect(settings.effectiveLiveActivityTheme == .dark)
-        #expect(settings.effectiveLiveActivityAccent == .teal)
+        #expect(settings.effectiveLiveActivityAccent == .steel)
 
-        // Ponovno uključivanje vraća aplikacijine, a vlastite ostaju zapamćene.
+        // Ponovno uključivanje vraća aplikacijinu temu, a vlastita ostaje zapamćena.
         settings.setLiveActivityFollowsApp(true)
         #expect(settings.effectiveLiveActivityTheme == .system)
-        #expect(settings.effectiveLiveActivityAccent == .purple)
-        #expect(settings.liveActivityAccent == .teal)
+        #expect(settings.liveActivityTheme == .dark)
     }
 
     @Test("Težina se u bazi čuva u kilogramima")

@@ -33,26 +33,30 @@ struct TemplatePickerSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                if !groups.isEmpty {
-                    ForEach(groups, id: \.schedule.id) { group in
-                        Section(group.schedule.name) {
-                            ForEach(group.workouts, id: \.item.id) { planned in
-                                row(.planned(planned)) {
-                                    TemplatePickerRow(
-                                        template: planned.template,
-                                        isNext: planned.item.id == group.nextItemID
-                                    )
+                Group {
+                    if !groups.isEmpty {
+                        ForEach(groups, id: \.schedule.id) { group in
+                            Section(group.schedule.name) {
+                                ForEach(group.workouts, id: \.item.id) { planned in
+                                    row(.planned(planned)) {
+                                        TemplatePickerRow(
+                                            template: planned.template,
+                                            isNext: planned.item.id == group.nextItemID
+                                        )
+                                    }
                                 }
                             }
                         }
+                        if !otherTemplates.isEmpty {
+                            Section("Ostali treninzi") { templateRows(otherTemplates) }
+                        }
+                    } else {
+                        templateRows(templates)
                     }
-                    if !otherTemplates.isEmpty {
-                        Section("Ostali treninzi") { templateRows(otherTemplates) }
-                    }
-                } else {
-                    templateRows(templates)
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Odaberi trening")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -163,15 +163,19 @@ struct ExerciseCatalogPanel: View {
             : (selected: [], others: results)
         NavigationStack {
             List {
-                if pinned.selected.isEmpty {
-                    rows(pinned.others)
-                } else {
-                    Section("Odabrano") { rows(pinned.selected) }
-                    if !pinned.others.isEmpty {
-                        Section("Rezultati") { rows(pinned.others) }
+                Group {
+                    if pinned.selected.isEmpty {
+                        rows(pinned.others)
+                    } else {
+                        Section("Odabrano") { rows(pinned.selected) }
+                        if !pinned.others.isEmpty {
+                            Section("Rezultati") { rows(pinned.others) }
+                        }
                     }
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .accessibilityIdentifier("planningPanel.list")
             .overlay {
                 if results.isEmpty && pinned.selected.isEmpty { ContentUnavailableView.search(text: filter.query) }
@@ -249,6 +253,7 @@ private struct CatalogPanelBottomBar: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
+                    .foregroundStyle(AppPalette.onAccent)
                     .controlSize(.large)
                     .disabled(selectedCount == 0)
                     .accessibilityIdentifier("planningPanel.addWhileSearching")
@@ -280,21 +285,25 @@ struct TemplateListPanel: View {
     var body: some View {
         NavigationStack {
             List(templates) { template in
-                SelectableRow(isSelected: selected.contains(template.id), toggle: { toggle(template) }) {
-                    Label {
-                        Text(template.name)
-                            .font(.itemTitle)
-                    } icon: {
-                        WorkoutKindIcon(
-                            mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises))
-                        )
+                Group {
+                    SelectableRow(isSelected: selected.contains(template.id), toggle: { toggle(template) }) {
+                        Label {
+                            Text(template.name)
+                                .font(.itemTitle)
+                        } icon: {
+                            WorkoutKindIcon(
+                                mix: SessionCardio.mix(of: template, isCardio: catalogStore.isCardio(custom: customExercises))
+                            )
+                        }
                     }
+                    .panelDraggable(
+                        PlanningDrag.template(template), enabled: sizeClass == .regular,
+                        title: template.name, systemImage: "dumbbell"
+                    )
                 }
-                .panelDraggable(
-                    PlanningDrag.template(template), enabled: sizeClass == .regular,
-                    title: template.name, systemImage: "dumbbell"
-                )
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .accessibilityIdentifier("planningPanel.list")
             .overlay {
                 if templates.isEmpty {

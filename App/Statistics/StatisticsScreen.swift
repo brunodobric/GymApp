@@ -145,7 +145,7 @@ struct StatisticsScreen: View {
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppPalette.background)
         .navigationTitle("Statistika")
     }
 
@@ -251,7 +251,7 @@ struct StatisticsCard<Content: View>: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.card))
+        .background(AppPalette.card, in: RoundedRectangle(cornerRadius: CornerRadius.card))
     }
 }
 
@@ -559,13 +559,17 @@ struct RecordsScreen: View {
 
     var body: some View {
         List {
-            if filtered.isEmpty {
-                Text("Nema rekorda za ovaj filter.").foregroundStyle(.secondary)
+            Group {
+                if filtered.isEmpty {
+                    Text("Nema rekorda za ovaj filter.").foregroundStyle(.secondary)
+                }
+                ForEach(Array(filtered.enumerated()), id: \.offset) { _, entry in
+                    RecordRow(entry: entry, unit: unit)
+                }
             }
-            ForEach(Array(filtered.enumerated()), id: \.offset) { _, entry in
-                RecordRow(entry: entry, unit: unit)
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Rekordi")
         .searchable(text: $search, prompt: "Vježba")
         .toolbar {

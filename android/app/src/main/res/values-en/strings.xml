@@ -265,13 +265,6 @@
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
-    <string name="accent_color">Color</string>
-    <string name="accent_blue">Apollo blue</string>
-    <string name="accent_indigo">Indigo</string>
-    <string name="accent_purple">Purple</string>
-    <string name="accent_pink">Pink</string>
-    <string name="accent_teal">Teal</string>
-    <string name="accent_graphite">Graphite</string>
     <string name="category_chest">Chest</string>
     <string name="category_back">Back</string>
     <string name="category_shoulders">Shoulders</string>

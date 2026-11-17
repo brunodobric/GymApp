@@ -92,7 +92,7 @@ struct SessionMusclesSection: View {
         .buttonStyle(.plain)
         // Crta između redaka ide do lijevog ruba, preko točke.
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
-        .listRowBackground(selected ? accent.opacity(0.12) : nil)
+        .listRowBackground(accent.opacity(selected ? 0.12 : 0).background(AppPalette.card))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(BodyRegion.title(load.region)))
         .accessibilityValue(Text("\(load.weightedSets.formatted(.number.precision(.fractionLength(0...1)))) serija, \(detail(load))"))

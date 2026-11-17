@@ -424,7 +424,7 @@ extension HomeScreen {
             .frame(maxWidth: 700)
             .frame(maxWidth: .infinity)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppPalette.background)
         .navigationTitle("Početna")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

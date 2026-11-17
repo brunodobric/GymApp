@@ -239,33 +239,26 @@ class PersonalRecordTest {
     }
 
     @Test
-    fun `tema i boja imaju zadane vrijednosti i ignoriraju nepoznate`() {
+    fun `tema ima zadanu vrijednost i ignorira nepoznatu`() {
         val settings = UserSettings()
         assertEquals(AppTheme.SYSTEM, settings.theme)
-        assertEquals(AccentChoice.BLUE, settings.accent)
+        assertEquals(AccentChoice.STEEL, settings.accent)
         settings.theme = AppTheme.DARK
-        settings.accent = AccentChoice.TEAL
         assertEquals("dark", settings.themeRaw)
-        assertEquals("teal", settings.accentColorRaw)
         settings.themeRaw = "nepoznato"
-        settings.accentColorRaw = "nepoznato"
         assertEquals(AppTheme.SYSTEM, settings.theme)
-        assertEquals(AccentChoice.BLUE, settings.accent)
     }
 
     @Test
-    fun `boje koje su izašle iz ponude čitaju se kao zadana Apolon plava`() {
+    fun `sve stare boje čitaju se kao Čelik, jedini akcent`() {
         val settings = UserSettings()
-        for (removed in listOf("green", "orange", "red")) {
+        for (removed in listOf("blue", "indigo", "purple", "pink", "teal", "graphite", "green", "orange", "red")) {
             settings.accentColorRaw = removed
             settings.liveActivityAccentRaw = removed
-            assertEquals(AccentChoice.BLUE, settings.accent)
-            assertEquals(AccentChoice.BLUE, settings.liveActivityAccent)
+            assertEquals(AccentChoice.STEEL, settings.accent)
+            assertEquals(AccentChoice.STEEL, settings.liveActivityAccent)
         }
-        assertEquals(
-            listOf(AccentChoice.BLUE, AccentChoice.INDIGO, AccentChoice.PURPLE, AccentChoice.PINK, AccentChoice.TEAL, AccentChoice.GRAPHITE),
-            AccentChoice.entries,
-        )
+        assertEquals(listOf(AccentChoice.STEEL), AccentChoice.entries)
     }
 }
 

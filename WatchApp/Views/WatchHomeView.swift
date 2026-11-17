@@ -108,6 +108,7 @@ private struct WatchNextWorkoutCard: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
+            .foregroundStyle(AppPalette.onAccent)
         }
         .padding(12)
         .background(Color.white.opacity(0.1), in: .rect(cornerRadius: 18))
@@ -148,6 +149,7 @@ struct WatchPlanView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+                .foregroundStyle(AppPalette.onAccent)
                 .listRowBackground(Color.clear)
             } footer: {
                 WatchPlanMeta(plan: plan)

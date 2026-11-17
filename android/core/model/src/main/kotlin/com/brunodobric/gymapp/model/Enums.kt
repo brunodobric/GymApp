@@ -49,11 +49,12 @@ enum class ExperienceLevel(override val raw: String) : RawValued {
 enum class AppTheme(override val raw: String) : RawValued { SYSTEM("system"), LIGHT("light"), DARK("dark") }
 
 /**
- * Naglasna boja aplikacije. `blue` je zadana Apolon plava. Zelene, crvene i narančaste nema jer znače
- * završenu seriju, brisanje i zagrijavanje: spremljena stara vrijednost čita se kao zadana.
+ * Naglasna boja aplikacije. Od nove palete postoji samo Čelik (`AppPalette` u aplikaciji), a izbor u Postavkama
+ * je uklonjen. Vrijednost se i dalje prenosi (sat, widgeti, sigurnosna kopija), pa se svaka stara spremljena
+ * boja ("blue", "teal", "green" i ostale) čita kao Čelik.
  */
 enum class AccentChoice(override val raw: String) : RawValued {
-    BLUE("blue"), INDIGO("indigo"), PURPLE("purple"), PINK("pink"), TEAL("teal"), GRAPHITE("graphite")
+    STEEL("steel")
 }
 
 /** Razina statistike: osnovna ili detaljna (Pro). */

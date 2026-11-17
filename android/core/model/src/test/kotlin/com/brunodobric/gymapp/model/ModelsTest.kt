@@ -132,28 +132,25 @@ class ModelsTest {
     }
 
     @Test
-    fun `obavijest u tijeku prati temu i boju aplikacije dok se ne isključi`() {
+    fun `obavijest u tijeku prati temu aplikacije dok se ne isključi, a boja je uvijek Čelik`() {
         val settings = GymStore().settings()
         assertTrue(settings.liveActivityFollowsApp)
         settings.theme = AppTheme.LIGHT
-        settings.accent = AccentChoice.PURPLE
         assertEquals(AppTheme.LIGHT, settings.effectiveLiveActivityTheme)
-        assertEquals(AccentChoice.PURPLE, settings.effectiveLiveActivityAccent)
+        assertEquals(AccentChoice.STEEL, settings.effectiveLiveActivityAccent)
 
         settings.changeLiveActivityFollowsApp(false)
         assertEquals(AppTheme.LIGHT, settings.liveActivityTheme)
-        assertEquals(AccentChoice.PURPLE, settings.liveActivityAccent)
 
         settings.liveActivityTheme = AppTheme.DARK
-        settings.liveActivityAccent = AccentChoice.TEAL
+        settings.liveActivityAccentRaw = "teal"
         settings.theme = AppTheme.SYSTEM
         assertEquals(AppTheme.DARK, settings.effectiveLiveActivityTheme)
-        assertEquals(AccentChoice.TEAL, settings.effectiveLiveActivityAccent)
+        assertEquals(AccentChoice.STEEL, settings.effectiveLiveActivityAccent)
 
         settings.changeLiveActivityFollowsApp(true)
         assertEquals(AppTheme.SYSTEM, settings.effectiveLiveActivityTheme)
-        assertEquals(AccentChoice.PURPLE, settings.effectiveLiveActivityAccent)
-        assertEquals(AccentChoice.TEAL, settings.liveActivityAccent)
+        assertEquals(AppTheme.DARK, settings.liveActivityTheme)
     }
 
     @Test

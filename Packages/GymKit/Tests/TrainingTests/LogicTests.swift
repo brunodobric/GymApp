@@ -239,35 +239,33 @@ struct PersonalRecordTests {
         #expect(PRKind.tracked(by: nil) == Set(PRKind.allCases))
     }
 
-    @Test("Tema i boja imaju zadane vrijednosti i ignoriraju nepoznate")
+    @Test("Tema ima zadanu vrijednost i ignorira nepoznatu")
     func themeAndAccent() {
         let settings = UserSettings()
         #expect(settings.theme == .system)
-        #expect(settings.accent == .blue)
+        #expect(settings.accent == .steel)
         settings.theme = .dark
-        settings.accent = .teal
-        #expect(settings.themeRaw == "dark" && settings.accentColorRaw == "teal")
+        #expect(settings.themeRaw == "dark")
         settings.themeRaw = "nepoznato"
-        settings.accentColorRaw = "nepoznato"
-        #expect(settings.theme == .system && settings.accent == .blue)
+        #expect(settings.theme == .system)
     }
 
-    @Test("Boje koje su izašle iz ponude čitaju se kao zadana Apolon plava")
-    func removedAccentsFallBackToDefault() {
+    @Test("Sve stare boje čitaju se kao Čelik, jedini akcent")
+    func removedAccentsFallBackToSteel() {
         let settings = UserSettings()
-        for removed in ["green", "orange", "red"] {
+        for removed in ["blue", "indigo", "purple", "pink", "teal", "graphite", "green", "orange", "red"] {
             settings.accentColorRaw = removed
             settings.liveActivityAccentRaw = removed
-            #expect(settings.accent == .blue)
-            #expect(settings.liveActivityAccent == .blue)
+            #expect(settings.accent == .steel)
+            #expect(settings.liveActivityAccent == .steel)
         }
-        #expect(AccentChoice.allCases == [.blue, .indigo, .purple, .pink, .teal, .graphite])
+        #expect(AccentChoice.allCases == [.steel])
     }
 
-    @Test("Stara boja u JSON-u dekodira se kao zadana, a ne ruši dekodiranje")
-    func removedAccentDecodesAsDefault() throws {
-        let decoded = try JSONDecoder().decode([AccentChoice].self, from: Data(#"["green","teal"]"#.utf8))
-        #expect(decoded == [.blue, .teal])
+    @Test("Stara boja u JSON-u dekodira se kao Čelik, a ne ruši dekodiranje")
+    func removedAccentDecodesAsSteel() throws {
+        let decoded = try JSONDecoder().decode([AccentChoice].self, from: Data(#"["green","teal","steel"]"#.utf8))
+        #expect(decoded == [.steel, .steel, .steel])
     }
 }
 

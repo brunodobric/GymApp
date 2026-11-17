@@ -93,7 +93,7 @@ struct OverviewScreen: View {
             .frame(maxWidth: 700)
             .frame(maxWidth: .infinity)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppPalette.background)
         .navigationTitle("Pregled")
         .toolbar {
             if !isCurrent {
@@ -309,7 +309,7 @@ private struct OverviewSummaryCard: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(10)
-        .background(Color(.tertiarySystemFill), in: .rect(cornerRadius: CornerRadius.inner))
+        .background(AppPalette.fill, in: .rect(cornerRadius: CornerRadius.inner))
         .accessibilityElement(children: .combine)
     }
 
@@ -616,7 +616,7 @@ private struct YearActivityGrid: View {
                 } else if day.date > today {
                     .clear
                 } else {
-                    Color(.tertiarySystemFill)
+                    AppPalette.fill
                 }
                 context.fill(Path(roundedRect: rect, cornerRadius: cell / 4), with: .color(color))
             }

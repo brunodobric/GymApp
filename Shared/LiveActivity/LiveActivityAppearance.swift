@@ -13,12 +13,12 @@ extension RestTimerActivityAttributes.ContentState {
     }
 
     var accentColor: Color {
-        AccentPalette.color(for: accent)
+        AppPalette.accent(for: accent)
     }
 }
 
 extension EnvironmentValues {
     /// Naglasna boja Live Activityja. `Color.accentColor` u widgetu je uvijek zadana boja iz kataloga,
     /// pa dijelovi čitaju ovu vrijednost.
-    @Entry var activityAccent: Color = AccentPalette.apolon
+    @Entry var activityAccent: Color = AppPalette.accent
 }

@@ -151,31 +151,36 @@ private struct ExerciseSplitList: View {
     var body: some View {
         let results = catalogStore.search(filter, custom: customExercises)
         List(selection: $selection) {
-            Section {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(Self.routes, id: \.self) { item in
-                            FilterChip(title: item.title, isSelected: route == item) { route = item }
+            Group {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(Self.routes, id: \.self) { item in
+                                FilterChip(title: item.title, isSelected: route == item) { route = item }
+                            }
                         }
+                        .padding(.horizontal)
+                        .padding(.vertical, 4)
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, 4)
+                }
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                Section {
+                    ForEach(results) { summary in
+                        NavigationLink(value: summary.source) {
+                            ExerciseRow(
+                                summary: summary,
+                                thumbnail: catalogStore.thumbnail(for: summary.source, customExercises: customExercises)
+                            )
+                        }
+                        .openInWindowMenu(DetailWindow.exercise, value: summary.id)
+                        .selectableRowBackground(selection == summary.source)
+                    }
                 }
             }
-            .listRowInsets(EdgeInsets())
-            .listRowBackground(Color.clear)
-            Section {
-                ForEach(results) { summary in
-                    NavigationLink(value: summary.source) {
-                        ExerciseRow(
-                            summary: summary,
-                            thumbnail: catalogStore.thumbnail(for: summary.source, customExercises: customExercises)
-                        )
-                    }
-                    .openInWindowMenu(DetailWindow.exercise, value: summary.id)
-                }
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .overlay { emptyState(results) }
         .navigationTitle("Vježbe")
         .searchable(text: $filter.query, prompt: "Pretraži vježbe")
@@ -338,6 +343,7 @@ private struct FilterChip: View {
         if isSelected {
             Button(action: action) { Text(title) }
                 .buttonStyle(.borderedProminent)
+                .foregroundStyle(AppPalette.onAccent)
                 .buttonBorderShape(.capsule)
                 .accessibilityAddTraits(.isSelected)
         } else {
@@ -384,22 +390,26 @@ private struct ExerciseResults<Header: View>: View {
             grid
         } else {
             List {
-                if Header.self != EmptyView.self {
-                    Section {
-                        header
-                    }
-                    .listRowInsets(EdgeInsets())
-                    .listRowBackground(Color.clear)
-                }
-                Section {
-                    ForEach(results) { summary in
-                        NavigationLink(value: summary) {
-                            ExerciseRow(summary: summary, thumbnail: thumbnail(for: summary))
+                Group {
+                    if Header.self != EmptyView.self {
+                        Section {
+                            header
                         }
-                        .openInWindowMenu(DetailWindow.exercise, value: summary.id)
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                    }
+                    Section {
+                        ForEach(results) { summary in
+                            NavigationLink(value: summary) {
+                                ExerciseRow(summary: summary, thumbnail: thumbnail(for: summary))
+                            }
+                            .openInWindowMenu(DetailWindow.exercise, value: summary.id)
+                        }
                     }
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
         }
     }
 
@@ -417,7 +427,7 @@ private struct ExerciseResults<Header: View>: View {
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppPalette.background)
     }
 
     private func thumbnail(for summary: ExerciseSummary) -> ExerciseThumbnail.Source? {
@@ -450,7 +460,7 @@ private struct ExerciseGridCell: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.card))
+        .background(AppPalette.card, in: RoundedRectangle(cornerRadius: CornerRadius.card))
         .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: CornerRadius.card))
         .hoverEffect()
         .accessibilityElement(children: .combine)

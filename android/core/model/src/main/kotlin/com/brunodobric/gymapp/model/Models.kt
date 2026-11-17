@@ -633,7 +633,7 @@ class UserSettings(override var id: UUID = UUID.randomUUID()) : GymRecord {
         set(value) { themeRaw = value.raw }
 
     var accent: AccentChoice
-        get() = rawValueOf<AccentChoice>(accentColorRaw) ?: AccentChoice.BLUE
+        get() = rawValueOf<AccentChoice>(accentColorRaw) ?: AccentChoice.STEEL
         set(value) { accentColorRaw = value.raw }
 
     var liveActivityTheme: AppTheme
@@ -641,7 +641,7 @@ class UserSettings(override var id: UUID = UUID.randomUUID()) : GymRecord {
         set(value) { liveActivityThemeRaw = value.raw }
 
     var liveActivityAccent: AccentChoice
-        get() = rawValueOf<AccentChoice>(liveActivityAccentRaw) ?: AccentChoice.BLUE
+        get() = rawValueOf<AccentChoice>(liveActivityAccentRaw) ?: AccentChoice.STEEL
         set(value) { liveActivityAccentRaw = value.raw }
 
     /** Tema koju obavijest u tijeku stvarno koristi: aplikacijina ili vlastita. */

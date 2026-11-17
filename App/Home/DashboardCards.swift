@@ -56,7 +56,7 @@ struct HomeCard<Content: View>: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding()
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.card))
+        .background(AppPalette.card, in: RoundedRectangle(cornerRadius: CornerRadius.card))
     }
 }
 
@@ -80,6 +80,7 @@ struct ProfileSetupCard: View {
                     .font(.subheadline).foregroundStyle(.secondary)
                 Button("Postavi profil") { showsSetup = true }
                     .buttonStyle(.borderedProminent)
+                    .foregroundStyle(AppPalette.onAccent)
             }
             .overlay(alignment: .topTrailing) {
                 Button("Zatvori", systemImage: "xmark") { withAnimation { dismissed = true } }
@@ -91,7 +92,7 @@ struct ProfileSetupCard: View {
             }
             .sheet(isPresented: $showsSetup) {
                 OnboardingScreen(settings: settings)
-                    .appAccent(settings?.accent)
+                    .appPalette()
             }
         }
     }
@@ -373,36 +374,40 @@ struct DashboardEditor: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    ForEach(shown) { card in
-                        if let kind = card.kind {
-                            Label(kind.title, systemImage: kind.symbol)
+                Group {
+                    Section {
+                        ForEach(shown) { card in
+                            if let kind = card.kind {
+                                Label(kind.title, systemImage: kind.symbol)
+                            }
                         }
+                        .onMove { offsets, destination in
+                            perform { try layout.move(fromOffsets: offsets, toOffset: destination) }
+                        }
+                        .onDelete { offsets in
+                            let cards = shown
+                            perform { for index in offsets { try layout.remove(cards[index]) } }
+                        }
+                    } header: {
+                        Text("Na Početnoj")
+                    } footer: {
+                        if shown.isEmpty { Text("Nema kartica. Dodaj ih ispod.") }
                     }
-                    .onMove { offsets, destination in
-                        perform { try layout.move(fromOffsets: offsets, toOffset: destination) }
-                    }
-                    .onDelete { offsets in
-                        let cards = shown
-                        perform { for index in offsets { try layout.remove(cards[index]) } }
-                    }
-                } header: {
-                    Text("Na Početnoj")
-                } footer: {
-                    if shown.isEmpty { Text("Nema kartica. Dodaj ih ispod.") }
-                }
-                if !available.isEmpty {
-                    Section("Dodaj") {
-                        ForEach(available, id: \.self) { kind in
-                            Button {
-                                perform { try layout.add(kind) }
-                            } label: {
-                                Label(kind.title, systemImage: "plus.circle.fill")
+                    if !available.isEmpty {
+                        Section("Dodaj") {
+                            ForEach(available, id: \.self) { kind in
+                                Button {
+                                    perform { try layout.add(kind) }
+                                } label: {
+                                    Label(kind.title, systemImage: "plus.circle.fill")
+                                }
                             }
                         }
                     }
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .environment(\.editMode, .constant(.active))
             .navigationTitle("Kartice")
             .navigationBarTitleDisplayMode(.inline)

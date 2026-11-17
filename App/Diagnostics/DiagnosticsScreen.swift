@@ -9,53 +9,57 @@ struct DiagnosticsScreen: View {
 
     var body: some View {
         List {
-            Section {
-                // swiftlint:disable:next line_length
-                Text("Sustav jednom dnevno pripremi izvještaj o radu aplikacije (pokretanje, memorija, baterija), a nakon rušenja ili zastoja i izvještaj o grešci. Izvještaji ostaju na ovom uređaju i ne sadrže tvoje treninge. Možeš ih izvesti i poslati uz prijavu greške.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            if !log.totals.isEmpty {
-                Section("Zadnjih 90 dana") {
-                    ForEach(log.totals.sorted { $0.key < $1.key }, id: \.key) { kind, count in
-                        LabeledContent(DiagnosticsText.title(kind), value: count.formatted())
-                    }
-                }
-            }
-            Section("Izvještaji") {
-                if log.entries.isEmpty {
-                    Text("Još nema izvještaja. Prvi stiže dan nakon korištenja aplikacije.")
+            Group {
+                Section {
+                    // swiftlint:disable:next line_length
+                    Text("Sustav jednom dnevno pripremi izvještaj o radu aplikacije (pokretanje, memorija, baterija), a nakon rušenja ili zastoja i izvještaj o grešci. Izvještaji ostaju na ovom uređaju i ne sadrže tvoje treninge. Možeš ih izvesti i poslati uz prijavu greške.")
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                ForEach(log.entries) { entry in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(entry.kind == .diagnostics ? "Greška u radu" : "Dnevne metrike")
-                        Text(entry.receivedAt.formatted(date: .abbreviated, time: .shortened))
-                            .font(.subheadline)
+                if !log.totals.isEmpty {
+                    Section("Zadnjih 90 dana") {
+                        ForEach(log.totals.sorted { $0.key < $1.key }, id: \.key) { kind, count in
+                            LabeledContent(DiagnosticsText.title(kind), value: count.formatted())
+                        }
+                    }
+                }
+                Section("Izvještaji") {
+                    if log.entries.isEmpty {
+                        Text("Još nema izvještaja. Prvi stiže dan nakon korištenja aplikacije.")
                             .foregroundStyle(.secondary)
-                        if !entry.counts.isEmpty {
-                            Text(DiagnosticsText.summary(entry.counts))
+                    }
+                    ForEach(log.entries) { entry in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(entry.kind == .diagnostics ? "Greška u radu" : "Dnevne metrike")
+                            Text(entry.receivedAt.formatted(date: .abbreviated, time: .shortened))
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
+                            if !entry.counts.isEmpty {
+                                Text(DiagnosticsText.summary(entry.counts))
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
-                    }
-                    .accessibilityElement(children: .combine)
-                }
-            }
-            if !log.entries.isEmpty {
-                Section {
-                    if let exportURL {
-                        ShareLink(item: exportURL) {
-                            Label("Izvezi izvještaje", systemImage: "square.and.arrow.up")
-                        }
-                    }
-                    Button("Obriši izvještaje", role: .destructive) {
-                        DiagnosticsStore.shared.removeAll()
-                        reload()
+                        .accessibilityElement(children: .combine)
                     }
                 }
+                if !log.entries.isEmpty {
+                    Section {
+                        if let exportURL {
+                            ShareLink(item: exportURL) {
+                                Label("Izvezi izvještaje", systemImage: "square.and.arrow.up")
+                            }
+                        }
+                        Button("Obriši izvještaje", role: .destructive) {
+                            DiagnosticsStore.shared.removeAll()
+                            reload()
+                        }
+                    }
+                }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Dijagnostika")
         .onAppear(perform: reload)
     }

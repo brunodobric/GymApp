@@ -38,7 +38,7 @@ struct ExerciseKindHome: View {
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppPalette.background)
     }
 
     /// Dva stupca na iPhoneu, više na iPadu, jedan stupac kod veličina teksta za pristupačnost.
@@ -58,7 +58,7 @@ struct ExerciseKindHome: View {
             Divider().padding(.leading)
             LinkRow(title: "Moje vježbe", count: customCount, route: .custom, onSelect: onSelect)
         }
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.card))
+        .background(AppPalette.card, in: RoundedRectangle(cornerRadius: CornerRadius.card))
     }
 }
 
@@ -126,7 +126,7 @@ private struct ExerciseKindCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(padding)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: CornerRadius.card))
+        .background(AppPalette.card, in: RoundedRectangle(cornerRadius: CornerRadius.card))
         .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: CornerRadius.card))
         .hoverEffect()
         .accessibilityElement(children: .combine)
@@ -149,7 +149,7 @@ private struct ExerciseKindCard: View {
             }
             .clipShape(shape)
         } else {
-            Color(.tertiarySystemFill)
+            AppPalette.fill
                 .aspectRatio(1, contentMode: .fit)
                 .overlay {
                     Image(systemName: kind.systemImage)

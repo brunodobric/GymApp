@@ -16,43 +16,47 @@ struct WeightStepsScreen: View {
 
     var body: some View {
         List {
-            Section {
-                ForEach(Equipment.allCases, id: \.self) { equipment in
-                    Picker(selection: binding(for: equipment)) {
-                        ForEach(WeightStepSettings.choices(for: unit), id: \.self) { step in
-                            Text(verbatim: WeightStepText.text(step, unit: unit)).tag(step)
-                        }
-                    } label: {
-                        Text(equipment.title)
-                    }
-                }
-            } header: {
-                Text("Oprema")
-            } footer: {
-                Text("""
-                    Razmak između dviju težina na kotačiću, na gumbima + i − u Live Activityju i za jedan klik \
-                    Digital Crowna na satu. Koraci vrijede za jedinicu koja je sada odabrana (\(unit.symbol)).
-                    """)
-            }
-            if !overrides.isEmpty {
+            Group {
                 Section {
-                    ForEach(overrides, id: \.key) { item in
-                        LabeledContent(item.name, value: WeightStepText.text(item.step, unit: unit))
-                            .swipeActions {
-                                Button("Prema opremi") { removeOverride(item.key) }
+                    ForEach(Equipment.allCases, id: \.self) { equipment in
+                        Picker(selection: binding(for: equipment)) {
+                            ForEach(WeightStepSettings.choices(for: unit), id: \.self) { step in
+                                Text(verbatim: WeightStepText.text(step, unit: unit)).tag(step)
                             }
+                        } label: {
+                            Text(equipment.title)
+                        }
                     }
                 } header: {
-                    Text("Vježbe s vlastitim korakom")
+                    Text("Oprema")
                 } footer: {
-                    Text("Korak postavljen na vježbi ima prednost pred korakom opreme. Mijenja se na stranici vježbe, a povlačenjem ulijevo vježba se vraća na korak opreme.")
+                    Text("""
+                        Razmak između dviju težina na kotačiću, na gumbima + i − u Live Activityju i za jedan klik \
+                        Digital Crowna na satu. Koraci vrijede za jedinicu koja je sada odabrana (\(unit.symbol)).
+                        """)
+                }
+                if !overrides.isEmpty {
+                    Section {
+                        ForEach(overrides, id: \.key) { item in
+                            LabeledContent(item.name, value: WeightStepText.text(item.step, unit: unit))
+                                .swipeActions {
+                                    Button("Prema opremi") { removeOverride(item.key) }
+                                }
+                        }
+                    } header: {
+                        Text("Vježbe s vlastitim korakom")
+                    } footer: {
+                        Text("Korak postavljen na vježbi ima prednost pred korakom opreme. Mijenja se na stranici vježbe, a povlačenjem ulijevo vježba se vraća na korak opreme.")
+                    }
+                }
+                Section {
+                    Button("Vrati zadane korake") { resetEquipment() }
+                        .disabled(!settings.weightSteps.equipment.keys.contains { $0.unit == unit })
                 }
             }
-            Section {
-                Button("Vrati zadane korake") { resetEquipment() }
-                    .disabled(!settings.weightSteps.equipment.keys.contains { $0.unit == unit })
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Korak težine")
         .navigationBarTitleDisplayMode(.inline)
     }

@@ -102,24 +102,28 @@ private struct EquipmentListScreen: View {
 
     var body: some View {
         Form {
-            Section {
-                ForEach(Equipment.allCases, id: \.self) { item in
-                    let isOn = equipment.contains(item)
-                    Button {
-                        if isOn { equipment.removeAll { $0 == item } } else { equipment.append(item) }
-                    } label: {
-                        HStack {
-                            Text(item.title).foregroundStyle(.primary)
-                            Spacer()
-                            if isOn { Image(systemName: "checkmark").foregroundStyle(.tint) }
+            Group {
+                Section {
+                    ForEach(Equipment.allCases, id: \.self) { item in
+                        let isOn = equipment.contains(item)
+                        Button {
+                            if isOn { equipment.removeAll { $0 == item } } else { equipment.append(item) }
+                        } label: {
+                            HStack {
+                                Text(item.title).foregroundStyle(.primary)
+                                Spacer()
+                                if isOn { Image(systemName: "checkmark").foregroundStyle(.tint) }
+                            }
                         }
+                        .accessibilityAddTraits(isOn ? .isSelected : [])
                     }
-                    .accessibilityAddTraits(isOn ? .isSelected : [])
+                } footer: {
+                    Text("Šipka za zgibove je pod Ostalo. Vježbe s vlastitom težinom su uvijek moguće.")
                 }
-            } footer: {
-                Text("Šipka za zgibove je pod Ostalo. Vježbe s vlastitom težinom su uvijek moguće.")
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Oprema")
         .navigationBarTitleDisplayMode(.inline)
     }

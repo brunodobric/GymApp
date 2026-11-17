@@ -65,7 +65,7 @@ extension View {
     /// tako ne prosijava kroz polja, oznaku i kvačicu, nego ostaje samo pozadina.
     func opaqueFill(_ style: some ShapeStyle, in shape: some Shape) -> some View {
         background(style, in: shape)
-            .background(Color(uiColor: .secondarySystemGroupedBackground), in: shape)
+            .background(AppPalette.card, in: shape)
     }
 }
 

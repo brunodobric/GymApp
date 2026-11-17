@@ -79,17 +79,17 @@ public enum AppTheme: String, Codable, CaseIterable, Sendable {
     case dark
 }
 
-/// Naglasna boja aplikacije. `blue` je zadana Apolon plava (`AccentPalette` u aplikaciji).
-/// Zelene, crvene i narančaste nema jer znače završenu seriju, brisanje i zagrijavanje:
-/// spremljena stara vrijednost ("green", "orange", "red") čita se kao zadana.
+/// Naglasna boja aplikacije. Od nove palete postoji samo Čelik (`AppPalette` u aplikaciji), a izbor u
+/// Postavkama je uklonjen. Vrijednost se i dalje prenosi (sat, widgeti, Live Activity, kopija), pa svaka
+/// stara spremljena boja ("blue", "teal", "green" i ostale) čita se kao Čelik.
 public enum AccentChoice: String, Codable, CaseIterable, Sendable {
-    case blue, indigo, purple, pink, teal, graphite
+    case steel
 
     /// Nepoznata vrijednost (stara boja iz konteksta sata ili kopije) dekodira se kao zadana,
     /// da zbog boje ne padne dekodiranje cijelog zapisa.
     public init(from decoder: Decoder) throws {
         let rawValue = try decoder.singleValueContainer().decode(String.self)
-        self = AccentChoice(rawValue: rawValue) ?? .blue
+        self = AccentChoice(rawValue: rawValue) ?? .steel
     }
 }
 

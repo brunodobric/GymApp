@@ -55,65 +55,69 @@ struct WorkoutSummarySheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    LabeledContent("Trajanje", value: durationText(summary.durationSeconds))
-                    if summary.totalVolumeKg > 0 {
-                        LabeledContent("Volumen", value: WeightFormatter(unit: unit).string(fromKilograms: summary.totalVolumeKg))
-                    }
-                    if summary.hardSets > 0 {
-                        LabeledContent("Tvrde serije", value: "\(summary.hardSets)")
-                    }
-                    cardioRows
-                    if summary.cardio?.meters == nil, let meters = session.distanceMeters {
-                        LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
-                    }
-                } footer: {
-                    if summary.hardSets > 0 {
-                        Text("Tvrde serije su radne serije bez onih s RPE ispod 6. Kardio vježbe se ne broje u serije.")
-                    }
-                }
-                if let comparison {
-                    SessionComparisonSection(comparison: comparison, unit: unit)
-                }
-                // Bez rekorda kardio trening nema što reći u ovom odjeljku.
-                if !summary.records.isEmpty || summary.hardSets > 0 {
-                    recordsSection
-                }
-                if let templateUpdate {
-                    TemplateUpdateSection(session: session, template: templateUpdate.template, changes: templateUpdate.changes)
-                }
-                if !results.isEmpty {
-                    Section("Vježbe") {
-                        ForEach(results) { ExerciseResultRow(result: $0, unit: unit, showsRest: isPro) }
-                    }
-                }
-                SessionMusclesSection(session: session, weekSets: weekSets)
-                if isPro {
+                Group {
                     Section {
-                        Picker("Napor treninga", selection: $sessionRPE) {
-                            Text("Bez ocjene").tag(Double?.none)
-                            ForEach(1...10, id: \.self) { value in
-                                Text(verbatim: "\(value)").tag(Double?.some(Double(value)))
-                            }
+                        LabeledContent("Trajanje", value: durationText(summary.durationSeconds))
+                        if summary.totalVolumeKg > 0 {
+                            LabeledContent("Volumen", value: WeightFormatter(unit: unit).string(fromKilograms: summary.totalVolumeKg))
+                        }
+                        if summary.hardSets > 0 {
+                            LabeledContent("Tvrde serije", value: "\(summary.hardSets)")
+                        }
+                        cardioRows
+                        if summary.cardio?.meters == nil, let meters = session.distanceMeters {
+                            LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
                         }
                     } footer: {
-                        Text("Koliko je bio težak cijeli trening, od 1 do 10. Napor puta trajanje je opterećenje treninga (Foster i sur. 2001).")
-                    }
-                }
-                if hasCardio {
-                    Section("Kardio") {
-                        HStack {
-                            TextField("Prosječni puls", text: $heartRateText)
-                                .keyboardType(.numberPad)
-                            Text("otk/min").foregroundStyle(.secondary)
+                        if summary.hardSets > 0 {
+                            Text("Tvrde serije su radne serije bez onih s RPE ispod 6. Kardio vježbe se ne broje u serije.")
                         }
                     }
+                    if let comparison {
+                        SessionComparisonSection(comparison: comparison, unit: unit)
+                    }
+                    // Bez rekorda kardio trening nema što reći u ovom odjeljku.
+                    if !summary.records.isEmpty || summary.hardSets > 0 {
+                        recordsSection
+                    }
+                    if let templateUpdate {
+                        TemplateUpdateSection(session: session, template: templateUpdate.template, changes: templateUpdate.changes)
+                    }
+                    if !results.isEmpty {
+                        Section("Vježbe") {
+                            ForEach(results) { ExerciseResultRow(result: $0, unit: unit, showsRest: isPro) }
+                        }
+                    }
+                    SessionMusclesSection(session: session, weekSets: weekSets)
+                    if isPro {
+                        Section {
+                            Picker("Napor treninga", selection: $sessionRPE) {
+                                Text("Bez ocjene").tag(Double?.none)
+                                ForEach(1...10, id: \.self) { value in
+                                    Text(verbatim: "\(value)").tag(Double?.some(Double(value)))
+                                }
+                            }
+                        } footer: {
+                            Text("Koliko je bio težak cijeli trening, od 1 do 10. Napor puta trajanje je opterećenje treninga (Foster i sur. 2001).")
+                        }
+                    }
+                    if hasCardio {
+                        Section("Kardio") {
+                            HStack {
+                                TextField("Prosječni puls", text: $heartRateText)
+                                    .keyboardType(.numberPad)
+                                Text("otk/min").foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    Section("Bilješka") {
+                        TextField("Kako je prošlo?", text: $notes, axis: .vertical)
+                            .lineLimit(2...6)
+                    }
                 }
-                Section("Bilješka") {
-                    TextField("Kako je prošlo?", text: $notes, axis: .vertical)
-                        .lineLimit(2...6)
-                }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Sažetak")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

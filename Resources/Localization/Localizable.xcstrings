@@ -1405,16 +1405,6 @@
         }
       }
     },
-    "Apolon plava" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apollo blue"
-          }
-        }
-      }
-    },
     "Apple Zdravlje" : {
       "localizations" : {
         "en" : {
@@ -1581,16 +1571,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Points are calculated once all three lifts have been done in this period."
-          }
-        }
-      }
-    },
-    "Boja" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Color"
           }
         }
       }
@@ -2725,16 +2705,6 @@
         }
       }
     },
-    "Grafit" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Graphite"
-          }
-        }
-      }
-    },
     "Greška" : {
       "localizations" : {
         "en" : {
@@ -2821,16 +2791,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Has a workout"
-          }
-        }
-      }
-    },
-    "Indigo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Indigo"
           }
         }
       }
@@ -4713,16 +4673,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Live Activity"
-          }
-        }
-      }
-    },
-    "Ljubičasta" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Purple"
           }
         }
       }
@@ -7527,16 +7477,6 @@
         }
       }
     },
-    "Roza" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pink"
-          }
-        }
-      }
-    },
     "Ruka" : {
       "localizations" : {
         "en" : {
@@ -8307,12 +8247,12 @@
         }
       }
     },
-    "Tema vrijedi za zaključani zaslon. Dynamic Island je uvijek crn, pa se ondje mijenja samo boja." : {
+    "Tema vrijedi za zaključani zaslon. Dynamic Island je uvijek crn." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The theme applies to the Lock Screen. The Dynamic Island is always black, so only the color changes there."
+            "value" : "The theme applies to the Lock Screen. The Dynamic Island is always black."
           }
         }
       }
@@ -8403,16 +8343,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Body in muscle view"
-          }
-        }
-      }
-    },
-    "Tirkizna" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Teal"
           }
         }
       }

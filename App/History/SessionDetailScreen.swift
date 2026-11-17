@@ -36,56 +36,60 @@ struct SessionDetailScreen: View {
 
     var body: some View {
         List {
-            header
-            Section {
-                if let end = session.endedAt {
-                    LabeledContent("Trajanje", value: Duration.seconds(max(0, end.timeIntervalSince(session.startedAt)))
-                        .formatted(.units(allowed: [.hours, .minutes], width: .abbreviated)))
-                }
-                if let meters = session.distanceMeters {
-                    LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
-                }
-                if let heartRate = health.averageHeartRate(of: session) {
-                    LabeledContent("Prosječni puls", value: String(localized: "\(Int(heartRate)) otk/min"))
-                }
-                // Kalorije samo iz Zdravlja; bez njih se redak ne prikazuje (ni nula ni procjena).
-                if let energy = health.activeEnergy(of: session) {
-                    LabeledContent("Aktivne kalorije", value: "\(Int(energy.rounded())) kcal")
-                }
-                if let effort = session.sessionRPE {
-                    LabeledContent("Napor treninga", value: "\(Int(effort)) / 10")
-                }
-            } footer: {
-                if session.isImportedFromWorkoutsApp {
-                    Text("Uvezeno iz Zdravlja.")
-                } else if session.healthKitWorkoutId != nil {
-                    Text("Spremljeno u Zdravlje.")
-                }
-            }
-            if let comparison {
-                SessionComparisonSection(comparison: comparison, unit: unit)
-            }
-            ForEach(session.orderedExercises.filter { !$0.isRemoved }) { exercise in
+            Group {
+                header
                 Section {
-                    ForEach(Array(exercise.orderedSets.filter(\.isCompleted).enumerated()), id: \.element.id) { index, set in
-                        SetLine(set: set, inputType: exercise.inputType, unit: unit, number: number(of: set, in: exercise, fallback: index))
+                    if let end = session.endedAt {
+                        LabeledContent("Trajanje", value: Duration.seconds(max(0, end.timeIntervalSince(session.startedAt)))
+                            .formatted(.units(allowed: [.hours, .minutes], width: .abbreviated)))
                     }
-                } header: {
-                    Text(exercise.exerciseName)
+                    if let meters = session.distanceMeters {
+                        LabeledContent("Udaljenost", value: "\(NumberInput.format(meters / 1000)) km")
+                    }
+                    if let heartRate = health.averageHeartRate(of: session) {
+                        LabeledContent("Prosječni puls", value: String(localized: "\(Int(heartRate)) otk/min"))
+                    }
+                    // Kalorije samo iz Zdravlja; bez njih se redak ne prikazuje (ni nula ni procjena).
+                    if let energy = health.activeEnergy(of: session) {
+                        LabeledContent("Aktivne kalorije", value: "\(Int(energy.rounded())) kcal")
+                    }
+                    if let effort = session.sessionRPE {
+                        LabeledContent("Napor treninga", value: "\(Int(effort)) / 10")
+                    }
                 } footer: {
-                    if let result = results[exercise.exerciseKey], let oneRepMax = result.oneRepMaxKg {
-                        Text(resultText(oneRepMax: oneRepMax, change: result.change))
+                    if session.isImportedFromWorkoutsApp {
+                        Text("Uvezeno iz Zdravlja.")
+                    } else if session.healthKitWorkoutId != nil {
+                        Text("Spremljeno u Zdravlje.")
                     }
                 }
-            }
-            if !session.notes.isEmpty {
-                Section("Bilješke") {
-                    Text(session.notes)
+                if let comparison {
+                    SessionComparisonSection(comparison: comparison, unit: unit)
                 }
+                ForEach(session.orderedExercises.filter { !$0.isRemoved }) { exercise in
+                    Section {
+                        ForEach(Array(exercise.orderedSets.filter(\.isCompleted).enumerated()), id: \.element.id) { index, set in
+                            SetLine(set: set, inputType: exercise.inputType, unit: unit, number: number(of: set, in: exercise, fallback: index))
+                        }
+                    } header: {
+                        Text(exercise.exerciseName)
+                    } footer: {
+                        if let result = results[exercise.exerciseKey], let oneRepMax = result.oneRepMaxKg {
+                            Text(resultText(oneRepMax: oneRepMax, change: result.change))
+                        }
+                    }
+                }
+                if !session.notes.isEmpty {
+                    Section("Bilješke") {
+                        Text(session.notes)
+                    }
+                }
+                // Mapa mišića je na dnu, ispod serija i bilješki.
+                SessionMusclesSection(session: session)
             }
-            // Mapa mišića je na dnu, ispod serija i bilješki.
-            SessionMusclesSection(session: session)
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .id(contentVersion)
         .task(id: contentVersion) {
             let engine = StatisticsEngine(context: context)

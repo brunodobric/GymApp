@@ -76,6 +76,7 @@ struct ProgramRecommendationSections: View {
                 if index == 0 {
                     Button("Dodaj i aktiviraj") { onAdd(item.program) }
                         .buttonStyle(.borderedProminent)
+                        .foregroundStyle(AppPalette.onAccent)
                 } else {
                     Button("Dodaj i aktiviraj") { onAdd(item.program) }
                 }
@@ -144,7 +145,7 @@ struct ProgramRecommendationCards: View {
                 Text(item.reasons.map(\.text).formatted(.list(type: .and)))
                     .font(.footnote).opacity(0.8)
             }
-            // Bijela tipka na kartici u boji akcenta, tekst u akcentu.
+            // Tipka u boji teksta na akcentu (bijela ili tamna), tekst u akcentu.
             Button {
                 onAdd(item.program)
             } label: {
@@ -152,13 +153,13 @@ struct ProgramRecommendationCards: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity, minHeight: 50)
                     .foregroundStyle(.tint)
-                    .background(.white, in: .rect(cornerRadius: CornerRadius.inner))
+                    .background(AppPalette.onAccent, in: .rect(cornerRadius: CornerRadius.inner))
                     .contentShape(.rect)
             }
             .buttonStyle(.plain)
             .padding(.top, 8)
         }
-        .foregroundStyle(.white)
+        .foregroundStyle(AppPalette.onAccent)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(.tint, in: .rect(cornerRadius: CornerRadius.card))
@@ -210,14 +211,18 @@ struct ProgramRecommendationScreen: View {
 
     var body: some View {
         Form {
-            ProgramRecommendationSections(profile: profile) { program in
-                if profile.lowerDaysGoal(for: program) != nil {
-                    pendingProgram = program
-                } else {
-                    add(program, newDaysGoal: nil)
+            Group {
+                ProgramRecommendationSections(profile: profile) { program in
+                    if profile.lowerDaysGoal(for: program) != nil {
+                        pendingProgram = program
+                    } else {
+                        add(program, newDaysGoal: nil)
+                    }
                 }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .daysGoalWarning(profile: profile, program: $pendingProgram) { program, days in
             // Potvrda o dodavanju je drugo upozorenje: čeka da se prvo zatvori, inače se ne prikaže.
             Task {

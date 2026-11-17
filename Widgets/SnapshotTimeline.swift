@@ -38,9 +38,9 @@ struct SnapshotProvider: TimelineProvider {
 // MARK: - Izgled
 
 extension WidgetSnapshot {
-    /// Naglasna boja iz Postavki (kao `AccentChoice.color` u aplikaciji).
+    /// Akcent, isti kao u aplikaciji (Čelik, `AppPalette`).
     var accentColor: Color {
-        AccentPalette.color(for: accent)
+        AppPalette.accent(for: accent)
     }
 
     var weightFormatter: WeightFormatter { WeightFormatter(unit: weightUnit) }
@@ -63,10 +63,10 @@ extension WidgetSnapshot.Mix {
     }
 }
 
-/// Pozadina widgeta na početnom zaslonu: bijela u svijetloj i crna u tamnoj temi, kao Appleovi widgeti.
+/// Pozadina widgeta na početnom zaslonu: boja kartice iz palete, kao kartice na Početnoj.
 struct CardBackground: View {
     var body: some View {
-        Color(.systemBackground)
+        AppPalette.card
     }
 }
 
@@ -107,7 +107,7 @@ struct StartButton: View {
             if renderingMode == .fullColor {
                 Image(systemName: "play.fill")
                     .font(.system(size: size * 0.4, weight: .bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(AppPalette.onAccent)
                     .frame(width: size, height: size)
                     .background(Circle().fill(.tint))
             } else {

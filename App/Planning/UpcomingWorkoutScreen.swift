@@ -29,12 +29,16 @@ struct UpcomingWorkoutScreen: View {
 
     var body: some View {
         List {
-            if let planned = nextWorkout {
-                content(for: planned)
-            } else {
-                ContentUnavailableView("Nema sljedećeg treninga", systemImage: "calendar.badge.checkmark")
+            Group {
+                if let planned = nextWorkout {
+                    content(for: planned)
+                } else {
+                    ContentUnavailableView("Nema sljedećeg treninga", systemImage: "calendar.badge.checkmark")
+                }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Sljedeći trening")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $replacing) { target in

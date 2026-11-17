@@ -20,6 +20,7 @@ struct MuscleMapLicenseScreen: View {
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .background(AppPalette.background)
         .navigationTitle("MuscleMap")
         .navigationBarTitleDisplayMode(.inline)
     }

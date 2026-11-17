@@ -83,12 +83,12 @@ struct RootView: View {
             selection = .home
             homeRequest = .activeWorkout
         }
-        .appAccent(settings?.accent)
+        .appPalette()
         .preferredColorScheme(settings?.theme.colorScheme)
         // List preko Početne; zatvaranje povlačenjem je isto što i "Preskoči" (sprema OnboardingScreen).
         .sheet(isPresented: $showsOnboarding) {
             OnboardingScreen()
-                .appAccent(settings?.accent)
+                .appPalette()
         }
         // Kratka odgoda: ako je onboarding potreban zbog brisanja podataka, list Postavki se prvo mora zatvoriti.
         .task(id: needsOnboarding) {

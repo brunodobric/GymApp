@@ -28,43 +28,47 @@ struct MeasurementDetailScreen: View {
 
     var body: some View {
         List {
-            if list.count >= 2 {
-                Section {
-                    Chart(list) { item in
-                        LineMark(
-                            x: .value("Datum", item.date),
-                            y: .value(title, BodyFormat.displayValue(item.value, kind: kind, unit: unit))
-                        )
-                        PointMark(
-                            x: .value("Datum", item.date),
-                            y: .value(title, BodyFormat.displayValue(item.value, kind: kind, unit: unit))
-                        )
+            Group {
+                if list.count >= 2 {
+                    Section {
+                        Chart(list) { item in
+                            LineMark(
+                                x: .value("Datum", item.date),
+                                y: .value(title, BodyFormat.displayValue(item.value, kind: kind, unit: unit))
+                            )
+                            PointMark(
+                                x: .value("Datum", item.date),
+                                y: .value(title, BodyFormat.displayValue(item.value, kind: kind, unit: unit))
+                            )
+                        }
+                        .chartYScale(domain: ChartValueDomain.domain(for: list.map { BodyFormat.displayValue($0.value, kind: kind, unit: unit) }))
+                        .chartHeight(200, regular: 320)
+                        .accessibilityLabel(Text("Graf mjere \(title)"))
                     }
-                    .chartYScale(domain: ChartValueDomain.domain(for: list.map { BodyFormat.displayValue($0.value, kind: kind, unit: unit) }))
-                    .chartHeight(200, regular: 320)
-                    .accessibilityLabel(Text("Graf mjere \(title)"))
                 }
-            }
-            Section("Povijest") {
-                if list.isEmpty {
-                    Text("Još nema unosa.").foregroundStyle(.secondary)
-                }
-                ForEach(list.reversed()) { item in
-                    HStack {
-                        Text(item.date.formatted(date: .abbreviated, time: .omitted))
-                        Spacer()
-                        Text(BodyFormat.text(item.value, kind: kind, unit: unit))
-                        if item.source == .healthKit {
-                            Image(systemName: "heart.fill").foregroundStyle(.red).accessibilityLabel(Text("Iz Apple Zdravlja"))
+                Section("Povijest") {
+                    if list.isEmpty {
+                        Text("Još nema unosa.").foregroundStyle(.secondary)
+                    }
+                    ForEach(list.reversed()) { item in
+                        HStack {
+                            Text(item.date.formatted(date: .abbreviated, time: .omitted))
+                            Spacer()
+                            Text(BodyFormat.text(item.value, kind: kind, unit: unit))
+                            if item.source == .healthKit {
+                                Image(systemName: "heart.fill").foregroundStyle(.red).accessibilityLabel(Text("Iz Apple Zdravlja"))
+                            }
                         }
                     }
-                }
-                .onDelete { offsets in
-                    let reversed = Array(list.reversed())
-                    for index in offsets { try? BodyTracking(context: context).delete(reversed[index]) }
+                    .onDelete { offsets in
+                        let reversed = Array(list.reversed())
+                        for index in offsets { try? BodyTracking(context: context).delete(reversed[index]) }
+                    }
                 }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -92,16 +96,20 @@ private struct AddMeasurementSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                HStack {
-                    TextField("Vrijednost", text: $valueText)
-                        .keyboardType(.decimalPad)
-                    Text(BodyFormat.unitSymbol(kind: kind, unit: unit)).foregroundStyle(.secondary)
+                Group {
+                    HStack {
+                        TextField("Vrijednost", text: $valueText)
+                            .keyboardType(.decimalPad)
+                        Text(BodyFormat.unitSymbol(kind: kind, unit: unit)).foregroundStyle(.secondary)
+                    }
+                    DatePicker("Datum", selection: $date, in: ...Date(), displayedComponents: .date)
+                    if let errorText {
+                        Text(errorText).foregroundStyle(.red)
+                    }
                 }
-                DatePicker("Datum", selection: $date, in: ...Date(), displayedComponents: .date)
-                if let errorText {
-                    Text(errorText).foregroundStyle(.red)
-                }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Novi unos")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

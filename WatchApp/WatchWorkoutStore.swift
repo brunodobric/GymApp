@@ -73,7 +73,6 @@ final class WatchWorkoutStore {
     private init() {}
 
     var unit: WeightUnit { context.weightUnit }
-    var accent: AccentChoice { context.accent ?? .blue }
     var isController: Bool { active?.controllingDevice == .watch }
     /// Puls i kalorije prikazuju se kad sat drži sesiju u Zdravlju (vodi trening ili ga je pokrenuo iPhone).
     var showsHealthMetrics: Bool { isController || (mirrorHealthSessionID != nil && mirrorHealthSessionID == active?.id) }

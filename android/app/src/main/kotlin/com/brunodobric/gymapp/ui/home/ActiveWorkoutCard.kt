@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -218,12 +217,12 @@ private fun StepButton(symbol: String, label: String, enabled: Boolean, onClick:
 }
 
 /**
- * Sljedeći trening kao plava kartica iz prijedloga dizajna: raspored i ciklus, naziv, vježbe s planom
- * (npr. "3 × 8–10") i bijeli gumb "Započni". Ostali načini početka su u kartici ispod.
+ * Sljedeći trening kao kartica u boji akcenta: raspored i ciklus, naziv, vježbe s planom
+ * (npr. "3 × 8–10") i gumb "Započni" u boji teksta na akcentu. Ostali načini početka su u kartici ispod.
  */
 @Composable
 internal fun NextWorkoutHero(workout: PlannedWorkout, onStart: () -> Unit) {
-    val onAccent = Color.White
+    val onAccent = MaterialTheme.colorScheme.onPrimary
     Column(
         Modifier.fillMaxWidth()
             .clip(RoundedCornerShape(28.dp))

@@ -243,7 +243,7 @@ class WatchContextBuilderTest {
         assertEquals(startedSets, planned.exercises.map { it.sets })
         assertEquals("kilograms", payload.weightUnit)
         assertEquals(90, payload.defaultRestSeconds)
-        assertEquals("blue", payload.accent)
+        assertEquals("steel", payload.accent)
         // "Prošli put" za sat: završene serije zadnjeg izvođenja; potisak još nije odrađen.
         assertEquals(pastRow.orderedSets.map { it.weightKg }, planned.exercises[0].previous.map { it.weightKg })
         assertEquals(emptyList(), planned.exercises[1].previous)

@@ -17,7 +17,8 @@ import androidx.wear.tiles.TileService
 import com.brunodobric.gymapp.watch.MainActivity
 import com.brunodobric.gymapp.watch.R
 import com.brunodobric.gymapp.watch.WatchApplication
-import com.brunodobric.gymapp.watch.ui.accentColor
+import com.brunodobric.gymapp.watch.ui.Accent
+import com.brunodobric.gymapp.watch.ui.OnAccent
 import com.brunodobric.gymapp.wear.WatchGlance
 import com.google.common.util.concurrent.ListenableFuture
 import java.time.Instant
@@ -46,7 +47,7 @@ class NextWorkoutTileService : TileService() {
 
     private fun layout(glance: WatchGlance, now: Instant): LayoutElementBuilders.LayoutElement {
         val kind = glance.kind(now)
-        val accent = accentColor(glance.accent).toArgb()
+        val accent = Accent.toArgb()
         val column = LayoutElementBuilders.Column.Builder()
             .setWidth(expand())
             .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
@@ -134,7 +135,7 @@ class NextWorkoutTileService : TileService() {
                     )
                     .build(),
             )
-            .addContent(text(label, 15f, WHITE, bold = true))
+            .addContent(text(label, 15f, OnAccent.toArgb(), bold = true))
             .build()
     }
 
