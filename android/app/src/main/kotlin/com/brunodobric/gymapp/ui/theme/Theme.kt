@@ -14,57 +14,82 @@ import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.model.AppTheme
 
 /**
- * Naglasne boje, iste kao `AccentPalette` na iOS-u (Shared/Design/AccentPalette.swift): svaka ima svijetlu
- * i tamnu vrijednost. Ključ je `AccentChoice.rawValue`, a nepoznata vrijednost daje zadanu Apolon plavu.
+ * Boje aplikacije, iste kao `AppPalette` na iOS-u (Shared/Design/AppPalette.swift, docs/DIZAJN.md, odjeljak Boja).
+ * Plavo-siva paleta od šest tonova (#06141B, #11212D, #253745, #4A5C6A, #9BA8AB, #CCD0CF); svijetla tema dodaje
+ * dva izvedena tona za podlogu i kartice. Akcent je jedan, Čelik, a tekst na njemu je [onAccent].
  */
-object AccentPalette {
-    data class Pair(val light: Color, val dark: Color)
-
-    val apolon = Pair(Color(0xFF1F5BD6), Color(0xFF4C88FA))
-
-    fun forRaw(raw: String?): Pair = when (raw) {
-        "indigo" -> Pair(Color(0xFF4B47D6), Color(0xFF7F7AF7))
-        "purple" -> Pair(Color(0xFF8A3CCB), Color(0xFFA66CEB))
-        "pink" -> Pair(Color(0xFFC8255F), Color(0xFFEA4F8B))
-        "teal" -> Pair(Color(0xFF00707F), Color(0xFF1A98A7))
-        "graphite" -> Pair(Color(0xFF3A404C), Color(0xFF868C98))
-        else -> apolon
+object AppPalette {
+    data class Pair(val light: Color, val dark: Color) {
+        fun pick(dark: Boolean): Color = if (dark) this.dark else light
     }
+
+    /** Akcent Čelik. */
+    val accent = Pair(Color(0xFF253745), Color(0xFFCCD0CF))
+    /** Tekst i simboli na punom akcentu. */
+    val onAccent = Pair(Color.White, Color(0xFF06141B))
+    val background = Pair(Color(0xFFE6E9E8), Color(0xFF06141B))
+    val card = Pair(Color(0xFFF7F8F8), Color(0xFF11212D))
+    val fill = Pair(Color(0xFFCCD0CF), Color(0xFF253745))
+    val subtleFill = Pair(Color(0xFFE6E9E8), Color(0xFF1A2C39))
+    /** Razdjelnici i obrubi, nije za tekst. */
+    val separator = Pair(Color(0xFF9BA8AB), Color(0xFF4A5C6A))
+    val text = Pair(Color(0xFF06141B), Color(0xFFCCD0CF))
+    val secondaryText = Pair(Color(0xFF4A5C6A), Color(0xFF9BA8AB))
 }
 
 @Composable
 fun ApolonTheme(
-    accentRaw: String? = null,
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val accent = AccentPalette.forRaw(accentRaw)
+    val p = AppPalette
     val colors = if (darkTheme) {
-        // Tamni način kao standard: crna podloga kao systemBackground na iOS-u, kartice tamnosive.
         darkColorScheme(
-            primary = accent.dark,
-            onPrimary = Color.White,
-            background = Color.Black,
-            surface = Color.Black,
-            surfaceContainerHighest = Color(0xFF1C1F26),
-            surfaceContainerHigh = Color(0xFF181B21),
-            surfaceContainer = Color(0xFF14161B),
+            primary = p.accent.dark,
+            onPrimary = p.onAccent.dark,
+            primaryContainer = p.fill.dark,
+            onPrimaryContainer = p.text.dark,
+            secondary = p.accent.dark,
+            onSecondary = p.onAccent.dark,
+            secondaryContainer = p.fill.dark,
+            onSecondaryContainer = p.text.dark,
+            background = p.background.dark,
+            onBackground = p.text.dark,
+            surface = p.background.dark,
+            onSurface = p.text.dark,
+            surfaceVariant = p.fill.dark,
+            onSurfaceVariant = p.secondaryText.dark,
+            surfaceContainerLowest = p.background.dark,
+            surfaceContainerLow = p.card.dark,
+            surfaceContainer = p.card.dark,
+            surfaceContainerHigh = p.card.dark,
+            surfaceContainerHighest = p.card.dark,
+            outline = p.separator.dark,
+            outlineVariant = p.fill.dark,
         )
     } else {
-        // Svijetla podloga #F3F5FA s bijelim karticama, tekst #12161F i #4A5263 (prijedlog dizajna).
         lightColorScheme(
-            primary = accent.light,
-            onPrimary = Color.White,
-            background = Color(0xFFF3F5FA),
-            surface = Color(0xFFF3F5FA),
-            onBackground = Color(0xFF12161F),
-            onSurface = Color(0xFF12161F),
-            onSurfaceVariant = Color(0xFF4A5263),
-            surfaceContainerHighest = Color.White,
-            surfaceContainerHigh = Color(0xFFF7F9FC),
-            surfaceContainer = Color(0xFFEEF1F7),
-            surfaceContainerLow = Color(0xFFF7F9FC),
-            outlineVariant = Color(0xFFDDE2EC),
+            primary = p.accent.light,
+            onPrimary = p.onAccent.light,
+            primaryContainer = p.fill.light,
+            onPrimaryContainer = p.text.light,
+            secondary = p.accent.light,
+            onSecondary = p.onAccent.light,
+            secondaryContainer = p.fill.light,
+            onSecondaryContainer = p.text.light,
+            background = p.background.light,
+            onBackground = p.text.light,
+            surface = p.background.light,
+            onSurface = p.text.light,
+            surfaceVariant = p.fill.light,
+            onSurfaceVariant = p.secondaryText.light,
+            surfaceContainerLowest = Color.White,
+            surfaceContainerLow = p.card.light,
+            surfaceContainer = p.card.light,
+            surfaceContainerHigh = p.card.light,
+            surfaceContainerHighest = p.card.light,
+            outline = p.separator.light,
+            outlineVariant = p.fill.light,
         )
     }
     // Kartice su zaobljenije nego zadano u Materialu (20 dp), kao u prijedlogu dizajna.

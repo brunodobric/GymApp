@@ -43,7 +43,7 @@ class HealthPermissionsActivity : ComponentActivity() {
         setContent {
             rememberStoreRevision(store)
             val settings = store.settings()
-            ApolonTheme(accentRaw = settings.accentColorRaw, darkTheme = settings.theme.isDark()) {
+            ApolonTheme(darkTheme = settings.theme.isDark()) {
                 Scaffold(
                     topBar = {
                         TopAppBar(

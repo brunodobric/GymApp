@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
             // Tema i boja iz postavki; promjena u Postavkama odmah mijenja cijelu aplikaciju.
             rememberStoreRevision(services.store)
             val settings = services.store.settings()
-            ApolonTheme(accentRaw = settings.accentColorRaw, darkTheme = settings.theme.isDark()) {
+            ApolonTheme(darkTheme = settings.theme.isDark()) {
                 RootScreen(
                     services,
                     openWorkoutRequests = openWorkoutRequests.intValue,

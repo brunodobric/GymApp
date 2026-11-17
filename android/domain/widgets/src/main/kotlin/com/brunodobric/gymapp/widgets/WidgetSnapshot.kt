@@ -24,7 +24,7 @@ import java.util.UUID
 data class WidgetSnapshot(
     @Serializable(InstantSerializer::class) val generatedAt: Instant,
     /** Naglasna boja iz Postavki (`AccentChoice.raw`). */
-    val accent: String = "blue",
+    val accent: String = "steel",
     val weightUnit: String = WeightUnit.KILOGRAMS.raw,
     /** Trening u tijeku; dok traje, widget sljedećeg treninga nudi nastavak. */
     val activeWorkout: ActiveWorkout? = null,

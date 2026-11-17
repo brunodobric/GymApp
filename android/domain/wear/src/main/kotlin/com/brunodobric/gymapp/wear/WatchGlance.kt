@@ -19,7 +19,7 @@ data class WatchGlance(
     val restEndsAt: Instant? = null,
     val next: Next? = null,
     val week: WidgetSnapshot.Week? = null,
-    val accent: String = "blue",
+    val accent: String = "steel",
     /** Zadnja tjelesna težina s mobitela (kg). */
     val bodyWeightKg: Double? = null,
     val unit: WeightUnit = WeightUnit.KILOGRAMS,

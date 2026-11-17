@@ -128,12 +128,12 @@ private fun StartRow(
         modifier = Modifier.clickable(onClick = onClick),
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         leadingContent = {
-            // Glavni način početka ima bijelu ikonu na punom akcentu, ostali akcent na blagom akcentu.
+            // Glavni način početka ima ikonu u boji teksta na akcentu (onPrimary) na punom akcentu, ostali akcent na blagom akcentu.
             Box(
                 Modifier.size(40.dp).clip(CircleShape).background(if (prominent) accent else accent.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(icon, contentDescription = null, tint = if (prominent) Color.White else accent)
+                Icon(icon, contentDescription = null, tint = if (prominent) MaterialTheme.colorScheme.onPrimary else accent)
             }
         },
         headlineContent = {

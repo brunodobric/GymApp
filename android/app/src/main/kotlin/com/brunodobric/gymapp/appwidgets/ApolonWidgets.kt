@@ -52,7 +52,7 @@ import androidx.glance.unit.ColorProvider
 import com.brunodobric.gymapp.MainActivity
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.stats.StatsCalendar
-import com.brunodobric.gymapp.ui.theme.AccentPalette
+import com.brunodobric.gymapp.ui.theme.AppPalette
 import com.brunodobric.gymapp.units.DurationInput
 import com.brunodobric.gymapp.units.WeightFormatter
 import com.brunodobric.gymapp.widgets.WidgetDates
@@ -112,7 +112,7 @@ class NextWorkoutWidget : SnapshotWidget() {
     @Composable
     override fun ColumnScope.Content(snapshot: WidgetSnapshot, now: Instant) {
         val context = LocalContext.current
-        val accent = accent(snapshot)
+        val accent = widgetAccent
         val active = snapshot.activeWorkout
         val next = snapshot.nextWorkout
         when {
@@ -160,7 +160,7 @@ class WeekWidget : SnapshotWidget() {
     override fun ColumnScope.Content(snapshot: WidgetSnapshot, now: Instant) {
         val context = LocalContext.current
         val calendar = StatsCalendar.system()
-        val accent = accent(snapshot)
+        val accent = widgetAccent
         val week = snapshot.week?.current(now, calendar)
             ?: WidgetSnapshot.Week.empty(calendar.weekInterval(now).start, 0, null, 0, calendar)
         Heading(context.getString(R.string.widget_this_week), accent)
@@ -215,7 +215,7 @@ class BodyWeightWidget : SnapshotWidget() {
     @Composable
     override fun ColumnScope.Content(snapshot: WidgetSnapshot, now: Instant) {
         val context = LocalContext.current
-        val accent = accent(snapshot)
+        val accent = widgetAccent
         Heading(context.getString(R.string.body_weight), accent)
         val weight = snapshot.bodyWeight
         if (weight == null) {
@@ -233,7 +233,7 @@ class BodyWeightWidget : SnapshotWidget() {
         val points = weight.normalizedPoints
         if (points.isNotEmpty()) {
             Image(
-                ImageProvider(sparkline(points, accentColor(snapshot))),
+                ImageProvider(sparkline(points, sparklineColor)),
                 contentDescription = null,
                 modifier = GlanceModifier.fillMaxWidth().height(36.dp),
             )
@@ -247,7 +247,7 @@ class LastWorkoutWidget : SnapshotWidget() {
     @Composable
     override fun ColumnScope.Content(snapshot: WidgetSnapshot, now: Instant) {
         val context = LocalContext.current
-        val accent = accent(snapshot)
+        val accent = widgetAccent
         Heading(context.getString(R.string.widget_last_workout), accent)
         val last = snapshot.lastWorkout
         if (last == null) {
@@ -272,7 +272,7 @@ class RecordWidget : SnapshotWidget() {
     @Composable
     override fun ColumnScope.Content(snapshot: WidgetSnapshot, now: Instant) {
         val context = LocalContext.current
-        val accent = accent(snapshot)
+        val accent = widgetAccent
         Heading(context.getString(R.string.records), accent)
         val record = snapshot.latestRecord
         if (record == null) {
@@ -308,18 +308,20 @@ class RecordWidgetReceiver : GlanceAppWidgetReceiver() {
 
 // MARK: Dijelovi
 
-private val widgetBackground = DayNightColor(day = Color.White, night = Color.Black)
-private val primaryText = DayNightColor(day = Color(0xFF111111), night = Color.White)
-private val secondaryText = DayNightColor(day = Color(0xFF6B6B70), night = Color(0xFF9A9AA0))
-private val fill = DayNightColor(day = Color(0xFFE5E5EA), night = Color(0xFF2C2C2E))
+// Boje iz palete (`AppPalette`), kao widgeti na iOS-u: pozadina je boja kartice.
+private fun dayNight(pair: AppPalette.Pair): ColorProvider = DayNightColor(day = pair.light, night = pair.dark)
 
-private fun accent(snapshot: WidgetSnapshot): ColorProvider {
-    val pair = AccentPalette.forRaw(snapshot.accent)
-    return DayNightColor(day = pair.light, night = pair.dark)
-}
+private val widgetBackground = dayNight(AppPalette.card)
+private val primaryText = dayNight(AppPalette.text)
+private val secondaryText = dayNight(AppPalette.secondaryText)
+private val fill = dayNight(AppPalette.fill)
+private val onAccent = dayNight(AppPalette.onAccent)
 
-/** Boja krivulje težine: tamnija inačica naglasne boje vidi se na bijeloj i na crnoj pozadini (slika se ne mijenja s temom). */
-private fun accentColor(snapshot: WidgetSnapshot): Int = AccentPalette.forRaw(snapshot.accent).dark.toArgb()
+/** Akcent je jedan (Čelik), pa ne ovisi o vrijednosti u snimci. */
+private val widgetAccent = dayNight(AppPalette.accent)
+
+/** Boja krivulje težine: srednji ton palete vidi se na svijetloj i na tamnoj kartici (slika se ne mijenja s temom). */
+private val sparklineColor: Int = Color(0xFF4A5C6A).toArgb()
 
 /** Poveznica widgeta otvara MainActivity, koja je predaje aplikaciji (`onOpenURL` na iOS-u). */
 private fun open(context: Context, link: WidgetLink): Action = actionStartActivity(
@@ -360,7 +362,7 @@ private fun StartButton(accent: ColorProvider) {
     Button(
         text = "▶",
         onClick = open(context, WidgetLink.StartWorkout),
-        colors = ButtonDefaults.buttonColors(backgroundColor = accent, contentColor = DayNightColor(Color.White, Color.White)),
+        colors = ButtonDefaults.buttonColors(backgroundColor = accent, contentColor = onAccent),
         modifier = GlanceModifier.width(52.dp),
     )
 }

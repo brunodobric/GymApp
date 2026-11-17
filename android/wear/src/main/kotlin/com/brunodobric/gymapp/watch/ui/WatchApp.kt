@@ -45,15 +45,11 @@ import com.brunodobric.gymapp.wear.WatchWorkoutStore
 import java.time.Instant
 import kotlinx.coroutines.delay
 
-/** Naglasne boje kao na mobitelu (`AccentPalette`, tamna vrijednost jer je sat uvijek taman). */
-internal fun accentColor(raw: String?): Color = when (raw) {
-    "indigo" -> Color(0xFF7F7AF7)
-    "purple" -> Color(0xFFA66CEB)
-    "pink" -> Color(0xFFEA4F8B)
-    "teal" -> Color(0xFF1A98A7)
-    "graphite" -> Color(0xFF868C98)
-    else -> Color(0xFF4C88FA)
-}
+/** Akcent Čelik kao na mobitelu (`AppPalette`, tamna vrijednost jer je sat uvijek taman). */
+internal val Accent = Color(0xFFCCD0CF)
+
+/** Tekst i simboli na punom akcentu: akcent je svijetao, pa je tekst tamni ton palete. */
+internal val OnAccent = Color(0xFF06141B)
 
 /** Zelena za završenu seriju (kao kvačica na mobitelu), ne prati naglasnu boju. */
 internal val DoneGreen = Color(0xFF30D158)
@@ -61,8 +57,7 @@ internal val DoneGreen = Color(0xFF30D158)
 @Composable
 fun WatchApp(store: WatchWorkoutStore, health: HealthTracker, onStart: (PlannedWorkoutPayload) -> Unit) {
     val state by store.state.collectAsStateWithLifecycle()
-    val accent = accentColor(state.context.accent)
-    MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(primary = accent, onPrimary = Color.White)) {
+    MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(primary = Accent, onPrimary = OnAccent)) {
         AppScaffold {
             var plan by remember { mutableStateOf<PlannedWorkoutPayload?>(null) }
             val summary = state.summary

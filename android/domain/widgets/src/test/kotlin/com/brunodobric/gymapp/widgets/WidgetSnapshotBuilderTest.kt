@@ -59,7 +59,7 @@ class WidgetSnapshotBuilderTest {
         assertNull(snapshot.latestRecord)
         assertEquals(0, snapshot.week?.sessions)
         assertEquals(7, snapshot.week?.days?.size)
-        assertEquals(AccentChoice.BLUE.raw, snapshot.accent)
+        assertEquals(AccentChoice.STEEL.raw, snapshot.accent)
         assertEquals("kilograms", snapshot.weightUnit)
     }
 
