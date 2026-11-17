@@ -23,6 +23,7 @@ U paketu `GymKit` test "Statistika za godinu dana" (`StatsTests`) mjeri statisti
 
 * **Osobni rekordi u statistici:** svaki trening se prije uspoređivao s cijelom ranijom poviješću vježbe, pa je vrijeme raslo s kvadratom broja treninga. Sada se povijest nakon svakog treninga sažima (`PersonalRecordDetector.condensed`) na serije koje mogu odlučiti o rekordu. Test provjerava da su rekordi isti kao s punom poviješću.
 * **Rekordi se ne računaju ponovno** kad se na ekranu Statistika promijeni samo razdoblje grafa ili heatmapa.
+* **Statistika ne računa pri svakom otvaranju taba:** `.task` se pokreće pri svakom povratku na tab, a računanje ide na glavnu nit, pa je animacija odabira zadnjeg taba (Liquid Glass) zapinjala. Sada se podaci računaju samo kad se ključ (podaci, razdoblje, postavke) promijeni, i to tek nakon prijelaza taba, dok su prikazani prethodni podaci.
 * **Pokretanje treninga iz predloška:** smart defaults za svaku vježbu prije su čitali serije iz svih ranijih izvođenja, a trebaju samo zadnje. Sada se serije čitaju samo dok se ne nađe zadnje izvođenje.
 
 ## Ciljevi
