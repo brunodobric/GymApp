@@ -38,6 +38,10 @@ struct StatisticsScreen: View {
     /// Otvoreni ekran kartice. U jednom stupcu je to stog, u podijeljenom prikazu prvi element je desni stupac,
     /// pa preklapanje iPhonea Duo zadržava otvoreni ekran.
     @State private var path: [CardDestination] = []
+    /// Ključevi za koje su podaci već izračunati. `.task` se ponovno pokreće pri svakom povratku na tab,
+    /// a s istim ključem nema što računati.
+    @State private var loadedKey: LoadKey?
+    @State private var loadedRecordsKey: RecordsKey?
 
     private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
     private var isPro: Bool { settings?.statsDetail == .pro }
@@ -69,6 +73,17 @@ struct StatisticsScreen: View {
         var excluded: Set<String>
     }
 
+    private var loadKey: LoadKey {
+        LoadKey(
+            version: DataVersion.shared.value, muscleDays: muscleDays, customCount: customExercises.count,
+            goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek, sex: settings?.sex, isPro: isPro
+        )
+    }
+
+    private var recordsKey: RecordsKey {
+        RecordsKey(version: DataVersion.shared.value, kinds: trackedKinds, excluded: excludedExercises)
+    }
+
     var body: some View {
         Group {
             if sizeClass == .regular {
@@ -93,12 +108,21 @@ struct StatisticsScreen: View {
                 }
             }
         }
-        .task(id: LoadKey(
-            version: DataVersion.shared.value, muscleDays: muscleDays, customCount: customExercises.count,
-            goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek, sex: settings?.sex, isPro: isPro
-        )) { load() }
+        .task(id: loadKey) {
+            let key = loadKey
+            guard key != loadedKey else { return }
+            // Nova kartica Mišića (razdoblje) računa se odmah, a novi podaci i prvo otvaranje nakon prijelaza taba.
+            if key.version != loadedKey?.version, !(await waitForTabTransition()) { return }
+            load()
+            loadedKey = key
+        }
         // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
-        .task(id: RecordsKey(version: DataVersion.shared.value, kinds: trackedKinds, excluded: excludedExercises)) { loadRecords() }
+        .task(id: recordsKey) {
+            let key = recordsKey
+            guard key != loadedRecordsKey, await waitForTabTransition() else { return }
+            loadRecords()
+            loadedRecordsKey = key
+        }
         // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
         .onChange(of: rootReset) { path = [] }
         .id(rootReset)
@@ -160,6 +184,14 @@ struct StatisticsScreen: View {
         // Zadnji trening i kalkulator ploča otvaraju se samo s Početne.
         case .lastWorkout, .plateCalculator: OverviewScreen()
         }
+    }
+
+    /// Računanje ide na glavnu nit (SwiftData kontekst), pa se pričeka da sustav dovrši animaciju odabira taba
+    /// (Liquid Glass) i prijelaz. Inače stotine milisekundi računanja zaustave animaciju i tab bar zašteka.
+    /// Dotad ostaju prikazani prethodni podaci. Vraća false ako je korisnik u međuvremenu otišao s taba.
+    private func waitForTabTransition() async -> Bool {
+        try? await Task.sleep(for: .milliseconds(400))
+        return !Task.isCancelled
     }
 
     private func load() {
