@@ -227,7 +227,7 @@ struct WatchContextBuilderTests {
         #expect(planned.exercises.map(\.sets) == (try startedSets(template, in: context)))
         #expect(payload.weightUnit == .kilograms)
         #expect(payload.defaultRestSeconds == 90)
-        #expect(payload.accent == .blue)
+        #expect(payload.accent == .steel)
         // "Prošli put" za sat: završene serije zadnjeg izvođenja; potisak još nije odrađen.
         #expect(planned.exercises[0].previous?.map(\.weightKg) == pastRow.orderedSets.map(\.weightKg))
         #expect(planned.exercises[1].previous == [])

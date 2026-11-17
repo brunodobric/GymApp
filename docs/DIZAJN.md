@@ -86,17 +86,32 @@ Smjer "Apolon, mirniji": zaobljeni bold za naslove i brojeve, obični SF Pro za 
 
 ## Boja
 
-* **Zadana boja je Apolon plava**, nijansa tamnoplave podloge ikone, posvijetljena da bude čitljiva: `#1F5BD6` u svijetloj i `#4C88FA` u tamnoj temi. Ista je u `AccentColor` u katalozima aplikacije i sata, pa sustav (upozorenja, prvo pokretanje) ima istu boju. Sat dobiva korisnikov izbor u kontekstu s iPhonea.
-* **Izbor u Postavkama** ima šest boja (`AccentPalette` u `Shared/Design`, `AccentChoice` u GymKitu): Apolon plava, indigo, ljubičasta, roza, tirkizna i grafit. Svaka ima svijetlu i tamnu vrijednost s barem 4,5 : 1 kao tekst na podlozi i barem 3 : 1 za bijeli tekst na punom gumbu. Nova boja ulazi samo ako prolazi oboje.
-* **Akcent u kodu:** kontrole ga dobivaju kroz `.tint`, a pozadine, grafovi i Canvas čitaju `@Environment(\.appAccent)`. Oboje postavlja `appAccent(_:)` na korijenu prozora. Ne koristi se `Color.accentColor` ni sistemska `.blue`. Widgeti i Live Activity boju čitaju iz snimke odnosno stanja preko `AccentPalette.color(for:)`.
-* **Semantičke boje ne prate akcent:** zelena je završena serija (i gumb "Završi seriju" na satu), narančasta zagrijavanje, rekord i niz, crvena brisanje i greške, a mišićne skupine imaju svoje boje. Zato zelene, crvene i narančaste nema u ponudi akcenata.
+* **Paleta:** šest plavo-sivih tonova, `#06141B`, `#11212D`, `#253745`, `#4A5C6A`, `#9BA8AB` i `#CCD0CF` (`AppPalette` u `Shared/Design`, na Androidu `AppPalette` u `ui/theme/Theme.kt`). Uloge:
+
+  | Uloga | Svijetla | Tamna | Zamjenjuje |
+  |---|---|---|---|
+  | Podloga ekrana (`background`) | `#E6E9E8` | `#06141B` | `systemGroupedBackground` |
+  | Kartica i redak popisa (`card`) | `#F7F8F8` | `#11212D` | `secondarySystemGroupedBackground` |
+  | Ispuna (`fill`): prazne točke, trake, sličice | `#CCD0CF` | `#253745` | `tertiarySystemFill` |
+  | Blaža ispuna (`subtleFill`): polja, neodabrane opcije | `#E6E9E8` | `#1A2C39` | `quaternarySystemFill` |
+  | Razdjelnik (`separator`), nije za tekst | `#9BA8AB` | `#4A5C6A` | |
+  | Primarni tekst (`text`) | `#06141B` | `#CCD0CF` | `label` |
+  | Sekundarni tekst (`secondaryText`) | `#4A5C6A` | `#9BA8AB` | `secondaryLabel` |
+  | Akcent Čelik (`accent`) | `#253745` | `#CCD0CF` | |
+  | Tekst na punom akcentu (`onAccent`) | `#FFFFFF` | `#06141B` | bijela |
+
+  Dva svijetla tona (`#E6E9E8`, `#F7F8F8`) izvedena su iz `#CCD0CF`; tamna tema koristi samo paletu. Kontrast na kartici: primarni tekst 17,6 i 10,6 : 1, sekundarni 6,5 i 6,7 : 1, akcent 11,5 i 10,6 : 1. Sat ostaje na čistoj crnoj (OLED), a akcent mu je tamna vrijednost.
+* **Akcent je jedan, Čelik.** Izbor boje u Postavkama je uklonjen. `AccentChoice` u GymKitu ima samo `steel` i i dalje se prenosi (sat, widgeti, Live Activity, sigurnosna kopija); svaka stara spremljena boja čita se kao Čelik. Isti je u `AccentColor` u katalozima aplikacije i sata, pa sustav (upozorenja, prvo pokretanje) ima istu boju.
+* **Tekst na akcentu je `onAccent`, nikad `.white`:** u tamnoj temi je akcent svijetao. Gumbi `.borderedProminent` zato dobivaju `.foregroundStyle(AppPalette.onAccent)`.
+* **Akcent i paleta u kodu:** `appPalette()` na korijenu prozora (i na listovima koji ga trebaju) postavlja `.tint`, `@Environment(\.appAccent)` za pozadine, grafove i Canvas te primarni i sekundarni tekst (`foregroundStyle(text, secondaryText)`). Naslovi u navigacijskoj traci dobivaju boju teksta kroz `NavigationBarFont`. Popisi (`List`, `Form`) dobivaju `.appListBackground()`, a redovi `.listRowBackground(AppPalette.card)`; popis s odabirom (stupac na iPadu) boji odabrani redak sam (`selectableRowBackground`), jer vlastita boja retka skriva sistemsko isticanje. Ne koriste se `Color.accentColor`, sistemska `.blue` ni sistemske pozadine.
+* **Semantičke boje ne prate akcent:** zelena je završena serija (i gumb "Završi seriju" na satu), narančasta zagrijavanje, rekord i niz, crvena brisanje i greške, a mišićne skupine imaju svoje boje. Zato akcent nije ni zelen, ni crven, ni narančast.
 
 ## Pristupačnost
 
 * **Dynamic Type:** veličine elemenata uz tekst (oznaka serije, polja za unos, odbrojavanje na satu) idu kroz `@ScaledMetric`, ne fiksne brojeve. Retci s više polja (redak serije, traka odmora) kod veličina pristupačnosti (`dynamicTypeSize.isAccessibilitySize`) prelaze u dva retka.
 * **VoiceOver:** svaki gumb sa samo simbolom ima tekst (`Button("Preskoči", systemImage:)` s `.labelStyle(.iconOnly)` ili `accessibilityLabel`). Znakovi koji se ne čitaju dobro (×, Z, +10) dobivaju izgovorljiv opis: "Serija 2, 80 kg, 8 ponavljanja", "Zagrijavanje", "Produlji odmor za 10 sekundi". Odabrano stanje ide kroz `.isSelected`, a ukrasne slike su `accessibilityHidden`.
 * **Grafovi** imaju `accessibilityLabel` koji kaže što prikazuju, a heatmap tijela ima tekstualni sažetak.
-* **Kontrast:** boje su sistemske (prilagođavaju se za "Povećaj kontrast"). Zasivljenje i prigušivanje prozirnošću (završene serije) isključuje se kad je `colorSchemeContrast == .increased`. Stanje se nikad ne prikazuje samo bojom: završena serija ima i punu zelenu kvačicu (nezavršena je obrubljena ili svijetla), dan s treningom i točku i opis za VoiceOver.
+* **Kontrast:** boje palete imaju barem 4,5 : 1 za tekst i ne mijenjaju se za "Povećaj kontrast"; semantičke boje su sistemske i prilagođavaju se. Zasivljenje i prigušivanje prozirnošću (završene serije) isključuje se kad je `colorSchemeContrast == .increased`. Stanje se nikad ne prikazuje samo bojom: završena serija ima i punu zelenu kvačicu (nezavršena je obrubljena ili svijetla), dan s treningom i točku i opis za VoiceOver.
 * **Smanji kretanje:** animacije prijelaza poštuju `accessibilityReduceMotion`.
 
 ### Ručna provjera prije izdanja

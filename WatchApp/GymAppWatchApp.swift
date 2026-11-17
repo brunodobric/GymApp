@@ -51,7 +51,7 @@ struct WatchRootView: View {
                 WatchHomeView()
             }
         }
-        // Naglasna boja iz postavki na iPhoneu (gumbi, kvačica, polje pod krunom, trenutna vježba).
-        .tint(store.accent.color)
+        // Akcent Čelik, kao na iPhoneu (gumbi, kvačica, polje pod krunom, trenutna vježba).
+        .tint(AppPalette.accent)
     }
 }

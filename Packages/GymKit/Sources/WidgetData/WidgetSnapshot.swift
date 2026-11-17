@@ -20,7 +20,7 @@ public struct WidgetSnapshot: Codable, Equatable, Sendable {
     public var latestRecord: Record?
 
     public init(
-        generatedAt: Date, accent: String = "blue", weightUnit: WeightUnit = .kilograms,
+        generatedAt: Date, accent: String = "steel", weightUnit: WeightUnit = .kilograms,
         activeWorkout: ActiveWorkout? = nil, nextWorkout: NextWorkout? = nil, week: Week? = nil,
         bodyWeight: BodyWeight? = nil, lastWorkout: LastWorkout? = nil, latestRecord: Record? = nil
     ) {

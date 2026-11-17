@@ -37,21 +37,25 @@ struct ExercisePickerSheet: View {
             : []
         NavigationStack {
             List {
-                Section { categoryChips }
-                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                    .listRowBackground(Color.clear)
-                if !suggestions.isEmpty {
-                    Section("Prijedlozi") { ForEach(suggestions) { row($0) } }
+                Group {
+                    Section { categoryChips }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        .listRowBackground(Color.clear)
+                    if !suggestions.isEmpty {
+                        Section("Prijedlozi") { ForEach(suggestions) { row($0) } }
+                    }
+                    if !recent.isEmpty {
+                        Section("Nedavno") { ForEach(recent) { row($0) } }
+                    }
+                    Section {
+                        ForEach(results) { row($0) }
+                    } header: {
+                        if !suggestions.isEmpty || !recent.isEmpty { Text("Sve vježbe") }
+                    }
                 }
-                if !recent.isEmpty {
-                    Section("Nedavno") { ForEach(recent) { row($0) } }
-                }
-                Section {
-                    ForEach(results) { row($0) }
-                } header: {
-                    if !suggestions.isEmpty || !recent.isEmpty { Text("Sve vježbe") }
-                }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .overlay {
                 if results.isEmpty { ContentUnavailableView.search(text: filter.query) }
             }
@@ -86,7 +90,7 @@ struct ExercisePickerSheet: View {
                     .buttonStyle(.bordered)
                     .buttonBorderShape(.capsule)
                     .controlSize(.small)
-                    .tint(isOn ? .accentColor : .secondary)
+                    .tint(isOn ? AppPalette.accent : .secondary)
                     .accessibilityAddTraits(isOn ? .isSelected : [])
                 }
             }

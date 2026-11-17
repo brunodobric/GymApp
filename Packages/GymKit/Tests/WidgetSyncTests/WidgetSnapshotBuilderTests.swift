@@ -63,7 +63,7 @@ struct WidgetSnapshotBuilderTests {
         #expect(snapshot.latestRecord == nil)
         #expect(snapshot.week?.sessions == 0)
         #expect(snapshot.week?.days.count == 7)
-        #expect(snapshot.accent == AccentChoice.blue.rawValue)
+        #expect(snapshot.accent == AccentChoice.steel.rawValue)
         #expect(snapshot.weightUnit == .kilograms)
     }
 

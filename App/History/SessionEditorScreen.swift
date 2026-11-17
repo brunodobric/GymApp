@@ -44,42 +44,46 @@ struct SessionEditorScreen: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Naziv") {
-                    TextField("Naziv treninga", text: $session.name)
-                }
-                Section {
-                    DatePicker("Početak", selection: $session.startedAt)
-                    if session.endedAt != nil {
-                        DatePicker("Kraj", selection: endBinding, in: session.startedAt...)
+                Group {
+                    Section("Naziv") {
+                        TextField("Naziv treninga", text: $session.name)
                     }
-                } footer: {
-                    if session.healthKitWorkoutId != nil {
-                        Text("Izmjene se ne prenose u Zdravlje.")
-                    }
-                }
-                ForEach(exercises) { exercise in
                     Section {
-                        exerciseRows(exercise)
-                            .environment(
-                                \.weightStep,
-                                WeightStepSettings.resolver(
-                                    settings: settings, catalog: catalogStore.catalog, custom: customExercises
-                                )(exercise.exercise)
-                            )
-                    } header: {
-                        exerciseHeader(exercise)
+                        DatePicker("Početak", selection: $session.startedAt)
+                        if session.endedAt != nil {
+                            DatePicker("Kraj", selection: endBinding, in: session.startedAt...)
+                        }
+                    } footer: {
+                        if session.healthKitWorkoutId != nil {
+                            Text("Izmjene se ne prenose u Zdravlje.")
+                        }
+                    }
+                    ForEach(exercises) { exercise in
+                        Section {
+                            exerciseRows(exercise)
+                                .environment(
+                                    \.weightStep,
+                                    WeightStepSettings.resolver(
+                                        settings: settings, catalog: catalogStore.catalog, custom: customExercises
+                                    )(exercise.exercise)
+                                )
+                        } header: {
+                            exerciseHeader(exercise)
+                        }
+                    }
+                    Section {
+                        Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
+                    } footer: {
+                        Text("Serije bez kvačice i vježbe bez završene serije neće se spremiti.")
+                    }
+                    Section("Bilješke") {
+                        TextField("Bilješke", text: $session.notes, axis: .vertical)
+                            .lineLimit(3...)
                     }
                 }
-                Section {
-                    Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
-                } footer: {
-                    Text("Serije bez kvačice i vježbe bez završene serije neće se spremiti.")
-                }
-                Section("Bilješke") {
-                    TextField("Bilješke", text: $session.notes, axis: .vertical)
-                        .lineLimit(3...)
-                }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Uredi trening")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

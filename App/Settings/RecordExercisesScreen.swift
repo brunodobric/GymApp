@@ -19,20 +19,24 @@ struct RecordExercisesScreen: View {
 
     var body: some View {
         List {
-            Section {
-                if items.isEmpty {
-                    Text("Nema vježbi za prikaz.").foregroundStyle(.secondary)
+            Group {
+                Section {
+                    if items.isEmpty {
+                        Text("Nema vježbi za prikaz.").foregroundStyle(.secondary)
+                    }
+                    ForEach(items) { item in
+                        Toggle(item.name, isOn: Binding(
+                            get: { !settings.prExcludedExerciseKeys.contains(item.key) },
+                            set: { settings.setRecordsEnabled($0, forExercise: item.key) }
+                        ))
+                    }
+                } footer: {
+                    Text("Isključi vježbe za koje ne želiš rekorde, npr. zagrijavanje ili vježbe koje radiš samo za tehniku.")
                 }
-                ForEach(items) { item in
-                    Toggle(item.name, isOn: Binding(
-                        get: { !settings.prExcludedExerciseKeys.contains(item.key) },
-                        set: { settings.setRecordsEnabled($0, forExercise: item.key) }
-                    ))
-                }
-            } footer: {
-                Text("Isključi vježbe za koje ne želiš rekorde, npr. zagrijavanje ili vježbe koje radiš samo za tehniku.")
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Vježbe u rekordima")
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $search, prompt: "Vježba")

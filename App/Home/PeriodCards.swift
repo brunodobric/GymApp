@@ -17,14 +17,14 @@ struct WeekDaysStrip: View {
                 VStack(spacing: 4) {
                     ZStack {
                         Circle()
-                            .fill(day.isTrained ? AnyShapeStyle(.tint) : AnyShapeStyle(Color(.tertiarySystemFill)))
+                            .fill(day.isTrained ? AnyShapeStyle(.tint) : AnyShapeStyle(AppPalette.fill))
                         if isToday && !day.isTrained {
                             Circle().strokeBorder(.tint, lineWidth: 2)
                         }
                         if let mix = day.mix {
                             WorkoutKindIcon(mix: mix)
                                 .font(.footnote.bold())
-                                .foregroundStyle(.white)
+                                .foregroundStyle(AppPalette.onAccent)
                         }
                     }
                     .frame(width: 32, height: 32)
@@ -78,7 +78,7 @@ struct PeriodFigures: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(Color(.tertiarySystemFill), in: .rect(cornerRadius: CornerRadius.inner))
+        .background(AppPalette.fill, in: .rect(cornerRadius: CornerRadius.inner))
         .accessibilityElement(children: .combine)
     }
 }
@@ -183,7 +183,7 @@ struct MonthDaysStrip: View {
     private func fill(_ day: WeekProgress.Day) -> AnyShapeStyle {
         if day.isTrained { return AnyShapeStyle(.tint) }
         if day.date > .now { return AnyShapeStyle(Color.clear) }
-        return AnyShapeStyle(Color(.tertiarySystemFill))
+        return AnyShapeStyle(AppPalette.fill)
     }
 }
 

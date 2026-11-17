@@ -133,6 +133,8 @@ struct OnboardingScreen: View {
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
         }
         .scrollBounceBehavior(.basedOnSize)
+        // Opcije su na blagoj ispuni (`AppPalette.subtleFill`), pa je podloga lista boja kartice.
+        .presentationBackground(AppPalette.card)
         .presentationDetents(step == .recommendation ? [.large] : [fittedDetent, .large], selection: $detent)
         .presentationDragIndicator(.visible)
         .onChange(of: step, initial: true) { updateDetent() }
@@ -202,6 +204,7 @@ struct OnboardingScreen: View {
             Text(title).frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
+        .foregroundStyle(AppPalette.onAccent)
         .controlSize(.large)
         .padding(.top, 20)
     }
@@ -259,7 +262,7 @@ struct OnboardingScreen: View {
                     .keyboardType(.decimalPad)
                     .padding(.horizontal, 12)
                     .frame(minHeight: 36)
-                    .background(Color(.tertiarySystemFill), in: .rect(cornerRadius: CornerRadius.inner))
+                    .background(AppPalette.fill, in: .rect(cornerRadius: CornerRadius.inner))
                     .accessibilityLabel(Text("Težina"))
                 Picker("Jedinice", selection: $answers.unit) {
                     Text(WeightUnit.kilograms.symbol).tag(WeightUnit.kilograms)
@@ -306,7 +309,7 @@ struct OnboardingScreen: View {
             }
         }
         .padding(12)
-        .background(Color(.quaternarySystemFill), in: .rect(cornerRadius: CornerRadius.inner))
+        .background(AppPalette.subtleFill, in: .rect(cornerRadius: CornerRadius.inner))
     }
 
     // MARK: Prijedlog

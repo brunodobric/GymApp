@@ -231,6 +231,7 @@ struct SchedulesScreen: View {
             }
             ForEach(schedules) { schedule in
                 NavigationLink(value: PlanningSelection.schedule(schedule.id)) { ScheduleRow(schedule: schedule) }
+                    .selectableRowBackground(selection == .schedule(schedule.id))
             }
             .onDelete { offsets in
                 let engine = ScheduleEngine(context: context)
@@ -263,6 +264,7 @@ struct SchedulesScreen: View {
                         )
                     }
                 }
+                .selectableRowBackground(selection == .template(template.id))
             }
             .onDelete { offsets in
                 let engine = TemplateEngine(context: context)
@@ -274,15 +276,19 @@ struct SchedulesScreen: View {
 
     private var planningList: some View {
         List(selection: Binding(get: { selection }, set: { select($0) })) {
-            // Bez rasporeda je glavno ono što korisnik ima: treninzi idu prvi.
-            if schedules.isEmpty {
-                templatesSection
-                schedulesSection
-            } else {
-                schedulesSection
-                templatesSection
+            Group {
+                // Bez rasporeda je glavno ono što korisnik ima: treninzi idu prvi.
+                if schedules.isEmpty {
+                    templatesSection
+                    schedulesSection
+                } else {
+                    schedulesSection
+                    templatesSection
+                }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Plan")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Naslovi u navigacijskoj traci u SF Pro Rounded, kao naslovi i brojevi u sadržaju (`Font.screenTitle`).
+/// Naslovi u navigacijskoj traci u SF Pro Rounded i boji teksta iz palete, kao naslovi i brojevi u sadržaju (`Font.screenTitle`).
 ///
 /// SwiftUI `.fontDesign` ne djeluje na traku, pa se font postavlja kroz `UINavigationBar.appearance()`.
 /// Veliki naslov je bold i raste s Dynamic Typeom (`UIFontMetrics`), kao sistemski. Mali naslov je
@@ -11,8 +11,10 @@ import UIKit
 enum NavigationBarFont {
     static func apply() {
         let appearance = UINavigationBar.appearance()
-        appearance.largeTitleTextAttributes = [.font: largeTitle]
-        appearance.titleTextAttributes = [.font: inlineTitle]
+        // Boja naslova je primarni tekst iz palete (`AppPalette.text`), jer traka ne čita SwiftUI stil.
+        let text = UIColor(AppPalette.text)
+        appearance.largeTitleTextAttributes = [.font: largeTitle, .foregroundColor: text]
+        appearance.titleTextAttributes = [.font: inlineTitle, .foregroundColor: text]
     }
 
     private static var largeTitle: UIFont {

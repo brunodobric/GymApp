@@ -24,29 +24,33 @@ struct BodyScreen: View {
 
     var body: some View {
         List {
-            Section {
-                ForEach(BodyMeasurementKind.allCases.filter { $0 != .custom }, id: \.self) { kind in
-                    NavigationLink {
-                        MeasurementDetailScreen(kind: kind, customName: nil, unit: unit)
-                    } label: {
-                        row(title: String(localized: kind.title), list: entries(of: kind, customName: nil), kind: kind)
+            Group {
+                Section {
+                    ForEach(BodyMeasurementKind.allCases.filter { $0 != .custom }, id: \.self) { kind in
+                        NavigationLink {
+                            MeasurementDetailScreen(kind: kind, customName: nil, unit: unit)
+                        } label: {
+                            row(title: String(localized: kind.title), list: entries(of: kind, customName: nil), kind: kind)
+                        }
+                    }
+                }
+                Section("Vlastite mjere") {
+                    ForEach(customNames, id: \.self) { name in
+                        NavigationLink {
+                            MeasurementDetailScreen(kind: .custom, customName: name, unit: unit)
+                        } label: {
+                            row(title: name, list: entries(of: .custom, customName: name), kind: .custom)
+                        }
+                    }
+                    Button("Nova mjera", systemImage: "plus") {
+                        customName = ""
+                        showsNewCustom = true
                     }
                 }
             }
-            Section("Vlastite mjere") {
-                ForEach(customNames, id: \.self) { name in
-                    NavigationLink {
-                        MeasurementDetailScreen(kind: .custom, customName: name, unit: unit)
-                    } label: {
-                        row(title: name, list: entries(of: .custom, customName: name), kind: .custom)
-                    }
-                }
-                Button("Nova mjera", systemImage: "plus") {
-                    customName = ""
-                    showsNewCustom = true
-                }
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Tijelo")
         .navigationBarTitleDisplayMode(.inline)
         .alert("Nova mjera", isPresented: $showsNewCustom) {

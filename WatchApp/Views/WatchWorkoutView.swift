@@ -148,6 +148,7 @@ struct WatchSetView: View {
                 if store.showsFinishPrompt {
                     Button("Završi trening", systemImage: "flag.checkered") { store.finish() }
                         .buttonStyle(.borderedProminent)
+                        .foregroundStyle(AppPalette.onAccent)
                 }
                 if let exercise = store.currentExercise {
                     Button("Dodaj seriju", systemImage: "plus") { store.addSet(to: exercise.id) }

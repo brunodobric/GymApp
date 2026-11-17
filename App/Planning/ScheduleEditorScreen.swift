@@ -31,14 +31,18 @@ struct ScheduleEditorScreen: View {
 
     var body: some View {
         List {
-            Section("Naziv") {
-                TextField("Naziv rasporeda", text: $schedule.name)
-                    .disabled(!isEditing)
+            Group {
+                Section("Naziv") {
+                    TextField("Naziv rasporeda", text: $schedule.name)
+                        .disabled(!isEditing)
+                }
+                sequenceSection
+                durationSection
+                reminderSection
             }
-            sequenceSection
-            durationSection
-            reminderSection
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .planningEditMode(editing)
         .navigationTitle(schedule.name.isEmpty ? String(localized: "Raspored") : schedule.name)
         .navigationBarTitleDisplayMode(.inline)
@@ -288,7 +292,7 @@ struct ScheduleEditorScreen: View {
                         .font(.subheadline.bold())
                         .frame(maxWidth: .infinity, minHeight: 36)
                         .background(isOn ? accent : Color.secondary.opacity(0.15), in: .circle)
-                        .foregroundStyle(isOn ? Color.white : Color.primary)
+                        .foregroundStyle(isOn ? AppPalette.onAccent : Color.primary)
                 }
                 .buttonStyle(.plain)
                 // Na ekranu je samo slovo (P, U, S…), a dva P i dva S VoiceOveru ne govore koji je dan.

@@ -146,17 +146,21 @@ struct ExerciseHistoryScreen: View {
     var body: some View {
         let months = history.byMonth()
         List {
-            ForEach(months) { month in
-                Section(month.start.formatted(.dateTime.month(.wide).year())) {
-                    ForEach(month.performances) { performance in
-                        ExercisePerformanceLink(performance: performance, unit: unit, linksToSession: linksToSessions)
+            Group {
+                ForEach(months) { month in
+                    Section(month.start.formatted(.dateTime.month(.wide).year())) {
+                        ForEach(month.performances) { performance in
+                            ExercisePerformanceLink(performance: performance, unit: unit, linksToSession: linksToSessions)
+                        }
                     }
                 }
+                Section {} footer: {
+                    Text(ExerciseHistoryFormat.footer(history, unit: unit, linksToSessions: linksToSessions))
+                }
             }
-            Section {} footer: {
-                Text(ExerciseHistoryFormat.footer(history, unit: unit, linksToSessions: linksToSessions))
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Sva izvođenja")
         .navigationBarTitleDisplayMode(.inline)
     }

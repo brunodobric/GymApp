@@ -66,16 +66,20 @@ struct SettingsScreen: View {
     var body: some View {
         NavigationStack {
             Form {
-                ForEach(SettingsCategory.groups, id: \.self) { group in
-                    Section {
-                        ForEach(group, id: \.self) { category in
-                            NavigationLink(value: category) {
-                                Label(category.title, systemImage: category.systemImage)
+                Group {
+                    ForEach(SettingsCategory.groups, id: \.self) { group in
+                        Section {
+                            ForEach(group, id: \.self) { category in
+                                NavigationLink(value: category) {
+                                    Label(category.title, systemImage: category.systemImage)
+                                }
                             }
                         }
                     }
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Postavke")
             .navigationDestination(for: SettingsCategory.self) { category in
                 destination(for: category)
@@ -92,7 +96,7 @@ struct SettingsScreen: View {
         // Za "Sustav" nil ne poništava već prisilno postavljenu shemu na prikazanom listu, pa se šalje
         // sistemska shema izričito.
         .preferredColorScheme(settings?.theme.colorScheme ?? systemScheme)
-        .appAccent(settings?.accent)
+        .appPalette()
     }
 
     @ViewBuilder
@@ -111,7 +115,11 @@ struct SettingsScreen: View {
         case .health:
             UserSettingsPage(category) { HealthSettingsSection(settings: $0) }
         case .sync:
-            Form { SyncSettingsSection() }
+            Form {
+                SyncSettingsSection()
+                    .listRowBackground(AppPalette.card)
+            }
+            .appListBackground()
                 .settingsPageTitle(category)
         case .data:
             DataSettingsScreen(model: dataSettings) {
@@ -146,10 +154,14 @@ private struct UserSettingsPage<Content: View>: View {
 
     var body: some View {
         Form {
-            if let settings = UserSettings.preferred(in: settingsList) {
-                content(settings)
+            Group {
+                if let settings = UserSettings.preferred(in: settingsList) {
+                    content(settings)
+                }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .settingsPageTitle(category)
     }
 }
@@ -161,8 +173,12 @@ private struct DataSettingsScreen: View {
 
     var body: some View {
         Form {
-            DataSettingsSection(model: model)
+            Group {
+                DataSettingsSection(model: model)
+            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .dataSettingsPresentations(model, onReset: onReset)
         .settingsPageTitle(.data)
     }
@@ -179,24 +195,28 @@ private struct AboutScreen: View {
 
     var body: some View {
         Form {
-            Section {
-                LabeledContent("Verzija", value: version)
-            }
-            Section {
-                // Klipovi i upute vježbi su iz MoveKit paketa (komercijalna licenca, navođenje nije obavezno).
-                LabeledContent("Katalog vježbi", value: "MoveKit")
-                // Atribucija crteža tijela (MIT licenca zahtijeva copyright napomenu i tekst licence).
-                NavigationLink {
-                    MuscleMapLicenseScreen()
-                } label: {
-                    LabeledContent("Crteži tijela", value: "MuscleMap")
+            Group {
+                Section {
+                    LabeledContent("Verzija", value: version)
+                }
+                Section {
+                    // Klipovi i upute vježbi su iz MoveKit paketa (komercijalna licenca, navođenje nije obavezno).
+                    LabeledContent("Katalog vježbi", value: "MoveKit")
+                    // Atribucija crteža tijela (MIT licenca zahtijeva copyright napomenu i tekst licence).
+                    NavigationLink {
+                        MuscleMapLicenseScreen()
+                    } label: {
+                        LabeledContent("Crteži tijela", value: "MuscleMap")
+                    }
+                }
+                Section {
+                    Link("Pravila privatnosti", destination: PrivacyPolicy.url)
+                    NavigationLink("Dijagnostika") { DiagnosticsScreen() }
                 }
             }
-            Section {
-                Link("Pravila privatnosti", destination: PrivacyPolicy.url)
-                NavigationLink("Dijagnostika") { DiagnosticsScreen() }
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .settingsPageTitle(.about)
     }
 }

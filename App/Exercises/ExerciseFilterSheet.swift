@@ -10,42 +10,46 @@ struct ExerciseFilterSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Picker("Izvor", selection: $filter.origin) {
-                        Text("Sve").tag(ExerciseFilter.Origin.all)
-                        Text("Službene").tag(ExerciseFilter.Origin.official)
-                        Text("Vlastite").tag(ExerciseFilter.Origin.custom)
-                    }
-                    .pickerStyle(.segmented)
-                    Toggle("Prikaži arhivirane", isOn: $filter.includeArchived)
-                }
-
-                Section("Kategorija") {
-                    ForEach(ExerciseCategory.allCases, id: \.self) { category in
-                        SelectionRow(title: category.title, value: category, selection: $filter.categories)
-                    }
-                }
-
-                Section("Oprema") {
-                    ForEach(Equipment.allCases, id: \.self) { equipment in
-                        SelectionRow(title: equipment.title, value: equipment, selection: $filter.equipment)
-                    }
-                }
-
-                Section("Mišić") {
-                    ForEach(Muscle.allCases, id: \.self) { muscle in
-                        SelectionRow(title: muscle.title, value: muscle, selection: $filter.muscles)
-                    }
-                }
-
-                if filter.differs(from: base) {
+                Group {
                     Section {
-                        Button("Poništi filtere", role: .destructive) {
-                            filter.reset(to: base)
+                        Picker("Izvor", selection: $filter.origin) {
+                            Text("Sve").tag(ExerciseFilter.Origin.all)
+                            Text("Službene").tag(ExerciseFilter.Origin.official)
+                            Text("Vlastite").tag(ExerciseFilter.Origin.custom)
+                        }
+                        .pickerStyle(.segmented)
+                        Toggle("Prikaži arhivirane", isOn: $filter.includeArchived)
+                    }
+
+                    Section("Kategorija") {
+                        ForEach(ExerciseCategory.allCases, id: \.self) { category in
+                            SelectionRow(title: category.title, value: category, selection: $filter.categories)
+                        }
+                    }
+
+                    Section("Oprema") {
+                        ForEach(Equipment.allCases, id: \.self) { equipment in
+                            SelectionRow(title: equipment.title, value: equipment, selection: $filter.equipment)
+                        }
+                    }
+
+                    Section("Mišić") {
+                        ForEach(Muscle.allCases, id: \.self) { muscle in
+                            SelectionRow(title: muscle.title, value: muscle, selection: $filter.muscles)
+                        }
+                    }
+
+                    if filter.differs(from: base) {
+                        Section {
+                            Button("Poništi filtere", role: .destructive) {
+                                filter.reset(to: base)
+                            }
                         }
                     }
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Filteri")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

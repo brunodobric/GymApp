@@ -41,7 +41,7 @@ struct ExerciseThumbnail: View {
     @State private var image: UIImage?
 
     var body: some View {
-        Color(.tertiarySystemFill)
+        AppPalette.fill
             .aspectRatio(aspectRatio, contentMode: .fit)
             .overlay {
                 if let image {

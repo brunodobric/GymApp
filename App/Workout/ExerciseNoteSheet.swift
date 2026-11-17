@@ -14,14 +14,18 @@ struct ExerciseNoteSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    TextField("Npr. sjedalo na 4, hvat malo širi", text: $text, axis: .vertical)
-                        .lineLimit(3...8)
-                        .focused($isFocused)
-                } footer: {
-                    Text("Bilješka se prikazuje uz vježbu u svakom treningu.")
+                Group {
+                    Section {
+                        TextField("Npr. sjedalo na 4, hvat malo širi", text: $text, axis: .vertical)
+                            .lineLimit(3...8)
+                            .focused($isFocused)
+                    } footer: {
+                        Text("Bilješka se prikazuje uz vježbu u svakom treningu.")
+                    }
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle(exerciseName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

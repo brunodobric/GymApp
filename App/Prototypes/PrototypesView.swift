@@ -9,12 +9,16 @@ struct PrototypesView: View {
     var body: some View {
         NavigationStack {
             List {
-                NavigationLink {
-                    CloudKitSchemaToolView()
-                } label: {
-                    Label(String("CloudKit shema"), systemImage: "icloud")
+                Group {
+                    NavigationLink {
+                        CloudKitSchemaToolView()
+                    } label: {
+                        Label(String("CloudKit shema"), systemImage: "icloud")
+                    }
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle(String("Prototipi"))
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

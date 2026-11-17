@@ -45,22 +45,26 @@ struct CloudKitSchemaToolView: View {
 
     var body: some View {
         Form {
-            Section {
-                Button(String("Stvori shemu u Developmentu")) { run() }
-                    .disabled(isRunning || !AppServices.isCloudSyncSupported)
-                if isRunning { ProgressView() }
-                if let result { Text(result).font(.footnote) }
-            } footer: {
-                Text(verbatim: """
-                    Pokreće se iz Xcodea (Debug build ide u Development okruženje), nakon svake promjene sheme. \
-                    Zatim u CloudKit konzoli: Deploy Schema Changes u produkciju.
-                    """)
+            Group {
+                Section {
+                    Button(String("Stvori shemu u Developmentu")) { run() }
+                        .disabled(isRunning || !AppServices.isCloudSyncSupported)
+                    if isRunning { ProgressView() }
+                    if let result { Text(result).font(.footnote) }
+                } footer: {
+                    Text(verbatim: """
+                        Pokreće se iz Xcodea (Debug build ide u Development okruženje), nakon svake promjene sheme. \
+                        Zatim u CloudKit konzoli: Deploy Schema Changes u produkciju.
+                        """)
+                }
+                Section(String("Stanje")) {
+                    LabeledContent(String("Sinkronizacija u ovom pokretanju"), value: AppServices.isSyncRunning ? "da" : "ne")
+                    LabeledContent(String("Kontejner"), value: AppServices.cloudContainerIdentifier)
+                }
             }
-            Section(String("Stanje")) {
-                LabeledContent(String("Sinkronizacija u ovom pokretanju"), value: AppServices.isSyncRunning ? "da" : "ne")
-                LabeledContent(String("Kontejner"), value: AppServices.cloudContainerIdentifier)
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle(String("CloudKit shema"))
     }
 

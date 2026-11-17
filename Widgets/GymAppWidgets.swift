@@ -86,12 +86,12 @@ private extension View {
         case .some(.light):
             accented
                 .environment(\.colorScheme, .light)
-                .activityBackgroundTint(Color.white.opacity(0.9))
+                .activityBackgroundTint(AppPalette.card.opacity(0.9))
                 .activitySystemActionForegroundColor(.black)
         case .some(.dark):
             accented
                 .environment(\.colorScheme, .dark)
-                .activityBackgroundTint(Color.black.opacity(0.8))
+                .activityBackgroundTint(AppPalette.background.opacity(0.85))
                 .activitySystemActionForegroundColor(.white)
         default:
             accented
@@ -554,7 +554,7 @@ private struct ConfirmSetButton: View {
                         .font(.subheadline.bold())
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(AppPalette.onAccent)
                         .frame(maxWidth: .infinity, minHeight: 32)
                         .background(accent, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }

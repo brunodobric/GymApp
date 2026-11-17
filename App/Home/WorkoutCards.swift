@@ -88,7 +88,7 @@ private struct StartRow<Title: View>: View {
         HStack(spacing: 14) {
             Image(systemName: symbol)
                 .font(.title3.bold())
-                .foregroundStyle(isProminent ? AnyShapeStyle(.white) : AnyShapeStyle(.tint))
+                .foregroundStyle(isProminent ? AnyShapeStyle(AppPalette.onAccent) : AnyShapeStyle(.tint))
                 .frame(width: 40, height: 40)
                 .background(isProminent ? AnyShapeStyle(.tint) : AnyShapeStyle(.tint.opacity(0.15)), in: Circle())
                 .accessibilityHidden(true)
@@ -128,7 +128,7 @@ private struct WorkoutCardBackground: ViewModifier {
         content
             .background {
                 shape
-                    .fill(Color(.secondarySystemGroupedBackground))
+                    .fill(AppPalette.card)
                     .overlay {
                         // `.tint` je akcent iz postavki (RootView ga postavlja), a ne AccentColor iz asseta.
                         shape.fill(.tint.opacity(0.15 * strength))
@@ -156,7 +156,7 @@ private extension View {
 private struct CardRowButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(configuration.isPressed ? Color(.systemFill) : .clear)
+            .background(configuration.isPressed ? AppPalette.fill : .clear)
     }
 }
 
@@ -440,7 +440,7 @@ private struct SetValueStepper: View {
             // Neprozirna podloga da traka odmora ne prosijava; boja je ista kao dosad na podlozi kartice bez trake.
             let shape = RoundedRectangle(cornerRadius: CornerRadius.inner)
             shape
-                .fill(Color(.secondarySystemGroupedBackground))
+                .fill(AppPalette.card)
                 .overlay { shape.fill(Color.primary.opacity(0.08)) }
         }
     }

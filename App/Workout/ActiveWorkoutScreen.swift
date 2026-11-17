@@ -208,29 +208,33 @@ struct ActiveWorkoutScreen: View {
         // Korak težine vježbe na kotačiću (oprema ili vlastiti korak, `WeightStepSettings`): jedan za sve kartice.
         let weightStep = WeightStepSettings.resolver(settings: settings, catalog: catalogStore.catalog, custom: customExercises)
         return List {
-            if isLedByWatch {
-                Label("Trening vodi Apple Watch", systemImage: "applewatch")
-                    .foregroundStyle(.secondary)
-            }
-            if editMode.isEditing {
-                // Kod promjene redoslijeda vježbe su zatvorene, jedna vježba je jedan redak.
-                ForEach(visible) { exercise in
-                    card(for: exercise, weightStep: weightStep)
+            Group {
+                if isLedByWatch {
+                    Label("Trening vodi Apple Watch", systemImage: "applewatch")
+                        .foregroundStyle(.secondary)
                 }
-                .onMove { source, destination in
-                    try? engine.moveExercises(in: session, from: source, to: destination)
+                if editMode.isEditing {
+                    // Kod promjene redoslijeda vježbe su zatvorene, jedna vježba je jedan redak.
+                    ForEach(visible) { exercise in
+                        card(for: exercise, weightStep: weightStep)
+                    }
+                    .onMove { source, destination in
+                        try? engine.moveExercises(in: session, from: source, to: destination)
+                    }
+                } else {
+                    // Svaka vježba je svoja sekcija, a serija svoj redak koji se briše povlačenjem.
+                    ForEach(visible) { exercise in
+                        Section { card(for: exercise, weightStep: weightStep) }
+                    }
                 }
-            } else {
-                // Svaka vježba je svoja sekcija, a serija svoj redak koji se briše povlačenjem.
-                ForEach(visible) { exercise in
-                    Section { card(for: exercise, weightStep: weightStep) }
-                }
-            }
 
-            Section {
-                Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
+                Section {
+                    Button("Dodaj vježbu", systemImage: "plus") { showsPicker = true }
+                }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         // Manji razmak među vježbama, kao među karticama na početnom ekranu.
         .listSectionSpacing(16)
         // Retci zaglavlja tablice i gumba niži su od zadane najmanje visine retka.
@@ -512,12 +516,16 @@ private struct SupersetPartnerSheet: View {
     var body: some View {
         NavigationStack {
             List(candidates) { candidate in
-                Button(candidate.exerciseName) {
-                    onPick(candidate)
-                    dismiss()
+                Group {
+                    Button(candidate.exerciseName) {
+                        onPick(candidate)
+                        dismiss()
+                    }
+                    .foregroundStyle(.primary)
                 }
-                .foregroundStyle(.primary)
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .overlay {
                 if candidates.isEmpty {
                     ContentUnavailableView(
@@ -545,20 +553,24 @@ private struct RemovedExercisesSheet: View {
     var body: some View {
         NavigationStack {
             List(exercises) { exercise in
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(exercise.exerciseName)
-                        Text("\(exercise.orderedSets.filter(\.isCompleted).count) završenih serija")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Button("Vrati") {
-                        onRestore(exercise)
-                        dismiss()
+                Group {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(exercise.exerciseName)
+                            Text("\(exercise.orderedSets.filter(\.isCompleted).count) završenih serija")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Button("Vrati") {
+                            onRestore(exercise)
+                            dismiss()
+                        }
                     }
                 }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Uklonjene vježbe")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -29,66 +29,70 @@ struct CustomExerciseEditor: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    TextField("Naziv", text: $name)
-                    TextField("Opis (neobavezno)", text: $details, axis: .vertical)
-                        .lineLimit(2...6)
-                }
+                Group {
+                    Section {
+                        TextField("Naziv", text: $name)
+                        TextField("Opis (neobavezno)", text: $details, axis: .vertical)
+                            .lineLimit(2...6)
+                    }
 
-                Section {
-                    Picker("Vrsta vježbe", selection: $kind) {
-                        ForEach(ExerciseKind.allCases, id: \.self) { value in
-                            Text(value.title).tag(value)
+                    Section {
+                        Picker("Vrsta vježbe", selection: $kind) {
+                            ForEach(ExerciseKind.allCases, id: \.self) { value in
+                                Text(value.title).tag(value)
+                            }
                         }
-                    }
-                    Picker("Kategorija", selection: $category) {
-                        Text("Nije odabrano").tag(ExerciseCategory?.none)
-                        ForEach(ExerciseCategory.allCases, id: \.self) { value in
-                            Text(value.title).tag(ExerciseCategory?.some(value))
+                        Picker("Kategorija", selection: $category) {
+                            Text("Nije odabrano").tag(ExerciseCategory?.none)
+                            ForEach(ExerciseCategory.allCases, id: \.self) { value in
+                                Text(value.title).tag(ExerciseCategory?.some(value))
+                            }
                         }
-                    }
-                    Picker("Oprema", selection: $equipment) {
-                        Text("Nije odabrano").tag(Equipment?.none)
-                        ForEach(Equipment.allCases, id: \.self) { value in
-                            Text(value.title).tag(Equipment?.some(value))
+                        Picker("Oprema", selection: $equipment) {
+                            Text("Nije odabrano").tag(Equipment?.none)
+                            ForEach(Equipment.allCases, id: \.self) { value in
+                                Text(value.title).tag(Equipment?.some(value))
+                            }
                         }
-                    }
-                    Picker("Unos", selection: $inputType) {
-                        ForEach(ExerciseInputType.allCases, id: \.self) { value in
-                            Text(value.title).tag(value)
+                        Picker("Unos", selection: $inputType) {
+                            ForEach(ExerciseInputType.allCases, id: \.self) { value in
+                                Text(value.title).tag(value)
+                            }
                         }
+                    } footer: {
+                        Text("Vrsta unosa određuje polja u retku serije i način računanja volumena.")
                     }
-                } footer: {
-                    Text("Vrsta unosa određuje polja u retku serije i način računanja volumena.")
-                }
 
-                Section("Mišići") {
-                    ForEach(Muscle.allCases, id: \.self) { muscle in
-                        SelectionRow(title: muscle.title, value: muscle, selection: $muscles)
-                    }
-                }
-
-                Section("Slika") {
-                    if let imageData, let image = UIImage(data: imageData) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: 200)
-                            .accessibilityHidden(true)
-                        Button("Ukloni sliku", role: .destructive) {
-                            self.imageData = nil
-                            photoItem = nil
+                    Section("Mišići") {
+                        ForEach(Muscle.allCases, id: \.self) { muscle in
+                            SelectionRow(title: muscle.title, value: muscle, selection: $muscles)
                         }
                     }
-                    PhotosPicker(selection: $photoItem, matching: .images) {
-                        Text(imageData == nil ? "Odaberi sliku" : "Zamijeni sliku")
+
+                    Section("Slika") {
+                        if let imageData, let image = UIImage(data: imageData) {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxHeight: 200)
+                                .accessibilityHidden(true)
+                            Button("Ukloni sliku", role: .destructive) {
+                                self.imageData = nil
+                                photoItem = nil
+                            }
+                        }
+                        PhotosPicker(selection: $photoItem, matching: .images) {
+                            Text(imageData == nil ? "Odaberi sliku" : "Zamijeni sliku")
+                        }
+                    }
+
+                    if let errorText {
+                        Section { Text(errorText).foregroundStyle(.red) }
                     }
                 }
-
-                if let errorText {
-                    Section { Text(errorText).foregroundStyle(.red) }
-                }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle(exercise == nil ? "Nova vježba" : "Uredi vježbu")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

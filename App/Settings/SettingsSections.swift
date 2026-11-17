@@ -22,21 +22,6 @@ extension AppTheme {
     }
 }
 
-extension AccentChoice {
-    var color: Color { AccentPalette.color(for: rawValue) }
-
-    var title: LocalizedStringKey {
-        switch self {
-        case .blue: "Apolon plava"
-        case .indigo: "Indigo"
-        case .purple: "Ljubičasta"
-        case .pink: "Roza"
-        case .teal: "Tirkizna"
-        case .graphite: "Grafit"
-        }
-    }
-}
-
 /// Tipovi rekorda koje korisnik uključuje pojedinačno (vidi `PRKind.kinds(fromSettings:)`).
 enum PRSettingOption: String, CaseIterable, Identifiable {
     case maxWeight, maxVolume, maxReps
@@ -64,7 +49,7 @@ enum PRSettingOption: String, CaseIterable, Identifiable {
     }
 }
 
-/// Tema, naglasna boja i tijelo na prikazu mišića.
+/// Tema i tijelo na prikazu mišića. Akcent je jedan (Čelik, `AppPalette`), pa ga se ne bira.
 struct AppearanceSettingsSection: View {
     @Bindable var settings: UserSettings
 
@@ -73,7 +58,6 @@ struct AppearanceSettingsSection: View {
             Picker("Tema", selection: $settings.theme) {
                 ForEach(AppTheme.allCases, id: \.self) { Text($0.title).tag($0) }
             }
-            AccentPicker(selection: $settings.accent)
             Picker("Tijelo na prikazu mišića", selection: $settings.bodyMapFemale) {
                 Text("Muško").tag(false)
                 Text("Žensko").tag(true)
@@ -83,7 +67,7 @@ struct AppearanceSettingsSection: View {
     }
 }
 
-/// Tema i naglasna boja Live Activityja: prate aplikaciju ili su vlastite.
+/// Tema Live Activityja: prati aplikaciju ili je vlastita.
 private struct LiveActivityAppearanceSection: View {
     @Bindable var settings: UserSettings
 
@@ -101,47 +85,14 @@ private struct LiveActivityAppearanceSection: View {
                 Picker("Tema", selection: $settings.liveActivityTheme) {
                     ForEach(AppTheme.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
-                AccentPicker(selection: $settings.liveActivityAccent)
             }
         } header: {
             Text("Live Activity")
         } footer: {
-            Text("Tema vrijedi za zaključani zaslon. Dynamic Island je uvijek crn, pa se ondje mijenja samo boja.")
+            Text("Tema vrijedi za zaključani zaslon. Dynamic Island je uvijek crn.")
         }
         // Promjena se odmah vidi u Live Activityju ako je trening u tijeku.
         .onChange(of: settings.effectiveLiveActivityTheme) { WorkoutLiveUpdates.shared.refresh() }
-        .onChange(of: settings.effectiveLiveActivityAccent) { WorkoutLiveUpdates.shared.refresh() }
-    }
-}
-
-/// Izbor naglasne boje kao red obojenih krugova (izbornik bi ih obojio trenutnom bojom).
-private struct AccentPicker: View {
-    @Binding var selection: AccentChoice
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Boja")
-            HStack {
-                ForEach(AccentChoice.allCases, id: \.self) { choice in
-                    Button {
-                        selection = choice
-                    } label: {
-                        Circle()
-                            .fill(choice.color)
-                            .frame(width: 30, height: 30)
-                            .overlay {
-                                if selection == choice {
-                                    Image(systemName: "checkmark").font(.footnote.bold()).foregroundStyle(.white)
-                                }
-                            }
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(Text(choice.title))
-                    .accessibilityAddTraits(selection == choice ? .isSelected : [])
-                    if choice != AccentChoice.allCases.last { Spacer(minLength: 0) }
-                }
-            }
-        }
     }
 }
 

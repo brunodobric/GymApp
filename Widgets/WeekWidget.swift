@@ -87,14 +87,14 @@ private struct WeekView: View {
                 let isToday = Calendar.current.isDate(day.date, inSameDayAs: entry.date)
                 VStack(spacing: 2) {
                     ZStack {
-                        Circle().fill(day.isTrained ? AnyShapeStyle(.tint) : AnyShapeStyle(Color(.tertiarySystemFill)))
+                        Circle().fill(day.isTrained ? AnyShapeStyle(.tint) : AnyShapeStyle(AppPalette.fill))
                         if isToday && !day.isTrained {
                             Circle().strokeBorder(.tint, lineWidth: 2)
                         }
                         if let mix = day.mix {
                             Image(systemName: mix.symbol)
                                 .font(.caption2.bold())
-                                .foregroundStyle(.white)
+                                .foregroundStyle(AppPalette.onAccent)
                         }
                     }
                     .frame(width: 24, height: 24)
@@ -161,7 +161,7 @@ struct WeekRing: View {
 
     var body: some View {
         ZStack {
-            Circle().stroke(Color(.tertiarySystemFill), lineWidth: lineWidth)
+            Circle().stroke(AppPalette.fill, lineWidth: lineWidth)
             Circle()
                 .trim(from: 0, to: week.goalFraction ?? (week.sessions > 0 ? 1 : 0))
                 .stroke(.tint, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))

@@ -25,8 +25,12 @@ struct PlateCalculatorSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                PlateCalculatorSections(text: $text, unit: unit, settings: UserSettings.preferred(in: settingsList))
+                Group {
+                    PlateCalculatorSections(text: $text, unit: unit, settings: UserSettings.preferred(in: settingsList))
+                }
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Ploče")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -52,11 +56,15 @@ struct PlateCalculatorScreen: View {
     var body: some View {
         let settings = UserSettings.preferred(in: settingsList)
         Form {
-            PlateCalculatorSections(text: $text, unit: unit, settings: settings)
-            if let settings {
-                PlatesSettingsSection(settings: settings)
+            Group {
+                PlateCalculatorSections(text: $text, unit: unit, settings: settings)
+                if let settings {
+                    PlatesSettingsSection(settings: settings)
+                }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle("Kalkulator ploča")
         .task { _ = try? GymQueries(context: context).settings() }
     }

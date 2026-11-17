@@ -177,7 +177,7 @@ Aplikacija je podijeljena na 5 glavnih tabova (Dashboard je početni):
 Prvi ekran je popis kategorija u grupama, a svaka kategorija otvara svoju stranicu: **Prikaz, Trening, Ploče i šipka** · **Obavijesti, Zdravlje, iCloud** · **Podaci** · **O aplikaciji**. Na iPadu je isti list s istim stranicama.
 
 * **Tema:** Svijetlo / Tamno / Automatski (prema sustavu).
-* **Accent boja:** zadana je Apolon plava, boja aplikacije izvedena iz ikone. Korisnik može izabrati jednu od šest provjerenih boja: Apolon plava, indigo, ljubičasta, roza, tirkizna i grafit. Zelene, crvene i narančaste nema jer znače završenu seriju, brisanje i zagrijavanje (docs/DIZAJN.md, odjeljak Boja).
+* **Boje:** aplikacija koristi plavo-sivu paletu od šest tonova za podloge, kartice i tekst, a akcent je jedan, Čelik (tamni škriljac u svijetloj, svijetlo srebro u tamnoj temi). Izbora boje u Postavkama nema. Zelena, crvena i narančasta ostaju za završenu seriju, brisanje i zagrijavanje (docs/DIZAJN.md, odjeljak Boja).
 * **Live Activity:** prema zadanom prati temu i accent boju aplikacije. Kad se "Prati aplikaciju" isključi, bira vlastitu temu i boju (kreću od aplikacijinih). Tema vrijedi za zaključani zaslon; Dynamic Island je uvijek crn, pa se ondje mijenja samo boja.
 * **Jedinice:** kg / lbs.
 * **Zadana pauza:** dvije vrijednosti, za složene vježbe (tvornički 2:30) i za izolacijske i ostale (tvornički 1:30).
@@ -472,7 +472,7 @@ Jedina notifikacija koju aplikacija šalje tijekom treninga je **kraj odmora**, 
 * iPad nema Watch vezu i aktivni trening na Watchu ne prati uživo.
 
 #### Watch ekrani
-Sat je jednostavan: bilježi serije, vodi odmor i pokazuje vrijeme i vitalne znakove. Izgled prati aplikaciju na iPhoneu: naglasna boja iz postavki (stiže u kontekstu), ikona vrste treninga (snaga, kardio, snaga + kardio) i ista pravila za serije. Sadržaj ispunjava cijelu visinu zaslona.
+Sat je jednostavan: bilježi serije, vodi odmor i pokazuje vrijeme i vitalne znakove. Izgled prati aplikaciju na iPhoneu: akcent Čelik kao na iPhoneu, ikona vrste treninga (snaga, kardio, snaga + kardio) i ista pravila za serije. Sadržaj ispunjava cijelu visinu zaslona.
 
 1. **Početni ekran**
    * Kartica sljedećeg treninga svakog rasporeda: ikona vrste, naziv, broj vježbi i približno trajanje, gumb **Započni** na kartici

@@ -29,7 +29,7 @@ struct ChoiceGrid<Item: Hashable, Content: View>: View {
                         .padding(.horizontal, 12)
                         .foregroundStyle(isSelected ? AnyShapeStyle(.tint) : AnyShapeStyle(.primary))
                         .background(
-                            isSelected ? AnyShapeStyle(TintShapeStyle().opacity(0.12)) : AnyShapeStyle(Color(.quaternarySystemFill)),
+                            isSelected ? AnyShapeStyle(TintShapeStyle().opacity(0.12)) : AnyShapeStyle(AppPalette.subtleFill),
                             in: .rect(cornerRadius: CornerRadius.inner)
                         )
                         .overlay {
@@ -59,8 +59,8 @@ struct DaysPicker: View {
                     Text(day, format: .number)
                         .font(.body.weight(.semibold).monospacedDigit())
                         .frame(maxWidth: .infinity, minHeight: 40)
-                        .foregroundStyle(isSelected ? AnyShapeStyle(.white) : AnyShapeStyle(.primary))
-                        .background(isSelected ? AnyShapeStyle(.tint) : AnyShapeStyle(Color(.quaternarySystemFill)), in: .circle)
+                        .foregroundStyle(isSelected ? AnyShapeStyle(AppPalette.onAccent) : AnyShapeStyle(.primary))
+                        .background(isSelected ? AnyShapeStyle(.tint) : AnyShapeStyle(AppPalette.subtleFill), in: .circle)
                         .contentShape(.circle)
                 }
                 .buttonStyle(.plain)

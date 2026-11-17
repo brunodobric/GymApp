@@ -83,26 +83,31 @@ struct HistoryScreen: View {
         let listed = lists.listed
         let sessions = lists.all
         return List(selection: $selectedId) {
-            if showsCalendar {
+            Group {
+                if showsCalendar {
+                    Section {
+                        CalendarMonthView(
+                            month: $month, selectedDay: $selectedDay,
+                            workoutDays: Set(visible.map { Calendar.current.startOfDay(for: $0.startedAt) })
+                        )
+                    }
+                }
                 Section {
-                    CalendarMonthView(
-                        month: $month, selectedDay: $selectedDay,
-                        workoutDays: Set(visible.map { Calendar.current.startOfDay(for: $0.startedAt) })
-                    )
+                    ForEach(listed) { session in
+                        NavigationLink(value: session.id) { SessionRow(session: session, isCardio: lists.isCardio) }
+                            .openInWindowMenu(DetailWindow.session, value: session.id)
+                            .selectableRowBackground(selectedId == session.id)
+                    }
+                    // Poruka ide u popis ispod kalendara, ne preko cijelog ekrana.
+                    if showsCalendar && listed.isEmpty && !sessions.isEmpty {
+                        Text(selectedDay == nil ? "U ovom mjesecu nema odrađenih treninga." : "Za odabrani dan nema odrađenih treninga.")
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
-            Section {
-                ForEach(listed) { session in
-                    NavigationLink(value: session.id) { SessionRow(session: session, isCardio: lists.isCardio) }
-                        .openInWindowMenu(DetailWindow.session, value: session.id)
-                }
-                // Poruka ide u popis ispod kalendara, ne preko cijelog ekrana.
-                if showsCalendar && listed.isEmpty && !sessions.isEmpty {
-                    Text(selectedDay == nil ? "U ovom mjesecu nema odrađenih treninga." : "Za odabrani dan nema odrađenih treninga.")
-                        .foregroundStyle(.secondary)
-                }
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .overlay {
             if sessions.isEmpty {
                 ContentUnavailableView(

@@ -35,7 +35,7 @@ struct WorkoutKindIcon: View {
                     Image(systemName: "figure.run.circle.fill")
                         .font(.caption2)
                         .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .tint)
+                        .foregroundStyle(AppPalette.onAccent, .tint)
                         .background(Circle().fill(.background).padding(-1))
                         .offset(x: 6, y: 6)
                 }

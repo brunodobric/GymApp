@@ -65,82 +65,86 @@ private struct CatalogExerciseDetail: View {
         let mistakes = exercise.displayCommonMistakes(language: language)
 
         List {
-            switch catalogStore.illustration(for: exercise) {
-            case let .video(path, poster):
-                if let video = catalogStore.mediaURL(path) {
-                    Section {
-                        ExerciseVideoView(
-                            video: video,
-                            poster: poster.flatMap { catalogStore.mediaURL($0) },
-                            accessibilityText: name
-                        )
-                        .listRowInsets(EdgeInsets())
-                    }
-                }
-            case let .poster(path):
-                if let url = catalogStore.mediaURL(path), let image = UIImage(contentsOfFile: url.path) {
-                    Section {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .accessibilityLabel(name)
+            Group {
+                switch catalogStore.illustration(for: exercise) {
+                case let .video(path, poster):
+                    if let video = catalogStore.mediaURL(path) {
+                        Section {
+                            ExerciseVideoView(
+                                video: video,
+                                poster: poster.flatMap { catalogStore.mediaURL($0) },
+                                accessibilityText: name
+                            )
                             .listRowInsets(EdgeInsets())
+                        }
+                    }
+                case let .poster(path):
+                    if let url = catalogStore.mediaURL(path), let image = UIImage(contentsOfFile: url.path) {
+                        Section {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
+                                .accessibilityLabel(name)
+                                .listRowInsets(EdgeInsets())
+                        }
+                    }
+                case .unavailable:
+                    EmptyView()
+                }
+
+                Section("Mišići") {
+                    LabeledContent("Primarni") { Text(exercise.primaryMuscles.formattedList) }
+                    if !exercise.secondaryMuscles.isEmpty {
+                        LabeledContent("Sekundarni") { Text(exercise.secondaryMuscles.formattedList) }
                     }
                 }
-            case .unavailable:
-                EmptyView()
-            }
 
-            Section("Mišići") {
-                LabeledContent("Primarni") { Text(exercise.primaryMuscles.formattedList) }
-                if !exercise.secondaryMuscles.isEmpty {
-                    LabeledContent("Sekundarni") { Text(exercise.secondaryMuscles.formattedList) }
-                }
-            }
-
-            Section("Detalji") {
-                LabeledContent("Kategorija") { Text(exercise.category.title) }
-                LabeledContent("Oprema") { Text(exercise.equipment.title) }
-                LabeledContent("Razina") { Text(exercise.level.title) }
-                if let mechanic = exercise.mechanic {
-                    LabeledContent("Vrsta") { Text(mechanic.title) }
-                }
-                LabeledContent("Unos") { Text(exercise.inputType.title) }
-                if exercise.inputType.hasWeight {
-                    ExerciseWeightStepRow(exercise: ref, equipment: exercise.equipment)
-                }
-            }
-
-            Section {
-                if steps.isEmpty {
-                    Text("Upute za ovu vježbu nisu dostupne.")
-                        .foregroundStyle(.secondary)
-                }
-                ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-                    Text("\(index + 1). \(step)")
-                }
-            } header: {
-                Text("Upute")
-            } footer: {
-                if !steps.isEmpty && exercise.instructions[language] == nil && language != "en" {
-                    Text("Upute za ovu vježbu su zasad samo na engleskom.")
-                }
-            }
-
-            if !mistakes.isEmpty {
-                Section("Česte greške") {
-                    ForEach(Array(mistakes.enumerated()), id: \.offset) { _, mistake in
-                        Text(mistake)
+                Section("Detalji") {
+                    LabeledContent("Kategorija") { Text(exercise.category.title) }
+                    LabeledContent("Oprema") { Text(exercise.equipment.title) }
+                    LabeledContent("Razina") { Text(exercise.level.title) }
+                    if let mechanic = exercise.mechanic {
+                        LabeledContent("Vrsta") { Text(mechanic.title) }
+                    }
+                    LabeledContent("Unos") { Text(exercise.inputType.title) }
+                    if exercise.inputType.hasWeight {
+                        ExerciseWeightStepRow(exercise: ref, equipment: exercise.equipment)
                     }
                 }
-            }
 
-            ExerciseNoteSection(ref: ref)
+                Section {
+                    if steps.isEmpty {
+                        Text("Upute za ovu vježbu nisu dostupne.")
+                            .foregroundStyle(.secondary)
+                    }
+                    ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
+                        Text("\(index + 1). \(step)")
+                    }
+                } header: {
+                    Text("Upute")
+                } footer: {
+                    if !steps.isEmpty && exercise.instructions[language] == nil && language != "en" {
+                        Text("Upute za ovu vježbu su zasad samo na engleskom.")
+                    }
+                }
 
-            if let history {
-                ExerciseHistorySection(ref: ref, history: history, linksToSessions: linksToSessions)
+                if !mistakes.isEmpty {
+                    Section("Česte greške") {
+                        ForEach(Array(mistakes.enumerated()), id: \.offset) { _, mistake in
+                            Text(mistake)
+                        }
+                    }
+                }
+
+                ExerciseNoteSection(ref: ref)
+
+                if let history {
+                    ExerciseHistorySection(ref: ref, history: history, linksToSessions: linksToSessions)
+                }
             }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
         .task { history = ExerciseHistoryLoader.load(ref, context: context) }
@@ -160,60 +164,64 @@ private struct CustomExerciseDetail: View {
 
     var body: some View {
         List {
-            if let data = exercise.imageData, let image = UIImage(data: data) {
-                Section {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .accessibilityLabel(exercise.name)
-                        .listRowInsets(EdgeInsets())
-                }
-            }
-
-            if exercise.isArchived {
-                Section {
-                    Label("Arhivirana je i skrivena iz odabira.", systemImage: "archivebox")
-                    Button("Vrati vježbu") {
-                        exercise.isArchived = false
-                        try? context.save()
+            Group {
+                if let data = exercise.imageData, let image = UIImage(data: data) {
+                    Section {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .accessibilityLabel(exercise.name)
+                            .listRowInsets(EdgeInsets())
                     }
                 }
-            }
 
-            if !exercise.details.isEmpty {
-                Section("Opis") { Text(exercise.details) }
-            } else if exercise.imageData == nil {
-                // Vlastita vježba bez slike i opisa: stranica ne ostaje prazna, nego kaže kako je dopuniti.
-                Section {
-                    Button("Dodaj opis i sliku", systemImage: "square.and.pencil") { showsEditor = true }
-                } footer: {
-                    Text("Ovo je tvoja vježba, pa nema animaciju iz kataloga.")
+                if exercise.isArchived {
+                    Section {
+                        Label("Arhivirana je i skrivena iz odabira.", systemImage: "archivebox")
+                        Button("Vrati vježbu") {
+                            exercise.isArchived = false
+                            try? context.save()
+                        }
+                    }
+                }
+
+                if !exercise.details.isEmpty {
+                    Section("Opis") { Text(exercise.details) }
+                } else if exercise.imageData == nil {
+                    // Vlastita vježba bez slike i opisa: stranica ne ostaje prazna, nego kaže kako je dopuniti.
+                    Section {
+                        Button("Dodaj opis i sliku", systemImage: "square.and.pencil") { showsEditor = true }
+                    } footer: {
+                        Text("Ovo je tvoja vježba, pa nema animaciju iz kataloga.")
+                    }
+                }
+
+                Section("Detalji") {
+                    if let category = exercise.category {
+                        LabeledContent("Kategorija") { Text(category.title) }
+                    }
+                    if let equipment = exercise.equipment {
+                        LabeledContent("Oprema") { Text(equipment.title) }
+                    }
+                    if !exercise.muscles.isEmpty {
+                        LabeledContent("Mišići") { Text(exercise.muscles.formattedList) }
+                    }
+                    LabeledContent("Unos") { Text(exercise.inputType.title) }
+                    if exercise.inputType.hasWeight {
+                        ExerciseWeightStepRow(exercise: exercise.ref, equipment: exercise.equipment)
+                    }
+                }
+
+                ExerciseNoteSection(ref: exercise.summary.ref)
+
+                if let history {
+                    // Iz aktivnog treninga (bez uklanjanja) retci ne vode na stare treninge.
+                    ExerciseHistorySection(ref: exercise.summary.ref, history: history, linksToSessions: allowsRemoving)
                 }
             }
-
-            Section("Detalji") {
-                if let category = exercise.category {
-                    LabeledContent("Kategorija") { Text(category.title) }
-                }
-                if let equipment = exercise.equipment {
-                    LabeledContent("Oprema") { Text(equipment.title) }
-                }
-                if !exercise.muscles.isEmpty {
-                    LabeledContent("Mišići") { Text(exercise.muscles.formattedList) }
-                }
-                LabeledContent("Unos") { Text(exercise.inputType.title) }
-                if exercise.inputType.hasWeight {
-                    ExerciseWeightStepRow(exercise: exercise.ref, equipment: exercise.equipment)
-                }
-            }
-
-            ExerciseNoteSection(ref: exercise.summary.ref)
-
-            if let history {
-                // Iz aktivnog treninga (bez uklanjanja) retci ne vode na stare treninge.
-                ExerciseHistorySection(ref: exercise.summary.ref, history: history, linksToSessions: allowsRemoving)
-            }
+            .listRowBackground(AppPalette.card)
         }
+        .appListBackground()
         .navigationTitle(exercise.name)
         .navigationBarTitleDisplayMode(.inline)
         .task { history = ExerciseHistoryLoader.load(exercise.summary.ref, context: context) }

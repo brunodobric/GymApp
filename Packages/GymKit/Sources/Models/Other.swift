@@ -139,7 +139,7 @@ extension GymSchemaV1 {
         }
 
         public var accent: AccentChoice {
-            get { AccentChoice(rawValue: accentColorRaw) ?? .blue }
+            get { AccentChoice(rawValue: accentColorRaw) ?? .steel }
             set { accentColorRaw = newValue.rawValue }
         }
 
@@ -149,7 +149,7 @@ extension GymSchemaV1 {
         }
 
         public var liveActivityAccent: AccentChoice {
-            get { AccentChoice(rawValue: liveActivityAccentRaw) ?? .blue }
+            get { AccentChoice(rawValue: liveActivityAccentRaw) ?? .steel }
             set { liveActivityAccentRaw = newValue.rawValue }
         }
 

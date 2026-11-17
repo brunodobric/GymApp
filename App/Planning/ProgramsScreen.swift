@@ -16,16 +16,20 @@ struct ProgramsScreen: View {
     var body: some View {
         NavigationStack {
             List(ProgramLibrary.all) { program in
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(program.title).font(.itemTitle)
-                    Text(program.details)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                    Button("Dodaj program", systemImage: "plus.circle") { install(program) }
-                        .buttonStyle(.bordered)
+                Group {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(program.title).font(.itemTitle)
+                        Text(program.details)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Button("Dodaj program", systemImage: "plus.circle") { install(program) }
+                            .buttonStyle(.bordered)
+                    }
+                    .padding(.vertical, 4)
                 }
-                .padding(.vertical, 4)
+                .listRowBackground(AppPalette.card)
             }
+            .appListBackground()
             .navigationTitle("Programi")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
