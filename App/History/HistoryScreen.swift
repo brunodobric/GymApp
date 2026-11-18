@@ -137,7 +137,7 @@ struct HistoryScreen: View {
     }
 
     private var filterMenu: some View {
-        Menu("Filter", systemImage: filter.kinds.isEmpty ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill") {
+        Menu("Filter", systemImage: FilterSymbol.name(isActive: !filter.kinds.isEmpty)) {
             Section("Vrsta") {
                 ForEach(WorkoutKind.allCases, id: \.self) { kind in
                     Toggle(kind.title, isOn: Binding(
@@ -155,6 +155,7 @@ struct HistoryScreen: View {
                 }
             }
         }
+        .filterSymbolStyle()
     }
 }
 

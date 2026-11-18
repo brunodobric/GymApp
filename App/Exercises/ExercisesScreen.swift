@@ -236,11 +236,11 @@ private struct ExerciseListToolbar: ToolbarContent {
 
     var body: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button("Filteri", systemImage: isFiltered
-                ? "line.3.horizontal.decrease.circle.fill"
-                : "line.3.horizontal.decrease.circle") {
+            Button("Filteri", systemImage: FilterSymbol.name(isActive: isFiltered)) {
                 showsFilters = true
             }
+            .filterSymbolStyle()
+            .accessibilityValue(isFiltered ? Text("Uključeni") : Text(verbatim: ""))
         }
         ToolbarItem(placement: .topBarTrailing) {
             Button("Nova vježba", systemImage: "plus") {
