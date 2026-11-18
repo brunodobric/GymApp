@@ -1725,6 +1725,16 @@
         }
       }
     },
+    "Uključeni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On"
+          }
+        }
+      }
+    },
     "Vrste vježbi" : {
       "localizations" : {
         "en" : {

@@ -471,8 +471,7 @@ struct RecordsScreen: View {
         .searchable(text: $search, prompt: "Vježba")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-            Menu("Filter", systemImage: kinds.isEmpty
-                 ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill") {
+            Menu("Filter", systemImage: FilterSymbol.name(isActive: !kinds.isEmpty)) {
                 ForEach(PRKind.allCases, id: \.self) { kind in
                     Toggle(kind.title, isOn: Binding(
                         get: { kinds.contains(kind) },
@@ -483,6 +482,7 @@ struct RecordsScreen: View {
                 }
                 if !kinds.isEmpty { Button("Očisti filter") { kinds = [] } }
             }
+            .filterSymbolStyle()
             }
         }
     }
