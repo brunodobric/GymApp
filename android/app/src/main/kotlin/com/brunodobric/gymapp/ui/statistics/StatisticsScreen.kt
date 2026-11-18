@@ -43,22 +43,16 @@ import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.ui.TabScaffold
 import com.brunodobric.gymapp.ui.OpenRequest
-import com.brunodobric.gymapp.model.BodyMeasurementKind
 import com.brunodobric.gymapp.model.ExerciseRef
 import com.brunodobric.gymapp.model.StatsDetail
-import com.brunodobric.gymapp.stats.BodyTracking
 import com.brunodobric.gymapp.stats.ExerciseInfoBuilder
 import com.brunodobric.gymapp.stats.ExercisePoint
 import com.brunodobric.gymapp.stats.OverviewPeriod
 import com.brunodobric.gymapp.stats.PeriodSummary
 import com.brunodobric.gymapp.stats.StatisticsEngine
+import com.brunodobric.gymapp.stats.StatisticsSettings
 import com.brunodobric.gymapp.stats.StatsCalendar
-import com.brunodobric.gymapp.stats.dotsScore
-import com.brunodobric.gymapp.stats.effortDistribution
-import com.brunodobric.gymapp.stats.intensityDistribution
 import com.brunodobric.gymapp.stats.periodSummary
-import com.brunodobric.gymapp.stats.weeklyReview
-import com.brunodobric.gymapp.training.PRKind
 import com.brunodobric.gymapp.ui.LineChart
 import com.brunodobric.gymapp.ui.body.BodyScreen
 import com.brunodobric.gymapp.ui.rememberStoreRevision
@@ -73,8 +67,6 @@ import java.time.format.FormatStyle
  * Statistika: pregled tjedna, mjeseca ili godine, mišići (tvrde serije tjedno), trend snage po mišićima,
  * osobni rekordi, napor i intenzitet, DOTS, mjere tijela i napredak vježbe. Mapa tijela i savjeti dolaze kasnije.
  */
-/** Četiri tjedna u sekundama, razdoblje kartice Napor i intenzitet. */
-private const val FOUR_WEEKS = 28L * 24 * 3600
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,9 +97,12 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
             .map { it.exercise }
     }
     val settings = store.settings()
-    val records = remember(revision) {
-        StatisticsEngine(store).personalRecords(PRKind.tracked(settings), settings.prExcludedExerciseKeys)
-    }
+    // Teški dio statistike je izračunat unaprijed (`StatisticsCache`). Ovdje se računa samo ako ga još nema
+    // ili je zastario (npr. novi dan ili trening u tijeku), što inače ne radi ništa.
+    val cache = services.statistics
+    LaunchedEffect(revision) { cache.refresh(revision, StatisticsSettings.of(settings)) }
+    val stats = cache.snapshot
+    val records = stats?.records.orEmpty()
     if (showsRecords) {
         RecordsScreen(records, settings.weightUnit, onClose = { showsRecords = false })
         return
@@ -126,36 +121,14 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
 
     val info = remember(revision) { ExerciseInfoBuilder.provider(services.catalog, store.customExercises) }
     val isCardio = remember(info) { ExerciseInfoBuilder.isCardio(info) }
-    var muscleDays by rememberSaveable { mutableStateOf(MUSCLE_PERIODS.first()) }
     // Detaljni prikaz (Postavke > Trening > Prikaz statistike) dodaje kartice; u osnovnom se ne računaju (kao na iOS-u).
     val isPro = settings.statsDetail == StatsDetail.PRO
-    val loads = remember(revision, muscleDays, isPro) {
-        if (!isPro) return@remember emptyMap<String, com.brunodobric.gymapp.stats.RegionLoad>()
-        val now = Instant.now()
-        StatisticsEngine(store).heatmap(now.minusSeconds(muscleDays * 24L * 3600), now.plusSeconds(1), info)
-    }
-    val strengthTrends = remember(revision, isPro) { if (isPro) StatisticsEngine(store).strengthTrends(info = info) else emptyList() }
-    val weekly = remember(revision, settings.goal, settings.trainingDaysPerWeek, isPro) {
-        if (!isPro) return@remember null
-        StatisticsEngine(store).weeklyReview(goal = settings.goal, plannedPerWeek = settings.trainingDaysPerWeek, info = info)
-    }
-    val effort = remember(revision, isPro) {
-        if (!isPro) return@remember null
-        val now = Instant.now()
-        StatisticsEngine(store).effortDistribution(now.minusSeconds(FOUR_WEEKS), now.plusSeconds(1))
-    }
-    val intensity = remember(revision, isPro) {
-        if (!isPro) return@remember null
-        val now = Instant.now()
-        StatisticsEngine(store).intensityDistribution(now.minusSeconds(FOUR_WEEKS), now.plusSeconds(1))
-    }
-    // DOTS uz spol i zadnju upisanu tjelesnu težinu, kao na iOS-u.
-    val dots = remember(revision, isPro) {
-        if (!isPro) return@remember null
-        val sex = settings.sex
-        val bodyWeight = BodyTracking(store).latest(BodyMeasurementKind.WEIGHT)?.value
-        if (sex != null && bodyWeight != null && bodyWeight > 0) StatisticsEngine(store).dotsScore(bodyWeight, sex) else null
-    }
+    val loads = stats?.heatmap.orEmpty()
+    val strengthTrends = stats?.trends.orEmpty()
+    val weekly = stats?.weekly
+    val effort = stats?.effort
+    val intensity = stats?.intensity
+    val dots = stats?.dots
     val weight = remember(settings.weightUnit, locale) { WeightFormatter(settings.weightUnit, locale) }
     val goal = settings.trainingDaysPerWeek
     val summary = remember(revision, period, dateMillis, calendar) {
@@ -183,8 +156,8 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
             if (isPro) {
                 weekly?.let { WeeklyReviewCard(it.first, it.second, locale) }
                 MusclesCard(
-                    muscleDays,
-                    onDaysChange = { muscleDays = it },
+                    cache.muscleDays,
+                    onDaysChange = cache::changeMuscleDays,
                     loads = loads,
                     locale = locale,
                     diagrams = services.bodyMap,

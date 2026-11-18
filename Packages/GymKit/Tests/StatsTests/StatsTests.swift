@@ -920,3 +920,52 @@ struct PeriodOverviewTests {
         #expect(abs(summary.weeks - 31.0 / 7) < 0.0001)
     }
 }
+
+@Suite("Snimka statistike")
+struct StatisticsSnapshotTests {
+
+    @Test("Snimka daje iste brojeve kao pojedinačni izračuni")
+    func matchesEngine() throws {
+        let context = try makeContext()
+        let settings = UserSettings()
+        settings.statsDetail = .pro
+        context.insert(settings)
+        try addSession(context, at: base.addingTimeInterval(-2 * day), lifts: [
+            Lift(ref: bench, sets: [Work(weight: 80, reps: 5), Work(weight: 85, reps: 3)]),
+        ])
+        try addSession(context, at: base.addingTimeInterval(-day), lifts: [
+            Lift(ref: squat, sets: [Work(weight: 100, reps: 5)]),
+        ])
+
+        let snapshot = StatisticsSnapshotBuilder.make(
+            context: context, catalog: nil, settings: StatisticsSettings(settings), muscleDays: 28,
+            now: base, calendar: calendar
+        )
+        let engine = StatisticsEngine(context: context)
+        #expect(snapshot.sessionCount == 2)
+        #expect(snapshot.isPro)
+        #expect(snapshot.muscleDays == 28)
+        #expect(snapshot.records == (try engine.personalRecords(kinds: PRKind.tracked(by: settings))))
+        #expect(snapshot.frequency == (try engine.frequency(weeks: 12, endingAt: base, calendar: calendar)))
+        #expect(snapshot.heatmap == StatisticsSnapshotBuilder.heatmap(context: context, catalog: nil, days: 28, now: base))
+    }
+
+    @Test("Osnovni prikaz ne računa kartice detaljnog prikaza")
+    func basicSkipsProCards() throws {
+        let context = try makeContext()
+        let settings = UserSettings()
+        settings.statsDetail = .basic
+        context.insert(settings)
+        try addSession(context, at: base.addingTimeInterval(-day), lifts: [
+            Lift(ref: bench, sets: [Work(weight: 80, reps: 5, rpe: 8)]),
+        ])
+
+        let snapshot = StatisticsSnapshotBuilder.make(
+            context: context, catalog: nil, settings: StatisticsSettings(settings), muscleDays: 28, now: base
+        )
+        #expect(snapshot.sessionCount == 1)
+        #expect(!snapshot.isPro)
+        #expect(snapshot.review == nil)
+        #expect(snapshot.effort == EffortDistribution())
+    }
+}

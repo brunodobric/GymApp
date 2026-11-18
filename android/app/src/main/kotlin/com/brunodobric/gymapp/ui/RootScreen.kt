@@ -45,6 +45,7 @@ import com.brunodobric.gymapp.ui.home.HomeScreen
 import com.brunodobric.gymapp.ui.onboarding.OnboardingSheet
 import com.brunodobric.gymapp.ui.planning.SchedulesScreen
 import com.brunodobric.gymapp.ui.planning.UpcomingWorkoutScreen
+import com.brunodobric.gymapp.ui.statistics.StatisticsPrecompute
 import com.brunodobric.gymapp.ui.statistics.StatisticsScreen
 import com.brunodobric.gymapp.ui.settings.SettingsScreen
 import com.brunodobric.gymapp.ui.workout.WorkoutScreen
@@ -147,6 +148,8 @@ fun RootScreen(
             }
         }
     }
+    // Statistika se računa unaprijed, ne tek kad se otvori njen tab.
+    StatisticsPrecompute(services)
     // Prvo pokretanje: onboarding kao list preko Početne dok ga korisnik ne spremi, preskoči ili zatvori.
     rememberStoreRevision(services.store)
     val needsOnboarding = !services.store.settings().onboardingCompleted

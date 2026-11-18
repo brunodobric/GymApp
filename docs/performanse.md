@@ -12,8 +12,7 @@ Signposti (`PerformanceSignpost` u `App/Diagnostics/MetricsReporter.swift`) ozna
 | `CatalogLoad` | `CatalogStore` | učitavanje kataloga vježbi iz bundlea |
 | `WorkoutStart` | Početna i pregled sljedećeg treninga | pokretanje treninga iz predloška (vježbe, serije i smart defaults) |
 | `WorkoutOpen` | `ActiveWorkoutScreen` | prethodne vrijednosti za sve vježbe kad se ekran treninga otvori |
-| `Statistics` | `StatisticsScreen` | volumen, učestalost i heatmap |
-| `StatisticsRecords` | `StatisticsScreen` | osobni rekordi kroz cijelu povijest |
+| `Statistics` | `StatisticsStore` (u pozadini) | cijeli ekran Statistika: volumen, učestalost, heatmap i osobni rekordi kroz cijelu povijest |
 
 Vrijeme pokretanja (do prvog prikaza) MetricKit mjeri sam (`applicationLaunchMetrics`), a isto se vidi u Xcode Organizeru (Launch Time) kad aplikacija ima korisnike na TestFlightu.
 
@@ -23,7 +22,7 @@ U paketu `GymKit` test "Statistika za godinu dana" (`StatsTests`) mjeri statisti
 
 * **Osobni rekordi u statistici:** svaki trening se prije uspoređivao s cijelom ranijom poviješću vježbe, pa je vrijeme raslo s kvadratom broja treninga. Sada se povijest nakon svakog treninga sažima (`PersonalRecordDetector.condensed`) na serije koje mogu odlučiti o rekordu. Test provjerava da su rekordi isti kao s punom poviješću.
 * **Rekordi se ne računaju ponovno** kad se na ekranu Statistika promijeni samo razdoblje grafa ili heatmapa.
-* **Statistika ne računa pri svakom otvaranju taba:** `.task` se pokreće pri svakom povratku na tab, a računanje ide na glavnu nit, pa je animacija odabira zadnjeg taba (Liquid Glass) zapinjala. Sada se podaci računaju samo kad se ključ (podaci, razdoblje, postavke) promijeni, i to tek nakon prijelaza taba, dok su prikazani prethodni podaci.
+* **Statistika se računa u pozadini:** prije se računala na glavnoj niti kad se tab otvori, pa je animacija tab bara (Liquid Glass) zapinjala, a kasnije je ekran čekao prijelaz taba. Sada `StatisticsStore` računa cijelu snimku (`StatisticsSnapshotBuilder` u GymKitu) u zasebnom `ModelContext`u izvan glavne niti: nakon pokretanja aplikacije, nakon svake izmjene podataka (`DataVersion`) ili postavki i novog dana. Tab samo prikaže gotovu snimku. Rekordi su dio istog mjerenja (`Statistics`), stupac `StatisticsRecords` u starim rezultatima to je prije mjerio zasebno.
 * **Pokretanje treninga iz predloška:** smart defaults za svaku vježbu prije su čitali serije iz svih ranijih izvođenja, a trebaju samo zadnje. Sada se serije čitaju samo dok se ne nađe zadnje izvođenje.
 
 ## Ciljevi
@@ -36,8 +35,7 @@ Mjeri se na najstarijem podržanom iPhoneu koji je dostupan, u Release buildu, s
 | `AppServicesStart` | ispod 100 ms |
 | `WorkoutStart` (predložak sa 6 vježbi) | ispod 150 ms |
 | `WorkoutOpen` | ispod 100 ms |
-| `Statistics` | ispod 250 ms |
-| `StatisticsRecords` | ispod 250 ms |
+| `Statistics` | ispod 500 ms (u pozadini, korisnik ne čeka) |
 
 ## Kako izmjeriti (Mac i iPhone)
 

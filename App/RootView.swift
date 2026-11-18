@@ -1,4 +1,5 @@
 import Models
+import Stats
 import SwiftData
 import SwiftUI
 import WidgetData
@@ -71,6 +72,13 @@ struct RootView: View {
             selection = .home
             homeRequest = pending
         }
+        // Statistika se računa u pozadini nakon pokretanja i svake izmjene podataka ili postavki, ne tek kad se otvori tab.
+        .onChange(of: DataVersion.shared.value, initial: true) {
+            StatisticsStore.shared.refresh(settings: StatisticsSettings(settings))
+        }
+        .onChange(of: StatisticsSettings(settings)) {
+            StatisticsStore.shared.refresh(settings: StatisticsSettings(settings))
+        }
         // Podaci s drugih uređaja (iCloud) ne prolaze kroz spremanje u ovoj aplikaciji: widgeti se osvježe nakon uvoza.
         .onChange(of: SyncMonitor.shared.tracker.lastImport) {
             WidgetRefresher.shared.scheduleRefresh()
@@ -121,6 +129,8 @@ struct RootView: View {
             guard phase == .active else { return }
             ReminderScheduler.refresh(context: context)
             WidgetRefresher.shared.scheduleRefresh()
+            // Novi dan dok je aplikacija bila u pozadini: tjedan, mjesec i godina u Statistici se preračunaju.
+            StatisticsStore.shared.refresh(settings: StatisticsSettings(settings))
             // Trening započet na satu dok je iPhone bio zaključan dobiva Live Activity tek sad:
             // sustav je dopušta pokrenuti samo dok je aplikacija otvorena.
             WorkoutLiveUpdates.shared.refresh()
