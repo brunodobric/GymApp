@@ -105,6 +105,8 @@ enum AppServices {
         WidgetRefresher.shared.start(container: container)
         // Statistika i kartice: preračun nakon izmjene podataka.
         DataVersion.shared.start(container: container)
+        // Statistika se računa u pozadini, da je tab spreman kad se otvori (RootView pokreće izračun).
+        StatisticsStore.shared.start(container: container)
         SyncMonitor.shared.start()
         // Rušenja, zastoji i performanse (MetricKit), samo u lokalni dnevnik.
         MetricsReporter.shared.start()

@@ -9,6 +9,7 @@ import com.brunodobric.gymapp.health.HealthLocalFile
 import com.brunodobric.gymapp.model.GymStore
 import com.brunodobric.gymapp.stats.BodyMap
 import com.brunodobric.gymapp.stats.BodyMapDiagram
+import com.brunodobric.gymapp.ui.statistics.StatisticsCache
 import java.io.File
 
 /**
@@ -56,4 +57,7 @@ class AppServices(context: Context) {
 
     /** Slike vlastitih vježbi. */
     val exerciseImages: ExerciseImages by lazy { ExerciseImages(appContext) }
+
+    /** Statistika izračunata unaprijed, da je tab Statistika odmah spreman. */
+    val statistics: StatisticsCache by lazy { StatisticsCache(this) }
 }

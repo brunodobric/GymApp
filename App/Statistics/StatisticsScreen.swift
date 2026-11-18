@@ -13,76 +13,19 @@ struct StatisticsScreen: View {
     /// Mijenja se kad korisnik ponovno dodirne već otvoren tab: stog navigacije se vraća na korijen.
     var rootReset = 0
 
-    @Environment(\.modelContext) private var context
-    @Environment(CatalogStore.self) private var catalogStore
-    /// Završeni treninzi i treninzi iz Zdravlja; nil dok se ne prebroje (`compute`).
-    @State private var sessionCount: Int?
-    @Query private var customExercises: [CustomExercise]
     @Query private var settingsList: [UserSettings]
-
-    /// Razdoblje kartice Mišići u danima (4 tjedna, 12 tjedana ili godina).
-    @State private var muscleDays = 28
-    @State private var week: WeekProgress?
-    @State private var month: PeriodSummary?
-    @State private var year: PeriodSummary?
-    @State private var frequency: [FrequencyPoint] = []
-    @State private var heatmap: [String: RegionLoad] = [:]
-    @State private var trends: [StrengthTrend] = []
-    @State private var records: [RecordEntry] = []
-    @State private var review: WeeklyReview?
-    @State private var suggestions: [Suggestion] = []
-    @State private var effort = EffortDistribution()
-    @State private var intensity = IntensityDistribution()
-    @State private var dots: DotsScore?
+    /// Statistika izračunata u pozadini (`StatisticsStore`): ekran ništa ne računa, pa je odmah spreman.
+    private var store: StatisticsStore { StatisticsStore.shared }
+    private var stats: StatisticsSnapshot? { store.snapshot }
     @Environment(\.horizontalSizeClass) private var sizeClass
     /// Otvoreni ekran kartice. U jednom stupcu je to stog, u podijeljenom prikazu prvi element je desni stupac,
     /// pa preklapanje iPhonea Duo zadržava otvoreni ekran.
     @State private var path: [CardDestination] = []
-    /// Ključevi za koje su podaci već izračunati. `.task` se ponovno pokreće pri svakom povratku na tab,
-    /// a s istim ključem nema što računati.
-    @State private var loadedKey: LoadKey?
-    @State private var loadedRecordsKey: RecordsKey?
 
     private var settings: UserSettings? { UserSettings.preferred(in: settingsList) }
     private var isPro: Bool { settings?.statsDetail == .pro }
 
     private var unit: WeightUnit { UserSettings.weightUnit(in: settingsList) }
-
-    private var trackedKinds: Set<PRKind> {
-        PRKind.tracked(by: settings)
-    }
-
-    private var excludedExercises: Set<String> {
-        settings?.prExcludedExerciseKeys ?? []
-    }
-
-    private struct LoadKey: Equatable {
-        /// Izmjena podataka (`DataVersion`).
-        var version: Int
-        var muscleDays: Int
-        var customCount: Int
-        var goal: TrainingGoal?
-        var plannedPerWeek: Int?
-        var sex: Sex?
-        var isPro: Bool
-    }
-
-    private struct RecordsKey: Equatable {
-        var version: Int
-        var kinds: Set<PRKind>
-        var excluded: Set<String>
-    }
-
-    private var loadKey: LoadKey {
-        LoadKey(
-            version: DataVersion.shared.value, muscleDays: muscleDays, customCount: customExercises.count,
-            goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek, sex: settings?.sex, isPro: isPro
-        )
-    }
-
-    private var recordsKey: RecordsKey {
-        RecordsKey(version: DataVersion.shared.value, kinds: trackedKinds, excluded: excludedExercises)
-    }
 
     var body: some View {
         Group {
@@ -108,21 +51,6 @@ struct StatisticsScreen: View {
                 }
             }
         }
-        .task(id: loadKey) {
-            let key = loadKey
-            guard key != loadedKey else { return }
-            // Nova kartica Mišića (razdoblje) računa se odmah, a novi podaci i prvo otvaranje nakon prijelaza taba.
-            if key.version != loadedKey?.version, !(await waitForTabTransition()) { return }
-            load()
-            loadedKey = key
-        }
-        // Rekordi prolaze cijelu povijest pa se ne računaju ponovno kad se promijeni samo razdoblje grafa.
-        .task(id: recordsKey) {
-            let key = recordsKey
-            guard key != loadedRecordsKey, await waitForTabTransition() else { return }
-            loadRecords()
-            loadedRecordsKey = key
-        }
         // Ponovni dodir na tab: novi stog bez otvorenih ekrana (Apple HIG).
         .onChange(of: rootReset) { path = [] }
         .id(rootReset)
@@ -132,7 +60,7 @@ struct StatisticsScreen: View {
     /// (kartice se tad slažu u jedan stupac, a desno je pregled tjedna ili odabrani ekran).
     private var cards: some View {
         ScrollView {
-            if sessionCount == 0 {
+            if stats?.sessionCount == 0 {
                 ContentUnavailableView(
                     "Još nema statistike", systemImage: "chart.bar",
                     description: Text("Statistika se pojavi nakon prvog završenog treninga.")
@@ -140,27 +68,30 @@ struct StatisticsScreen: View {
                 .padding(.top, 40)
             }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)], spacing: 16) {
-                if let sessionCount, sessionCount > 0 {
-                    if let week {
-                        OverviewCard(week: week, month: month, year: year, frequency: frequency)
+                if let stats, stats.sessionCount > 0 {
+                    if let week = stats.week {
+                        OverviewCard(week: week, month: stats.month, year: stats.year, frequency: stats.frequency)
                     }
                     // Detaljni prikaz (kasnije plaćena verzija) dodaje kartice, a zajedničke izgledaju isto u oba prikaza.
                     // Kartica bez podataka se ne prikazuje; uvjet piše uz ocjenu u kartici Savjeti i u Postavkama.
                     if isPro {
-                        if let review {
-                            WeeklyReviewCard(review: review, suggestions: suggestions)
+                        if let review = stats.review {
+                            WeeklyReviewCard(review: review, suggestions: stats.suggestions)
                         }
-                        MusclesCard(days: $muscleDays, loads: heatmap, female: settings?.bodyMapFemale ?? false)
-                        if !trends.isEmpty {
-                            StrengthTrendCard(trends: trends)
+                        MusclesCard(
+                            days: Bindable(store).muscleDays, loads: stats.heatmap,
+                            female: settings?.bodyMapFemale ?? false
+                        )
+                        if !stats.trends.isEmpty {
+                            StrengthTrendCard(trends: stats.trends)
                         }
                     }
-                    RecordsCard(records: records, unit: unit)
+                    RecordsCard(records: stats.records, unit: unit)
                     if isPro {
-                        if effort.rated > 0 || intensity.total > 0 {
-                            EffortIntensityCard(effort: effort, intensity: intensity)
+                        if stats.effort.rated > 0 || stats.intensity.total > 0 {
+                            EffortIntensityCard(effort: stats.effort, intensity: stats.intensity)
                         }
-                        if let dots {
+                        if let dots = stats.dots {
                             DotsCard(score: dots, unit: unit)
                         }
                     }
@@ -178,77 +109,11 @@ struct StatisticsScreen: View {
     private func destination(_ destination: CardDestination) -> some View {
         switch destination {
         case .overview(let period): OverviewScreen(period: period)
-        case .records: RecordsScreen(records: records, unit: unit)
+        case .records: RecordsScreen(records: stats?.records ?? [], unit: unit)
         case .exerciseProgress: ExerciseProgressPicker()
         case .body: BodyScreen()
         // Zadnji trening i kalkulator ploča otvaraju se samo s Početne.
         case .lastWorkout, .plateCalculator: OverviewScreen()
-        }
-    }
-
-    /// Računanje ide na glavnu nit (SwiftData kontekst), pa se pričeka da sustav dovrši animaciju odabira taba
-    /// (Liquid Glass) i prijelaz. Inače stotine milisekundi računanja zaustave animaciju i tab bar zašteka.
-    /// Dotad ostaju prikazani prethodni podaci. Vraća false ako je korisnik u međuvremenu otišao s taba.
-    private func waitForTabTransition() async -> Bool {
-        try? await Task.sleep(for: .milliseconds(400))
-        return !Task.isCancelled
-    }
-
-    private func load() {
-        PerformanceSignpost.measure("Statistics") { compute() }
-    }
-
-    private func compute() {
-        // Kardio iz Zdravlja (lokalna baza) broji se u učestalost treninga.
-        let finished = FetchDescriptor<Session>(predicate: #Predicate { $0.stateRaw == "finished" })
-        sessionCount = ((try? context.fetchCount(finished)) ?? 0) + ((try? context.fetchCount(FetchDescriptor<HealthWorkout>())) ?? 0)
-        let engine = StatisticsEngine(context: context)
-        let info = ExerciseInfoBuilder.provider(catalog: catalogStore.catalog, custom: customExercises)
-        let now = Date()
-        let end = now.addingTimeInterval(1)
-        let isCardio = ExerciseInfoBuilder.isCardio(info)
-        week = try? engine.weekProgress(now: now, goal: settings?.trainingDaysPerWeek, isCardio: isCardio)
-        month = try? engine.periodSummary(.month, containing: now, now: now, goal: settings?.trainingDaysPerWeek, isCardio: isCardio)
-        year = try? engine.periodSummary(.year, containing: now, now: now, goal: settings?.trainingDaysPerWeek, isCardio: isCardio)
-        frequency = (try? engine.frequency(weeks: 12)) ?? []
-        // Ostale kartice su samo u detaljnom prikazu, pa se u osnovnom ne računaju.
-        guard isPro else {
-            heatmap = [:]
-            trends = []
-            review = nil
-            suggestions = []
-            effort = EffortDistribution()
-            intensity = IntensityDistribution()
-            dots = nil
-            return
-        }
-        let start = Calendar.current.date(byAdding: .day, value: -muscleDays, to: now) ?? now
-        heatmap = (try? engine.heatmap(from: start, until: end, info: info)) ?? [:]
-        trends = (try? engine.strengthTrends(weeks: 4, endingAt: end, info: info)) ?? []
-        let weekly = try? engine.weeklyReview(
-            endingAt: now, goal: settings?.goal, plannedPerWeek: settings?.trainingDaysPerWeek, info: info
-        )
-        review = weekly?.review
-        suggestions = weekly?.suggestions ?? []
-        let monthStart = now.addingTimeInterval(-28 * 24 * 3600)
-        effort = (try? engine.effortDistribution(from: monthStart, until: end)) ?? EffortDistribution()
-        intensity = (try? engine.intensityDistribution(from: monthStart, until: end)) ?? IntensityDistribution()
-        loadDots(engine: engine, endingAt: end)
-    }
-
-    /// DOTS samo u detaljnom prikazu, uz spol i zadnju upisanu tjelesnu težinu.
-    private func loadDots(engine: StatisticsEngine, endingAt end: Date) {
-        guard isPro else { dots = nil; return }
-        let bodyWeight = (try? BodyTracking(context: context).latest(of: .weight))?.value
-        guard let sex = settings?.sex, let bodyWeight, bodyWeight > 0 else { dots = nil; return }
-        dots = try? engine.dotsScore(bodyWeightKg: bodyWeight, sex: sex, endingAt: end)
-    }
-
-    private func loadRecords() {
-        PerformanceSignpost.measure("StatisticsRecords") {
-            records = (try? StatisticsEngine(context: context).personalRecords(
-                kinds: trackedKinds, excluding: excludedExercises
-            )) ?? []
         }
     }
 }
