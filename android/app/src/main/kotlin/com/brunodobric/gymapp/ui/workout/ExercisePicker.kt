@@ -46,7 +46,7 @@ import com.brunodobric.gymapp.catalog.ExerciseSummary
 import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.ui.catalogLanguage
 import com.brunodobric.gymapp.ui.exercises.ExerciseRowThumbnail
-import com.brunodobric.gymapp.ui.exercises.MoveKitAssets
+import com.brunodobric.gymapp.ui.exercises.rowImage
 import com.brunodobric.gymapp.ui.exercises.categoryTitle
 import com.brunodobric.gymapp.ui.exercises.equipmentTitle
 import com.brunodobric.gymapp.ui.rememberStoreRevision
@@ -90,19 +90,14 @@ fun ExercisePicker(
 
     @Composable
     fun PickerRow(item: ExerciseSummary) {
-        val source = item.source
-        val poster = if (source is ExerciseSummary.Source.Catalog) {
-            MoveKitAssets.posterPath(context, services.catalog.exercise(source.id))
-        } else {
-            null
-        }
+        val image = remember(item.id, revision) { services.rowImage(context, item.source) }
         val isSelected = item.id in selected
         val details = listOfNotNull(
             item.category?.let { stringResource(categoryTitle(it)) },
             item.equipment?.let { stringResource(equipmentTitle(it)) },
         ).joinToString(" · ")
         ListItem(
-            leadingContent = { ExerciseRowThumbnail(item.name, poster, size = 48.dp) },
+            leadingContent = { ExerciseRowThumbnail(item.name, image.posterPath, size = 48.dp, photo = image.photo) },
             headlineContent = { Text(item.name) },
             supportingContent = if (details.isEmpty()) null else ({ Text(details) }),
             trailingContent = if (allowsMultiple) ({ Checkbox(checked = isSelected, onCheckedChange = null) }) else null,
