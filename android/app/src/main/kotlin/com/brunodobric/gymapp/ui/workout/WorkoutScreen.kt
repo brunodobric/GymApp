@@ -2,6 +2,18 @@ package com.brunodobric.gymapp.ui.workout
 
 import com.brunodobric.gymapp.ui.HoldSync
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,7 +41,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -669,38 +680,103 @@ private fun ReorderRow(name: String, canMoveUp: Boolean, canMoveDown: Boolean, o
     }
 }
 
-/** Odmor u tamnoj plutajućoj traci: prsten s preostalim vremenom, −15, +15 i preskakanje. */
+/**
+ * Odmor u plutajućem otoku pri dnu, kao `RestTimerBar` na iOS-u: oznaka "Odmor" i veliko odbrojavanje lijevo,
+ * okrugli −10 i +10 i "Preskoči" desno, a vrijeme koje teče je tanka linija uz gornji rub.
+ * Kad tekst ne stane u jedan red (uski ekran ili veliki font), gumbi idu ispod odbrojavanja.
+ */
 @Composable
 private fun RestBar(remaining: Double, total: Double, onAdjust: (Int) -> Unit, onSkip: () -> Unit) {
+    val shape = RoundedCornerShape(24.dp)
     Surface(
-        modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 16.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.inverseSurface,
-        contentColor = MaterialTheme.colorScheme.inverseOnSurface,
-        shadowElevation = 6.dp,
+        modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 12.dp, vertical = 8.dp),
+        shape = shape,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shadowElevation = 8.dp,
     ) {
-        Row(Modifier.padding(horizontal = 12.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            CircularProgressIndicator(
+        Column {
+            LinearProgressIndicator(
                 progress = { if (total <= 0) 0f else (remaining / total).toFloat().coerceIn(0f, 1f) },
-                modifier = Modifier.size(40.dp),
-                color = MaterialTheme.colorScheme.inversePrimary,
-                trackColor = MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.2f),
-                strokeWidth = 4.dp,
-                strokeCap = StrokeCap.Round,
+                modifier = Modifier.fillMaxWidth().height(3.dp),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = Color.Transparent,
+                strokeCap = StrokeCap.Butt,
+                gapSize = 0.dp,
+                drawStopIndicator = {},
             )
-            Column(Modifier.weight(1f).padding(start = 12.dp)) {
-                Text(
-                    stringResource(R.string.rest),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.7f),
-                )
-                Text(DurationInput.format(remaining.toInt()), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.ExtraBold)
+            BoxWithConstraints(Modifier.padding(start = 20.dp, end = 12.dp, top = 11.dp, bottom = 14.dp)) {
+                // Potrebna širina jednog reda: odbrojavanje i "Preskoči" rastu s fontom, okrugli gumbi ne.
+                val fontScale = LocalDensity.current.fontScale
+                val stacked = maxWidth < 112.dp + 160.dp * fontScale
+                val countdown = @Composable {
+                    Column(Modifier.widthIn(min = 64.dp)) {
+                        Text(
+                            stringResource(R.string.rest).uppercase(LocalConfiguration.current.locales[0]),
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            softWrap = false,
+                        )
+                        Text(
+                            DurationInput.format(remaining.toInt()),
+                            style = MaterialTheme.typography.headlineMedium.copy(fontFeatureSettings = "tnum"),
+                            fontWeight = FontWeight.ExtraBold,
+                            maxLines = 1,
+                            softWrap = false,
+                        )
+                    }
+                }
+                val buttons = @Composable {
+                    RestRoundButton("−10", stringResource(R.string.shorten_rest)) { onAdjust(-10) }
+                    RestRoundButton("+10", stringResource(R.string.extend_rest)) { onAdjust(10) }
+                    val skipDescription = stringResource(R.string.skip_rest)
+                    FilledTonalButton(
+                        onClick = onSkip,
+                        modifier = Modifier.heightIn(min = 44.dp).semantics { contentDescription = skipDescription },
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        colors = restButtonColors(),
+                    ) {
+                        Text(stringResource(R.string.skip), maxLines = 1, softWrap = false, fontWeight = FontWeight.SemiBold)
+                    }
+                }
+                if (stacked) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        countdown()
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { buttons() }
+                    }
+                } else {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        countdown()
+                        Spacer(Modifier.weight(1f))
+                        buttons()
+                    }
+                }
             }
-            val buttonColor = MaterialTheme.colorScheme.inverseOnSurface
-            TextButton(onClick = { onAdjust(-15) }) { Text("−15", color = buttonColor) }
-            TextButton(onClick = { onAdjust(15) }) { Text("+15", color = buttonColor) }
-            TextButton(onClick = onSkip) { Text(stringResource(R.string.skip_rest), color = MaterialTheme.colorScheme.inversePrimary) }
         }
+    }
+}
+
+/** Boje gumba u traci odmora: ispunjeni ton na kartici, kao `.bordered` na iOS-u. */
+@Composable
+private fun restButtonColors() = ButtonDefaults.filledTonalButtonColors(
+    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor = MaterialTheme.colorScheme.onSurface,
+)
+
+/** Okrugli gumb −10 / +10 u traci odmora. */
+@Composable
+private fun RestRoundButton(text: String, description: String, onClick: () -> Unit) {
+    FilledTonalButton(
+        onClick = onClick,
+        modifier = Modifier.size(44.dp).semantics { contentDescription = description },
+        shape = CircleShape,
+        contentPadding = PaddingValues(0.dp),
+        colors = restButtonColors(),
+    ) {
+        Text(text, maxLines = 1, softWrap = false, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
     }
 }
 
