@@ -1,10 +1,17 @@
 package com.brunodobric.gymapp.ui.workout
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +37,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -51,6 +57,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.catalog.ExerciseInputType
 import com.brunodobric.gymapp.model.EffortScale
@@ -167,33 +174,37 @@ internal fun WorkoutExerciseCard(
                 ExerciseMenu(exercise, actions)
             }
             if (isOpen) {
-                Column(Modifier.padding(top = 12.dp, end = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    SetTableHeader(exercise.inputType, unit)
-                    var working = 0
-                    for (set in sets) {
-                        val label = if (set.kind == SetKind.WARM_UP) stringResource(R.string.warm_up_short) else (++working).toString()
-                        WorkoutSetRow(
-                            label = label,
-                            set = set,
-                            inputType = exercise.inputType,
-                            unit = unit,
-                            effortScale = effortScale,
-                            previousText = previousText(set),
-                            isCurrent = set.id == current?.id,
-                            dimsCompleted = tracksProgress,
-                            actions = actions,
-                            isRecord = set.id in recordSetIds,
-                        )
-                    }
-                    HorizontalDivider(Modifier.padding(top = 4.dp), color = MaterialTheme.colorScheme.outlineVariant)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        TextButton(onClick = { actions.onAddSet(SetKind.WORKING) }) {
-                            Icon(Icons.Filled.Add, contentDescription = null, Modifier.size(18.dp))
-                            Text(stringResource(R.string.add_set), Modifier.padding(start = 4.dp))
+                BoxWithConstraints(Modifier.padding(top = 12.dp, end = 8.dp)) {
+                    val metrics = setTableMetrics(maxWidth - ROW_PADDING * 2, exercise.inputType, LocalDensity.current.fontScale)
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        SetTableHeader(exercise.inputType, unit, metrics)
+                        var working = 0
+                        for (set in sets) {
+                            val label = if (set.kind == SetKind.WARM_UP) stringResource(R.string.warm_up_short) else (++working).toString()
+                            WorkoutSetRow(
+                                label = label,
+                                set = set,
+                                inputType = exercise.inputType,
+                                unit = unit,
+                                effortScale = effortScale,
+                                previousText = previousText(set),
+                                isCurrent = set.id == current?.id,
+                                dimsCompleted = tracksProgress,
+                                actions = actions,
+                                isRecord = set.id in recordSetIds,
+                                metrics = metrics,
+                            )
                         }
-                        TextButton(onClick = { actions.onAddSet(SetKind.WARM_UP) }) {
-                            Icon(Icons.Filled.Add, contentDescription = null, Modifier.size(18.dp))
-                            Text(stringResource(R.string.add_warm_up), Modifier.padding(start = 4.dp))
+                        HorizontalDivider(Modifier.padding(top = 4.dp), color = MaterialTheme.colorScheme.outlineVariant)
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            TextButton(onClick = { actions.onAddSet(SetKind.WORKING) }) {
+                                Icon(Icons.Filled.Add, contentDescription = null, Modifier.size(18.dp))
+                                Text(stringResource(R.string.add_set), Modifier.padding(start = 4.dp))
+                            }
+                            TextButton(onClick = { actions.onAddSet(SetKind.WARM_UP) }) {
+                                Icon(Icons.Filled.Add, contentDescription = null, Modifier.size(18.dp))
+                                Text(stringResource(R.string.add_warm_up), Modifier.padding(start = 4.dp))
+                            }
                         }
                     }
                 }
@@ -282,23 +293,77 @@ private fun loadChangeText(exercise: SessionExercise, unit: WeightUnit): String?
 private fun exerciseNotes(exercise: SessionExercise, persistentNote: String?): List<String> =
     listOf(exercise.notes, persistentNote.orEmpty()).map { it.trim() }.filter { it.isNotEmpty() }.distinct()
 
-private val BADGE_WIDTH = 36.dp
-private val CHECK_SIZE = 40.dp
+/** Unutarnji razmak retka serije; isti je u zaglavlju, da su stupci poravnati. */
+private val ROW_PADDING = 6.dp
+private val MIN_GAP = 4.dp
+/** Narančasta oznaka zagrijavanja, kao na iOS-u. */
+private val WARM_UP_COLOR = Color(0xFFFF9500)
 
-/** Nazivi stupaca, isti raspored kao u [WorkoutSetRow]. */
+/**
+ * Širine stupaca tablice serija, kao `SetTableMetrics` na iOS-u: oznaka, prošli put, polja vrijednosti i kvačica
+ * imaju stalnu širinu u svim retcima i u zaglavlju, a preostala širina se dijeli jednako na razmake među njima.
+ * Polja rastu s veličinom fonta, a na uskom ekranu se stisnu (prošli put i polja), da kvačica uvijek stane.
+ */
+private class SetTableMetrics(
+    val badge: Dp,
+    val previous: Dp,
+    val values: List<Dp>,
+    val check: Dp,
+    val rowHeight: Dp,
+)
+
+private fun setTableMetrics(width: Dp, inputType: ExerciseInputType, fontScale: Float): SetTableMetrics {
+    val scale = fontScale.coerceIn(1f, 1.3f)
+    val badge = 32.dp
+    val check = 52.dp
+    val wide = 72.dp * scale
+    val narrow = 52.dp * scale
+    val values = when (inputType) {
+        ExerciseInputType.WEIGHT_REPS, ExerciseInputType.WEIGHTED_BODYWEIGHT, ExerciseInputType.ASSISTED -> listOf(wide, narrow)
+        ExerciseInputType.BODYWEIGHT -> listOf(narrow)
+        ExerciseInputType.DURATION -> listOf(wide)
+        ExerciseInputType.DURATION_DISTANCE -> listOf(wide, wide)
+    }
+    val previous = 64.dp * scale
+    // Razmaci: iza oznake, iza prošlog puta, među poljima i ispred kvačice.
+    val fixed = badge + check + MIN_GAP * (values.size + 2)
+    val flexible = values.fold(previous) { sum, value -> sum + value }
+    val fit = ((width - fixed) / flexible).coerceIn(0.7f, 1f)
+    return SetTableMetrics(
+        badge = badge,
+        previous = previous * fit,
+        values = values.map { it * fit },
+        check = check,
+        rowHeight = 48.dp * scale.coerceAtMost(1.15f),
+    )
+}
+
+/** Nazivi stupaca, iste širine i razmaka kao u [WorkoutSetRow]. */
 @Composable
-private fun SetTableHeader(inputType: ExerciseInputType, unit: WeightUnit) {
+private fun SetTableHeader(inputType: ExerciseInputType, unit: WeightUnit, metrics: SetTableMetrics) {
     val locale = LocalConfiguration.current.locales[0]
-    val style = MaterialTheme.typography.labelSmall
+    val style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 0.sp)
     val color = MaterialTheme.colorScheme.onSurfaceVariant
     @Composable
-    fun header(text: String, modifier: Modifier) =
-        Text(text.uppercase(locale), modifier, style = style, fontWeight = FontWeight.Bold, color = color, textAlign = TextAlign.Center, maxLines = 1)
-    Row(Modifier.padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        header(stringResource(R.string.set_column), Modifier.width(BADGE_WIDTH))
-        header(stringResource(R.string.previous_column), Modifier.weight(1.2f))
-        valueColumns(inputType, unit).forEach { header(it, Modifier.weight(1f)) }
-        Box(Modifier.width(CHECK_SIZE))
+    fun header(text: String, width: Dp) = Text(
+        text.uppercase(locale),
+        Modifier.width(width),
+        style = style,
+        fontWeight = FontWeight.Bold,
+        color = color,
+        textAlign = TextAlign.Center,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+    )
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = ROW_PADDING),
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        header(stringResource(R.string.set_column), metrics.badge)
+        header(stringResource(R.string.previous_column), metrics.previous)
+        valueColumns(inputType, unit).zip(metrics.values).forEach { (title, width) -> header(title, width) }
+        Spacer(Modifier.width(metrics.check))
     }
 }
 
@@ -318,8 +383,9 @@ private fun valueColumns(inputType: ExerciseInputType, unit: WeightUnit): List<S
 }
 
 /**
- * Redak serije. Oznaka otvara izbornik (vrsta serije, kalkulator ploča, brisanje), napor ispod prošlog puta
- * izbornik ocjena, a težina i ponavljanja donji list s kotačićem. Trajanje i udaljenost upisuju se tipkovnicom.
+ * Redak serije, kao `SetRow` na iOS-u: oznaka, prošli put s naporom ispod, polja u stupcima i velika kvačica desno.
+ * Oznaka otvara izbornik (vrsta serije, kalkulator ploča, brisanje), napor izbornik ocjena, a težina i ponavljanja
+ * donji list s kotačićem. Trajanje i udaljenost upisuju se tipkovnicom. Završena serija se priguši, kvačica ne.
  */
 @Composable
 private fun WorkoutSetRow(
@@ -332,21 +398,23 @@ private fun WorkoutSetRow(
     isCurrent: Boolean,
     dimsCompleted: Boolean,
     actions: ExerciseCardActions,
+    metrics: SetTableMetrics,
     isRecord: Boolean = false,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val formatter = remember(unit, locale) { WeightFormatter(unit, locale) }
-    val dim = if (set.isCompleted && dimsCompleted) 0.55f else 1f
+    val dim = if (set.isCompleted && dimsCompleted) 0.45f else 1f
+    val widths = metrics.values
     Row(
         Modifier.fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
-            .background(if (isCurrent) MaterialTheme.colorScheme.primary.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surfaceContainerHighest)
-            .padding(horizontal = 4.dp, vertical = 6.dp),
+            .background(if (isCurrent) MaterialTheme.colorScheme.primary.copy(alpha = 0.10f) else Color.Transparent)
+            .padding(horizontal = ROW_PADDING, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Box(Modifier.width(BADGE_WIDTH)) {
-            SetBadge(label, set, inputType, formatter, actions, Modifier.width(BADGE_WIDTH).alpha(dim))
+        Box(Modifier.width(metrics.badge)) {
+            SetBadge(label, set, inputType, formatter, actions, Modifier.width(metrics.badge).alpha(dim))
             if (isRecord) {
                 Icon(
                     Icons.Filled.Star,
@@ -356,38 +424,45 @@ private fun WorkoutSetRow(
                 )
             }
         }
-        Column(Modifier.weight(1.2f).alpha(dim), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
+        Column(
+            Modifier.width(metrics.previous).alpha(dim),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            BasicText(
                 previousText ?: "–",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                ),
+                maxLines = 1,
+                autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = MaterialTheme.typography.bodySmall.fontSize),
             )
             if (set.rpe != null || isCurrent || !set.isCompleted) EffortMenu(set, effortScale, actions.onChange)
         }
+        val cell = { index: Int -> Modifier.width(widths[index]).height(metrics.rowHeight).alpha(dim) }
         when (inputType) {
             ExerciseInputType.WEIGHT_REPS, ExerciseInputType.WEIGHTED_BODYWEIGHT, ExerciseInputType.ASSISTED -> {
                 val weight = if (inputType == ExerciseInputType.WEIGHT_REPS) set.weightKg else set.extraWeightKg
-                ValueCell(weight?.let(formatter::number), Modifier.weight(1f).alpha(dim)) { actions.onEditSet(set) }
-                ValueCell(set.reps?.toString(), Modifier.weight(1f).alpha(dim)) { actions.onEditSet(set) }
+                ValueCell(weight?.let(formatter::number), cell(0)) { actions.onEditSet(set) }
+                ValueCell(set.reps?.toString(), cell(1)) { actions.onEditSet(set) }
             }
-            ExerciseInputType.BODYWEIGHT -> ValueCell(set.reps?.toString(), Modifier.weight(1f).alpha(dim)) { actions.onEditSet(set) }
+            ExerciseInputType.BODYWEIGHT -> ValueCell(set.reps?.toString(), cell(0)) { actions.onEditSet(set) }
             ExerciseInputType.DURATION, ExerciseInputType.DURATION_DISTANCE -> {
-                TextCell("${set.id}-duration", DurationInput.format(set.durationSeconds), false, Modifier.weight(1f).alpha(dim)) { text ->
+                TextCell("${set.id}-duration", DurationInput.format(set.durationSeconds), "m:ss", false, cell(0)) { text ->
                     set.durationSeconds = DurationInput.parse(text)
                     actions.onChange()
                 }
                 if (inputType == ExerciseInputType.DURATION_DISTANCE) {
                     val initial = set.distanceMeters?.let { NumberInput.format(it / 1000, locale) } ?: ""
-                    TextCell("${set.id}-distance", initial, true, Modifier.weight(1f).alpha(dim)) { text ->
+                    TextCell("${set.id}-distance", initial, "km", true, cell(1)) { text ->
                         set.distanceMeters = NumberInput.parse(text, locale)?.let { it * 1000 }
                         actions.onChange()
                     }
                 }
             }
         }
-        CheckButton(set.isCompleted, isCurrent) { actions.onToggle(set) }
+        CheckButton(set.isCompleted, Modifier.width(metrics.check).height(metrics.rowHeight)) { actions.onToggle(set) }
     }
 }
 
@@ -404,18 +479,20 @@ private fun SetBadge(
     var menu by remember { mutableStateOf(false) }
     Box(modifier, contentAlignment = Alignment.Center) {
         val warmUp = set.kind == SetKind.WARM_UP
+        // Bez pozadine, kao `SetBadge` na iOS-u: veći broj serije ili narančasto "Z"; dodirna površina 48 dp.
         Box(
-            Modifier.size(30.dp)
-                .clip(CircleShape)
-                .background(if (warmUp) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.14f) else MaterialTheme.colorScheme.surfaceContainer)
+            Modifier.fillMaxWidth()
+                .heightIn(min = 48.dp)
+                .clip(RoundedCornerShape(10.dp))
                 .clickable { menu = true },
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 label,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = if (warmUp) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.ExtraBold,
+                color = if (warmUp) WARM_UP_COLOR else MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
             )
         }
         DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
@@ -466,13 +543,14 @@ private fun EffortMenu(set: SetLog, scale: EffortScale, onChange: () -> Unit) {
         val rpe = set.rpe
         Text(
             rpe?.let(::label) ?: if (scale == EffortScale.RPE) "RPE" else "RIR",
-            Modifier.padding(top = 2.dp)
-                .clip(RoundedCornerShape(8.dp))
+            Modifier.clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
                 .clickable { menu = true }
-                .padding(horizontal = 6.dp, vertical = 2.dp),
+                .padding(horizontal = 8.dp, vertical = 2.dp),
             style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
-            color = if (rpe != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            fontWeight = if (rpe != null) FontWeight.Bold else FontWeight.Medium,
+            color = if (rpe != null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
         )
         DropdownMenu(expanded = menu, onDismissRequest = { menu = false }, modifier = Modifier.heightIn(max = 360.dp)) {
             DropdownMenuItem(text = { Text(stringResource(R.string.no_rating)) }, onClick = {
@@ -493,64 +571,85 @@ private fun EffortMenu(set: SetLog, scale: EffortScale, onChange: () -> Unit) {
     }
 }
 
-/** Vrijednost koja se mijenja kotačićem; prazna vrijednost je crtica. */
+/** Ispuna polja u retku serije, kao `.quaternary` na iOS-u: vidljiva na kartici i na označenom retku. */
+@Composable
+private fun fieldFill(): Color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+
+/** Vrijednost koja se mijenja kotačićem; prazna vrijednost je crtica. Velik, podebljan broj kao na iOS-u. */
 @Composable
 private fun ValueCell(text: String?, modifier: Modifier, onClick: () -> Unit) {
     Box(
-        modifier.height(44.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainer)
+        modifier.clip(RoundedCornerShape(12.dp))
+            .background(fieldFill())
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
+        // Na uskom polju se broj smanji (kao `minimumScaleFactor` na iOS-u), umjesto da se odreže.
+        BasicText(
             text ?: "–",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.ExtraBold,
-            color = if (text == null) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurface,
+            Modifier.padding(horizontal = 4.dp),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.ExtraBold,
+                color = if (text == null) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface,
+            ),
             maxLines = 1,
+            autoSize = TextAutoSize.StepBased(minFontSize = 13.sp, maxFontSize = MaterialTheme.typography.titleLarge.fontSize),
         )
     }
 }
 
-/** Polje za tipkovnicu: tekst živi u ekranu, a vrijednost se pretvara i sprema pri svakoj izmjeni. */
+/**
+ * Polje za tipkovnicu (trajanje, udaljenost), istog izgleda kao [ValueCell]. Tekst živi u ekranu,
+ * a vrijednost se pretvara i sprema pri svakoj izmjeni.
+ */
 @Composable
-private fun TextCell(key: String, initial: String, decimal: Boolean, modifier: Modifier, onValue: (String) -> Unit) {
+private fun TextCell(key: String, initial: String, hint: String, decimal: Boolean, modifier: Modifier, onValue: (String) -> Unit) {
     var text by rememberSaveable(key) { mutableStateOf(initial) }
-    OutlinedTextField(
+    val style = MaterialTheme.typography.titleMedium.copy(
+        textAlign = TextAlign.Center,
+        fontWeight = FontWeight.ExtraBold,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
+    BasicTextField(
         value = text,
         onValueChange = {
             text = it
             onValue(it)
         },
-        modifier = modifier,
+        modifier = modifier.clip(RoundedCornerShape(12.dp)).background(fieldFill()),
         singleLine = true,
-        textStyle = MaterialTheme.typography.titleMedium.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.Bold),
+        textStyle = style,
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         keyboardOptions = KeyboardOptions(keyboardType = if (decimal) KeyboardType.Decimal else KeyboardType.Number),
+        decorationBox = { field ->
+            Box(Modifier.padding(horizontal = 6.dp), contentAlignment = Alignment.Center) {
+                if (text.isEmpty()) {
+                    Text(hint, style = style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)), maxLines = 1)
+                }
+                field()
+            }
+        },
     )
 }
 
-/** Okrugla kvačica: puna zelena kad je serija gotova, obrubljena zelena za trenutnu seriju. */
+/**
+ * Velika zelena kvačica uz desni rub retka, kao na iOS-u: svijetlozelena ispuna dok serija nije završena,
+ * puna zelena kad jest.
+ */
 @Composable
-private fun CheckButton(completed: Boolean, isCurrent: Boolean, onClick: () -> Unit) {
+private fun CheckButton(completed: Boolean, modifier: Modifier, onClick: () -> Unit) {
     val success = MaterialTheme.colorScheme.success
-    val modifier = Modifier.size(CHECK_SIZE).clip(CircleShape)
     Box(
-        when {
-            completed -> modifier.background(success)
-            isCurrent -> modifier.border(2.dp, success, CircleShape)
-            else -> modifier.border(1.5.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
-        }.clickable(onClick = onClick),
+        modifier.clip(RoundedCornerShape(12.dp))
+            .background(if (completed) success else success.copy(alpha = 0.14f))
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             Icons.Filled.Check,
-            contentDescription = stringResource(R.string.complete_set),
-            tint = when {
-                completed -> Color.White
-                isCurrent -> success
-                else -> MaterialTheme.colorScheme.outline
-            },
+            contentDescription = stringResource(if (completed) R.string.uncomplete_set else R.string.complete_set),
+            modifier = Modifier.size(26.dp),
+            tint = if (completed) Color.White else success,
         )
     }
 }

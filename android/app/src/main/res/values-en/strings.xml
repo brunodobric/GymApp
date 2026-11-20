@@ -13,10 +13,13 @@
     <string name="add_exercise">Add exercise</string>
     <string name="add_set">Add set</string>
     <string name="complete_set">Complete set</string>
+    <string name="uncomplete_set">Undo set completion</string>
     <string name="reps_label">Reps</string>
     <string name="duration_label">Time</string>
     <string name="rest">Rest</string>
     <string name="skip_rest">Skip rest</string>
+    <string name="shorten_rest">Shorten rest by 10 seconds</string>
+    <string name="extend_rest">Extend rest by 10 seconds</string>
     <string name="back">Back</string>
     <string name="close">Close</string>
     <string name="cancel">Cancel</string>

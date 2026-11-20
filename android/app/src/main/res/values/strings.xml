@@ -14,10 +14,13 @@
     <string name="add_exercise">Dodaj vježbu</string>
     <string name="add_set">Dodaj seriju</string>
     <string name="complete_set">Završi seriju</string>
+    <string name="uncomplete_set">Poništi završetak serije</string>
     <string name="reps_label">Pon.</string>
     <string name="duration_label">Vrijeme</string>
     <string name="rest">Odmor</string>
     <string name="skip_rest">Preskoči odmor</string>
+    <string name="shorten_rest">Skrati odmor za 10 sekundi</string>
+    <string name="extend_rest">Produlji odmor za 10 sekundi</string>
     <string name="back">Natrag</string>
     <string name="close">Zatvori</string>
     <string name="cancel">Odustani</string>
@@ -651,7 +654,7 @@
     <string name="working_set">Radna serija</string>
     <string name="working_short">Radna</string>
     <string name="no_rating">Bez ocjene</string>
-    <string name="set_column">Serija</string>
+    <string name="set_column">Ser.</string>
     <string name="previous_column">Prošli put</string>
     <string name="set_number">Serija %1$d</string>
     <string name="weight_step_note">korak %1$s</string>
