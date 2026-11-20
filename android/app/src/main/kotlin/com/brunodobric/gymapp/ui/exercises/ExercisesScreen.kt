@@ -209,7 +209,9 @@ fun ExercisesScreen(services: AppServices) {
                         item.category?.let { stringResource(categoryTitle(it)) },
                         item.equipment?.let { stringResource(equipmentTitle(it)) },
                     ).joinToString(" · ")
+                    val image = remember(item.id, revision) { services.rowImage(context, item.source) }
                     ListItem(
+                        leadingContent = { ExerciseRowThumbnail(item.name, image.posterPath, size = 48.dp, photo = image.photo) },
                         headlineContent = { Text(item.name) },
                         supportingContent = if (details.isNotEmpty()) {
                             { Text(details) }
