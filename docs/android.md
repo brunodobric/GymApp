@@ -80,7 +80,7 @@ Nekoliko stvari na Androidu ne postoji ili radi drukčije. To nisu propusti plan
 | Prečaci, Siri, Spotlight (App Intents) | App Shortcuts (dugi pritisak na ikonu), pretraga sustava, Gemini/Assistant samo ako Google to i dalje podržava | Automatizacije poput "kad stignem u teretanu" nemaju sustavsku podlogu kao Shortcuts. Glasovne naredbe treba provjeriti u fazi 0. |
 | `HKHealthStore.startWatchApp` (iPhone pokreće sat) | Poruka preko Wearable Data Layera koju sat prima u servisu | Moguće, ali pokretanje sesije na satu iz pozadine treba prototip (odjeljak 7). |
 | iCloud i CloudKit bez prijave | Nema ekvivalenta bez Google prijave | Odjeljak 6. |
-| SF Pro Rounded | Appleova licenca ne dopušta SF fontove izvan Appleovih platformi | Treba drugi zaobljeni font ili sistemski (odjeljak 8). |
+| SF Pro Rounded | Appleova licenca ne dopušta SF fontove izvan Appleovih platformi | Android koristi Inter (OFL 1.1), ugrađen u aplikaciju (odjeljak 8). |
 | StandBy, Stage Manager, ⌘N i izbornik aplikacije | Više prozora i tipkovnički prečaci (Ctrl+N) postoje; StandBy nema | Prečaci tipkovnice ostaju, StandBy otpada. |
 | Apple Watch | Wear OS (Galaxy Watch, Pixel Watch). Wear OS sat se uparuje samo s Android telefonom. | Korisnik s iPhoneom ne može koristiti Wear OS sat i obrnuto. |
 | Sinkronizacija iPhone ↔ Android | Nije planirana | Prelazak ide preko izvoza i uvoza JSON-a (isti format). |
@@ -337,7 +337,7 @@ Isti ekrani i ista pravila kao na satu (specifikacija, "Watch ekrani"), u Compos
 ## 8. Dizajn
 
 * Novi dokument `docs/DIZAJN_ANDROID.md`: Material 3 pravila za aplikaciju, istim redom kao `DIZAJN.md` (navigacija, toolbar, tipografija, ekran aktivnog treninga, prilagodljivost, pristupačnost, sat).
-* **Tipografija:** SF Pro Rounded se ne smije koristiti na Androidu. Uloge teksta iz `AppFont` (screenTitle, cardTitle, itemTitle, metric...) ostaju, ali se mapiraju na Material type scale. Prijedlog: sistemski font za tekst i zaobljeni font pod licencom OFL (npr. Nunito ili Google Sans Flex, ako mu licenca to dopušta) za naslove i brojeve, s tabličnim brojkama. Font se isporučuje u aplikaciji, ne preuzima se, i ide u evidenciju licenci.
+* **Tipografija:** SF Pro Rounded se ne smije koristiti na Androidu. Uloge teksta iz `AppFont` (screenTitle, cardTitle, itemTitle, metric...) ostaju, ali se mapiraju na Material type scale. Odlučeno: sav tekst koristi font Inter (OFL 1.1), najbliži SF Pro. Jedna varijabilna datoteka u `res/font`, ne preuzima se; tipografija je u `ui/theme/Type.kt`. Optička veličina 14 za tekst i 32 za display, headline i titleLarge (kao SF Pro Text i Display). Inter nije zaobljen kao SF Pro Rounded u iOS naslovima. Licenca je u evidenciji ovisnosti i u "O aplikaciji". Widgeti (Glance) i Wear OS ostaju na sistemskom fontu.
 * **Ikona:** adaptivna ikona (prednji i stražnji sloj) i monokromatska verzija za tematske ikone, iz postojećeg dizajna ikone Apolon.
 * **Boje:** isti akcent i tamni način kao standard; Material You dinamične boje kao dodatna opcija.
 * **Ikone u sučelju:** SF Symbols nisu dopušteni izvan Appleovih platformi; koriste se Material Symbols (Apache 2.0), uz vlastite ikone gdje nema para (npr. bučica s oznakom trčanja).
@@ -425,7 +425,7 @@ Za testiranje treba barem jedan stvaran Android telefon (idealno Samsung, najče
 3. **Kada početi:** paralelno s iOS betom ili nakon izdanja iOS-a? Preporuka: nakon iOS izdanja ili barem nakon zaključavanja iOS sheme, jer svaka promjena modela tada vrijedi za obje platforme.
 4. **Repozitorij:** isti (`android/`, preporuka) ili zaseban?
 5. **Ovisnosti:** dopustiti Vico i biblioteku za povlačenje redaka (uz upis licence) ili sve pisati sami?
-6. **Font:** koji zaobljeni font zamjenjuje SF Pro Rounded.
+6. **Font:** odlučeno, Inter (OFL 1.1) na mobitelu.
 7. **Račun na Google Playu:** osobni (zatvoreno testiranje 12 testera kroz 14 dana) ili tvrtka.
 
 ## 14. Prvi koraci

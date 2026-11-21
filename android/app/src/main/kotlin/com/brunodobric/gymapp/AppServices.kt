@@ -55,6 +55,10 @@ class AppServices(context: Context) {
     fun muscleMapLicense(): String =
         runCatching { appContext.assets.open("LICENSE-MuscleMap.txt").bufferedReader().use { it.readText() } }.getOrDefault("")
 
+    /** Tekst licence fonta Inter (SIL OFL 1.1), za "O aplikaciji". */
+    fun interLicense(): String =
+        runCatching { appContext.assets.open("LICENSE-Inter.txt").bufferedReader().use { it.readText() } }.getOrDefault("")
+
     /** Slike vlastitih vježbi. */
     val exerciseImages: ExerciseImages by lazy { ExerciseImages(appContext) }
 

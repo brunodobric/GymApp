@@ -94,7 +94,7 @@ fun ApolonTheme(
     }
     // Kartice su zaobljenije nego zadano u Materialu (20 dp), kao u prijedlogu dizajna.
     val shapes = Shapes(medium = RoundedCornerShape(20.dp), large = RoundedCornerShape(24.dp))
-    MaterialTheme(colorScheme = colors, shapes = shapes, content = content)
+    MaterialTheme(colorScheme = colors, shapes = shapes, typography = AppTypography, content = content)
 }
 
 /** Zelena za završene serije i potvrdu, svijetla i tamna. */
