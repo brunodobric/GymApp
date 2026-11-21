@@ -11,7 +11,8 @@ enum FilterSymbol {
 }
 
 extension View {
-    /// Simbol filtera crta se jednobojno u primarnoj boji, kao ostali gumbi u toolbaru.
+    /// Simbol filtera (i drugih izbornika u toolbaru) crta se jednobojno u primarnoj boji,
+    /// kao ostali gumbi u toolbaru.
     func filterSymbolStyle() -> some View {
         symbolRenderingMode(.monochrome)
             .foregroundStyle(.primary)
