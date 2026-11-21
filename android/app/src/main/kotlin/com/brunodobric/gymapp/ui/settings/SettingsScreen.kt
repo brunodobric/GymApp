@@ -155,6 +155,10 @@ private fun SettingsPage(services: AppServices, category: SettingsCategory, onBa
     if (showsMuscleMapLicense) {
         MuscleMapLicenseDialog(services, onDismiss = { showsMuscleMapLicense = false })
     }
+    var showsInterLicense by rememberSaveable { mutableStateOf(false) }
+    if (showsInterLicense) {
+        InterLicenseDialog(services, onDismiss = { showsInterLicense = false })
+    }
     if (showsRecommendation) {
         ProgramRecommendationScreen(services, onClose = { showsRecommendation = false })
         return
@@ -196,6 +200,11 @@ private fun SettingsPage(services: AppServices, category: SettingsCategory, onBa
                         trailingContent = { Text("MuscleMap") },
                         modifier = Modifier.clickable { showsMuscleMapLicense = true },
                     )
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.settings_font)) },
+                        trailingContent = { Text("Inter") },
+                        modifier = Modifier.clickable { showsInterLicense = true },
+                    )
                     // Javna pravila privatnosti (GitHub Pages iz mape site/), na jeziku sučelja, kao na iOS-u.
                     val uriHandler = LocalUriHandler.current
                     val privacyUrl = stringResource(R.string.privacy_policy_url)
@@ -232,6 +241,24 @@ private fun MuscleMapLicenseDialog(services: AppServices, onDismiss: () -> Unit)
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 Text(stringResource(R.string.musclemap_intro))
                 Text("github.com/Jsplice/MuscleMap", modifier = Modifier.padding(vertical = 8.dp))
+                Text(license, style = MaterialTheme.typography.bodySmall)
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.done)) } },
+    )
+}
+
+/** Atribucija i tekst licence fonta Inter (SIL OFL 1.1 traži da licenca ide uz font). */
+@Composable
+private fun InterLicenseDialog(services: AppServices, onDismiss: () -> Unit) {
+    val license = remember { services.interLicense() }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Inter") },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                Text(stringResource(R.string.inter_intro))
+                Text("github.com/rsms/inter", modifier = Modifier.padding(vertical = 8.dp))
                 Text(license, style = MaterialTheme.typography.bodySmall)
             }
         },

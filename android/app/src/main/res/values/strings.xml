@@ -456,6 +456,8 @@
     <string name="body_map_description">Prikaz tijela s opterećenjem. %1$s</string>
     <string name="body_drawings">Crteži tijela</string>
     <string name="musclemap_intro">Crteži tijela u heatmapu preuzeti su iz projekta MuscleMap (MIT licenca).</string>
+    <string name="settings_font">Font</string>
+    <string name="inter_intro">Tekst u aplikaciji koristi font Inter (SIL Open Font License 1.1).</string>
     <string name="tap_body_part">Dodirni dio tijela za detalje.</string>
     <string name="workout_notification_set">%1$s · serija %2$d od %3$d</string>
     <string name="workout_notification_rest">Odmor · %1$s</string>
