@@ -297,6 +297,9 @@ struct SchedulesScreen: View {
                     Button("Novi trening", systemImage: "dumbbell") { newTemplate() }
                     Button("Gotovi programi", systemImage: "square.stack.3d.up") { showsPrograms = true }
                 }
+                // Izbornik u toolbaru iOS ne boji kao obični gumb (+ je bio zelen), pa se simbol
+                // crta jednobojno u primarnoj boji, kao + na ostalim ekranima.
+                .filterSymbolStyle()
             }
         }
         .sheet(isPresented: $showsPrograms) { ProgramsScreen() }
