@@ -68,7 +68,7 @@ import java.time.format.TextStyle as DayTextStyle
 /**
  * Widgeti na početnom zaslonu (Jetpack Glance), isti kao na iPhoneu: sljedeći trening, ovaj tjedan, težina,
  * zadnji trening i zadnji rekord. Svi čitaju snimku ([widgetSnapshots]) koju slaže [WidgetRefresher].
- * Pozadina je bijela, a u tamnoj temi crna, kao widgeti na iOS-u.
+ * Pozadina je boja kartice iz palete (`AppPalette.card`), svijetla ili tamna prema temi, kao widgeti na iOS-u.
  */
 object ApolonWidgets {
     private val all: List<GlanceAppWidget>
@@ -360,7 +360,9 @@ private fun Secondary(text: String, modifier: GlanceModifier = GlanceModifier) {
 private fun StartButton(accent: ColorProvider) {
     val context = LocalContext.current
     Button(
-        text = "▶",
+        // U+FE0E traži tekstni oblik znaka: bez njega ga neki telefoni crtaju kao emoji (plavi kvadrat), pa se
+        // trokut ne vidi u boji gumba.
+        text = "\u25B6\uFE0E",
         onClick = open(context, WidgetLink.StartWorkout),
         colors = ButtonDefaults.buttonColors(backgroundColor = accent, contentColor = onAccent),
         modifier = GlanceModifier.width(52.dp),
