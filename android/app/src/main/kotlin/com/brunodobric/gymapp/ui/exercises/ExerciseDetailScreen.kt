@@ -142,6 +142,18 @@ fun ExerciseDetailScreen(
             customExercise?.imageFile?.let(services.exerciseImages::file)?.let { file ->
                 ExerciseImage(file, ref.name, Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
             }
+            // Arhivirana vlastita vježba (korištena u treningu pa "uklonjena") vraća se u odabir, kao na iOS-u.
+            customExercise?.takeIf { it.isArchived && showsHistory }?.let { exercise ->
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.exercise_archived)) },
+                    trailingContent = {
+                        TextButton(onClick = {
+                            exercise.isArchived = false
+                            store.save()
+                        }) { Text(stringResource(R.string.restore_exercise)) }
+                    },
+                )
+            }
             val primary = catalogExercise?.primaryMuscles ?: customExercise?.muscles.orEmpty()
             val secondary = catalogExercise?.secondaryMuscles.orEmpty()
             if (primary.isNotEmpty()) {

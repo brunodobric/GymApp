@@ -1,6 +1,7 @@
 package com.brunodobric.gymapp
 
 import android.app.Application
+import android.util.Log
 import com.brunodobric.gymapp.appwidgets.WidgetRefresher
 import com.brunodobric.gymapp.health.HealthConnectSync
 import com.brunodobric.gymapp.notifications.ReminderNotifications
@@ -41,9 +42,22 @@ class ApolonApplication : Application() {
     lateinit var watchSync: PhoneWatchSync
         private set
 
+    /**
+     * Greška pri otvaranju baze na uređaju; tada se umjesto aplikacije prikazuje `StoreFailureScreen`, a usluge
+     * koje čitaju bazu (obavijesti, podsjetnici, widgeti, Health Connect, sinkronizacija, sat) se ne pokreću.
+     */
+    var storeFailure: Throwable? = null
+        private set
+
     override fun onCreate() {
         super.onCreate()
         services = AppServices(this)
+        // Aplikacija se ne ruši pri svakom pokretanju kad se baza ne može otvoriti (kao na iOS-u).
+        storeFailure = runCatching { services.store }.exceptionOrNull()
+        storeFailure?.let {
+            Log.e("Store", "Baza se nije otvorila", it)
+            return
+        }
         RestNotifications.createChannels(this)
         RestNotificationScheduler(this, services.store).start()
         WorkoutNotification.createChannel(this)

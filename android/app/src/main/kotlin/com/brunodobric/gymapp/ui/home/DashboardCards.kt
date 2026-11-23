@@ -90,7 +90,8 @@ internal fun DashboardCardKind.title(): Int = when (this) {
 
 /** Radnje kartica: kamo vodi dodir. */
 internal class DashboardActions(
-    val onOpenStatistics: () -> Unit,
+    /** Pregled razdoblja u Statistici (Ovaj tjedan, Ovaj mjesec, Ova godina). */
+    val onOpenOverview: (OverviewPeriod) -> Unit,
     val onOpenSession: (Session) -> Unit,
     val onOpenBody: () -> Unit,
     val onOpenPlates: () -> Unit,
@@ -100,9 +101,9 @@ internal class DashboardActions(
 @Composable
 internal fun DashboardCardView(services: AppServices, kind: DashboardCardKind, revision: Long, actions: DashboardActions, modifier: Modifier) {
     when (kind) {
-        DashboardCardKind.THIS_WEEK -> ThisWeekCard(services, revision, actions.onOpenStatistics, modifier)
-        DashboardCardKind.THIS_MONTH -> PeriodCard(services, OverviewPeriod.MONTH, revision, actions.onOpenStatistics, modifier)
-        DashboardCardKind.THIS_YEAR -> PeriodCard(services, OverviewPeriod.YEAR, revision, actions.onOpenStatistics, modifier)
+        DashboardCardKind.THIS_WEEK -> ThisWeekCard(services, revision, { actions.onOpenOverview(OverviewPeriod.WEEK) }, modifier)
+        DashboardCardKind.THIS_MONTH -> PeriodCard(services, OverviewPeriod.MONTH, revision, { actions.onOpenOverview(OverviewPeriod.MONTH) }, modifier)
+        DashboardCardKind.THIS_YEAR -> PeriodCard(services, OverviewPeriod.YEAR, revision, { actions.onOpenOverview(OverviewPeriod.YEAR) }, modifier)
         DashboardCardKind.LAST_WORKOUT -> LastWorkoutCard(services, revision, actions.onOpenSession, modifier)
         DashboardCardKind.BODY_WEIGHT -> BodyWeightCard(services, revision, actions.onOpenBody, modifier)
         DashboardCardKind.PLATE_CALCULATOR -> HomeCard(stringResource(R.string.plates), actions.onOpenPlates, modifier) {
@@ -154,7 +155,7 @@ private fun ThisWeekCard(services: AppServices, revision: Long, onClick: () -> U
 }
 
 @Composable
-private fun WeekHeader(progress: WeekProgress) {
+internal fun WeekHeader(progress: WeekProgress) {
     Row(verticalAlignment = Alignment.Bottom) {
         Row(Modifier.weight(1f), verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             val goal = progress.goal
@@ -183,7 +184,7 @@ private fun WeekHeader(progress: WeekProgress) {
 
 /** Sedam dana tjedna: pun krug za dan s treningom, obrub za današnji dan. */
 @Composable
-private fun WeekDaysStrip(days: List<TrainingDay>, locale: Locale) {
+internal fun WeekDaysStrip(days: List<TrainingDay>, locale: Locale) {
     val zone = ZoneId.systemDefault()
     val today = LocalDate.now(zone)
     Row(Modifier.fillMaxWidth()) {
@@ -211,7 +212,7 @@ private fun WeekDaysStrip(days: List<TrainingDay>, locale: Locale) {
 
 /** Tvrde serije, kardio i ukupno vrijeme u malim poljima (`PeriodFigures` na iOS-u). */
 @Composable
-private fun PeriodFigures(hardSets: Int, cardioSeconds: Int, totalSeconds: Double) {
+internal fun PeriodFigures(hardSets: Int, cardioSeconds: Int, totalSeconds: Double) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         if (hardSets > 0) Figure(hardSets.toString(), stringResource(R.string.stat_hard_sets), Modifier.weight(1f))
         if (cardioSeconds >= 60) Figure(durationText(cardioSeconds.toDouble()), stringResource(R.string.stat_cardio), Modifier.weight(1f))
@@ -230,7 +231,7 @@ private fun Figure(value: String, label: String, modifier: Modifier) {
 }
 
 /** "1 h 4 min" ili "45 min". */
-private fun durationText(seconds: Double): String {
+internal fun durationText(seconds: Double): String {
     val minutes = (seconds / 60).toInt()
     return if (minutes >= 60) "${minutes / 60} h ${minutes % 60} min" else "$minutes min"
 }
@@ -262,7 +263,7 @@ private fun PeriodCard(services: AppServices, period: OverviewPeriod, revision: 
 }
 
 @Composable
-private fun perWeekText(summary: PeriodSummary, locale: Locale): String {
+internal fun perWeekText(summary: PeriodSummary, locale: Locale): String {
     val value = NumberInput.format(Math.round(summary.sessionsPerWeek * 10) / 10.0, locale)
     return summary.weeklyGoal?.let { stringResource(R.string.per_week_goal, value, it) } ?: stringResource(R.string.per_week, value)
 }

@@ -75,7 +75,7 @@ internal fun recordValue(record: PersonalRecord, weight: WeightFormatter): Strin
 }
 
 @Composable
-private fun RecordRow(entry: RecordEntry, weight: WeightFormatter, dates: DateTimeFormatter) {
+internal fun RecordRow(entry: RecordEntry, weight: WeightFormatter, dates: DateTimeFormatter) {
     ListItem(
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         headlineContent = { Text(entry.exerciseName) },
@@ -85,7 +85,7 @@ private fun RecordRow(entry: RecordEntry, weight: WeightFormatter, dates: DateTi
 }
 
 @Composable
-private fun rememberRecordFormats(unit: WeightUnit): Pair<WeightFormatter, DateTimeFormatter> {
+internal fun rememberRecordFormats(unit: WeightUnit): Pair<WeightFormatter, DateTimeFormatter> {
     val locale = LocalConfiguration.current.locales[0]
     val weight = remember(unit, locale) { WeightFormatter(unit, locale) }
     val dates = remember(locale) {

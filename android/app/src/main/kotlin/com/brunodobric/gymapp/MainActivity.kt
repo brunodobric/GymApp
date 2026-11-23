@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.brunodobric.gymapp.notifications.ReminderNotifications
 import com.brunodobric.gymapp.notifications.WorkoutNotification
 import com.brunodobric.gymapp.ui.RootScreen
+import com.brunodobric.gymapp.ui.StoreFailureScreen
 import com.brunodobric.gymapp.ui.rememberStoreRevision
 import com.brunodobric.gymapp.ui.theme.ApolonTheme
 import com.brunodobric.gymapp.ui.theme.isDark
@@ -29,7 +30,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) handle(intent)
-        val services = (application as ApolonApplication).services
+        val app = application as ApolonApplication
+        val services = app.services
+        if (app.storeFailure != null) {
+            setContent { ApolonTheme { StoreFailureScreen(app.storeFailure) } }
+            return
+        }
         setContent {
             // Tema i boja iz postavki; promjena u Postavkama odmah mijenja cijelu aplikaciju.
             rememberStoreRevision(services.store)
@@ -50,6 +56,7 @@ class MainActivity : ComponentActivity() {
     /** Health Connect dopušta čitanje samo dok je aplikacija na zaslonu: novi podaci čitaju se pri svakom povratku. */
     override fun onResume() {
         super.onResume()
+        if ((application as ApolonApplication).storeFailure != null) return
         (application as ApolonApplication).health.sync()
         // Promjene s drugih uređaja stižu pri svakom povratku u aplikaciju.
         (application as ApolonApplication).sync.sync()
@@ -58,6 +65,7 @@ class MainActivity : ComponentActivity() {
     /** Pri odlasku u pozadinu promjene odmah idu u datoteku za sinkronizaciju. */
     override fun onStop() {
         super.onStop()
+        if ((application as ApolonApplication).storeFailure != null) return
         (application as ApolonApplication).sync.sync()
     }
 

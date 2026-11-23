@@ -134,7 +134,7 @@ internal fun MusclesCard(
 
 /** Legenda fiksne skale heatmapa (`LoadScale.weeklyLevel`): četiri razine boje. */
 @Composable
-private fun HeatmapLegend() {
+internal fun HeatmapLegend() {
     val accent = MaterialTheme.colorScheme.primary
     val idle = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.22f)
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {

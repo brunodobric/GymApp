@@ -47,7 +47,11 @@ import com.brunodobric.gymapp.model.ExerciseRef
 import com.brunodobric.gymapp.model.StatsDetail
 import com.brunodobric.gymapp.stats.ExerciseInfoBuilder
 import com.brunodobric.gymapp.stats.ExercisePoint
+import com.brunodobric.gymapp.stats.FrequencyPoint
 import com.brunodobric.gymapp.stats.OverviewPeriod
+import com.brunodobric.gymapp.stats.WeekProgress
+import com.brunodobric.gymapp.stats.weekProgress
+import java.time.LocalDate
 import com.brunodobric.gymapp.stats.PeriodSummary
 import com.brunodobric.gymapp.stats.StatisticsEngine
 import com.brunodobric.gymapp.stats.StatisticsSettings
@@ -64,19 +68,31 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 /**
- * Statistika: pregled tjedna, mjeseca ili godine, mišići (tvrde serije tjedno), trend snage po mišićima,
+ * Statistika: kartica Pregled (tjedan, mjesec i godina, otvara [OverviewScreen]), mišići (tvrde serije tjedno), trend snage po mišićima,
  * osobni rekordi, napor i intenzitet, DOTS, mjere tijela i napredak vježbe. Mapa tijela i savjeti dolaze kasnije.
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, onRequestHandled: () -> Unit = {}) {
+fun StatisticsScreen(
+    services: AppServices,
+    bodyRequest: OpenRequest? = null,
+    onRequestHandled: () -> Unit = {},
+    overviewRequest: OpenRequest? = null,
+    onOverviewHandled: () -> Unit = {},
+) {
     val store = services.store
     val revision = rememberStoreRevision(store)
     val locale = LocalConfiguration.current.locales[0]
     val calendar = remember(locale) { StatsCalendar.system(locale) }
-    var period by rememberSaveable { mutableStateOf(OverviewPeriod.WEEK) }
-    var dateMillis by rememberSaveable { mutableStateOf(Instant.now().toEpochMilli()) }
+    // Otvoren Pregled razdoblja (`OverviewPeriod.raw`); kartice Početne ga otvaraju na svom razdoblju.
+    var overviewRaw by rememberSaveable { mutableStateOf<String?>(null) }
+    LaunchedEffect(overviewRequest) {
+        if (overviewRequest != null) {
+            overviewRaw = overviewRequest.value
+            onOverviewHandled()
+        }
+    }
     var openedKey by rememberSaveable { mutableStateOf<String?>(null) }
     var showsBody by rememberSaveable { mutableStateOf(false) }
     // Dodir na widget težine otvara praćenje tijela.
@@ -87,7 +103,6 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
         }
     }
     var showsRecords by rememberSaveable { mutableStateOf(false) }
-    val date = Instant.ofEpochMilli(dateMillis)
 
     val exercises = remember(revision) {
         // Vježbe iz završenih treninga, od zadnje odrađene.
@@ -105,6 +120,10 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
     val records = stats?.records.orEmpty()
     if (showsRecords) {
         RecordsScreen(records, settings.weightUnit, onClose = { showsRecords = false })
+        return
+    }
+    OverviewPeriod.entries.firstOrNull { it.raw == overviewRaw }?.let { period ->
+        OverviewScreen(services, period, onClose = { overviewRaw = null })
         return
     }
     if (showsBody) {
@@ -131,8 +150,16 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
     val dots = stats?.dots
     val weight = remember(settings.weightUnit, locale) { WeightFormatter(settings.weightUnit, locale) }
     val goal = settings.trainingDaysPerWeek
-    val summary = remember(revision, period, dateMillis, calendar) {
-        StatisticsEngine(store).periodSummary(period, date, goal = goal, calendar = calendar, isCardio = isCardio)
+    val today = LocalDate.now()
+    val overview = remember(revision, calendar, goal, isCardio, today) {
+        val engine = StatisticsEngine(store)
+        val now = Instant.now()
+        OverviewFigures(
+            week = engine.weekProgress(now, goal, calendar, isCardio),
+            month = engine.periodSummary(OverviewPeriod.MONTH, now, now, goal, calendar, isCardio),
+            year = engine.periodSummary(OverviewPeriod.YEAR, now, now, goal, calendar, isCardio),
+            frequency = engine.frequency(12, now, calendar),
+        )
     }
 
     TabScaffold(stringResource(R.string.tab_statistics)) { padding ->
@@ -140,19 +167,7 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
             Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OverviewPeriod.entries.forEach { option ->
-                    FilterChip(
-                        selected = option == period,
-                        onClick = {
-                            period = option
-                            dateMillis = Instant.now().toEpochMilli()
-                        },
-                        label = { Text(stringResource(periodTitle(option))) },
-                    )
-                }
-            }
-            SummaryCard(summary, locale, onShift = { step -> dateMillis = period.shift(date, step, calendar).toEpochMilli() })
+            OverviewCard(overview.week, overview.month, overview.year, overview.frequency, locale, onOpen = { overviewRaw = it.raw })
             if (isPro) {
                 weekly?.let { WeeklyReviewCard(it.first, it.second, locale) }
                 MusclesCard(
@@ -197,51 +212,10 @@ fun StatisticsScreen(services: AppServices, bodyRequest: OpenRequest? = null, on
     }
 }
 
-private fun periodTitle(period: OverviewPeriod): Int = when (period) {
-    OverviewPeriod.WEEK -> R.string.period_week
-    OverviewPeriod.MONTH -> R.string.period_month
-    OverviewPeriod.YEAR -> R.string.period_year
-}
-
-@Composable
-private fun SummaryCard(summary: PeriodSummary, locale: java.util.Locale, onShift: (Int) -> Unit) {
-    val zone = ZoneId.systemDefault()
-    val formatter = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale).withZone(zone) }
-    // Kraj intervala je početak sljedećeg razdoblja, pa se prikazuje dan prije.
-    val lastDay = summary.interval.end.minusSeconds(1)
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { onShift(-1) }) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.previous_period))
-                }
-                Text(
-                    formatter.format(summary.interval.start) + " – " + formatter.format(lastDay),
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.weight(1f),
-                )
-                IconButton(onClick = { onShift(1) }) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.next_period))
-                }
-            }
-            Figure(stringResource(R.string.stat_workouts), summary.sessions.toString())
-            Figure(stringResource(R.string.stat_trained_days), summary.trainedDays.toString())
-            Figure(stringResource(R.string.stat_hard_sets), summary.hardSets.toString())
-            Figure(stringResource(R.string.stat_time), DurationInput.format(summary.totalSeconds.toInt()))
-            if (summary.cardioSeconds > 0) Figure(stringResource(R.string.stat_cardio), DurationInput.format(summary.cardioSeconds))
-            summary.weeklyGoal?.let { goal ->
-                if (summary.period != OverviewPeriod.WEEK) {
-                    Figure(stringResource(R.string.stat_per_week), String.format(locale, "%.1f / %d", summary.sessionsPerWeek, goal))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun Figure(label: String, value: String) {
-    Row(Modifier.fillMaxWidth()) {
-        Text(label, modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value, style = MaterialTheme.typography.bodyLarge)
-    }
-}
+/** Brojke kartice Pregled: tekući tjedan, mjesec i godina te treninzi po tjednu za zadnjih 12 tjedana. */
+private class OverviewFigures(
+    val week: WeekProgress,
+    val month: PeriodSummary,
+    val year: PeriodSummary,
+    val frequency: List<FrequencyPoint>,
+)
