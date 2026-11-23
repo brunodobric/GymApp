@@ -37,6 +37,8 @@ struct ExerciseCard: View {
     /// Otvara stranicu vježbe (animacija i upute). Nil kad vježba nije u katalogu ni među vlastitima.
     let onShowInfo: (() -> Void)?
 
+    @Environment(\.colorSchemeContrast) private var contrast
+
     /// Svaki dio je svoj redak u listi (sekcija vježbe), da se serija može obrisati povlačenjem ulijevo.
     var body: some View {
         header
@@ -92,7 +94,7 @@ struct ExerciseCard: View {
         HStack {
             Button(action: onToggleOpen) {
                 HStack(spacing: 12) {
-                    ExerciseRowThumbnail(source: thumbnail)
+                    thumbnailView
                     titles
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -138,16 +140,28 @@ struct ExerciseCard: View {
                     .foregroundStyle(.tint)
             }
             Text(exercise.exerciseName).font(.itemTitle)
-            HStack(spacing: 4) {
-                Text("\(completedCount) od \(exercise.orderedSets.count) serija")
-                if let target = targetText {
+            if isDone {
+                // Gotova vježba: zeleni status umjesto cilja, da se na prvi pogled vidi što je odrađeno.
+                HStack(spacing: 4) {
+                    Image(systemName: "checkmark.circle.fill")
+                    Text("Gotovo")
                     Text(verbatim: "·")
-                    target
+                    Text("\(completedCount) od \(exercise.orderedSets.count) serija")
                 }
+                .font(.subheadline)
+                .foregroundStyle(.green)
+            } else {
+                HStack(spacing: 4) {
+                    Text("\(completedCount) od \(exercise.orderedSets.count) serija")
+                    if let target = targetText {
+                        Text(verbatim: "·")
+                        target
+                    }
+                }
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
             }
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-            if let change = loadChangeText {
+            if let change = loadChangeText, !isDone {
                 Label { change } icon: { Image(systemName: "arrow.up.right") }
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.tint)
@@ -188,6 +202,29 @@ struct ExerciseCard: View {
 
     private var completedCount: Int {
         exercise.orderedSets.filter(\.isCompleted).count
+    }
+
+    /// Sve serije vježbe su završene (vježba bez serija nije gotova).
+    private var isDone: Bool {
+        !exercise.orderedSets.isEmpty && completedCount == exercise.orderedSets.count
+    }
+
+    /// Sličica gotove vježbe je prigušena (osim uz pojačani kontrast) i nosi zelenu kvačicu u kutu.
+    private var thumbnailView: some View {
+        ExerciseRowThumbnail(source: thumbnail)
+            .opacity(isDone && contrast != .increased ? 0.55 : 1)
+            .overlay(alignment: .bottomTrailing) {
+                if isDone {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.body.weight(.semibold))
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, .green)
+                        .background(Circle().fill(AppPalette.card).padding(-2))
+                        .offset(x: 5, y: 5)
+                        .accessibilityHidden(true)
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: isDone)
     }
 
     private struct Row {
