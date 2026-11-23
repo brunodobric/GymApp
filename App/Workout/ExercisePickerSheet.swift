@@ -62,6 +62,9 @@ struct ExercisePickerSheet: View {
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $filter.query, prompt: "Pretraži vježbe")
+            // Dok je pretraga uključena, traka s naslovom i gumbima ostaje vidljiva, pa je
+            // "Dodaj" dostupan čim je označena barem jedna vježba (bez toga ga pretraga sakrije).
+            .searchPresentationToolbarBehavior(.avoidHidingContent)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Odustani") { dismiss() }
