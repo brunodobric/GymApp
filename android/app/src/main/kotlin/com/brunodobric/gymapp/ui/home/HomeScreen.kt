@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
+import com.brunodobric.gymapp.stats.OverviewPeriod
 import com.brunodobric.gymapp.model.DashboardLayout
 import com.brunodobric.gymapp.model.OnboardingAnswers
 import com.brunodobric.gymapp.model.Schedule
@@ -69,7 +70,7 @@ fun HomeScreen(
     services: AppServices,
     onOpenWorkout: () -> Unit,
     onOpenSettings: () -> Unit,
-    onOpenStatistics: () -> Unit = {},
+    onOpenOverview: (OverviewPeriod) -> Unit = {},
     onOpenSession: (Session) -> Unit = {},
     onOpenBody: () -> Unit = {},
     /** Ekran treninga je otvoren iznad Početne: ponuda za prekinut trening se ne pokazuje. */
@@ -170,7 +171,7 @@ fun HomeScreen(
             }
             val kinds = remember(revision) { layout.cards().mapNotNull { it.kind } }
             val actions = DashboardActions(
-                onOpenStatistics = onOpenStatistics,
+                onOpenOverview = onOpenOverview,
                 onOpenSession = onOpenSession,
                 onOpenBody = onOpenBody,
                 onOpenPlates = { showsPlates = true },

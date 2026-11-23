@@ -10,8 +10,10 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.RemoteViews
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.brunodobric.gymapp.ApolonApplication
 import com.brunodobric.gymapp.MainActivity
 import com.brunodobric.gymapp.R
@@ -19,6 +21,8 @@ import com.brunodobric.gymapp.catalog.Mechanic
 import com.brunodobric.gymapp.model.GymStore
 import com.brunodobric.gymapp.model.SessionState
 import com.brunodobric.gymapp.model.WeightStepSettings
+import com.brunodobric.gymapp.planning.ShortcutFinishResult
+import com.brunodobric.gymapp.planning.WorkoutShortcuts
 import com.brunodobric.gymapp.training.LiveSetEditor
 import com.brunodobric.gymapp.training.LiveSetValue
 import com.brunodobric.gymapp.training.LiveWorkoutStatus
@@ -32,7 +36,8 @@ import kotlin.math.sign
 
 /**
  * Obavijest treninga u tijeku, zamjena za Live Activity s iOS-a. Tiha je i stalna dok trening traje:
- * naziv treninga, trajanje (ili odbrojavanje odmora), trenutna vježba i serija te gumb "Potvrdi seriju".
+ * naziv treninga, trajanje (ili odbrojavanje odmora), trenutna vježba i serija te gumbi "Potvrdi seriju" i
+ * "Završi trening" (zamjena za prečac Završi trening s iOS-a, kad je barem jedna serija završena).
  * Dodir otvara ekran treninga. Nije foreground service: trening se ne odvija u pozadini, pa obavijest
  * samo prikazuje stanje iz baze, a alarm kraja odmora je u [RestNotifications].
  */
@@ -40,10 +45,12 @@ object WorkoutNotification {
     private const val CHANNEL = "workout"
     private const val NOTIFICATION_ID = 1002
     private const val CONFIRM_REQUEST_CODE = 1003
+    private const val FINISH_REQUEST_CODE = 1006
     internal const val OPEN_REQUEST_CODE = 1004
     private const val OPEN_APP_REQUEST_CODE = 1005
     internal const val ACTION_CONFIRM = "com.brunodobric.gymapp.CONFIRM_SET"
     internal const val ACTION_ADJUST = "com.brunodobric.gymapp.ADJUST_SET"
+    internal const val ACTION_FINISH = "com.brunodobric.gymapp.FINISH_WORKOUT"
     internal const val EXTRA_SET_ID = "setId"
     internal const val EXTRA_FIELD = "field"
     internal const val EXTRA_STEPS = "steps"
@@ -108,6 +115,8 @@ object WorkoutNotification {
             .setContentText(text)
             .setSubText(context.getString(R.string.workout_notification_progress, status.completedSets, status.totalSets))
             .setCategory(NotificationCompat.CATEGORY_WORKOUT)
+            // Boja aplikacije za ikonu i naziv, kao Live Activity koji prati aplikaciju; tema prati sustav.
+            .setColor(ContextCompat.getColor(context, R.color.notification_accent))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
@@ -147,6 +156,15 @@ object WorkoutNotification {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
             builder.addAction(0, context.getString(R.string.confirm_set), confirm)
+        }
+        if (status.completedSets > 0) {
+            val finish = PendingIntent.getBroadcast(
+                context,
+                FINISH_REQUEST_CODE,
+                Intent(context, WorkoutActionReceiver::class.java).setAction(ACTION_FINISH),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+            builder.addAction(0, context.getString(R.string.finish_workout_action), finish)
         }
         try {
             NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build())
@@ -263,12 +281,27 @@ class WorkoutNotificationUpdater(context: Context, private val store: GymStore) 
     }
 }
 
-/** Gumb "Potvrdi seriju": označava seriju završenom kao kvačica na ekranu treninga i pokreće odmor. */
+/**
+ * Gumbi obavijesti: "Potvrdi seriju" označava seriju završenom kao kvačica na ekranu treninga i pokreće odmor,
+ * − i + mijenjaju vrijednost sljedeće serije, a "Završi trening" završava i sprema trening kao gumb Završi
+ * (`FinishWorkoutIntent` na iOS-u). Zdravlje, sat, podsjetnici i widgeti prate spremanje preko baze.
+ */
 class WorkoutActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val app = context.applicationContext as ApolonApplication
         val services = app.services
         val store = services.store
+        if (intent.action == WorkoutNotification.ACTION_FINISH) {
+            val message = when (val result = WorkoutShortcuts(store).finishActive()) {
+                ShortcutFinishResult.NoActiveWorkout -> context.getString(R.string.no_active_workout)
+                is ShortcutFinishResult.LedByWatch -> context.getString(R.string.workout_led_by_watch_finish)
+                is ShortcutFinishResult.NothingCompleted -> context.getString(R.string.nothing_completed_to_save)
+                is ShortcutFinishResult.Finished -> context.getString(R.string.workout_saved, result.session.name)
+            }
+            app.workoutNotifications.refresh(force = true)
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            return
+        }
         val id = intent.getStringExtra(WorkoutNotification.EXTRA_SET_ID)?.let { runCatching { UUID.fromString(it) }.getOrNull() }
         val session = store.activeSession()?.takeIf { it.state == SessionState.ACTIVE }
         val set = session?.exercises?.flatMap { it.sets }?.firstOrNull { it.id == id }

@@ -163,6 +163,11 @@ private fun SettingsPage(services: AppServices, category: SettingsCategory, onBa
         ProgramRecommendationScreen(services, onClose = { showsRecommendation = false })
         return
     }
+    var showsDiagnostics by rememberSaveable { mutableStateOf(false) }
+    if (showsDiagnostics) {
+        DiagnosticsScreen(onClose = { showsDiagnostics = false })
+        return
+    }
     BackHandler(onBack = onBack)
     Scaffold(
         topBar = {
@@ -211,6 +216,11 @@ private fun SettingsPage(services: AppServices, category: SettingsCategory, onBa
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.privacy_policy)) },
                         modifier = Modifier.clickable { runCatching { uriHandler.openUri(privacyUrl) } },
+                    )
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.diagnostics)) },
+                        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null) },
+                        modifier = Modifier.clickable { showsDiagnostics = true },
                     )
                 }
             }

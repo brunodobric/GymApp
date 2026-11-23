@@ -99,6 +99,7 @@ fun RootScreen(
     // Zahtjevi koje Povijest i Statistika otvaraju kad stignu (dodir na widget).
     var historyRequest by remember { mutableStateOf<OpenRequest?>(null) }
     var bodyRequest by remember { mutableStateOf<OpenRequest?>(null) }
+    var overviewRequest by remember { mutableStateOf<OpenRequest?>(null) }
     val emptyName = stringResource(R.string.workout_default_name)
     // Dodir na widget otvara dio aplikacije iz poveznice, kao `onOpenURL` na iOS-u (docs/widgeti.md).
     LaunchedEffect(widgetLink) {
@@ -177,7 +178,10 @@ fun RootScreen(
                         onOpenWorkout = { showsWorkout = true },
                         onOpenSettings = { showsSettings = true },
                         workoutShown = showsWorkout,
-                        onOpenStatistics = { selected = Section.STATISTICS },
+                        onOpenOverview = { period ->
+                            selected = Section.STATISTICS
+                            overviewRequest = OpenRequest(period.raw)
+                        },
                         onOpenSession = { session ->
                             selected = Section.HISTORY
                             historyRequest = OpenRequest(session.id.toString())
@@ -190,7 +194,13 @@ fun RootScreen(
                     Section.HISTORY -> HistoryScreen(services, historyRequest, onRequestHandled = { historyRequest = null })
                     Section.SCHEDULES -> SchedulesScreen(services)
                     Section.EXERCISES -> ExercisesScreen(services)
-                    Section.STATISTICS -> StatisticsScreen(services, bodyRequest, onRequestHandled = { bodyRequest = null })
+                    Section.STATISTICS -> StatisticsScreen(
+                        services,
+                        bodyRequest,
+                        onRequestHandled = { bodyRequest = null },
+                        overviewRequest = overviewRequest,
+                        onOverviewHandled = { overviewRequest = null },
+                    )
                 }
             }
         }

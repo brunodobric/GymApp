@@ -83,6 +83,7 @@ import com.brunodobric.gymapp.catalog.Equipment
 import com.brunodobric.gymapp.catalog.ExerciseSearch
 import com.brunodobric.gymapp.catalog.ExerciseSummary
 import com.brunodobric.gymapp.catalog.Mechanic
+import com.brunodobric.gymapp.model.DeviceRole
 import com.brunodobric.gymapp.model.SessionExercise
 import com.brunodobric.gymapp.model.exerciseNotes
 import com.brunodobric.gymapp.model.SetKind
@@ -386,6 +387,14 @@ fun WorkoutScreen(services: AppServices, onClose: () -> Unit) {
         ) {
             item(key = "progress") {
                 Column(Modifier.padding(horizontal = 16.dp).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    // Trening pokrenut na satu: sat ga vodi i završava, a mobitel prati stanje (kao na iOS-u).
+                    if (session.controllingDevice == DeviceRole.WATCH) {
+                        Text(
+                            "⌚ " + stringResource(R.string.workout_led_by_watch),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
                     Text(
                         stringResource(R.string.sets_progress, completedCount, totalCount),
                         style = MaterialTheme.typography.labelLarge,

@@ -183,3 +183,46 @@ fun StatisticsEngine.periodVolume(
     }
     return VolumeComparison.of(buckets)
 }
+
+/**
+ * Promjene brojki prema razdoblju prije, za pločice sažetka u Pregledu (kao `OverviewSummaryCard` na iOS-u).
+ * Null znači da se promjena ne prikazuje: nema razdoblja prije, nema razlike ili je razlika premala.
+ */
+object PeriodChange {
+    /** Razlika u broju treninga; null kad je ista. */
+    fun count(now: Int, before: Int?): Int? = before?.let { now - it }?.takeIf { it != 0 }
+
+    /** Razlika u sekundama; null kad je manja od minute. */
+    fun duration(now: Double, before: Double?): Double? = before?.let { now - it }?.takeIf { kotlin.math.abs(it) >= 60 }
+
+    /** Relativna promjena (0,1 = +10 %); null bez vrijednosti prije, s nulom prije ili kad je ista. */
+    fun percent(now: Int, before: Int?): Double? {
+        if (before == null || before <= 0 || now == before) return null
+        return (now - before).toDouble() / before
+    }
+}
+
+/** Kretanje po razdobljima u Pregledu: najviše [OLDEST_YEARS] unatrag, a naprijed najdalje do danas. */
+object OverviewNavigation {
+    const val OLDEST_YEARS = 10L
+
+    /** Može li se na razdoblje prije: početak prikazanog razdoblja je mlađi od deset godina. */
+    fun canGoBack(period: OverviewPeriod, anchor: Instant, now: Instant, calendar: StatsCalendar = StatsCalendar.system()): Boolean =
+        period.interval(anchor, calendar).start > calendar.addYears(now, -OLDEST_YEARS)
+
+    /** Je li prikazano razdoblje tekuće (sadrži `now`), pa naprijed nema kamo. */
+    fun isCurrent(period: OverviewPeriod, anchor: Instant, now: Instant, calendar: StatsCalendar = StatsCalendar.system()): Boolean {
+        val interval = period.interval(anchor, calendar)
+        return now >= interval.start && now < interval.end
+    }
+
+    /** Datum u razdoblju za `step` razdoblja dalje; naprijed se ne ide preko `now`. */
+    fun shift(period: OverviewPeriod, anchor: Instant, step: Int, now: Instant, calendar: StatsCalendar = StatsCalendar.system()): Instant {
+        val shifted = period.shift(anchor, step, calendar)
+        return if (shifted > now) now else shifted
+    }
+
+    /** Rekordi postavljeni u razdoblju (rekord nosi početak svog treninga), od najnovijeg kao na ulazu. */
+    fun records(records: List<RecordEntry>, interval: DateInterval): List<RecordEntry> =
+        records.filter { it.date >= interval.start && it.date < interval.end }
+}
