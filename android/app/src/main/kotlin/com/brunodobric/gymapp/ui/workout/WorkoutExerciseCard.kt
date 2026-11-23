@@ -115,11 +115,30 @@ internal fun WorkoutExerciseCard(
     val sets = exercise.orderedSets
     val done = sets.count { it.isCompleted }
     val allDone = sets.isNotEmpty() && done == sets.size
+    /** Oznaka gotove vježbe samo u treningu, ne u uređivanju povijesti gdje su sve serije završene. */
+    val isDone = allDone && tracksProgress
     val current = if (tracksProgress) sets.firstOrNull { !it.isCompleted } else null
     Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         Column(Modifier.padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = if (isOpen) 8.dp else 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ExerciseRowThumbnail(exercise.exerciseName, posterPath, onClick = actions.onShowInfo)
+                // Gotova vježba: prigušena sličica sa zelenom kvačicom u kutu, kao na iOS-u.
+                Box {
+                    ExerciseRowThumbnail(
+                        exercise.exerciseName,
+                        posterPath,
+                        modifier = if (isDone) Modifier.alpha(0.55f) else Modifier,
+                        onClick = actions.onShowInfo,
+                    )
+                    if (isDone) {
+                        Box(
+                            Modifier.align(Alignment.BottomEnd).padding(2.dp).size(20.dp).clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.success),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(Icons.Filled.Check, contentDescription = null, Modifier.size(14.dp), tint = Color.White)
+                        }
+                    }
+                }
                 Column(Modifier.weight(1f).clickable(onClick = actions.onToggleOpen)) {
                     if (exercise.supersetGroupId != null) {
                         Text(
@@ -134,12 +153,13 @@ internal fun WorkoutExerciseCard(
                         if (allDone) {
                             Icon(Icons.Filled.Check, contentDescription = null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.success)
                         }
+                        val progress = stringResource(R.string.sets_progress, done, sets.size)
                         Text(
-                            stringResource(R.string.sets_progress, done, sets.size),
+                            if (isDone) "${stringResource(R.string.done)} · $progress" else progress,
                             style = MaterialTheme.typography.bodySmall,
                             color = if (allDone) MaterialTheme.colorScheme.success else MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        targetText(exercise)?.let { target ->
+                        if (!isDone) targetText(exercise)?.let { target ->
                             Text(
                                 "· $target",
                                 style = MaterialTheme.typography.bodySmall,
@@ -147,7 +167,7 @@ internal fun WorkoutExerciseCard(
                             )
                         }
                     }
-                    loadChangeText(exercise, unit)?.let { change ->
+                    if (!isDone) loadChangeText(exercise, unit)?.let { change ->
                         Text(
                             change,
                             style = MaterialTheme.typography.bodySmall,
