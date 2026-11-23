@@ -3,19 +3,523 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Apolon</title>
+  <title>Apolon: dnevnik treninga za iPhone, iPad i Apple Watch</title>
+  <meta name="description" content="Apolon je dnevnik treninga za teretanu. Seriju upišeš u nekoliko dodira, a prošli rezultat vidiš u istom retku. Bez računa, oglasa i praćenja.">
+  <link rel="canonical" href="https://brunodobric.github.io/GymApp/">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0B2140">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="hr_HR">
+  <meta property="og:title" content="Apolon: dnevnik treninga">
+  <meta property="og:description" content="Seriju upišeš u nekoliko dodira, a prošli rezultat vidiš u istom retku. Za iPhone, iPad i Apple Watch, bez računa i bez oglasa.">
+  <meta property="og:url" content="https://brunodobric.github.io/GymApp/">
+  <meta property="og:image" content="https://brunodobric.github.io/GymApp/assets/ikona.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Apolon",
+    "description": "Dnevnik treninga za teretanu, za iPhone, iPad i Apple Watch.",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "iOS, iPadOS, watchOS",
+    "inLanguage": ["hr", "en"]
+  }
+  </script>
   <style>
-    :root { color-scheme: light dark; }
-    body { margin: 0; font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; }
-    main { max-width: 680px; margin: 0 auto; padding: 48px 16px; }
+    /* Boje su paleta aplikacije (docs/DIZAJN.md, odjeljak Boja). Bez vanjskih fontova i resursa. */
+    :root {
+      color-scheme: light dark;
+      --bg: #F7F8F8; --band: #E6E9E8; --text: #06141B; --muted: #4A5C6A;
+      --line: #CCD0CF; --accent: #253745; --on-accent: #FFFFFF;
+      --navy-1: #152F50; --navy-2: #061A3A;
+      --green: #30B158; --orange: #F08A24;
+      --rounded: ui-rounded, "SF Pro Rounded", "Inter Display", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #06141B; --band: #11212D; --text: #E6E9E8; --muted: #9BA8AB;
+        --line: #253745; --accent: #CCD0CF; --on-accent: #06141B;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 var(--sans); }
+    h1, h2, h3 { font-family: var(--rounded); font-weight: 700; line-height: 1.12; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+    h1 { font-size: clamp(38px, 6.2vw, 68px); }
+    h2 { font-size: clamp(28px, 3.8vw, 42px); }
+    h3 { font-size: 20px; line-height: 1.3; }
+    p { margin: 0; }
+    a { color: inherit; }
+    a:focus-visible, summary:focus-visible { outline: 3px solid #6FA3FF; outline-offset: 3px; border-radius: 6px; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .eyebrow { font: 700 13px/1 var(--rounded); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+    .lead { font-size: clamp(18px, 1.7vw, 21px); color: var(--muted); max-width: 34em; }
+    .skip { position: absolute; left: -999px; }
+    .skip:focus { left: 16px; top: 16px; background: #fff; color: #06141B; padding: 8px 12px; border-radius: 8px; z-index: 10; }
+
+    /* Uvod: tamnoplava s ikone aplikacije, ista u svijetloj i tamnoj temi. */
+    .hero { background: linear-gradient(180deg, var(--navy-1), var(--navy-2)); color: #EEF2F8; overflow: hidden; }
+    .hero .eyebrow, .hero .lead { color: #B4C2D6; }
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 20px; padding-bottom: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; font: 700 21px/1 var(--rounded); text-decoration: none; }
+    .brand img { width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(255,255,255,.18); }
+    .top nav { display: flex; gap: 28px; font-size: 15px; }
+    .top nav a { text-decoration: none; color: #B4C2D6; padding: 8px 0; }
+    .top nav a:hover { color: #fff; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; padding-top: 56px; }
+    .hero-text { padding-bottom: 72px; }
+    .hero h1 { margin-bottom: 24px; color: #fff; }
+    .stores { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+    .store { display: inline-flex; flex-direction: column; justify-content: center; min-height: 56px; padding: 8px 22px; border-radius: 14px; text-decoration: none; font: 700 18px/1.2 var(--rounded); background: #EEF2F8; color: #061A3A; }
+    .store small { font: 600 12px/1.2 var(--sans); opacity: .75; }
+    .store.soon { background: transparent; color: #EEF2F8; border: 1.5px dashed rgba(238,242,248,.5); }
+    .store-note { margin-top: 14px; font-size: 14px; color: #B4C2D6; }
+    .hero-phone { align-self: end; display: flex; justify-content: center; }
+    .hero-phone .phone { margin-bottom: -64px; }
+
+    /* Činjenice ispod uvoda */
+    .facts { border-bottom: 1px solid var(--line); }
+    .facts ul { list-style: none; margin: 0; padding: 28px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .facts li { font-size: 15px; color: var(--muted); line-height: 1.4; }
+    .facts b { display: block; font: 700 24px/1.2 var(--rounded); color: var(--text); margin-bottom: 2px; }
+
+    section { padding: 96px 0; }
+    .band { background: var(--band); }
+    .head { max-width: 720px; margin-bottom: 48px; }
+    .head h2 { margin-bottom: 16px; }
+
+    /* Trening: popis u dva stupca s tankim crtama, bez kartica */
+    .points { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 56px; }
+    .points li { padding: 22px 0; border-top: 1px solid var(--line); }
+    .points h3 { margin-bottom: 6px; }
+    .points p { color: var(--muted); }
+
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
+    .two h2 { font-size: clamp(26px, 3vw, 34px); margin-bottom: 16px; }
+    .two p { color: var(--muted); }
+    .list { list-style: none; margin: 24px 0 0; padding: 0; }
+    .list li { padding: 12px 0; border-top: 1px solid var(--line); }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+    .tags span { font: 700 15px/1 var(--rounded); padding: 10px 14px; border-radius: 999px; background: var(--accent); color: var(--on-accent); }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .split .visual { display: flex; justify-content: center; }
+    .split h2 { margin-bottom: 16px; }
+    .split .lead { font-size: 18px; }
+    .split.flip .visual { order: 2; }
+
+    /* Privatnost */
+    .privacy { background: linear-gradient(180deg, var(--navy-1), var(--navy-2)); color: #EEF2F8; }
+    .privacy .eyebrow { color: #B4C2D6; }
+    .privacy h2 { font-size: clamp(32px, 5vw, 56px); max-width: 14em; margin-bottom: 24px; color: #fff; }
+    .privacy p { max-width: 38em; color: #D3DCE9; font-size: 19px; }
+    .privacy ul { list-style: none; padding: 0; margin: 40px 0 0; display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 12px 40px; font: 700 18px/1.3 var(--rounded); }
+    .privacy li::before { content: "Bez "; color: #8FA3BF; font-weight: 600; }
+    .privacy a { color: #fff; }
+
+    /* Uređaji */
+    .devices { margin: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 56px; }
+    .devices div { padding: 22px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 150px 1fr; gap: 16px; }
+    .devices dt { font: 700 20px/1.3 var(--rounded); }
+    .devices dd { margin: 0; color: var(--muted); }
+    .pill { display: inline-block; font: 700 11px/1 var(--rounded); letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--line); color: var(--muted); margin-top: 6px; }
+
+    /* Pitanja */
+    .faq { max-width: 760px; }
+    .faq details { border-top: 1px solid var(--line); }
+    .faq details:last-child { border-bottom: 1px solid var(--line); }
+    .faq summary { cursor: pointer; list-style: none; padding: 20px 40px 20px 0; position: relative; font: 700 19px/1.35 var(--rounded); }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after { content: "+"; position: absolute; right: 4px; top: 16px; font: 400 26px/1 var(--sans); color: var(--muted); }
+    .faq details[open] summary::after { content: "−"; }
+    .faq details p { padding: 0 40px 22px 0; color: var(--muted); }
+
+    .cta { text-align: center; }
+    .cta img { width: 96px; height: 96px; border-radius: 22px; margin-bottom: 24px; }
+    .cta h2 { margin-bottom: 12px; }
+    .cta p { color: var(--muted); }
+    .cta .stores { justify-content: center; }
+    .cta .store { background: var(--accent); color: var(--on-accent); }
+    .cta .store.soon { background: transparent; color: var(--text); border-color: var(--muted); }
+
+    footer { border-top: 1px solid var(--line); padding: 32px 0 48px; font-size: 15px; color: var(--muted); }
+    footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; }
+    footer nav { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+
+    /* Prikazi aplikacije nacrtani u CSS-u (ilustracije, ne snimke zaslona) */
+    .phone { --p-bg: #06141B; --p-card: #11212D; --p-fill: #253745; --p-text: #CCD0CF; --p-muted: #9BA8AB; --p-line: #1F303D; --p-accent: #CCD0CF; --p-on: #06141B;
+      width: 320px; flex: none; border-radius: 48px; border: 9px solid #22364A; background: var(--p-bg); color: var(--p-text);
+      padding: 14px 14px 20px; font: 13px/1.35 var(--sans); box-shadow: 0 30px 60px rgba(2, 10, 24, .35); }
+    .phone.light { --p-bg: #E6E9E8; --p-card: #F7F8F8; --p-fill: #CCD0CF; --p-text: #06141B; --p-muted: #4A5C6A; --p-line: #DDE1E0; --p-accent: #253745; --p-on: #FFFFFF; border-color: #1B2B38; }
+    .phone b, .phone strong, .num { font-family: var(--rounded); font-weight: 700; }
+    .status { display: flex; justify-content: space-between; padding: 4px 14px 12px; font: 700 13px/1 var(--rounded); }
+    .status i { width: 46px; height: 10px; border-radius: 5px; background: var(--p-text); opacity: .85; }
+    .p-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 4px 12px; }
+    .p-nav .title { text-align: center; font: 700 15px/1.2 var(--rounded); }
+    .p-nav .title small { display: block; font: 600 12px/1.3 var(--rounded); color: var(--p-muted); }
+    .p-nav .btn { background: var(--p-accent); color: var(--p-on); font: 700 13px/1 var(--rounded); padding: 8px 12px; border-radius: 999px; }
+    .p-nav .chev { width: 28px; color: var(--p-muted); font-size: 18px; }
+    .p-card { background: var(--p-card); border-radius: 16px; margin-bottom: 10px; overflow: hidden; }
+    .rest { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 10px 14px; }
+    .rest small { display: block; font-size: 11px; color: var(--p-muted); }
+    .rest .num { font-size: 22px; line-height: 1; }
+    .bar { height: 5px; border-radius: 3px; background: var(--p-fill); }
+    .bar i { display: block; height: 100%; width: 58%; border-radius: 3px; background: var(--p-accent); }
+    .rest .plus { font: 700 13px/1 var(--rounded); }
+    .ex-head { padding: 12px 14px; }
+    .ex-head b, .p-label { display: block; font: 700 12px/1.3 var(--rounded); letter-spacing: .06em; text-transform: uppercase; }
+    .ex-head span { color: var(--p-muted); font-size: 12px; }
+    .set { display: grid; grid-template-columns: 22px 1fr auto 28px; gap: 10px; align-items: center; padding: 9px 14px; border-top: 1px solid var(--p-line); }
+    .set .n { width: 22px; height: 22px; border-radius: 50%; background: var(--p-fill); display: grid; place-items: center; font: 700 11px/1 var(--rounded); }
+    .set .n.z { color: var(--orange); }
+    .set .v { font: 600 16px/1 var(--rounded); }
+    .set .prev { font-size: 11px; color: var(--p-muted); }
+    .set .chk { width: 28px; height: 28px; border-radius: 8px; border: 2px solid var(--p-fill); display: grid; place-items: center; }
+    .set .chk.done { background: var(--green); border-color: var(--green); }
+    .set .chk.done::after, .set .chk.next::after { content: ""; width: 10px; height: 5px; border-left: 2.5px solid #fff; border-bottom: 2.5px solid #fff; transform: rotate(-45deg) translateY(-1px); }
+    .set .chk.next { border-color: var(--green); }
+    .set .chk.next::after { border-color: var(--green); }
+    .set.active { background: var(--p-fill); }
+    .set.active .n { background: var(--p-accent); color: var(--p-on); }
+    .phone.light .set.active { background: #DCE1E0; }
+    .ex-foot { display: flex; justify-content: space-between; padding: 11px 14px; border-top: 1px solid var(--p-line); font: 700 13px/1 var(--rounded); }
+    .ex-foot span:last-child { color: var(--orange); }
+    .ex-closed { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; }
+    .ex-closed i { color: var(--p-muted); font-style: normal; }
+    .p-actions { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 16px; }
+    .p-actions span { text-align: center; padding: 13px 16px; border-radius: 12px; font: 700 14px/1 var(--rounded); background: var(--p-fill); }
+    .p-actions span:first-child { background: var(--p-accent); color: var(--p-on); }
+
+    .p-title { font: 700 26px/1.1 var(--rounded); padding: 2px 6px 2px; }
+    .p-sub { color: var(--p-muted); padding: 0 6px 12px; }
+    .p-pad { padding: 14px; }
+    .p-label { color: var(--p-muted); margin-bottom: 10px; }
+    .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tiles div { background: var(--p-bg); border-radius: 10px; padding: 10px; font-size: 11px; color: var(--p-muted); }
+    .tiles b { display: block; font-size: 17px; color: var(--p-text); }
+    .up { color: #1F9A48; }
+    .muscle { display: grid; grid-template-columns: 62px 1fr 20px; gap: 10px; align-items: center; padding: 4px 0; }
+    .muscle .bar { height: 8px; border-radius: 4px; }
+    .muscle .bar i { border-radius: 4px; }
+    .muscle b { text-align: right; }
+    .pr { display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--p-line); }
+    .pr:first-of-type { border-top: 0; padding-top: 0; }
+    .pr span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); margin-right: 8px; }
+
+    .watch { width: 236px; flex: none; border-radius: 62px; border: 9px solid #3B4650; background: #000; color: #fff; padding: 22px 20px 20px; font: 13px/1.3 var(--sans); position: relative; box-shadow: 0 30px 60px rgba(2, 10, 24, .3); }
+    .watch::after { content: ""; position: absolute; right: -19px; top: 64px; width: 10px; height: 44px; border-radius: 4px; background: #3B4650; }
+    .w-top { display: flex; justify-content: space-between; font: 600 14px/1 var(--rounded); }
+    .w-top .t { color: #FFC700; }
+    .w-top .hr { color: #FF453A; margin-left: 6px; }
+    .w-label { font: 700 16px/1.2 var(--rounded); color: #CCD0CF; margin-top: 8px; }
+    .ring { position: relative; width: 112px; height: 112px; margin: 8px auto; }
+    .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 32px; }
+    .w-next { text-align: center; color: #9BA8AB; font-size: 12px; }
+    .w-next b { display: block; color: #fff; font-size: 15px; }
+    .w-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
+    .w-btns span { background: #1A2C39; color: #CCD0CF; border-radius: 999px; padding: 9px 0; text-align: center; font: 700 12px/1 var(--rounded); }
+
+    @media (max-width: 900px) {
+      section { padding: 64px 0; }
+      .top nav { display: none; }
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; padding-top: 44px; }
+      .hero-text { padding-bottom: 0; }
+      .hero-phone .phone { margin-bottom: -96px; }
+      .facts ul { grid-template-columns: 1fr 1fr; }
+      .points, .two, .split, .devices { grid-template-columns: 1fr; }
+      .two { gap: 56px; }
+      .split { gap: 40px; }
+      .split.flip .visual { order: 0; }
+      .privacy ul { grid-template-columns: 1fr 1fr; }
+      .head { margin-bottom: 32px; }
+    }
+    @media (max-width: 420px) {
+      .wrap { padding-left: 16px; padding-right: 16px; }
+      .phone { width: 100%; max-width: 320px; }
+      .devices div { grid-template-columns: 1fr; gap: 4px; }
+      .store { flex: 1 1 100%; }
+    }
   </style>
 </head>
 <body>
-<main>
-  <h1>Apolon</h1>
-  <p>Dnevnik treninga za iPhone, iPad i Apple Watch.</p>
-  <p><a href="podrska/">Podrška</a> · <a href="privacy/">Pravila privatnosti</a></p>
-  <p lang="en"><a href="support/">Support</a> · <a href="privacy/en/">Privacy policy</a></p>
+<a class="skip" href="#sadrzaj">Preskoči na sadržaj</a>
+
+<header class="hero">
+  <div class="wrap top">
+    <a class="brand" href="./" aria-label="Apolon, početna">
+      <img src="assets/ikona.png" alt="" width="40" height="40">Apolon
+    </a>
+    <nav aria-label="Glavna navigacija">
+      <a href="#trening">Trening</a>
+      <a href="#napredak">Napredak</a>
+      <a href="#sat">Apple Watch</a>
+      <a href="#privatnost">Privatnost</a>
+      <a href="#pitanja">Pitanja</a>
+    </nav>
+  </div>
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <p class="eyebrow">Dnevnik treninga za teretanu</p>
+      <h1>Zapiši seriju i vrati se šipki.</h1>
+      <p class="lead">Seriju upišeš u nekoliko dodira, a ono što si radio prošli put vidiš u istom retku. Na iPhoneu, iPadu i Apple Watchu, bez računa i bez oglasa.</p>
+      <!--
+        POVEZNICE NA TRGOVINE: aplikacija još nije objavljena.
+        Kad bude u App Storeu, zamijeni <span class="store soon">…</span> s:
+        <a class="store" href="https://apps.apple.com/app/idXXXXXXXXXX"><small>Preuzmi na</small>App Storeu</a>
+        Isto vrijedi za Google Play i za gumbe na dnu stranice.
+      -->
+      <div class="stores">
+        <span class="store soon"><small>Uskoro na</small>App Storeu</span>
+        <span class="store soon"><small>Android verzija</small>u izradi</span>
+      </div>
+      <p class="store-note">Apolon još nije u trgovinama. Poveznice za preuzimanje dolaze ovdje.</p>
+    </div>
+
+    <div class="hero-phone" role="img" aria-label="Prikaz treninga u tijeku: tajmer odmora, serije potiska s klupe s prošlim rezultatima i gumb Završi seriju">
+      <div class="phone" aria-hidden="true">
+        <div class="status"><span>9:41</span><i></i></div>
+        <div class="p-nav">
+          <span class="chev">⌄</span>
+          <span class="title">Push dan<small>32:15</small></span>
+          <span class="btn">Završi</span>
+        </div>
+        <div class="p-card rest">
+          <div><small>Odmor</small><span class="num">1:24</span></div>
+          <div class="bar"><i></i></div>
+          <span class="plus">+10 s</span>
+        </div>
+        <div class="p-card">
+          <div class="ex-head"><b>Potisak s klupe</b><span>Prošli put 80 kg × 8 · cilj 82,5 kg</span></div>
+          <div class="set"><span class="n z">Z</span><span class="v">60 kg × 10</span><span></span><span class="chk done"></span></div>
+          <div class="set"><span class="n">1</span><span class="v">80 kg × 8</span><span></span><span class="chk done"></span></div>
+          <div class="set active"><span class="n">2</span><span class="v">82,5 kg × 8</span><span class="prev">80 × 8</span><span class="chk next"></span></div>
+          <div class="set"><span class="n">3</span><span class="v">82,5 kg × 8</span><span class="prev">80 × 8</span><span class="chk"></span></div>
+          <div class="ex-foot"><span>+ Dodaj seriju</span><span>Zagrijavanje</span></div>
+        </div>
+        <div class="p-card ex-closed">
+          <div class="ex-head" style="padding:0"><b>Kosi potisak bučicama</b><span>0 od 3 serije · 26 kg × 10</span></div><i>⌄</i>
+        </div>
+        <div class="p-actions"><span>Završi seriju</span><span>Preskoči</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="sadrzaj">
+  <div class="facts">
+    <div class="wrap">
+      <ul>
+        <li><b>Gotovo 600 vježbi</b>s animacijama i uputama korak po korak</li>
+        <li><b>3 gotova programa</b>Full Body, Upper / Lower i Push / Pull / Legs</li>
+        <li><b>Bez računa</b>nema prijave, oglasa ni praćenja</li>
+        <li><b>CSV i JSON</b>izvoz svih podataka kad god želiš</li>
+      </ul>
+    </div>
+  </div>
+
+  <section id="trening">
+    <div class="wrap">
+      <div class="head" style="padding-top:24px">
+        <p class="eyebrow">Trening</p>
+        <h2>Između dvije serije imaš minutu ili dvije. Apolon ih ne troši.</h2>
+      </div>
+      <ul class="points">
+        <li><h3>Prošli put u istom retku</h3><p>Uz svaku seriju stoji što si napravio zadnji put i prijedlog težine i ponavljanja za sljedeću.</p></li>
+        <li><h3>Odmor kreće sam</h3><p>Tajmer se pokreće čim označiš seriju. Treba ti malo više? +10 i −10 sekundi su na jedan dodir.</p></li>
+        <li><h3>Superserije, zagrijavanje, RPE ili RIR</h3><p>Zagrijavanje se vodi odvojeno od radnih serija, a napor bilježiš onako kako si navikao.</p></li>
+        <li><h3>Kalkulator ploča</h3><p>Upišeš šipku i ploče koje tvoja teretana ima, a Apolon pokaže što staviti na svaku stranu.</p></li>
+        <li><h3>Svaka vrsta vježbe</h3><p>S težinom, s vlastitom težinom, s dodatnim teretom, uz pomoć ili na trajanje.</p></li>
+        <li><h3>Prekinut trening se nastavlja</h3><p>Poziv usred serije ili ugašen mobitel ne brišu ništa. Trening te čeka tamo gdje je stao.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="band" id="plan">
+    <div class="wrap two">
+      <div>
+        <p class="eyebrow">Plan</p>
+        <h2>Kreni s gotovim programom ili složi svoj</h2>
+        <p>Raspored zna koji je trening sljedeći, pa na Početnoj samo dodirneš Započni.</p>
+        <div class="tags"><span>Full Body</span><span>Upper / Lower</span><span>Push / Pull / Legs</span></div>
+        <ul class="list">
+          <li>Vlastiti rasporedi s ciklusima i danima odmora</li>
+          <li>Podsjetnici na fiksne dane ili fleksibilno, kad ti odgovara</li>
+          <li>Izmjena samo za trenutni ciklus, bez diranja plana</li>
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow">Katalog vježbi</p>
+        <h2>Gotovo 600 vježbi, svaka s animacijom</h2>
+        <p>Nisi siguran kako se vježba izvodi? Uz animaciju su upute korak po korak i mišići koje vježba radi.</p>
+        <ul class="list">
+          <li>Pretraga i filteri po mišićima, opremi i vrsti pokreta</li>
+          <li>Upute dostupne i usred treninga, bez izlaska iz njega</li>
+          <li>Vlastite vježbe sa slikom, za sve čega u katalogu nema</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="napredak">
+    <div class="wrap split">
+      <div class="visual" role="img" aria-label="Prikaz pregleda tjedna: tri od tri treninga, tvrde serije, serije po mišiću i rekordi tjedna">
+        <div class="phone light" aria-hidden="true">
+          <div class="status"><span>9:41</span><i></i></div>
+          <div class="p-title">Tjedan</div>
+          <div class="p-sub">2. – 8. studenoga</div>
+          <div class="p-card p-pad">
+            <span class="p-label">Sažetak</span>
+            <div class="tiles">
+              <div><b>3 od 3</b>treninga · cilj ispunjen</div>
+              <div><b>3 h 15 min</b>ukupno <span class="up">+20 min</span></div>
+              <div><b>52</b>tvrde serije <span class="up">+8 %</span></div>
+              <div><b>2</b>nova rekorda</div>
+            </div>
+          </div>
+          <div class="p-card p-pad">
+            <span class="p-label">Serije po mišiću</span>
+            <div class="muscle"><span>Prsa</span><div class="bar"><i style="width:55%"></i></div><b>11</b></div>
+            <div class="muscle"><span>Leđa</span><div class="bar"><i style="width:70%"></i></div><b>14</b></div>
+            <div class="muscle"><span>Noge</span><div class="bar"><i style="width:60%"></i></div><b>12</b></div>
+            <div class="muscle"><span>Ramena</span><div class="bar"><i style="width:30%"></i></div><b>6</b></div>
+          </div>
+          <div class="p-card p-pad">
+            <span class="p-label">Rekordi tjedna</span>
+            <div class="pr"><span>Zgib</span><b>+5 kg × 6</b></div>
+            <div class="pr"><span>Veslanje</span><b>70 kg × 10</b></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow">Napredak</p>
+        <h2>Vidiš što raste, a što stoji</h2>
+        <p class="lead">Brojke iz treninga slažu se u pregled tjedna, mjeseca i godine, bez tablica koje moraš voditi sam.</p>
+        <ul class="list">
+          <li>Osobni rekordi: težina, volumen, ponavljanja, trajanje i udaljenost</li>
+          <li>Procjena 1RM i graf napretka za svaku vježbu</li>
+          <li>Volumen po mišićima, učestalost treninga i karta opterećenja tijela</li>
+          <li>Mjere tijela, svaka sa svojim grafom</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="sat">
+    <div class="wrap split flip">
+      <div class="visual" role="img" aria-label="Prikaz odmora na Apple Watchu: odbrojavanje 1:14, puls i sljedeća serija">
+        <div class="watch" aria-hidden="true">
+          <div class="w-top"><span><span class="t">0:37</span><span class="hr">♥</span> 62</span><span>13:11</span></div>
+          <div class="w-label">Odmor</div>
+          <div class="ring">
+            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="#253745" stroke-width="7"/><circle cx="50" cy="50" r="44" fill="none" stroke="#CCD0CF" stroke-width="7" stroke-linecap="round" stroke-dasharray="276" stroke-dashoffset="50"/></svg>
+            <span class="num">1:14</span>
+          </div>
+          <div class="w-next">Sljedeće: Potisak s klupe<b>77,5 kg × 8</b></div>
+          <div class="w-btns"><span>−10 s</span><span>▶▏</span><span>+10 s</span></div>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow">Apple Watch</p>
+        <h2>Mobitel može ostati u torbi</h2>
+        <p class="lead">Seriju označiš na zapešću, a sat odbrojava odmor i pokaže što je sljedeće.</p>
+        <ul class="list">
+          <li>Serije i odmor sa sata, s pulsom i kalorijama</li>
+          <li>Komplikacije za sljedeći trening i odmor koji traje</li>
+          <li>Live Activity na iPhoneu dok treniraš sa satom</li>
+          <li>Treninzi se spremaju u Zdravlje i zatvaraju Activity prstenove</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="privacy" id="privatnost">
+    <div class="wrap">
+      <p class="eyebrow">Privatnost</p>
+      <h2>Tvoji treninzi ostaju kod tebe.</h2>
+      <p>Podaci su na tvojim uređajima i u tvom iCloudu, a podaci iz Zdravlja ne napuštaju uređaj. Sve možeš izvesti u CSV ili JSON, ili obrisati u Postavkama. Detalji su u <a href="privacy/">pravilima privatnosti</a>.</p>
+      <ul>
+        <li>računa</li>
+        <li>oglasa</li>
+        <li>analitike</li>
+        <li>praćenja</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="uredaji">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Uređaji</p>
+        <h2>Jedan dnevnik na svim tvojim uređajima</h2>
+        <p class="lead">Sinkronizacija ide preko tvog iClouda, pa trening upisan na satu čeka na iPhoneu i iPadu.</p>
+      </div>
+      <dl class="devices">
+        <div><dt>iPhone</dt><dd>Cijela aplikacija, widgeti na početnom i zaključanom zaslonu i kontrola „Započni trening”.</dd></div>
+        <div><dt>iPad</dt><dd>Bočna traka, više stupaca i veći grafovi za pregled napretka i slaganje rasporeda.</dd></div>
+        <div><dt>Apple Watch</dt><dd>Trening sa zapešća, puls i kalorije, komplikacije na brojčaniku.</dd></div>
+        <div><dt>Android<br><span class="pill">U izradi</span></dt><dd>Verzija za Android mobitele je u izradi. Izvoz u CSV i JSON isti je na obje platforme.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="band" id="pitanja">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Pitanja</p>
+        <h2>Prije nego što ga isprobaš</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>Trebam li račun?</summary>
+          <p>Ne. Apolon nema račun ni prijavu. Podaci se spremaju na uređaj, a ako uključiš sinkronizaciju, i u tvoj iCloud.</p>
+        </details>
+        <details>
+          <summary>Mogu li ga koristiti bez Apple Watcha?</summary>
+          <p>Možeš. Cijeli trening vodiš na iPhoneu, a sat je dodatak za one koji ne žele vaditi mobitel između serija.</p>
+        </details>
+        <details>
+          <summary>Kako prenijeti podatke na novi uređaj?</summary>
+          <p>Prijavi se istim Apple računom i uključi iCloud za Apolon. Možeš i izvesti JSON kopiju u Postavke &gt; Podaci i uvesti je na novom uređaju.</p>
+        </details>
+        <details>
+          <summary>Što ako želim otići s Apolona?</summary>
+          <p>Sve treninge izvezeš u CSV ili JSON u bilo kojem trenutku. Podatke možeš i obrisati: Postavke &gt; Podaci &gt; Obriši sve podatke briše ih s uređaja i iz iClouda.</p>
+        </details>
+        <details>
+          <summary>Kada izlazi i hoće li biti verzije za Android?</summary>
+          <p>Apolon još nije u App Storeu. Verzija za Android je u izradi, a datum izlaska nije određen ni za jednu platformu.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap">
+      <img src="assets/ikona.png" alt="Ikona aplikacije Apolon" width="96" height="96">
+      <h2>Apolon stiže na App Store</h2>
+      <p>Za iPhone, iPad i Apple Watch.</p>
+      <div class="stores">
+        <span class="store soon"><small>Uskoro na</small>App Storeu</span>
+        <span class="store soon"><small>Android verzija</small>u izradi</span>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Bruno Dobrić · Apolon</span>
+    <nav aria-label="Podnožje">
+      <a href="podrska/">Podrška</a>
+      <a href="privacy/">Pravila privatnosti</a>
+      <a href="support/" lang="en">Support</a>
+      <a href="privacy/en/" lang="en">Privacy policy</a>
+    </nav>
+  </div>
+</footer>
 </body>
 </html>
