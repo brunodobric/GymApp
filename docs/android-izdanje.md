@@ -45,6 +45,8 @@ AAB i APK s MoveKit sadržajem dijele se samo kroz Play Console i poimence odabr
 
 ## 4. Play Console: postavljanje aplikacije
 
+**Račun:** organizacija (D-U-N-S broj i provjera tvrtke). Naziv programera na Playu je naziv tvrtke, a adresa i kontakt tvrtke su javni na stranici aplikacije.
+
 **Nova aplikacija:** naziv Apolon, zadani jezik hrvatski (hr), aplikacija (ne igra), besplatna.
 
 **Glavni unos u trgovini** (Grow > Store presence > Main store listing): tekstovi iz `PlayStore/metadata/<jezik>/` (`title.txt`, `short_description.txt`, `full_description.txt`), ikona `PlayStore/graphics/icon-512.png`, grafika `PlayStore/graphics/feature-graphic-<jezik>.png` (1024 × 500), snimke zaslona mobitela (barem 2, preporuka 4 do 8, uspravno 9:16) i sata (barem 1, kvadrat, npr. 384 × 384, bez okvira sata). Engleski se dodaje kao prijevod (en-US).
@@ -112,8 +114,8 @@ Aplikacija na satu za vrijeme treninga drži foreground service vrste `health` (
 ## 5. Testiranje i produkcija
 
 1. **Interno testiranje** (do 100 testera po e-mailu, bez pregleda): prvi upload, provjera da se aplikacija i sat instaliraju iz Playa, da klipovi stižu (paket klipova) i da se mobitel i sat vide.
-2. **Zatvoreno testiranje:** novi osobni račun programera mora prije produkcije imati **barem 12 testera prijavljenih neprekidno 14 dana**. Testeri se dodaju kao popis e-mailova ili Google grupa i moraju prihvatiti poziv (opt-in) i instalirati aplikaciju. Brojanje kreće kad je 12 testera prijavljeno; tko odustane, ne broji se.
-3. **Zahtjev za produkciju** (Dashboard > Apply for production): upitnik o testiranju (tko su testeri, što su prijavili, što je ispravljeno). Google odgovara obično za nekoliko dana.
+2. **Zatvoreno testiranje (preporuka):** račun programera je račun organizacije (Bruno, 27. 11.), pa pravilo za nove osobne račune (barem 12 testera neprekidno 14 dana prije produkcije) ne vrijedi. Zatvoreni test s nekoliko testera ipak se preporučuje prije produkcije, posebno za sat i obavijesti na Samsungu.
+3. **Zahtjev za produkciju** ne treba za račun organizacije: izdanje se šalje izravno na pregled u produkcijsku stazu.
 4. **Produkcija:** postupno izdanje (npr. 20 %, pa 100 %), zemlje: sve.
 
 Tijekom testiranja svako novo izdanje dobiva veći `apolon.versionCode`.
