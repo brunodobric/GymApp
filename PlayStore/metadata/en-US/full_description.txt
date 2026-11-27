@@ -1,0 +1,46 @@
+Apolon is a gym workout log built so that logging never gets in the way of training: you log a set in a few taps, and what you did last time is right there in the same row.
+
+TRAINING
+• Previous results next to every set, with suggested weight and reps for the next one
+• Rest timer starts on its own after a set, with +15 and −15 seconds
+• Ongoing workout notification: next set, rest and confirming a set from the lock screen
+• Supersets, warm-up and working sets, RPE or RIR
+• Exercises with weight, bodyweight, added weight, assistance or duration
+• Plate calculator for your bar and the plates you have
+• An interrupted workout (a call, a dead phone) picks up where it stopped
+
+SCHEDULES
+• Ready-made programs: Full Body, Upper / Lower and Push / Pull / Legs
+• Your own schedules with cycles and rest days
+• Reminders on fixed days or flexibly, when it suits you
+• Change just the current cycle without touching the plan
+
+EXERCISE CATALOG
+• Nearly 600 exercises with looping animations and step-by-step instructions
+• Search and filters by muscle, equipment and movement type
+• Your own exercises, with a photo
+
+PROGRESS
+• Personal records: weight, volume, reps, duration and distance
+• Estimated 1RM and a progress chart for every exercise
+• Volume per muscle, training frequency and a body heatmap
+• Week, month and year overview
+• Body measurements with a chart for each one
+
+WEAR OS WATCH
+• Sets and rest from your wrist, with heart rate and calories
+• Train with just your watch; the workout reaches your phone when they reconnect
+• Tile and complications for your next workout
+
+WIDGETS AND SHORTCUTS
+• Widgets for your next workout, this week, last workout, latest record and body weight
+• Quick Settings tile to start a workout
+
+HEALTH CONNECT AND DATA
+• Workouts and weight are saved to Health Connect, if you allow it
+• Cardio workouts, weight and height from Health Connect appear in your history and measurements
+• Sync between Android devices through a file you choose, for example on Google Drive
+• Export to CSV and JSON, and import from Strong and Hevy
+
+PRIVACY
+Apolon has no account, ads, analytics or tracking. Your data stays on your devices, and Health Connect data never leaves your phone.

@@ -1,0 +1,46 @@
+Apolon je dnevnik treninga za teretanu. Napravljen je da bilježenje ne smeta treningu: seriju upišeš u nekoliko dodira, a ono što si radio prošli put vidiš u istom retku.
+
+TRENING
+• Prethodni rezultati uz svaku seriju i prijedlog težine i ponavljanja za sljedeću
+• Tajmer odmora kreće sam nakon serije, uz +15 i −15 sekundi
+• Obavijest treninga u tijeku: sljedeća serija, odmor i potvrda serije sa zaključanog zaslona
+• Superserije, zagrijavanje i radne serije, RPE ili RIR
+• Vježbe s težinom, vlastitom težinom, dodatnim teretom, pomoći ili trajanjem
+• Kalkulator ploča za tvoju šipku i ploče koje imaš
+• Trening koji se prekine (poziv, ugašen mobitel) nastavlja se gdje je stao
+
+RASPOREDI
+• Gotovi programi: Full Body, Upper / Lower i Push / Pull / Legs
+• Vlastiti rasporedi s ciklusima i danima odmora
+• Podsjetnici na fiksne dane ili fleksibilno, kad ti odgovara
+• Izmjena samo za trenutni ciklus, bez diranja plana
+
+KATALOG VJEŽBI
+• Gotovo 600 vježbi s animacijama i uputama korak po korak
+• Pretraga i filteri po mišićima, opremi i vrsti pokreta
+• Vlastite vježbe sa slikom
+
+NAPREDAK
+• Osobni rekordi: težina, volumen, ponavljanja, trajanje i udaljenost
+• Procjena 1RM i graf napretka za svaku vježbu
+• Volumen po mišićima, učestalost treninga i karta opterećenja tijela
+• Pregled tjedna, mjeseca i godine
+• Mjere tijela s grafom za svaku mjeru
+
+WEAR OS SAT
+• Serije i odmor sa zapešća, s pulsom i kalorijama
+• Trening na satu i bez mobitela, stiže na mobitel kad se povežu
+• Pločica i komplikacije za sljedeći trening
+
+WIDGETI I PREČACI
+• Widgeti za sljedeći trening, tjedan, zadnji trening, rekord i težinu
+• Pločica u brzim postavkama za početak treninga
+
+HEALTH CONNECT I PODACI
+• Treninzi i težina spremaju se u Health Connect, ako to dopustiš
+• Kardio treninzi, težina i visina iz Health Connecta prikazuju se u povijesti i mjerama
+• Sinkronizacija između Android uređaja preko datoteke koju sam odabereš, npr. na Google Driveu
+• Izvoz u CSV i JSON te uvoz iz Stronga i Hevyja
+
+PRIVATNOST
+Apolon nema račun, oglase, analitiku ni praćenje. Podaci su na tvojim uređajima, a podaci iz Health Connecta ne napuštaju mobitel.

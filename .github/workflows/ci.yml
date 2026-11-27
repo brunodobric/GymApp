@@ -36,6 +36,11 @@ jobs:
           python3 -m unittest discover -s Tools/AppStore
           python3 Tools/AppStore/check_metadata.py
 
+      - name: Google Play tekstovi
+        run: |
+          python3 -m unittest discover -s Tools/PlayStore
+          python3 Tools/PlayStore/check_metadata.py
+
       - name: Testovi paketa GymKit
         run: swift test --package-path Packages/GymKit
 
