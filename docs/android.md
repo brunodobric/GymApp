@@ -426,7 +426,7 @@ Za testiranje treba barem jedan stvaran Android telefon (idealno Samsung, najče
 4. **Repozitorij:** isti (`android/`, preporuka) ili zaseban?
 5. **Ovisnosti:** dopustiti Vico i biblioteku za povlačenje redaka (uz upis licence) ili sve pisati sami?
 6. **Font:** odlučeno, Inter (OFL 1.1) na mobitelu.
-7. **Račun na Google Playu:** osobni (zatvoreno testiranje 12 testera kroz 14 dana) ili tvrtka.
+7. **Račun na Google Playu:** odlučeno, račun organizacije (Bruno, 27. 11.), pa nema obaveznog zatvorenog testiranja s 12 testera.
 
 ## 14. Prvi koraci
 
