@@ -38,4 +38,7 @@ if (hasAndroidSdk) {
     include(":app")
     // Aplikacija za Wear OS sat (Galaxy Watch, Pixel Watch), isti applicationId kao mobitel.
     include(":wear")
+    // Paket klipova MoveKit (install-time asset pack) samo kad je sadržaj pripremljen (scripts/movekit-android.sh).
+    val moveKitMedia = file("movekit/src/main/assets/movekit/Media")
+    if (moveKitMedia.listFiles()?.any { !it.name.startsWith(".") } == true) include(":movekit")
 }

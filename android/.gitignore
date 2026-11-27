@@ -6,3 +6,7 @@ local.properties
 .kotlin/
 # MoveKit sadržaj nikad ne ide u repozitorij (docs/movekit.md).
 app/src/main/assets/movekit/
+movekit/src/main/assets/
+# Ključ za potpis izdanja nikad ne ide u repozitorij (docs/android-izdanje.md).
+*.jks
+*.keystore

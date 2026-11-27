@@ -906,4 +906,8 @@
     <string name="diagnostics_hangs">Hangs</string>
     <string name="diagnostics_low_memory">Shutdowns due to low memory</string>
     <string name="diagnostics_excessive_resources">Excessive resource use</string>
+    <string name="battery_usage">Battery usage</string>
+    <string name="battery_unrestricted">Unrestricted</string>
+    <string name="battery_optimized">Optimized: end of rest may be late</string>
+    <string name="battery_footer">Some phones (such as Samsung and Xiaomi) delay notifications from apps that save battery. If the end of rest is late, tap Battery usage and under Battery in the app info choose Unrestricted.</string>
 </resources>
