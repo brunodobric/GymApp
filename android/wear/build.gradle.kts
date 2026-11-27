@@ -15,8 +15,35 @@ android {
         // Wear OS 3 (API 30) je najstariji s Health Services.
         minSdk = 30
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        // Broj verzije je u gradle.properties. Mobitel i sat dijele applicationId, pa na Google Playu trebaju
+        // različit versionCode: mobitel je apolon.versionCode × 10, a sat × 10 + 1.
+        versionCode = providers.gradleProperty("apolon.versionCode").get().toInt() * 10 + 1
+        versionName = providers.gradleProperty("apolon.versionName").get()
+    }
+
+    // Potpis izdanja (upload ključ za Google Play, docs/android-izdanje.md). Ključ nikad nije u repozitoriju: putanja
+    // i lozinke dolaze iz okoline ili iz ~/.gradle/gradle.properties. Bez njih se release gradi nepotpisan (CI).
+    val releaseKeystore = providers.gradleProperty("apolon.keystore").orElse(providers.environmentVariable("APOLON_KEYSTORE")).orNull
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = file(releaseKeystore)
+                storePassword = providers.gradleProperty("apolon.keystorePassword").orElse(providers.environmentVariable("APOLON_KEYSTORE_PASSWORD")).get()
+                keyAlias = providers.gradleProperty("apolon.keyAlias").orElse(providers.environmentVariable("APOLON_KEY_ALIAS")).getOrElse("upload")
+                keyPassword = providers.gradleProperty("apolon.keyPassword").orElse(providers.environmentVariable("APOLON_KEY_PASSWORD")).get()
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            // R8 uklanja nekorišteni kod i resurse, ali ne preimenuje klase (proguard-rules.pro): nazivi enuma i
+            // tipova zapisa spremaju se u bazu i kopiju, a stack trace u dijagnostici ostaje čitljiv.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfigs.findByName("release")?.let { signingConfig = it }
+        }
     }
 
     buildFeatures {

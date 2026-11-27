@@ -918,4 +918,8 @@
     <string name="diagnostics_hangs">Zastoji</string>
     <string name="diagnostics_low_memory">Gašenja zbog memorije</string>
     <string name="diagnostics_excessive_resources">Prekomjerno trošenje</string>
+    <string name="battery_usage">Potrošnja baterije</string>
+    <string name="battery_unrestricted">Bez ograničenja</string>
+    <string name="battery_optimized">Optimizirano: kraj odmora može zakasniti</string>
+    <string name="battery_footer">Neki mobiteli (npr. Samsung i Xiaomi) odgađaju obavijesti aplikacija koje štede bateriju. Ako kraj odmora kasni, dodirni Potrošnja baterije i u podacima o aplikaciji pod Baterija odaberi Bez ograničenja.</string>
 </resources>

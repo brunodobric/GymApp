@@ -409,6 +409,7 @@ internal fun NotificationSettingsSection(services: AppServices) {
         headlineContent = { Text(stringResource(R.string.focus_during_workout)) },
     )
     Footer(stringResource(R.string.rest_notification_footer))
+    BatteryOptimizationItem()
     if (showsFocusTip) FocusTipPage(onClose = { showsFocusTip = false })
 }
 

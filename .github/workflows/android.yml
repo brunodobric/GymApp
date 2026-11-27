@@ -42,6 +42,20 @@ jobs:
         if: hashFiles('android/app/build.gradle.kts') != ''
         run: ./gradlew :app:assembleDebug :wear:assembleDebug --console=plain
 
+      # Release build kao za Google Play: R8, AAB za mobitel i sat te paket klipova (install-time asset pack).
+      # MoveKit sadržaj nije u repozitoriju, pa paket ovdje dobiva probnu datoteku samo da se provjeri da ulazi u AAB.
+      # AAB se ne sprema: nije potpisan i nema klipove (pravi se gradi na Macu, scripts/android-izdanje.sh).
+      - name: Release AAB (provjera)
+        if: hashFiles('android/app/build.gradle.kts') != ''
+        run: |
+          mkdir -p movekit/src/main/assets/movekit/Media
+          echo probni > movekit/src/main/assets/movekit/Media/ci-probni.txt
+          ./gradlew :app:bundleRelease :wear:bundleRelease --console=plain
+          unzip -l app/build/outputs/bundle/release/app-release.aab | grep -q "movekit/assets/movekit/Media/ci-probni.txt" \
+            || { echo "Paket klipova nije u AAB-u"; unzip -l app/build/outputs/bundle/release/app-release.aab | head -50; exit 1; }
+          ls -l app/build/outputs/bundle/release/ wear/build/outputs/bundle/release/
+          rm -rf movekit/src/main/assets
+
       - name: Spremi APK
         if: hashFiles('android/app/build.gradle.kts') != ''
         uses: actions/upload-artifact@v4

@@ -15,6 +15,7 @@ iOS, iPadOS i watchOS aplikacija za bilježenje treninga. Swift + SwiftUI, Swift
 * `docs/movekit.md`: MoveKit katalog vježbi, licenca i što smije u javni repozitorij
 * `docs/widgeti.md`: widgeti, kontrola "Započni trening" i komplikacije: snimka u App Groupu i osvježavanje
 * `docs/android.md`: plan Android verzije (samo mobitel): stog, mapiranje funkcija, faze
+* `docs/android-izdanje.md`: Android izdanje: upload ključ, AAB i paket klipova, Play Console obrasci, zatvoreno testiranje
 
 Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi tipova, funkcija i varijabli su na engleskom.
 
@@ -33,6 +34,7 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 * `Packages/GymKit/`: logika bez sučelja, s unit testovima (Swift Testing)
 * `Resources/Catalog/`: javni katalog vježbi (`catalog.json`, gradi ga `Tools/CatalogBuilder`)
 * `Resources/MoveKit/`: licencirani MoveKit klipovi i upute, ne commita se (`scripts/movekit.sh`)
+* `PlayStore/`: tekstovi i grafike za Google Play (hr i en). Duljine provjerava CI.
 * `AppStore/`: tekstovi za App Store Connect (hr i en), napomena za review i snimke zaslona. Duljine provjerava CI.
 * `site/`: pravila privatnosti i podrška (GitHub Pages)
 * `android/`: Android aplikacija (Kotlin, Gradle). Čisti Kotlin moduli u `android/core/` i `android/domain/` su port GymKita s istim testovima; modul `app` se gradi samo uz Android SDK (CI: `.github/workflows/android.yml`).
@@ -55,7 +57,8 @@ Dokumentacija, komentari u kodu i commit poruke pišu se na hrvatskom. Nazivi ti
 brew install xcodegen swiftlint
 xcodegen generate                              # generira GymApp.xcodeproj
 scripts/movekit.sh                             # MoveKit klipovi i upute u build (na Macu, treba ffmpeg)
-scripts/movekit-android.sh --apk               # MoveKit klipovi, posteri i upute u Android build i debug APK (na Macu, treba Android SDK)
+scripts/movekit-android.sh --apk               # MoveKit klipovi (H.264), posteri i upute u Android build i debug APK (na Macu, treba Android SDK i ffmpeg)
+scripts/android-izdanje.sh                     # potpisani AAB mobitela i sata za Google Play (na Macu)
 scripts/testflight.sh                          # arhiva i upload za TestFlight (na Macu)
 swift test --package-path Packages/GymKit      # testovi logike
 swiftlint lint
