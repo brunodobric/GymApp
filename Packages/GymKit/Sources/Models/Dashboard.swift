@@ -5,6 +5,8 @@ import SwiftData
 /// ostaju u bazi, ali se ne prikazuju.
 public enum DashboardCardKind: String, CaseIterable, Sendable {
     case thisWeek
+    /// Streak: uzastopni tjedni s ispunjenim tjednim ciljem i koliko treninga još treba da se niz ne izgubi.
+    case streak
     /// Tekući mjesec, kao Ovaj tjedan, s prosjekom treninga tjedno; dodir otvara Pregled na mjesecu.
     case thisMonth
     /// Tekuća godina s treninzima po mjesecima; dodir otvara Pregled na godini.
@@ -17,12 +19,12 @@ public enum DashboardCardKind: String, CaseIterable, Sendable {
     public var isCompact: Bool {
         switch self {
         case .bodyWeight, .plateCalculator: true
-        case .thisWeek, .thisMonth, .thisYear, .lastWorkout: false
+        case .thisWeek, .streak, .thisMonth, .thisYear, .lastWorkout: false
         }
     }
 
     /// Vrste koje Početna dobiva na praznom početku, ovim redom.
-    public static let defaults: [DashboardCardKind] = [.thisWeek, .lastWorkout]
+    public static let defaults: [DashboardCardKind] = [.thisWeek, .streak, .lastWorkout]
 
     /// Ukinute vrste. Tjedni volumen (tonaža) je zamijenila kartica Ovaj tjedan, a sljedeći trening
     /// ponavljao je ono što već piše u kartici Započni.
@@ -120,6 +122,21 @@ public struct DashboardLayout {
             cards.insert(card, at: 0)
         }
         try renumber(cards)
+        try context.save()
+    }
+
+    /// Uvođenje kartice Streak (jednom po uređaju): postojeća Početna dobiva je odmah ispod kartice Ovaj tjedan,
+    /// a bez nje na vrhu. Početna koja je već ima i prazna Početna (puni je `seedDefaults`) se ne mijenjaju.
+    /// Ako je istodobno dodaju dva uređaja, duplikat uklanja deduplikacija.
+    public func addStreakCard() throws {
+        var all = try allCards()
+        let streak = DashboardCardKind.streak.rawValue
+        guard !all.isEmpty, !all.contains(where: { $0.kindRaw == streak }) else { return }
+        let week = all.firstIndex { $0.kindRaw == DashboardCardKind.thisWeek.rawValue }
+        let card = DashboardCard(kindRaw: streak, orderIndex: 0)
+        context.insert(card)
+        all.insert(card, at: week.map { $0 + 1 } ?? 0)
+        try renumber(all)
         try context.save()
     }
 

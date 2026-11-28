@@ -46,6 +46,8 @@ struct HomeScreen: View {
     @AppStorage("dashboard.lastWorkoutSeeded") private var defaultsSeeded = false
     /// Početna je jednom prešla na karticu Ovaj tjedan (`DashboardLayout.upgradeToWeekCard`).
     @AppStorage("dashboard.weekCardUpgraded") private var weekCardUpgraded = false
+    /// Postojeća Početna je jednom dobila karticu Streak (`DashboardLayout.addStreakCard`).
+    @AppStorage("dashboard.streakCardAdded") private var streakCardAdded = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var recovery: RecoveryPrompt?
     /// Ekran koji je otvorio widget (pregled tjedna, težina, zadnji trening), kao list preko Početne.
@@ -168,10 +170,16 @@ struct HomeScreen: View {
         return DashboardLayout.rows(kinds)
     }
 
+    /// Kartica Streak je na Početnoj: kartica Ovaj tjedan tada ne ponavlja niz tjedana.
+    private var showsStreakCard: Bool {
+        DashboardLayout.visible(dashboardCards).contains { $0.kind == .streak }
+    }
+
     @ViewBuilder
     private func cardView(_ kind: DashboardCardKind) -> some View {
         switch kind {
-        case .thisWeek: ThisWeekCard()
+        case .thisWeek: ThisWeekCard(showsStreak: !showsStreakCard)
+        case .streak: StreakCard()
         case .thisMonth: PeriodCard(period: .month)
         case .thisYear: PeriodCard(period: .year)
         case .lastWorkout:
@@ -261,9 +269,9 @@ struct HomeScreen: View {
     }
 
     /// Jednom po uređaju: prazna Početna dobiva zadane kartice, a postojeća prelazi na karticu Ovaj tjedan
-    /// (tjedni volumen postaje Ovaj tjedan, sljedeći trening se uklanja).
+    /// (tjedni volumen postaje Ovaj tjedan, sljedeći trening se uklanja) i dobiva karticu Streak.
     private func prepareCards() {
-        guard !defaultsSeeded || !weekCardUpgraded else { return }
+        guard !defaultsSeeded || !weekCardUpgraded || !streakCardAdded else { return }
         if AppServices.isSyncRunning && SyncMonitor.shared.tracker.lastImport == nil { return }
         let layout = DashboardLayout(context: context)
         do {
@@ -271,11 +279,18 @@ struct HomeScreen: View {
                 // Na praznoj Početnoj zadane kartice već imaju Ovaj tjedan, pa prijelaz nije potreban.
                 let seeded = try layout.seedDefaults()
                 defaultsSeeded = true
-                if !seeded.isEmpty { weekCardUpgraded = true }
+                if !seeded.isEmpty {
+                    weekCardUpgraded = true
+                    streakCardAdded = true
+                }
             }
             if !weekCardUpgraded {
                 try layout.upgradeToWeekCard()
                 weekCardUpgraded = true
+            }
+            if !streakCardAdded {
+                try layout.addStreakCard()
+                streakCardAdded = true
             }
         } catch {
             // Pokušava se opet pri sljedećem otvaranju Početne.

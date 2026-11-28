@@ -37,10 +37,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,6 +61,7 @@ import com.brunodobric.gymapp.stats.OverviewPeriod
 import com.brunodobric.gymapp.stats.PeriodSummary
 import com.brunodobric.gymapp.stats.StatisticsEngine
 import com.brunodobric.gymapp.stats.StatsCalendar
+import com.brunodobric.gymapp.stats.StreakStatus
 import com.brunodobric.gymapp.stats.TrainingDay
 import com.brunodobric.gymapp.stats.WeekProgress
 import com.brunodobric.gymapp.stats.periodSummary
@@ -81,6 +84,7 @@ import java.util.Locale
 /** Naslov kartice na Početnoj. */
 internal fun DashboardCardKind.title(): Int = when (this) {
     DashboardCardKind.THIS_WEEK -> R.string.card_this_week
+    DashboardCardKind.STREAK -> R.string.card_streak
     DashboardCardKind.THIS_MONTH -> R.string.card_this_month
     DashboardCardKind.THIS_YEAR -> R.string.card_this_year
     DashboardCardKind.LAST_WORKOUT -> R.string.card_last_workout
@@ -99,9 +103,19 @@ internal class DashboardActions(
 
 /** Kartica Početne prema vrsti (`cardView` na iOS-u). */
 @Composable
-internal fun DashboardCardView(services: AppServices, kind: DashboardCardKind, revision: Long, actions: DashboardActions, modifier: Modifier) {
+internal fun DashboardCardView(
+    services: AppServices,
+    kind: DashboardCardKind,
+    revision: Long,
+    actions: DashboardActions,
+    modifier: Modifier,
+    /** Kartica Streak je na Početnoj: Ovaj tjedan tada ne ponavlja niz tjedana. */
+    showsStreakCard: Boolean = false,
+) {
     when (kind) {
-        DashboardCardKind.THIS_WEEK -> ThisWeekCard(services, revision, { actions.onOpenOverview(OverviewPeriod.WEEK) }, modifier)
+        DashboardCardKind.THIS_WEEK ->
+            ThisWeekCard(services, revision, { actions.onOpenOverview(OverviewPeriod.WEEK) }, modifier, showsStreak = !showsStreakCard)
+        DashboardCardKind.STREAK -> StreakCard(services, revision, { actions.onOpenOverview(OverviewPeriod.WEEK) }, modifier)
         DashboardCardKind.THIS_MONTH -> PeriodCard(services, OverviewPeriod.MONTH, revision, { actions.onOpenOverview(OverviewPeriod.MONTH) }, modifier)
         DashboardCardKind.THIS_YEAR -> PeriodCard(services, OverviewPeriod.YEAR, revision, { actions.onOpenOverview(OverviewPeriod.YEAR) }, modifier)
         DashboardCardKind.LAST_WORKOUT -> LastWorkoutCard(services, revision, actions.onOpenSession, modifier)
@@ -136,7 +150,7 @@ private fun rememberIsCardio(services: AppServices, revision: Long): (String) ->
 
 /** Ovaj tjedan: broj treninga prema cilju, traka cilja, dani tjedna, niz tjedana i brojke. */
 @Composable
-private fun ThisWeekCard(services: AppServices, revision: Long, onClick: () -> Unit, modifier: Modifier) {
+private fun ThisWeekCard(services: AppServices, revision: Long, onClick: () -> Unit, modifier: Modifier, showsStreak: Boolean = true) {
     val locale = LocalConfiguration.current.locales[0]
     val isCardio = rememberIsCardio(services, revision)
     val goal = services.store.settings().trainingDaysPerWeek
@@ -145,7 +159,7 @@ private fun ThisWeekCard(services: AppServices, revision: Long, onClick: () -> U
         StatisticsEngine(services.store).weekProgress(goal = goal, calendar = StatsCalendar.system(locale), isCardio = isCardio)
     }
     HomeCard(stringResource(R.string.card_this_week), onClick, modifier) {
-        WeekHeader(progress)
+        WeekHeader(progress, showsStreak)
         progress.goalFraction?.let { fraction ->
             LinearProgressIndicator(progress = { fraction.toFloat() }, modifier = Modifier.fillMaxWidth(), strokeCap = StrokeCap.Round)
         }
@@ -155,7 +169,7 @@ private fun ThisWeekCard(services: AppServices, revision: Long, onClick: () -> U
 }
 
 @Composable
-internal fun WeekHeader(progress: WeekProgress) {
+internal fun WeekHeader(progress: WeekProgress, showsStreak: Boolean = true) {
     Row(verticalAlignment = Alignment.Bottom) {
         Row(Modifier.weight(1f), verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             val goal = progress.goal
@@ -171,13 +185,87 @@ internal fun WeekHeader(progress: WeekProgress) {
                 Text(stringResource(R.string.workouts_n, progress.sessions), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold)
             }
         }
-        if (progress.streakWeeks >= 2) {
+        if (showsStreak && progress.streakWeeks >= 2) {
             Text(
                 "🔥 " + stringResource(R.string.weeks_streak, progress.streakWeeks),
                 Modifier.padding(bottom = 6.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+    }
+}
+
+/**
+ * Streak (`StreakCard` na iOS-u): uzastopni tjedni s ispunjenim tjednim ciljem, treninzi ovog tjedna prema cilju
+ * i koliko ih još treba do kraja tjedna da se niz ne izgubi ([StreakStatus]). Dodir otvara Pregled na tjednu.
+ */
+@Composable
+private fun StreakCard(services: AppServices, revision: Long, onClick: () -> Unit, modifier: Modifier) {
+    val locale = LocalConfiguration.current.locales[0]
+    val isCardio = rememberIsCardio(services, revision)
+    val goal = services.store.settings().trainingDaysPerWeek
+    val today = LocalDate.now()
+    val status = remember(revision, goal, today, locale) {
+        val calendar = StatsCalendar.system(locale)
+        val now = Instant.now()
+        StreakStatus.of(StatisticsEngine(services.store).weekProgress(now = now, goal = goal, calendar = calendar, isCardio = isCardio), now, calendar)
+    }
+    val orange = Color(0xFFFF9500)
+    val resources = LocalContext.current.resources
+    HomeCard(stringResource(R.string.card_streak), onClick, modifier) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
+            // Bez niza plamen je prigušen.
+            Text("🔥", Modifier.alpha(if (status.weeks > 0) 1f else 0.35f), style = MaterialTheme.typography.headlineLarge)
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    if (status.weeks > 0) {
+                        resources.getQuantityString(R.plurals.widget_weeks_in_row, status.weeks, status.weeks)
+                    } else {
+                        stringResource(R.string.streak_start)
+                    },
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    when (status.state) {
+                        StreakStatus.State.SECURED -> stringResource(R.string.streak_secured)
+                        StreakStatus.State.AT_RISK -> resources.getQuantityString(R.plurals.streak_at_risk, status.remaining, status.remaining)
+                        StreakStatus.State.CAN_GROW -> resources.getQuantityString(R.plurals.streak_can_grow, status.remaining, status.remaining)
+                        StreakStatus.State.NOT_STARTED -> stringResource(R.string.streak_not_started)
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (status.state == StreakStatus.State.AT_RISK) orange else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        if (status.state != StreakStatus.State.SECURED) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                if (status.target <= 7) {
+                    repeat(status.target) { index ->
+                        Box(
+                            Modifier.size(10.dp).clip(CircleShape).background(
+                                if (index < status.sessions) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHighest,
+                            ),
+                        )
+                    }
+                }
+                Text(
+                    stringResource(R.string.streak_sessions_of_target, status.sessions, status.target),
+                    Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    if (status.daysLeft <= 1) {
+                        stringResource(R.string.streak_last_day)
+                    } else {
+                        resources.getQuantityString(R.plurals.streak_days_left, status.daysLeft, status.daysLeft)
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (status.isLastChance) orange else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

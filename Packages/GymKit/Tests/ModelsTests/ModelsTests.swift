@@ -380,7 +380,7 @@ struct DashboardLayoutTests {
         try layout.add(.plateCalculator)
         #expect(try layout.add(.bodyWeight) == nil)
         #expect(try kinds(layout) == [.bodyWeight, .plateCalculator])
-        #expect(try layout.availableKinds() == [.thisWeek, .thisMonth, .thisYear, .lastWorkout])
+        #expect(try layout.availableKinds() == [.thisWeek, .streak, .thisMonth, .thisYear, .lastWorkout])
     }
 
     @Test("Uklanjanje zatvara rupu u redoslijedu")
@@ -414,13 +414,38 @@ struct DashboardLayoutTests {
         #expect(try kinds(layout) == [.bodyWeight])
     }
 
-    @Test("Prazna Početna dobiva Ovaj tjedan i Zadnji trening")
+    @Test("Prazna Početna dobiva Ovaj tjedan, Streak i Zadnji trening")
     func seedsDefaultsOnEmpty() throws {
         let layout = DashboardLayout(context: try makeContext())
-        #expect(try layout.seedDefaults().count == 2)
-        #expect(try kinds(layout) == [.thisWeek, .lastWorkout])
+        #expect(try layout.seedDefaults().count == 3)
+        #expect(try kinds(layout) == [.thisWeek, .streak, .lastWorkout])
         #expect(try layout.seedDefaults().isEmpty)
-        #expect(try layout.allCards().map(\.orderIndex) == [0, 1])
+        #expect(try layout.allCards().map(\.orderIndex) == [0, 1, 2])
+    }
+
+    @Test("Streak dolazi ispod kartice Ovaj tjedan, a bez nje na vrh")
+    func addsStreakCard() throws {
+        let context = try makeContext()
+        context.insert(DashboardCard(kindRaw: "lastWorkout", orderIndex: 0))
+        context.insert(DashboardCard(kindRaw: "thisWeek", orderIndex: 1))
+        context.insert(DashboardCard(kindRaw: "bodyWeight", orderIndex: 2))
+        let layout = DashboardLayout(context: context)
+        try layout.addStreakCard()
+        #expect(try raw(layout) == ["lastWorkout", "thisWeek", "streak", "bodyWeight"])
+        #expect(try layout.allCards().map(\.orderIndex) == [0, 1, 2, 3])
+        // Drugi prolaz ništa ne mijenja.
+        try layout.addStreakCard()
+        #expect(try raw(layout) == ["lastWorkout", "thisWeek", "streak", "bodyWeight"])
+
+        let withoutWeek = try makeContext()
+        withoutWeek.insert(DashboardCard(kindRaw: "plateCalculator", orderIndex: 0))
+        let other = DashboardLayout(context: withoutWeek)
+        try other.addStreakCard()
+        #expect(try raw(other) == ["streak", "plateCalculator"])
+
+        let empty = DashboardLayout(context: try makeContext())
+        try empty.addStreakCard()
+        #expect(try empty.allCards().isEmpty)
     }
 
     @Test("Prijelaz: tjedni volumen postaje Ovaj tjedan na istom mjestu, sljedeći trening nestaje")

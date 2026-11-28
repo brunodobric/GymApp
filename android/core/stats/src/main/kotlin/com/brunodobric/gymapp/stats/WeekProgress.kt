@@ -49,6 +49,13 @@ data class WeekProgress(
      * i ovaj tjedan ako je cilj već ispunjen.
      */
     var streakWeeks: Int = 0,
+    /** Niz do prošlog tjedna, bez tekućeg ([streakLength] prošlih tjedana). */
+    var previousStreakWeeks: Int = 0,
+    /**
+     * Niz kakav bi ostao da tjedan završi bez novih treninga: veći od [previousStreakWeeks] kad je cilj
+     * ispunjen, jednak kad je tjedan bez treninga pauza, a 0 kad se niz prekida.
+     */
+    var streakIfWeekEndsNow: Int = 0,
 ) {
     /** Udio cilja (0 do 1) za traku; null bez cilja. */
     val goalFraction: Double?
@@ -97,11 +104,16 @@ data class WeekProgress(
                     if (WorkoutKind.CARDIO in mix.kinds) day.cardio = true
                 }
             }
-            progress.streakWeeks = streak(finished, week.start, progress.sessions, progress.weeklyTarget, calendar)
+            val previous = previousWeekCounts(finished, week.start, calendar)
+            val target = progress.weeklyTarget
+            progress.previousStreakWeeks = streakLength(previous, target)
+            progress.streakWeeks = if (progress.sessions >= target) progress.previousStreakWeeks + 1 else progress.previousStreakWeeks
+            progress.streakIfWeekEndsNow = streakLength(listOf(progress.sessions) + previous, target)
             return progress
         }
 
-        private fun streak(sessions: List<Session>, weekStart: Instant, current: Int, target: Int, calendar: StatsCalendar): Int {
+        /** Broj treninga po tjednu prije `weekStart`, od prošlog tjedna unatrag (najviše [STREAK_LIMIT] tjedana). */
+        private fun previousWeekCounts(sessions: List<Session>, weekStart: Instant, calendar: StatsCalendar): List<Int> {
             val counts = mutableMapOf<Instant, Int>()
             for (session in sessions) {
                 if (session.startedAt >= weekStart) continue
@@ -115,8 +127,7 @@ data class WeekProgress(
                 weeks.add(counts[start] ?: 0)
                 cursor = start
             }
-            val streak = streakLength(weeks, target)
-            return if (current >= target) streak + 1 else streak
+            return weeks
         }
 
         /** Najmanje tjedana između dvije pauze koje ne prekidaju niz. */

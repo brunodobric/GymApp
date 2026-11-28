@@ -10,6 +10,7 @@ extension DashboardCardKind {
     var title: LocalizedStringKey {
         switch self {
         case .thisWeek: "Ovaj tjedan"
+        case .streak: "Streak"
         case .thisMonth: "Ovaj mjesec"
         case .thisYear: "Ova godina"
         case .lastWorkout: "Zadnji trening"
@@ -21,6 +22,7 @@ extension DashboardCardKind {
     var symbol: String {
         switch self {
         case .thisWeek: "target"
+        case .streak: "flame.fill"
         case .thisMonth: "calendar"
         case .thisYear: "chart.bar.xaxis"
         case .lastWorkout: "clock.arrow.circlepath"
@@ -103,6 +105,9 @@ struct ProfileSetupCard: View {
 /// Tekući tjedan: odrađeni treninzi prema cilju iz onboardinga (dani tjedno), dani s vrstom treninga,
 /// tvrde serije, kardio i ukupno vrijeme te niz tjedana s ispunjenim ciljem. Dodir otvara Pregled na tekućem tjednu.
 struct ThisWeekCard: View {
+    /// Niz tjedana u kartici; skriven kad je na Početnoj i kartica Streak, da se ne ponavlja.
+    var showsStreak = true
+
     @Environment(\.modelContext) private var context
     @Environment(CatalogStore.self) private var catalogStore
     @Query private var customExercises: [CustomExercise]
@@ -178,7 +183,7 @@ struct ThisWeekCard: View {
 
     @ViewBuilder
     private func streak(_ progress: WeekProgress) -> some View {
-        if progress.streakWeeks >= 2 {
+        if showsStreak, progress.streakWeeks >= 2 {
             Label {
                 Text("\(progress.streakWeeks) tjedana zaredom")
             } icon: {

@@ -7,6 +7,9 @@ package com.brunodobric.gymapp.model
 enum class DashboardCardKind(val raw: String) {
     THIS_WEEK("thisWeek"),
 
+    /** Streak: uzastopni tjedni s ispunjenim tjednim ciljem i koliko treninga još treba da se niz ne izgubi. */
+    STREAK("streak"),
+
     /** Tekući mjesec, kao Ovaj tjedan, s prosjekom treninga tjedno. */
     THIS_MONTH("thisMonth"),
 
@@ -24,7 +27,7 @@ enum class DashboardCardKind(val raw: String) {
         fun fromRaw(raw: String): DashboardCardKind? = entries.firstOrNull { it.raw == raw }
 
         /** Vrste koje Početna dobiva na praznom početku, ovim redom. */
-        val defaults = listOf(THIS_WEEK, LAST_WORKOUT)
+        val defaults = listOf(THIS_WEEK, STREAK, LAST_WORKOUT)
 
         /** Ukinute vrste (tjedni volumen i sljedeći trening). */
         internal const val RETIRED_WEEKLY_VOLUME = "weeklyVolume"
@@ -94,6 +97,20 @@ class DashboardLayout(private val store: GymStore) {
         }
         if (!hasWeek) cards.add(0, store.insert(DashboardCard(week, 0)))
         renumber(cards)
+        store.save()
+    }
+
+    /**
+     * Uvođenje kartice Streak (jednom po uređaju): postojeća Početna dobiva je odmah ispod kartice Ovaj tjedan,
+     * a bez nje na vrhu. Početna koja je već ima i prazna Početna (puni je [seedDefaults]) se ne mijenjaju.
+     */
+    fun addStreakCard() {
+        val all = allCards().toMutableList()
+        val streak = DashboardCardKind.STREAK.raw
+        if (all.isEmpty() || all.any { it.kindRaw == streak }) return
+        val week = all.indexOfFirst { it.kindRaw == DashboardCardKind.THIS_WEEK.raw }
+        all.add(if (week >= 0) week + 1 else 0, store.insert(DashboardCard(streak, 0)))
+        renumber(all)
         store.save()
     }
 
