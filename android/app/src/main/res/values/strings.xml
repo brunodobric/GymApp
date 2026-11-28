@@ -672,6 +672,27 @@
     <string name="of_goal_workouts">od %1$d treninga</string>
     <string name="workouts_n">%1$d treninga</string>
     <string name="weeks_streak">%1$d tjedana zaredom</string>
+    <string name="card_streak">Streak</string>
+    <string name="streak_start">Započni streak</string>
+    <string name="streak_secured">Cilj ovog tjedna je ispunjen, streak je siguran.</string>
+    <string name="streak_not_started">Ispuni tjedni cilj i započni streak.</string>
+    <string name="streak_last_day">Zadnji dan tjedna</string>
+    <string name="streak_sessions_of_target">%1$d od %2$d</string>
+    <plurals name="streak_at_risk">
+        <item quantity="one">Još %d trening do kraja tjedna ili gubiš streak.</item>
+        <item quantity="few">Još %d treninga do kraja tjedna ili gubiš streak.</item>
+        <item quantity="other">Još %d treninga do kraja tjedna ili gubiš streak.</item>
+    </plurals>
+    <plurals name="streak_can_grow">
+        <item quantity="one">Još %d trening do kraja tjedna i streak raste.</item>
+        <item quantity="few">Još %d treninga do kraja tjedna i streak raste.</item>
+        <item quantity="other">Još %d treninga do kraja tjedna i streak raste.</item>
+    </plurals>
+    <plurals name="streak_days_left">
+        <item quantity="one">Još %d dan</item>
+        <item quantity="few">Još %d dana</item>
+        <item quantity="other">Još %d dana</item>
+    </plurals>
     <string name="per_week">%1$s tjedno</string>
     <string name="per_week_goal">%1$s od %2$d tjedno</string>
     <string name="total_label">Ukupno</string>

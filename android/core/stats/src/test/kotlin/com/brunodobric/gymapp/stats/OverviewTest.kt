@@ -198,6 +198,77 @@ class OverviewTest {
             assertEquals(2, WeekProgress.streakLength(listOf(3, 0, 3, 0, 3), 3))
             assertEquals(5, WeekProgress.streakLength(listOf(3, 0, 3, 3, 3, 0, 3), 3))
         }
+
+        /** Treninzi u tjednima prije tekućeg: `weeks[0]` je prošli tjedan. */
+        private fun GymStore.history(weeks: List<Int>): List<Session> = weeks.withIndex().flatMap { (index, count) ->
+            (0 until count).map { offset -> addSession(monday.plusDays(-(index + 1) * 7.0 + offset), lifts = emptyList()) }
+        }
+
+        /** Treninzi tekućeg tjedna, od ponedjeljka. */
+        private fun GymStore.thisWeek(count: Int): List<Session> =
+            (0 until count).map { addSession(monday.plusSeconds(it * 3600L), lifts = emptyList()) }
+
+        @Test
+        fun `streak - ispunjen tjedan je osiguran i ulazi u niz`() {
+            val store = newStore()
+            val progress = WeekProgress.make(store.history(listOf(3, 3)) + store.thisWeek(3), base, 3, utcMonday, isCardio)
+            assertEquals(2, progress.previousStreakWeeks)
+            assertEquals(3, progress.streakIfWeekEndsNow)
+            val status = StreakStatus.of(progress, base, utcMonday)
+            assertEquals(StreakStatus.State.SECURED, status.state)
+            assertEquals(3, status.weeks)
+            assertEquals(0, status.remaining)
+            assertTrue(!status.isLastChance)
+        }
+
+        @Test
+        fun `streak - tjedan s premalo treninga prekida niz, pa je niz u opasnosti`() {
+            val store = newStore()
+            val progress = WeekProgress.make(store.history(listOf(3, 3)) + store.thisWeek(1), base, 3, utcMonday, isCardio)
+            assertEquals(0, progress.streakIfWeekEndsNow)
+            val status = StreakStatus.of(progress, base, utcMonday)
+            assertEquals(StreakStatus.State.AT_RISK, status.state)
+            assertEquals(2, status.weeks)
+            assertEquals(1, status.sessions)
+            assertEquals(2, status.remaining)
+            // Petak: do kraja tjedna su petak, subota i nedjelja.
+            assertEquals(3, status.daysLeft)
+            assertTrue(!status.isLastChance)
+
+            val sunday = monday.plusDays(6.0).plusSeconds(10 * 3600)
+            val lastDay = StreakStatus.of(progress, sunday, utcMonday)
+            assertEquals(1, lastDay.daysLeft)
+            assertTrue(lastDay.isLastChance)
+        }
+
+        @Test
+        fun `streak - tjedan bez treninga moze biti pauza, pa niz ostaje i ne prijeti gubitkom`() {
+            val progress = WeekProgress.make(newStore().history(listOf(3, 3)), base, 3, utcMonday, isCardio)
+            assertEquals(2, progress.streakIfWeekEndsNow)
+            val status = StreakStatus.of(progress, base, utcMonday)
+            assertEquals(StreakStatus.State.CAN_GROW, status.state)
+            assertEquals(3, status.remaining)
+
+            // Pauza je bila prošli tjedan: drugi prazan tjedan zaredom prekida niz.
+            val afterPause = WeekProgress.make(newStore().history(listOf(0, 3, 3)), base, 3, utcMonday, isCardio)
+            assertEquals(2, afterPause.previousStreakWeeks)
+            assertEquals(StreakStatus.State.AT_RISK, StreakStatus.of(afterPause, base, utcMonday).state)
+        }
+
+        @Test
+        fun `streak - bez niza ispunjen cilj zapocinje niz, a bez cilja broji se jedan trening`() {
+            val store = newStore()
+            val sessions = store.history(listOf(1)) + store.thisWeek(1)
+            val status = StreakStatus.of(WeekProgress.make(sessions, base, 3, utcMonday, isCardio), base, utcMonday)
+            assertEquals(StreakStatus.State.NOT_STARTED, status.state)
+            assertEquals(0, status.weeks)
+            assertEquals(2, status.remaining)
+
+            val free = StreakStatus.of(WeekProgress.make(sessions, base, null, utcMonday, isCardio), base, utcMonday)
+            assertEquals(StreakStatus.State.SECURED, free.state)
+            assertEquals(1, free.target)
+            assertEquals(2, free.weeks)
+        }
     }
 
     @Nested

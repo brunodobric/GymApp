@@ -4,6 +4,7 @@ import com.brunodobric.gymapp.catalog.Equipment
 import com.brunodobric.gymapp.model.DashboardCardKind.BODY_WEIGHT
 import com.brunodobric.gymapp.model.DashboardCardKind.LAST_WORKOUT
 import com.brunodobric.gymapp.model.DashboardCardKind.PLATE_CALCULATOR
+import com.brunodobric.gymapp.model.DashboardCardKind.STREAK
 import com.brunodobric.gymapp.model.DashboardCardKind.THIS_MONTH
 import com.brunodobric.gymapp.model.DashboardCardKind.THIS_WEEK
 import com.brunodobric.gymapp.model.DashboardCardKind.THIS_YEAR
@@ -33,7 +34,7 @@ class DashboardLayoutTest {
         layout.add(PLATE_CALCULATOR)
         assertNull(layout.add(BODY_WEIGHT))
         assertEquals(listOf(BODY_WEIGHT, PLATE_CALCULATOR), layout.kinds())
-        assertEquals(listOf(THIS_WEEK, THIS_MONTH, THIS_YEAR, LAST_WORKOUT), layout.availableKinds())
+        assertEquals(listOf(THIS_WEEK, STREAK, THIS_MONTH, THIS_YEAR, LAST_WORKOUT), layout.availableKinds())
     }
 
     @Test
@@ -68,12 +69,31 @@ class DashboardLayoutTest {
     }
 
     @Test
-    fun `prazna Početna dobiva Ovaj tjedan i Zadnji trening`() {
+    fun `prazna Početna dobiva Ovaj tjedan, Streak i Zadnji trening`() {
         val layout = DashboardLayout(GymStore())
-        assertEquals(2, layout.seedDefaults().size)
-        assertEquals(listOf(THIS_WEEK, LAST_WORKOUT), layout.kinds())
+        assertEquals(3, layout.seedDefaults().size)
+        assertEquals(listOf(THIS_WEEK, STREAK, LAST_WORKOUT), layout.kinds())
         assertTrue(layout.seedDefaults().isEmpty())
-        assertEquals(listOf(0, 1), layout.allCards().map { it.orderIndex })
+        assertEquals(listOf(0, 1, 2), layout.allCards().map { it.orderIndex })
+    }
+
+    @Test
+    fun `Streak dolazi ispod kartice Ovaj tjedan, a bez nje na vrh`() {
+        val layout = layoutWith("lastWorkout", "thisWeek", "bodyWeight")
+        layout.addStreakCard()
+        assertEquals(listOf("lastWorkout", "thisWeek", "streak", "bodyWeight"), layout.raw())
+        assertEquals(listOf(0, 1, 2, 3), layout.allCards().map { it.orderIndex })
+        // Drugi prolaz ništa ne mijenja.
+        layout.addStreakCard()
+        assertEquals(listOf("lastWorkout", "thisWeek", "streak", "bodyWeight"), layout.raw())
+
+        val other = layoutWith("plateCalculator")
+        other.addStreakCard()
+        assertEquals(listOf("streak", "plateCalculator"), other.raw())
+
+        val empty = DashboardLayout(GymStore())
+        empty.addStreakCard()
+        assertTrue(empty.allCards().isEmpty())
     }
 
     @Test

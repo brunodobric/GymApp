@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.brunodobric.gymapp.AppServices
 import com.brunodobric.gymapp.R
 import com.brunodobric.gymapp.stats.OverviewPeriod
+import com.brunodobric.gymapp.model.DashboardCardKind
 import com.brunodobric.gymapp.model.DashboardLayout
 import com.brunodobric.gymapp.model.OnboardingAnswers
 import com.brunodobric.gymapp.model.Schedule
@@ -95,6 +96,11 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         layout.upgradeToWeekCard()
         layout.seedDefaults()
+        // Jednom po uređaju postojeća Početna dobiva karticu Streak (nova je već ima među zadanima).
+        if (!prefs.getBoolean(STREAK_CARD_ADDED, false)) {
+            layout.addStreakCard()
+            prefs.edit().putBoolean(STREAK_CARD_ADDED, true).apply()
+        }
     }
     if (!workoutShown) RecoveryPrompt(services, onContinue = onOpenWorkout)
     // Aktivni rasporedi čiji su treninzi u izboru (prazno: izbor bez rasporeda).
@@ -178,7 +184,12 @@ fun HomeScreen(
             )
             DashboardLayout.rows(kinds).forEach { row ->
                 Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    row.forEach { kind -> DashboardCardView(services, kind, revision, actions, Modifier.weight(1f).fillMaxHeight()) }
+                    row.forEach { kind ->
+                        DashboardCardView(
+                            services, kind, revision, actions, Modifier.weight(1f).fillMaxHeight(),
+                            showsStreakCard = DashboardCardKind.STREAK in kinds,
+                        )
+                    }
                     // Mala kartica sama u redu zauzima pola širine.
                     if (row.size == 1 && row[0].isCompact) Spacer(Modifier.weight(1f))
                 }
@@ -204,6 +215,9 @@ private const val HOME_PREFS = "home"
 
 /** Kartica "Postavi profil" zatvorena križićem (na ovom uređaju). */
 private const val PROFILE_SETUP_DISMISSED = "profileSetupDismissed"
+
+/** Postojeća Početna je jednom dobila karticu Streak ([DashboardLayout.addStreakCard]). */
+private const val STREAK_CARD_ADDED = "streakCardAdded"
 
 /** Naknadno ispunjavanje onboardinga (`ProfileSetupPrompt`): otvara isti list u dva koraka. */
 @Composable

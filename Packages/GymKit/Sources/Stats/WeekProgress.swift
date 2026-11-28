@@ -44,6 +44,11 @@ public struct WeekProgress: Equatable, Sendable {
     /// Uzastopni tjedni s ispunjenim ciljem (bez cilja: s barem jednim treningom), do prošlog tjedna,
     /// i ovaj tjedan ako je cilj već ispunjen.
     public var streakWeeks = 0
+    /// Niz do prošlog tjedna, bez tekućeg (`streakLength` prošlih tjedana).
+    public var previousStreakWeeks = 0
+    /// Niz kakav bi ostao da tjedan završi bez novih treninga: veći od `previousStreakWeeks` kad je cilj
+    /// ispunjen, jednak kad je tjedan bez treninga pauza, a 0 kad se niz prekida.
+    public var streakIfWeekEndsNow = 0
 
     /// Udio cilja (0 do 1) za traku; nil bez cilja.
     public var goalFraction: Double? {
@@ -81,8 +86,11 @@ public struct WeekProgress: Equatable, Sendable {
                 if mix.kinds.contains(.cardio) { progress.days[index].cardio = true }
             }
         }
-        progress.streakWeeks = streak(of: finished, before: week.start, current: progress.sessions,
-                                      target: progress.weeklyTarget, calendar: calendar)
+        let previous = previousWeekCounts(of: finished, before: week.start, calendar: calendar)
+        let target = progress.weeklyTarget
+        progress.previousStreakWeeks = streakLength(previous, target: target)
+        progress.streakWeeks = progress.sessions >= target ? progress.previousStreakWeeks + 1 : progress.previousStreakWeeks
+        progress.streakIfWeekEndsNow = streakLength([progress.sessions] + previous, target: target)
         return progress
     }
 
@@ -95,7 +103,8 @@ public struct WeekProgress: Equatable, Sendable {
         }
     }
 
-    private static func streak(of sessions: [Session], before weekStart: Date, current: Int, target: Int, calendar: Calendar) -> Int {
+    /// Broj treninga po tjednu prije `weekStart`, od prošlog tjedna unatrag (najviše `streakLimit` tjedana).
+    private static func previousWeekCounts(of sessions: [Session], before weekStart: Date, calendar: Calendar) -> [Int] {
         var counts: [Date: Int] = [:]
         for session in sessions where session.startedAt < weekStart {
             if let start = calendar.dateInterval(of: .weekOfYear, for: session.startedAt)?.start {
@@ -110,8 +119,7 @@ public struct WeekProgress: Equatable, Sendable {
             weeks.append(counts[start, default: 0])
             cursor = start
         }
-        let streak = streakLength(weeks, target: target)
-        return current >= target ? streak + 1 : streak
+        return weeks
     }
 
     /// Najmanje tjedana između dvije pauze koje ne prekidaju niz.
